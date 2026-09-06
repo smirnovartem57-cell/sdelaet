@@ -1,4 +1,4 @@
-name: One-time site patch
+name: Publish site v14
 
 on:
   push:
@@ -9,24 +9,55 @@ permissions:
   contents: write
 
 jobs:
-  patch:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply requested site fixes
+
+      - name: Publish prepared pages
         shell: bash
         run: |
+          base64 -d .github/site_patch_payload.b64 > /tmp/site_patch_payload.tgz
+          mkdir -p /tmp/site_patch
+          tar -xzf /tmp/site_patch_payload.tgz -C /tmp/site_patch
+
+          cp /tmp/site_patch/create-task.html create-task.html
+          cp /tmp/site_patch/task-tz.html task-tz.html
+          cp /tmp/site_patch/candidates.html candidates.html
+          cp /tmp/site_patch/requests.html requests.html
+          cp /tmp/site_patch/replies.html replies.html
+          cp /tmp/site_patch/compare.html compare.html
+          cp /tmp/site_patch/work.html work.html
+          cp /tmp/site_patch/review.html review.html
+
           python - <<'PY'
           from pathlib import Path
+          import re
+
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          s = s.replace(
-              'https://rutube.ru/play/embed/66efbf9c12cd8d8883912f2916c344d1/?p=teTmlscm3XWaxUv_uMY3-A&autoplay=1',
-              'https://rutube.ru/play/embed/512e9f504aaf3f656030e28182b20979/?p=gBbkrUb_nErXboTSvQOxJQ&autoplay=1'
-          )
+          partial = Path('/tmp/site_patch/home-task-example.html').read_text(encoding='utf-8')
+
+          m = re.search(r'(<style>.*?</style>)?(<section class="task-example container" id="demo">.*?</section>)', partial, re.S)
+          if not m:
+              raise SystemExit('home partial not recognized')
+
+          extra_style = m.group(1) or ''
+          section = m.group(2)
+
+          if extra_style and 'tz-preview-card' not in s:
+              s = s.replace('</head>', extra_style + '\n</head>', 1)
+
+          s, n = re.subn(r'<section class="task-example container" id="demo">.*?</section>', section, s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit(f'expected one demo section, got {n}')
+
+          s = s.replace('href="index.html"', 'href="/"')
+          s = s.replace('sdelaet_create_task_v04.html', 'create-task.html')
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit patch
+
+      - name: Commit published site
         shell: bash
         run: |
           if git diff --quiet; then
@@ -35,6 +66,6 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Update presentation video link'
+          git add index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html
+          git commit -m 'Publish complete client flow v14'
           git push
