@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Техническое задание — Сделает</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .tz-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tz-list{display:grid;border:1px solid var(--line);border-radius:16px;overflow:hidden}.tz-row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 12px;border-bottom:1px solid #eef1f7}.tz-row:last-child{border-bottom:0}.tz-row span{color:#74809b;font-size:12px}.tz-row b{font-size:13px}.wall-plan.large{min-height:300px}.ask-list{display:grid;gap:8px;margin-top:10px}.ask{padding:10px 11px;border-radius:13px;background:#fbfcff;border:1px solid var(--line);font-size:12px;color:#56627e}@media(max-width:700px){.tz-grid{grid-template-columns:1fr}.tz-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
+    <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
+    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>А вы выберете уже из нескольких понятных вариантов.</p></div>
+    <div class="side-bottom"><a class="back-link" href="index.html">← На главную</a></div>
+  </aside>
+  <main class="main">
+    <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step active">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
+    <div class="content"><div class="layout">
+      <section class="card">
+        <div class="kicker">Шаг 2</div><h1>Техническое задание готово</h1><p class="muted">Собрали описание, фотографии, размеры и ответы в один запрос, который можно одинаково отправить всем исполнителям.</p>
+        <div class="tz-grid">
+          <div class="tz-list">
+            <div class="tz-row"><span>Объект</span><b>одна стена балкона вокруг окна</b></div><div class="tz-row"><span>География</span><b>Мытищи</b></div><div class="tz-row"><span>Размер стены</span><b>3140 × 2870 мм</b></div><div class="tz-row"><span>Размер окна</span><b>1800 × 2200 мм</b></div><div class="tz-row"><span>Площадь</span><b>≈ 5,05 м² без откосов</b></div><div class="tz-row"><span>Окно</span><b>оставить существующее</b></div><div class="tz-row"><span>Срок</span><b>начать в ближайшее время</b></div><div class="tz-row"><span>Не входит</span><b>пол, потолок, остальные стены</b></div><div class="tz-row"><span>В расчёте указать</span><b>технологию, утеплитель, работу/материалы, откосы, сроки, гарантию и замер</b></div>
+          </div>
+          <div class="wall-plan large"><div class="dim-x">3140 мм</div><div class="dim-y">2870 мм</div><div class="wall"><div class="window-box"></div></div><div class="dim-window">окно 1800 × 2200 мм</div></div>
+        </div>
+        <div class="row mt"><button class="btn secondary">Редактировать</button><button class="btn ghost">Скачать PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
+      </section>
+      <aside class="card"><div class="kicker">Проверка перед поиском</div><h2>Данных достаточно</h2><div class="good">✓ Можно начинать предварительный поиск исполнителей.</div><div class="ask-list"><div class="ask"><b>Опционально:</b> сравнивать только утепление под отделку или сразу вариант с чистовой?</div><div class="ask"><b>Опционально:</b> допустим ли бесплатный выезд на замер до финальной цены?</div></div><div class="note mt"><b>Важно:</b> все исполнители получают одно ТЗ — предложения можно сравнивать честнее.</div></aside>
+    </div></div>
+  </main>
+</div>
+</body>
+</html>
