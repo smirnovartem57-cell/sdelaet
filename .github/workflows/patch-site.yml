@@ -1,4 +1,4 @@
-# final publish trigger 2026-09-06 23:12 MSK
+# final publish trigger 2026-09-06 23:14 MSK
 name: Publish final v14
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           echo 'decode replies'
           base64 -d .github/payload/replies.html.gz.b64 | gzip -d > replies.html
           echo 'decode compare'
-          base64 -d .github/payload/compare.html.gz.b64 | gzip -d > compare.html
+          cat .github/payload/compare.part00 .github/payload/compare.part01 .github/payload/compare.part02 | base64 -d | gzip -d > compare.html
           echo 'decode work'
           base64 -d .github/payload/work.html.gz.b64 | gzip -d > work.html
           echo 'decode review'
