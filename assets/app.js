@@ -59,9 +59,23 @@ function sdLoadJob(){try{return JSON.parse(localStorage.getItem(SDELAET_JOB_KEY)
 function sdSaveReply(candidate,data){localStorage.setItem('sdelaet.reply.'+candidate,JSON.stringify(data))}
 function sdLoadReply(candidate){try{return JSON.parse(localStorage.getItem('sdelaet.reply.'+candidate)||'{}')}catch(e){return{}}}
 
+function sdApplyBrandLogo(){
+  document.querySelectorAll('.logo-mark').forEach(el=>{
+    if(el.tagName==='IMG') return;
+    const img=document.createElement('img');
+    img.className='logo-mark';
+    img.src='assets/logo-icon.svg';
+    img.alt='';
+    img.width=38;
+    img.height=38;
+    el.replaceWith(img);
+  });
+}
+
 window.Sdelaet={saveFiles:sdSaveFiles,loadFiles:sdLoadFiles,renderFiles:sdRenderFiles,saveJob:sdSaveJob,loadJob:sdLoadJob,saveReply:sdSaveReply,loadReply:sdLoadReply};
 
 document.addEventListener('DOMContentLoaded',()=>{
+  sdApplyBrandLogo();
   const dl=document.getElementById('regions');
   if(dl){['Республика Крым','Севастополь','Донецкая Народная Республика','Луганская Народная Республика','Запорожская область','Херсонская область'].forEach(name=>{if(![...dl.options].some(o=>o.value===name)){const o=document.createElement('option');o.value=name;dl.appendChild(o);}});}
 });
