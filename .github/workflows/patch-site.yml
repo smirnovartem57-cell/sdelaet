@@ -1,3 +1,4 @@
+# final publish trigger 2026-09-06 23:06 MSK
 name: Publish final v14
 on:
   push:
@@ -13,14 +14,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo 'decode create-task'
           cat .github/payload/create-task.1.b64 .github/payload/create-task.2.b64 | base64 -d | gzip -d > create-task.html
+          echo 'decode task-tz'
           cat .github/payload/task-tz.1.b64 .github/payload/task-tz.2.b64 | base64 -d | gzip -d > task-tz.html
+          echo 'decode candidates'
           base64 -d .github/payload/candidates.html.gz.b64 | gzip -d > candidates.html
+          echo 'decode requests'
           base64 -d .github/payload/requests.html.gz.b64 | gzip -d > requests.html
+          echo 'decode replies'
           base64 -d .github/payload/replies.html.gz.b64 | gzip -d > replies.html
+          echo 'decode compare'
           base64 -d .github/payload/compare.html.gz.b64 | gzip -d > compare.html
+          echo 'decode work'
           base64 -d .github/payload/work.html.gz.b64 | gzip -d > work.html
+          echo 'decode review'
           cat .github/payload/review.1.b64 .github/payload/review.2.b64 | base64 -d | gzip -d > review.html
+          echo 'decode landing partial'
           base64 -d .github/payload/home-task-example.html.gz.b64 | gzip -d > /tmp/home.html
           test "$(wc -c < create-task.html)" -eq 23395
           test "$(wc -c < task-tz.html)" -eq 19672
