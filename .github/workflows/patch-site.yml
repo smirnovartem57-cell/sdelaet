@@ -1,4 +1,4 @@
-# final publish trigger 2026-09-06 23:06 MSK
+# final publish trigger 2026-09-06 23:12 MSK
 name: Publish final v14
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
         run: |
           set -euo pipefail
           echo 'decode create-task'
-          cat .github/payload/create-task.1.b64 .github/payload/create-task.2.b64 | base64 -d | gzip -d > create-task.html
+          cat .github/payload/create-task.part00 .github/payload/create-task.part01 .github/payload/create-task.part02 .github/payload/create-task.part03 | base64 -d | gzip -d > create-task.html
           echo 'decode task-tz'
           cat .github/payload/task-tz.1.b64 .github/payload/task-tz.2.b64 | base64 -d | gzip -d > task-tz.html
           echo 'decode candidates'
