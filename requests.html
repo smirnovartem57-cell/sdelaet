@@ -11,9 +11,9 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
+    <a class="logo" href="index.html"><img class="logo-mark" src="assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a>
     <nav class="menu"><a href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Шаг 4</div><b>Готовим один запрос</b><p>Для каждого исполнителя сохраняем телефон, email и мессенджер, если они найдены.</p></div>
+    <div class="side-note"><div class="kicker">Шаг 4</div><b>Готовим один запрос</b><p>Для каждого исполнителя сохраняем телефон, электронную почту и мессенджер, если они найдены.</p></div>
     <div class="side-bottom"><a class="back-link" href="candidates.html">← К кандидатам</a></div>
   </aside>
   <main class="main">
@@ -27,30 +27,30 @@
           <div class="request-head"><div><h2 id="candidateName" style="margin:0"></h2><div id="candidateMeta" class="mini"></div></div><span id="candidateChannel" class="channel"></span></div>
           <div class="contact-grid">
             <div class="contact-field"><label>Телефон</label><input id="contactPhone" readonly></div>
-            <div class="contact-field"><label>Email</label><input id="contactEmail" type="email" placeholder="email не найден — можно добавить"></div>
-            <div class="contact-field"><label>Мессенджер</label><input id="contactMessenger" placeholder="ссылка Telegram / WhatsApp"></div>
+            <div class="contact-field"><label>Электронная почта</label><input id="contactEmail" type="email" placeholder="адрес не найден — можно добавить"></div>
+            <div class="contact-field"><label>Мессенджер</label><input id="contactMessenger" placeholder="ссылка на чат или профиль"></div>
           </div>
           <div class="row mt"><button id="saveContacts" class="btn secondary">Сохранить контакты</button></div>
           <div id="messageText" class="message-box mt"></div>
           <div class="row mt">
             <button id="copyMessage" class="btn primary">Скопировать сообщение</button>
-            <a id="emailCandidate" class="btn secondary">Написать на email</a>
+            <a id="emailCandidate" class="btn secondary">Написать на почту</a>
             <a id="openMessenger" class="btn secondary" target="_blank" rel="noopener">Открыть мессенджер</a>
             <a id="openSite" class="btn secondary" target="_blank" rel="noopener">Открыть сайт</a>
             <a id="callPhone" class="btn ghost">Позвонить</a>
             <button id="markSent" class="btn ghost">Отметить отправленным</button>
           </div>
-          <div class="channel-note">Сейчас email открывается в вашей почтовой программе, а мессенджер — по сохранённой ссылке. После подключения backend можно будет отправлять централизованно и собирать ответы внутри «Сделает».</div>
+          <div class="channel-note">Сейчас письмо открывается в вашей почтовой программе, а мессенджер — по сохранённой ссылке. После подключения серверной части сможем отправлять запросы централизованно и собирать ответы внутри «Сделает».</div>
         </div>
-        <div class="note mt"><b>Что отправляем:</b> короткий текст + одинаковое ТЗ. Технические справочные материалы и внутренние источники Product Spec исполнителю не показываем.</div>
+        <div class="note mt"><b>Что отправляем:</b> короткое сообщение + одинаковое ТЗ. Внутренние технические источники и спецификация категории исполнителю не показываются.</div>
         <div class="row mt"><a class="btn primary" href="replies.html">Перейти к ответам →</a></div>
       </section>
       <aside class="card">
         <div class="kicker">Массовая отправка</div><h2>Какие каналы собраны</h2>
         <div class="mass-box">
-          <div class="mass-stat"><div><span>Email найден</span><b id="emailCount">0</b></div><div><span>Мессенджер добавлен</span><b id="messengerCount">0</b></div></div>
-          <div class="row"><a id="massEmail" class="btn primary">Открыть письмо всем с email</a><button id="copyEmails" class="btn secondary">Скопировать email</button></div>
-          <div class="channel-note">Для мессенджеров универсальной массовой отправки без подключения аккаунта/официальной интеграции нет — пока открываем чаты по одному.</div>
+          <div class="mass-stat"><div><span>Почта найдена</span><b id="emailCount">0</b></div><div><span>Мессенджер добавлен</span><b id="messengerCount">0</b></div></div>
+          <div class="row"><a id="massEmail" class="btn primary">Открыть письмо всем</a><button id="copyEmails" class="btn secondary">Скопировать адреса</button></div>
+          <div class="channel-note">Для мессенджеров универсальной массовой отправки без подключения аккаунта или официальной интеграции нет — пока открываем чаты по одному.</div>
         </div>
         <h3 class="mt">Статус запросов</h3><div id="statusList" class="side-list"></div>
       </aside>
@@ -72,8 +72,8 @@ function setContacts(v){localStorage.setItem('sdelaet.contacts.v1',JSON.stringif
 function merged(id){const saved=getContacts()[id]||{};return{...candidates[id],...saved}}
 function sentState(){try{return JSON.parse(localStorage.getItem('sdelaet.sent.v1')||'{}')}catch(e){return{}}}
 function buildMessage(){const j=Sdelaet.loadJob();const where=[j.locationDetail,j.location].filter(Boolean).join(', ')||'Мытищи';const surfaces=(j.selectedWalls||[]).length?(j.selectedWalls||[]).map(x=>({front:'фасадная стена',left:'левая стена',right:'правая стена',apartment:'стена к квартире'}[x]||x)).join(', '):'выбранная стена';return `Добрый день.\n\nНужен предварительный расчёт по задаче в ${where}.\n\nОбъём: ${surfaces}${j.floor?', пол':''}${j.ceiling?', потолок':''}.\nЦель: ${j.goal||'локально утеплить выбранную поверхность'}.\nРазмер стены: ${j.wallSize||'нужен замер'}.\nРазмер существующего проёма: ${j.openingSize||'нужен замер'}.\nОкно/дверь: ${j.windowWork||'существующие, работы с ними отдельно не заказывали'}.\nРезультат: ${j.finish||'основание под дальнейшую отделку'}.\nСрок: ${j.time||'в ближайшее время'}.\n\nПросьба указать:\n— что нужно сделать с основанием и щелями до утепления;\n— какой материал и толщину предлагаете;\n— как будут выполнены углы и примыкания к окну/двери и соседним поверхностям;\n— что входит в итоговый результат;\n— работы и материалы отдельно, дополнительные расходы;\n— нужен ли замер, минимальную стоимость заказа, срок, договор и гарантию.\n\nЕсли считаете, что для результата нужен больший объём, пожалуйста, дайте его отдельным вариантом с отдельной ценой.\n\nСможете взять такую задачу?`}
-function updateMass(){const all=ids.map(id=>merged(id));const emails=all.map(x=>x.email).filter(Boolean);const mess=all.map(x=>x.messenger).filter(Boolean);emailCount.textContent=emails.length;messengerCount.textContent=mess.length;copyEmails.classList.toggle('disabled',!emails.length);massEmail.classList.toggle('disabled',!emails.length);const body=encodeURIComponent(buildMessage());massEmail.href=emails.length?'mailto:?bcc='+encodeURIComponent(emails.join(','))+'&subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+body:'#';copyEmails.onclick=async()=>{if(emails.length){await navigator.clipboard.writeText(emails.join(', '));copyEmails.textContent='Скопировано ✓';setTimeout(()=>copyEmails.textContent='Скопировать email',1200)}}}
-function render(){const c=merged(current),sent=sentState();candidateName.textContent=c.name;candidateMeta.textContent=c.meta;candidateChannel.textContent=[c.email?'email':'',c.messenger?'мессенджер':'',c.phone?'телефон':''].filter(Boolean).join(' / ')||'сайт';contactPhone.value=c.phoneLabel||'';contactEmail.value=c.email||'';contactMessenger.value=c.messenger||'';messageText.textContent=buildMessage();openSite.href=c.site;callPhone.href='tel:'+c.phone;emailCandidate.classList.toggle('disabled',!c.email);emailCandidate.href=c.email?'mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+encodeURIComponent(buildMessage()):'#';openMessenger.classList.toggle('disabled',!c.messenger);openMessenger.href=c.messenger||'#';candidateTabs.innerHTML=ids.map(id=>`<button class="chip ${id===current?'active':''}" data-id="${id}">${candidates[id].name}${sent[id]?' ✓':''}</button>`).join('');document.querySelectorAll('#candidateTabs .chip').forEach(b=>b.onclick=()=>{current=b.dataset.id;render()});statusList.innerHTML=ids.map(id=>{const x=merged(id);return `<div class="side-item"><b>${x.name}</b><br>${sent[id]?'✓ запрос отмечен отправленным':'ещё не отправлено'}<br><span class="mini">${x.email?'email ✓':'email —'} · ${x.messenger?'мессенджер ✓':'мессенджер —'}</span></div>`}).join('');updateMass()}
+function updateMass(){const all=ids.map(id=>merged(id));const emails=all.map(x=>x.email).filter(Boolean);const mess=all.map(x=>x.messenger).filter(Boolean);emailCount.textContent=emails.length;messengerCount.textContent=mess.length;copyEmails.classList.toggle('disabled',!emails.length);massEmail.classList.toggle('disabled',!emails.length);const body=encodeURIComponent(buildMessage());massEmail.href=emails.length?'mailto:?bcc='+encodeURIComponent(emails.join(','))+'&subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+body:'#';copyEmails.onclick=async()=>{if(emails.length){await navigator.clipboard.writeText(emails.join(', '));copyEmails.textContent='Скопировано ✓';setTimeout(()=>copyEmails.textContent='Скопировать адреса',1200)}}}
+function render(){const c=merged(current),sent=sentState();candidateName.textContent=c.name;candidateMeta.textContent=c.meta;candidateChannel.textContent=[c.email?'почта':'',c.messenger?'мессенджер':'',c.phone?'телефон':''].filter(Boolean).join(' / ')||'сайт';contactPhone.value=c.phoneLabel||'';contactEmail.value=c.email||'';contactMessenger.value=c.messenger||'';messageText.textContent=buildMessage();openSite.href=c.site;callPhone.href='tel:'+c.phone;emailCandidate.classList.toggle('disabled',!c.email);emailCandidate.href=c.email?'mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+encodeURIComponent(buildMessage()):'#';openMessenger.classList.toggle('disabled',!c.messenger);openMessenger.href=c.messenger||'#';candidateTabs.innerHTML=ids.map(id=>`<button class="chip ${id===current?'active':''}" data-id="${id}">${candidates[id].name}${sent[id]?' ✓':''}</button>`).join('');document.querySelectorAll('#candidateTabs .chip').forEach(b=>b.onclick=()=>{current=b.dataset.id;render()});statusList.innerHTML=ids.map(id=>{const x=merged(id);return `<div class="side-item"><b>${x.name}</b><br>${sent[id]?'✓ запрос отмечен отправленным':'ещё не отправлено'}<br><span class="mini">${x.email?'почта ✓':'почта —'} · ${x.messenger?'мессенджер ✓':'мессенджер —'}</span></div>`}).join('');updateMass()}
 saveContacts.onclick=()=>{const all=getContacts();all[current]={email:contactEmail.value.trim(),messenger:contactMessenger.value.trim()};setContacts(all);render();saveContacts.textContent='Сохранено ✓';setTimeout(()=>saveContacts.textContent='Сохранить контакты',1200)};
 copyMessage.onclick=async()=>{await navigator.clipboard.writeText(messageText.textContent);copyMessage.textContent='Скопировано ✓';setTimeout(()=>copyMessage.textContent='Скопировать сообщение',1200)};
 markSent.onclick=()=>{const s=sentState();s[current]=true;localStorage.setItem('sdelaet.sent.v1',JSON.stringify(s));render()};render();
