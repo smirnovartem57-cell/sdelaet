@@ -14,10 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unpack prepared pages
+      - name: Assemble and verify prepared pages
         shell: bash
         run: |
-          base64 -d .github/site_patch_payload.b64 > /tmp/site_v15.tar.gz
+          cat .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_05 > /tmp/site_v15.b64
+          test "$(wc -c < /tmp/site_v15.b64)" -eq 22992
+          echo "e13fa98db837ae4c08b77e74525933dd9b308e690d39cf59df79b14ea77de45d  /tmp/site_v15.b64" | sha256sum -c -
+          base64 -d /tmp/site_v15.b64 > /tmp/site_v15.tar.gz
+          echo "08d8fc070efdb0b35c835c1f021cfd6ce64fba53d640de641d4ff9637b067ad2  /tmp/site_v15.tar.gz" | sha256sum -c -
           tar -xzf /tmp/site_v15.tar.gz
 
       - name: Update landing example and navigation
@@ -71,7 +75,7 @@ jobs:
               p.write_text(s, encoding='utf-8')
           PY
 
-      - name: Validate internal page links
+      - name: Validate complete client flow
         shell: bash
         run: |
           python - <<'PY'
@@ -86,23 +90,40 @@ jobs:
                   continue
               text = p.read_text(encoding='utf-8')
               for href in re.findall(r'href="([^"#?]+\.html)', text):
-                  href = href.rsplit('/',1)[-1]
-                  if href not in pages:
-                      missing.append(f'{name} -> {href}')
+                  target = href.rsplit('/',1)[-1]
+                  if target not in pages:
+                      missing.append(f'{name} -> {target}')
+          required = {
+              'create-task.html':'task-tz.html',
+              'task-tz.html':'candidates.html',
+              'candidates.html':'requests.html',
+              'requests.html':'replies.html',
+              'replies.html':'compare.html',
+              'compare.html':'work.html',
+              'work.html':'review.html',
+          }
+          for page,target in required.items():
+              if f'href="{target}' not in Path(page).read_text(encoding='utf-8'):
+                  missing.append(f'missing forward link: {page} -> {target}')
           if missing:
-              raise SystemExit('Broken local links:\n' + '\n'.join(missing))
-          print('All client-flow links are valid')
+              raise SystemExit('Client flow validation failed:\n' + '\n'.join(missing))
+          print('Complete client flow is valid')
           PY
+
+      - name: Remove one-time publication payload
+        shell: bash
+        run: |
+          rm -f .github/site_patch_payload.b64 .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_05
 
       - name: Commit published flow
         shell: bash
         run: |
-          if git diff --quiet -- index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html README.md; then
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
             echo 'No changes needed'
             exit 0
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html README.md
           git commit -m 'Publish complete client flow v15'
           git push
