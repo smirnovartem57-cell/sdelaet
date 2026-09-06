@@ -1,46 +1,50 @@
 const SDELAET_JOB_KEY='sdelaet.job.v1';
 const SDELAET_DB='sdelaet-mvp';
-const SDELAET_STORE='jobFiles';
+const SDELAET_STORE='files';
 
 function sdOpenDb(){
   return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(SDELAET_DB,1);
+    const req=indexedDB.open(SDELAET_DB,2);
     req.onupgradeneeded=()=>{
       const db=req.result;
-      if(!db.objectStoreNames.contains(SDELAET_STORE)) db.createObjectStore(SDELAET_STORE,{keyPath:'id'});
+      if(db.objectStoreNames.contains('jobFiles')) db.deleteObjectStore('jobFiles');
+      if(!db.objectStoreNames.contains(SDELAET_STORE)) db.createObjectStore(SDELAET_STORE,{keyPath:'key'});
     };
     req.onsuccess=()=>resolve(req.result);
     req.onerror=()=>reject(req.error);
   });
 }
 
-async function sdSaveFiles(fileList){
+async function sdSaveFiles(fileList,bucket='job'){
   const db=await sdOpenDb();
   await new Promise((resolve,reject)=>{
     const tx=db.transaction(SDELAET_STORE,'readwrite');
     const store=tx.objectStore(SDELAET_STORE);
-    store.clear();
-    Array.from(fileList||[]).forEach((file,i)=>store.put({id:String(i+1),name:file.name,type:file.type,size:file.size,blob:file}));
+    const all=store.getAllKeys();
+    all.onsuccess=()=>{
+      (all.result||[]).filter(k=>String(k).startsWith(bucket+':')).forEach(k=>store.delete(k));
+      Array.from(fileList||[]).forEach((file,i)=>store.put({key:bucket+':'+(i+1),bucket,id:String(i+1),name:file.name,type:file.type,size:file.size,blob:file}));
+    };
     tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
   });
   db.close();
 }
 
-async function sdLoadFiles(){
+async function sdLoadFiles(bucket='job'){
   const db=await sdOpenDb();
   const rows=await new Promise((resolve,reject)=>{
     const tx=db.transaction(SDELAET_STORE,'readonly');
     const req=tx.objectStore(SDELAET_STORE).getAll();
-    req.onsuccess=()=>resolve(req.result||[]); req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>resolve((req.result||[]).filter(x=>x.bucket===bucket)); req.onerror=()=>reject(req.error);
   });
   db.close();
   return rows;
 }
 
-async function sdRenderFiles(target){
+async function sdRenderFiles(target,bucket='job'){
   const el=typeof target==='string'?document.getElementById(target):target;
   if(!el) return;
-  const rows=await sdLoadFiles();
+  const rows=await sdLoadFiles(bucket);
   el.innerHTML='';
   if(!rows.length){ el.innerHTML='<div class="file-empty">Файлы пока не добавлены</div>'; return; }
   rows.forEach(row=>{
@@ -55,7 +59,9 @@ async function sdRenderFiles(target){
   });
 }
 
-function sdSaveJob(data){ localStorage.setItem(SDELAET_JOB_KEY,JSON.stringify(data)); }
-function sdLoadJob(){ try{return JSON.parse(localStorage.getItem(SDELAET_JOB_KEY)||'{}')}catch(e){return{}} }
+function sdSaveJob(data){localStorage.setItem(SDELAET_JOB_KEY,JSON.stringify(data))}
+function sdLoadJob(){try{return JSON.parse(localStorage.getItem(SDELAET_JOB_KEY)||'{}')}catch(e){return{}}}
+function sdSaveReply(candidate,data){localStorage.setItem('sdelaet.reply.'+candidate,JSON.stringify(data))}
+function sdLoadReply(candidate){try{return JSON.parse(localStorage.getItem('sdelaet.reply.'+candidate)||'{}')}catch(e){return{}}}
 
-window.Sdelaet={saveFiles:sdSaveFiles,loadFiles:sdLoadFiles,renderFiles:sdRenderFiles,saveJob:sdSaveJob,loadJob:sdLoadJob};
+window.Sdelaet={saveFiles:sdSaveFiles,loadFiles:sdLoadFiles,renderFiles:sdRenderFiles,saveJob:sdSaveJob,loadJob:sdLoadJob,saveReply:sdSaveReply,loadReply:sdLoadReply};
