@@ -5,34 +5,103 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Техническое задание — Сделает</title>
   <link rel="stylesheet" href="assets/styles.css">
-  <style>
-    .tz-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tz-list{display:grid;border:1px solid var(--line);border-radius:16px;overflow:hidden}.tz-row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 12px;border-bottom:1px solid #eef1f7}.tz-row:last-child{border-bottom:0}.tz-row span{color:#74809b;font-size:12px}.tz-row b{font-size:13px}.wall-plan.large{min-height:300px}.ask-list{display:grid;gap:8px;margin-top:10px}.ask{padding:10px 11px;border-radius:13px;background:#fbfcff;border:1px solid var(--line);font-size:12px;color:#56627e}@media(max-width:700px){.tz-grid{grid-template-columns:1fr}.tz-row{grid-template-columns:1fr}}
-  </style>
 </head>
 <body>
 <div class="app-shell">
   <aside class="sidebar">
     <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
     <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>А вы выберете уже из нескольких понятных вариантов.</p></div>
+    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Один объём — один запрос</b><p>Все исполнители считают одну и ту же задачу, а дополнительные работы предлагают отдельно.</p></div>
     <div class="side-bottom"><a class="back-link" href="index.html">← На главную</a></div>
   </aside>
+
   <main class="main">
     <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step active">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-    <div class="content"><div class="layout">
-      <section class="card">
-        <div class="kicker">Шаг 2</div><h1>Техническое задание готово</h1><p class="muted">Собрали описание, фотографии, размеры и ответы в один запрос, который можно одинаково отправить всем исполнителям.</p>
-        <div class="tz-grid">
-          <div class="tz-list">
-            <div class="tz-row"><span>Объект</span><b>одна стена балкона вокруг окна</b></div><div class="tz-row"><span>География</span><b>Мытищи</b></div><div class="tz-row"><span>Размер стены</span><b>3140 × 2870 мм</b></div><div class="tz-row"><span>Размер окна</span><b>1800 × 2200 мм</b></div><div class="tz-row"><span>Площадь</span><b>≈ 5,05 м² без откосов</b></div><div class="tz-row"><span>Окно</span><b>оставить существующее</b></div><div class="tz-row"><span>Срок</span><b>начать в ближайшее время</b></div><div class="tz-row"><span>Не входит</span><b>пол, потолок, остальные стены</b></div><div class="tz-row"><span>В расчёте указать</span><b>технологию, утеплитель, работу/материалы, откосы, сроки, гарантию и замер</b></div>
+
+    <div class="content">
+      <div class="layout">
+        <section class="card">
+          <div class="kicker">Шаг 2 · ТЗ под утепление балкона</div>
+          <h1>Техническое задание готово</h1>
+          <p class="muted">Отделяем базовую задачу от дополнительных работ и просим каждого исполнителя раскрыть технологию одинаково.</p>
+
+          <div class="tz-layout mt">
+            <div>
+              <div class="tz-list">
+                <div class="tz-row"><span>Объект</span><b id="tzScope">стена балкона вокруг оконного проёма</b></div>
+                <div class="tz-row"><span>География</span><b id="tzLocation">Москва</b></div>
+                <div class="tz-row"><span>Цель</span><b id="tzGoal">локально утеплить стену / убрать промерзание</b></div>
+                <div class="tz-row"><span>Размер стены</span><b id="tzWall">3140 × 2870 мм</b></div>
+                <div class="tz-row"><span>Оконный проём</span><b id="tzWindow">1800 × 2200 мм</b></div>
+                <div class="tz-row"><span>Расчётная площадь</span><b id="tzArea">≈ 5,05 м²</b></div>
+                <div class="tz-row"><span>Работы с окном</span><b id="tzWindowWork">не входят в текущий заказ</b></div>
+                <div class="tz-row"><span>Результат поверхности</span><b id="tzFinish">основание под дальнейшую отделку</b></div>
+                <div class="tz-row"><span>Срок</span><b id="tzTiming">в ближайшее время</b></div>
+              </div>
+
+              <div class="tech-list">
+                <div class="tech-item"><b>1. Подготовка основания.</b> Указать демонтаж/очистку, заделку трещин и щелей, устранение продуваний и потенциальных мостиков холода.</div>
+                <div class="tech-item"><b>2. Состав системы.</b> Назвать утеплитель, толщину каждого слоя, способ крепления и полный порядок слоёв — не писать просто «Пеноплекс 50 мм».</div>
+                <div class="tech-item"><b>3. Герметичность и пароизоляция.</b> Указать, как герметизируются стыки утеплителя и нужна ли пароизоляция для предложенной системы; отдельно описать примыкания.</div>
+                <div class="tech-item"><b>4. Примыкания.</b> Отдельно описать решение у оконного проёма, откосов, пола, потолка и соседних стен, чтобы новая зона утепления не заканчивалась необработанным холодным стыком.</div>
+                <div class="tech-item"><b>5. Смета.</b> Работы, материалы, откосы/примыкания, расходники, доставка, подъём и вывоз мусора — отдельными строками.</div>
+                <div class="tech-item"><b>6. Условия.</b> Минимальная стоимость заказа, нужен ли замер, дата старта, срок работ, договор и гарантия.</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="tz-svg-wrap">
+                <svg class="tz-svg" viewBox="0 0 380 350" xmlns="http://www.w3.org/2000/svg" aria-label="Схема стены и оконного проёма">
+                  <defs><linearGradient id="w" x1="0" x2="1"><stop offset="0" stop-color="#eef5ff"/><stop offset="1" stop-color="#dbe9ff"/></linearGradient></defs>
+                  <rect x="35" y="35" width="314" height="287" rx="4" fill="#fff" stroke="#6f7ca8" stroke-width="3"/>
+                  <rect x="160" y="60" width="180" height="220" fill="url(#w)" stroke="#2f67db" stroke-width="4"/>
+                  <line x1="250" y1="60" x2="250" y2="280" stroke="#9db3ea" stroke-width="2"/>
+                  <line x1="35" y1="22" x2="349" y2="22" stroke="#5360d9" stroke-width="2"/><line x1="35" y1="16" x2="35" y2="28" stroke="#5360d9" stroke-width="2"/><line x1="349" y1="16" x2="349" y2="28" stroke="#5360d9" stroke-width="2"/>
+                  <text x="192" y="15" text-anchor="middle" font-family="Montserrat,Arial" font-size="12" font-weight="700" fill="#5360d9">3140 мм</text>
+                  <line x1="18" y1="35" x2="18" y2="322" stroke="#5360d9" stroke-width="2"/><line x1="12" y1="35" x2="24" y2="35" stroke="#5360d9" stroke-width="2"/><line x1="12" y1="322" x2="24" y2="322" stroke="#5360d9" stroke-width="2"/>
+                  <text x="8" y="180" transform="rotate(-90 8 180)" text-anchor="middle" font-family="Montserrat,Arial" font-size="12" font-weight="700" fill="#5360d9">2870 мм</text>
+                  <rect x="194" y="294" width="120" height="26" rx="13" fill="#fff" stroke="#dfe5f7"/><text x="254" y="311" text-anchor="middle" font-family="Roboto,Arial" font-size="11" fill="#435175">проём 1800 × 2200</text>
+                  <rect x="48" y="48" width="92" height="28" rx="14" fill="#eafaf3" stroke="#ccebdc"/><text x="94" y="66" text-anchor="middle" font-family="Roboto,Arial" font-size="11" font-weight="700" fill="#13744f">утепляемая зона</text>
+                </svg>
+              </div>
+              <div class="scope-note">Оконный проём показан только для геометрии стены и расчёта примыканий. Замена окна/остекления не включается в утепление автоматически.</div>
+              <div id="tzFiles" class="file-preview-grid"></div>
+            </div>
           </div>
-          <div class="wall-plan large"><div class="dim-x">3140 мм</div><div class="dim-y">2870 мм</div><div class="wall"><div class="window-box"></div></div><div class="dim-window">окно 1800 × 2200 мм</div></div>
-        </div>
-        <div class="row mt"><button class="btn secondary">Редактировать</button><button class="btn ghost">Скачать PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
-      </section>
-      <aside class="card"><div class="kicker">Проверка перед поиском</div><h2>Данных достаточно</h2><div class="good">✓ Можно начинать предварительный поиск исполнителей.</div><div class="ask-list"><div class="ask"><b>Опционально:</b> сравнивать только утепление под отделку или сразу вариант с чистовой?</div><div class="ask"><b>Опционально:</b> допустим ли бесплатный выезд на замер до финальной цены?</div></div><div class="note mt"><b>Важно:</b> все исполнители получают одно ТЗ — предложения можно сравнивать честнее.</div></aside>
-    </div></div>
+
+          <div id="oneWallWarning" class="warning-box">Если исполнитель считает, что утепление только этой стены не решит заявленную цель, он должен <b>не расширять базовую смету молча</b>, а отдельно объяснить причину и предложить дополнительный объём вторым вариантом.</div>
+
+          <div class="row mt"><a class="btn secondary" href="create-task.html">Редактировать</a><button class="btn ghost" type="button" onclick="window.print()">Сохранить / PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
+        </section>
+
+        <aside class="card">
+          <div class="kicker">Почему ТЗ именно такое</div><h2>Что важно для утепления</h2>
+          <div class="good">✓ Производители систем утепления описывают не один материал, а систему слоёв: основание, теплоизоляцию, герметизацию/пароизоляцию, каркас и отделку.</div>
+          <div class="note mt">Для полного превращения балкона в тёплое помещение важны качество остекления и непрерывный тепловой контур по холодным поверхностям. Для нашей задачи это <b>не повод автоматически добавить окна, пол и потолок</b> — это лишь сигнал, который исполнитель должен объяснить отдельно.</div>
+          <div class="side-list mt">
+            <a class="side-item" href="https://www.penoplex.ru/systems/teploizolyatsiya-balkona-lodzhii/" target="_blank" rel="noopener"><b>ПЕНОПЛЭКС</b><br>состав системы утепления балкона/лоджии ↗</a>
+            <a class="side-item" href="https://www.tn.ru/upload/iblock/ed5/as4olelzk0y5w16tb3tfvu534oh166e9/Balkon_Instruction_01_10_2025.pdf" target="_blank" rel="noopener"><b>ТЕХНОНИКОЛЬ</b><br>система ТН-СТЕНА Балкон ↗</a>
+          </div>
+        </aside>
+      </div>
+    </div>
   </main>
 </div>
+<script src="assets/app.js"></script>
+<script>
+function dims(s){const m=String(s||'').match(/(\d+)\D+(\d+)/);return m?[+m[1],+m[2]]:null}
+const job=Sdelaet.loadJob();
+if(job.scopes?.length) document.getElementById('tzScope').textContent=job.scopes.join(', ');
+const loc=[job.locationDetail,job.region].filter(Boolean).join(', '); if(loc) document.getElementById('tzLocation').textContent=loc;
+if(job.goal) document.getElementById('tzGoal').textContent=job.goal;
+if(job.wallSize) document.getElementById('tzWall').textContent=job.wallSize+' мм';
+if(job.windowSize) document.getElementById('tzWindow').textContent=job.windowSize+' мм';
+if(job.windowWork) document.getElementById('tzWindowWork').textContent=job.windowWork;
+if(job.finish) document.getElementById('tzFinish').textContent=job.finish;
+if(job.timing) document.getElementById('tzTiming').textContent=job.timing;
+const w=dims(job.wallSize||'3140 × 2870'),o=dims(job.windowSize||'1800 × 2200'); if(w&&o){const a=(w[0]*w[1]-o[0]*o[1])/1e6;document.getElementById('tzArea').textContent='≈ '+a.toFixed(2).replace('.',',')+' м²';}
+if(job.goal&&job.goal.includes('полностью тёплый')) document.getElementById('oneWallWarning').innerHTML='Для цели <b>«полностью тёплый балкон»</b> сервис дополнительно проверит качество остекления и полный тепловой контур. Эти работы всё равно должны идти отдельными строками, а не добавляться в базовую смету без согласия.';
+Sdelaet.renderFiles('tzFiles');
+</script>
 </body>
 </html>
