@@ -1,4 +1,4 @@
-name: Publish complete client flow v15
+name: Publish site v14 verified
 
 on:
   push:
@@ -14,66 +14,47 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Assemble and verify prepared pages
+      - name: Decode prepared pages
         shell: bash
         run: |
-          # v15 payload is split into small verified chunks to avoid connector truncation.
-          cat .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04a .github/payload_chunk_04b .github/payload_chunk_05 > /tmp/site_v15.b64
-          test "$(wc -c < /tmp/site_v15.b64)" -eq 22992
-          echo "e13fa98db837ae4c08b77e74525933dd9b308e690d39cf59df79b14ea77de45d  /tmp/site_v15.b64" | sha256sum -c -
-          base64 -d /tmp/site_v15.b64 > /tmp/site_v15.tar.gz
-          echo "08d8fc070efdb0b35c835c1f021cfd6ce64fba53d640de641d4ff9637b067ad2  /tmp/site_v15.tar.gz" | sha256sum -c -
-          tar -xzf /tmp/site_v15.tar.gz
+          set -euo pipefail
+          for page in create-task task-tz candidates requests replies compare work review; do
+            base64 -d ".github/payload/${page}.html.gz.b64" | gzip -d > "${page}.html"
+            test -s "${page}.html"
+          done
+          base64 -d ".github/payload/home-task-example.html.gz.b64" | gzip -d > /tmp/home-task-example.html
+          test -s /tmp/home-task-example.html
 
-      - name: Update landing example and navigation
+      - name: Patch landing and canonical links
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          index = Path('index.html')
-          snippet_path = Path('home-task-example.html')
-          s = index.read_text(encoding='utf-8')
-          snippet = snippet_path.read_text(encoding='utf-8')
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          partial = Path('/tmp/home-task-example.html').read_text(encoding='utf-8')
 
-          m = re.search(r'(<style>.*?</style>)(<section class="task-example container" id="demo">.*?</section>)', snippet, re.S)
-          if not m:
-              raise SystemExit('home task example payload is invalid')
-          extra_css, new_section = m.groups()
+          style = re.search(r'<style>(.*?)</style>', partial, re.S)
+          section = re.search(r'<section class="task-example container" id="demo">.*?</section>', partial, re.S)
+          if not section:
+              raise SystemExit('landing demo section missing from payload')
 
-          if 'tz-preview-card' not in s:
-              s = s.replace('</head>', extra_css + '\n</head>', 1)
+          if style and 'tz-preview-card{' not in s:
+              s = s.replace('</head>', '<style>' + style.group(1) + '</style>\n</head>', 1)
 
           s, count = re.subn(
               r'<section class="task-example container" id="demo">.*?</section>',
-              new_section,
-              s,
-              count=1,
-              flags=re.S,
+              section.group(0), s, count=1, flags=re.S
           )
           if count != 1:
-              raise SystemExit('landing task example block not found')
+              raise SystemExit(f'expected one landing demo block, got {count}')
 
+          s = s.replace('sdelaet_create_task_v04.html', 'create-task.html')
           s = s.replace('href="index.html"', 'href="/"')
           s = s.replace('http://onsdelaet.ru', 'https://onsdelaet.ru')
-          index.write_text(s, encoding='utf-8')
-          snippet_path.unlink()
-          PY
-
-      - name: Update project readme
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('README.md')
-          s = p.read_text(encoding='utf-8')
-          start = s.find('## Текущий пользовательский путь')
-          end = s.find('## Принципы первой версии')
-          if start != -1 and end != -1 and end > start:
-              flow = '''## Текущий пользовательский путь\n\n1. Главная — `index.html`\n2. Создание задачи — `create-task.html`\n3. Техническое задание — `task-tz.html`\n4. Подборка исполнителей — `candidates.html`\n5. Запросы исполнителям — `requests.html`\n6. Ответы — `replies.html`\n7. Сравнение — `compare.html`\n8. Работа — `work.html`\n9. Отзыв — `review.html`\n\n'''
-              s = s[:start] + flow + s[end:]
-              p.write_text(s, encoding='utf-8')
+          p.write_text(s, encoding='utf-8')
           PY
 
       - name: Validate complete client flow
@@ -82,18 +63,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
+
           pages = {'index.html','create-task.html','task-tz.html','candidates.html','requests.html','replies.html','compare.html','work.html','review.html'}
-          missing = []
-          for name in pages:
-              p = Path(name)
-              if not p.exists():
-                  missing.append(f'missing page: {name}')
-                  continue
-              text = p.read_text(encoding='utf-8')
-              for href in re.findall(r'href="([^"#?]+\.html)', text):
-                  target = href.rsplit('/',1)[-1]
-                  if target not in pages:
-                      missing.append(f'{name} -> {target}')
           required = {
               'create-task.html':'task-tz.html',
               'task-tz.html':'candidates.html',
@@ -103,28 +74,48 @@ jobs:
               'compare.html':'work.html',
               'work.html':'review.html',
           }
-          for page,target in required.items():
+          errors = []
+          for name in pages:
+              p = Path(name)
+              if not p.exists() or p.stat().st_size < 100:
+                  errors.append(f'missing or empty: {name}')
+                  continue
+              text = p.read_text(encoding='utf-8')
+              for href in re.findall(r'href="([^"#?]+\.html)', text):
+                  target = href.rsplit('/',1)[-1]
+                  if target not in pages:
+                      errors.append(f'{name} -> unknown {target}')
+          for page, target in required.items():
               if f'href="{target}' not in Path(page).read_text(encoding='utf-8'):
-                  missing.append(f'missing forward link: {page} -> {target}')
-          if missing:
-              raise SystemExit('Client flow validation failed:\n' + '\n'.join(missing))
-          print('Complete client flow is valid')
+                  errors.append(f'missing forward link: {page} -> {target}')
+          if errors:
+              raise SystemExit('Flow validation failed:\n' + '\n'.join(errors))
+          print('Complete client flow validated')
           PY
 
-      - name: Remove one-time publication payload
+      - name: Update readme
         shell: bash
         run: |
-          rm -f .github/site_patch_payload.b64 .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_04a .github/payload_chunk_04b .github/payload_chunk_05
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          s = p.read_text(encoding='utf-8')
+          start = s.find('## Текущий пользовательский путь')
+          end = s.find('## Принципы первой версии')
+          if start != -1 and end != -1 and end > start:
+              block = '''## Текущий пользовательский путь\n\n1. Главная — `index.html`\n2. Создание задачи — `create-task.html`\n3. Техническое задание — `task-tz.html`\n4. Подборка исполнителей — `candidates.html`\n5. Запросы исполнителям — `requests.html`\n6. Ответы — `replies.html`\n7. Сравнение — `compare.html`\n8. Работа — `work.html`\n9. Отзыв — `review.html`\n\n'''
+              p.write_text(s[:start] + block + s[end:], encoding='utf-8')
+          PY
 
-      - name: Commit published flow
+      - name: Commit published site
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html README.md
           if git diff --cached --quiet; then
-            echo 'No changes needed'
+            echo 'No page changes needed'
             exit 0
           fi
-          git commit -m 'Publish complete client flow v15'
+          git commit -m 'Publish complete client flow v14 verified'
           git push
