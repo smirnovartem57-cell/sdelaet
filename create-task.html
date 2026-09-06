@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Создать задачу — Сделает</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
+    <nav class="menu">
+      <a class="active" href="create-task.html">＋ Создать задачу</a>
+      <a href="#">▤ Мои задачи</a>
+      <a href="#">☆ Избранное</a>
+      <a href="#">✓ Проверки</a>
+      <a href="#">⚙ Настройки</a>
+    </nav>
+    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>А вы выберете уже из нескольких понятных вариантов.</p></div>
+    <div class="side-bottom"><a class="back-link" href="index.html">← На главную</a></div>
+  </aside>
+
+  <main class="main">
+    <div class="top"><div class="steps"><div class="step active">1. Задача</div><div class="step">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
+    <div class="content">
+      <div class="layout">
+        <section class="card">
+          <div class="kicker">Шаг 1</div>
+          <h1>Что нужно сделать?</h1>
+          <p class="muted">Напишите как получится или добавьте фотографии. Остальное дособерём короткими вопросами.</p>
+          <textarea>Нужно утеплить одну стену балкона вокруг существующего окна в Мытищах. Окно менять не нужно. Пол, потолок и остальные стены пока не трогаем.</textarea>
+          <div class="upload"><div><b>Фото / схема / замеры</b><div class="mini">JPG, PNG или PDF</div></div><label class="btn secondary">Добавить<input type="file" multiple accept="image/*,.pdf" style="display:none"></label></div>
+          <div class="q"><b>Окно оставляем?</b><div class="chips"><button class="chip active">Да</button><button class="chip">Нет</button></div></div>
+          <div class="q"><b>Когда планируете?</b><div class="chips"><button class="chip active">В ближайшее время</button><button class="chip">Не тороплюсь</button></div></div>
+          <div class="q"><b>Размеры известны?</b><div class="chips"><button class="chip active">Да</button><button class="chip">Нет, нужен замер</button></div></div>
+          <div class="q"><b>Где объект?</b><div class="chips"><button class="chip active">Мытищи</button><button class="chip">Изменить</button></div></div>
+          <div class="row mt"><a class="btn primary" href="task-tz.html">Собрать ТЗ →</a></div>
+        </section>
+
+        <aside class="card">
+          <div class="kicker">Сервис уже понял</div>
+          <h2>Утепление стены балкона</h2>
+          <div class="summary"><div class="metric"><span>Стена</span><b>3140 × 2870 мм</b></div><div class="metric"><span>Окно</span><b>1800 × 2200 мм</b></div><div class="metric"><span>Площадь</span><b>≈ 5,05 м²</b></div><div class="metric"><span>Срок</span><b>В ближайшее время</b></div></div>
+          <div class="note mt"><b>Важно:</b> клиент не обязан уметь составлять техническое задание — это задача сервиса.</div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+document.querySelectorAll('.chips').forEach(group=>group.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{group.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));btn.classList.add('active')})));
+</script>
+</body>
+</html>
