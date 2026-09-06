@@ -1,4 +1,4 @@
-name: Publish site v14 verified
+name: Publish verified site v14
 
 on:
   push:
@@ -14,18 +14,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Decode prepared pages
+      - name: Decode verified pages
         shell: bash
         run: |
           set -euo pipefail
-          for page in create-task task-tz candidates requests replies compare work review; do
-            base64 -d ".github/payload/${page}.html.gz.b64" | gzip -d > "${page}.html"
-            test -s "${page}.html"
-          done
-          base64 -d ".github/payload/home-task-example.html.gz.b64" | gzip -d > /tmp/home-task-example.html
-          test -s /tmp/home-task-example.html
 
-      - name: Patch landing and canonical links
+          cat .github/payload/create-task.1.b64 .github/payload/create-task.2.b64 | base64 -d | gzip -d > create-task.html
+          cat .github/payload/task-tz.1.b64 .github/payload/task-tz.2.b64 | base64 -d | gzip -d > task-tz.html
+          base64 -d .github/payload/candidates.html.gz.b64 | gzip -d > candidates.html
+          base64 -d .github/payload/requests.html.gz.b64 | gzip -d > requests.html
+          base64 -d .github/payload/replies.html.gz.b64 | gzip -d > replies.html
+          base64 -d .github/payload/compare.html.gz.b64 | gzip -d > compare.html
+          base64 -d .github/payload/work.html.gz.b64 | gzip -d > work.html
+          cat .github/payload/review.1.b64 .github/payload/review.2.b64 | base64 -d | gzip -d > review.html
+          base64 -d .github/payload/home-task-example.html.gz.b64 | gzip -d > /tmp/home-task-example.html
+
+          test "$(wc -c < create-task.html)" -eq 23395
+          test "$(wc -c < task-tz.html)" -eq 19672
+          test "$(wc -c < candidates.html)" -eq 16676
+          test "$(wc -c < requests.html)" -eq 16152
+          test "$(wc -c < replies.html)" -eq 14766
+          test "$(wc -c < compare.html)" -eq 15245
+          test "$(wc -c < work.html)" -eq 15492
+          test "$(wc -c < review.html)" -eq 15072
+          test "$(wc -c < /tmp/home-task-example.html)" -eq 9279
+
+      - name: Update landing example
         shell: bash
         run: |
           python - <<'PY'
@@ -36,13 +50,13 @@ jobs:
           s = p.read_text(encoding='utf-8')
           partial = Path('/tmp/home-task-example.html').read_text(encoding='utf-8')
 
-          style = re.search(r'<style>(.*?)</style>', partial, re.S)
+          styles = re.findall(r'<style>(.*?)</style>', partial, re.S)
           section = re.search(r'<section class="task-example container" id="demo">.*?</section>', partial, re.S)
           if not section:
-              raise SystemExit('landing demo section missing from payload')
+              raise SystemExit('landing demo section missing')
 
-          if style and 'tz-preview-card{' not in s:
-              s = s.replace('</head>', '<style>' + style.group(1) + '</style>\n</head>', 1)
+          if styles and 'tz-preview-card{' not in s:
+              s = s.replace('</head>', '<style>' + '\n'.join(styles) + '</style>\n</head>', 1)
 
           s, count = re.subn(
               r'<section class="task-example container" id="demo">.*?</section>',
@@ -74,37 +88,19 @@ jobs:
               'compare.html':'work.html',
               'work.html':'review.html',
           }
-          errors = []
+          errors=[]
           for name in pages:
-              p = Path(name)
-              if not p.exists() or p.stat().st_size < 100:
-                  errors.append(f'missing or empty: {name}')
-                  continue
-              text = p.read_text(encoding='utf-8')
+              text=Path(name).read_text(encoding='utf-8')
               for href in re.findall(r'href="([^"#?]+\.html)', text):
-                  target = href.rsplit('/',1)[-1]
+                  target=href.rsplit('/',1)[-1]
                   if target not in pages:
                       errors.append(f'{name} -> unknown {target}')
-          for page, target in required.items():
+          for page,target in required.items():
               if f'href="{target}' not in Path(page).read_text(encoding='utf-8'):
                   errors.append(f'missing forward link: {page} -> {target}')
           if errors:
-              raise SystemExit('Flow validation failed:\n' + '\n'.join(errors))
+              raise SystemExit('Flow validation failed:\n'+'\n'.join(errors))
           print('Complete client flow validated')
-          PY
-
-      - name: Update readme
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('README.md')
-          s = p.read_text(encoding='utf-8')
-          start = s.find('## Текущий пользовательский путь')
-          end = s.find('## Принципы первой версии')
-          if start != -1 and end != -1 and end > start:
-              block = '''## Текущий пользовательский путь\n\n1. Главная — `index.html`\n2. Создание задачи — `create-task.html`\n3. Техническое задание — `task-tz.html`\n4. Подборка исполнителей — `candidates.html`\n5. Запросы исполнителям — `requests.html`\n6. Ответы — `replies.html`\n7. Сравнение — `compare.html`\n8. Работа — `work.html`\n9. Отзыв — `review.html`\n\n'''
-              p.write_text(s[:start] + block + s[end:], encoding='utf-8')
           PY
 
       - name: Commit published site
@@ -112,10 +108,10 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html README.md
+          git add index.html create-task.html task-tz.html candidates.html requests.html replies.html compare.html work.html review.html
           if git diff --cached --quiet; then
             echo 'No page changes needed'
             exit 0
           fi
-          git commit -m 'Publish complete client flow v14 verified'
+          git commit -m 'Publish complete client flow v14'
           git push
