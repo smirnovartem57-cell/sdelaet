@@ -1,22 +1,19 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Техническое задание — Сделает</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Техническое задание — Сделает</title><link rel="stylesheet" href="assets/styles.css">
   <style>
-    .tz-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.8fr);gap:16px;align-items:start}
+    .tz-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(380px,.75fr);gap:16px;align-items:start}
     .brief-card{border:1px solid var(--line);border-radius:20px;background:#fff;overflow:hidden}.brief-head{padding:16px 18px;border-bottom:1px solid #eef1f7;background:linear-gradient(180deg,#fff,#fbfcff)}.brief-head h2{margin:3px 0 5px}.brief-body{padding:0 18px 18px}
-    .brief-section{padding:15px 0;border-bottom:1px solid #eef1f7}.brief-section:last-child{border-bottom:0}.brief-section h3{font-size:15px;margin:0 0 10px}.brief-grid{display:grid;grid-template-columns:150px 1fr;gap:8px 12px;font-size:12px}.brief-grid span{color:#75809a}.brief-grid b{font-weight:700}
+    .brief-section{padding:15px 0;border-bottom:1px solid #eef1f7}.brief-section:last-child{border-bottom:0}.brief-section h3{font-size:15px;margin:0 0 10px}.brief-grid{display:grid;grid-template-columns:170px 1fr;gap:8px 12px;font-size:12px}.brief-grid span{color:#75809a}.brief-grid b{font-weight:700}
     .surface-list{display:flex;gap:7px;flex-wrap:wrap}.surface-pill{padding:7px 9px;border-radius:999px;background:#eef0ff;color:#514bdc;border:1px solid #d4d3ff;font-size:11px;font-weight:700}.opening-pill{background:#ecfaff;color:#287bb0;border-color:#ccecf7}
     .req-list{display:grid;gap:8px}.req{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:#fbfcff;color:#53607d;font-size:12px}.req i{font-style:normal;width:22px;height:22px;border-radius:8px;background:#eef0ff;color:#514bdc;display:grid;place-items:center;flex:0 0 22px;font-weight:800}
-    .plan-card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfcff,#f1f6ff);padding:16px}.balcony-plan{position:relative;height:300px;max-width:430px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:inset 0 0 0 1px #e5e9f4}.plan-room{position:absolute;inset:64px 74px;border-radius:18px;background:linear-gradient(180deg,#f8f9fd,#eef3fb);display:grid;place-items:center;text-align:center;color:#78839e;font-size:12px}.wall{position:absolute;border:2px solid #cfd6e8;background:#fff;border-radius:12px}.wall.selected{border-color:#5b55f5;background:linear-gradient(135deg,#ecebff,#edf8ff)}.front{left:74px;right:74px;top:16px;height:42px}.apartment{left:74px;right:74px;bottom:16px;height:42px}.left{left:16px;top:64px;bottom:64px;width:42px}.right{right:16px;top:64px;bottom:64px;width:42px}.opening{position:absolute;background:#27c9ed;border:2px solid #fff;box-shadow:0 0 0 1px #4d92f5;border-radius:6px;z-index:3}.opening.door{background:#f5a524}.front .opening,.apartment .opening{width:64px;height:12px;left:50%;transform:translateX(-50%);top:13px}.left .opening,.right .opening{width:12px;height:64px;top:50%;transform:translateY(-50%);left:13px}
+    .plan-card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfcff,#f1f6ff);padding:16px}.balcony-plan{position:relative;height:330px;max-width:470px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:inset 0 0 0 1px #e5e9f4}.plan-room{position:absolute;inset:72px 82px;border-radius:18px;background:linear-gradient(180deg,#f8f9fd,#eef3fb);display:grid;place-items:center;text-align:center;color:#78839e;font-size:12px}.wall{position:absolute;border:2px solid #cfd6e8;background:#fff;border-radius:12px}.wall.selected{border-color:#5b55f5;background:linear-gradient(135deg,#ecebff,#edf8ff)}.front{left:82px;right:82px;top:18px;height:46px}.apartment{left:82px;right:82px;bottom:18px;height:46px}.left{left:18px;top:72px;bottom:72px;width:46px}.right{right:18px;top:72px;bottom:72px;width:46px}.opening{position:absolute;background:#27c9ed;border:2px solid #fff;box-shadow:0 0 0 1px #4d92f5;border-radius:6px;z-index:3}.opening.door{background:#f5a524}.front .opening,.apartment .opening{width:70px;height:13px;left:50%;transform:translateX(-50%);top:14px}.left .opening,.right .opening{width:13px;height:70px;top:50%;transform:translateY(-50%);left:14px}
     .surface-status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.surface-status div{border:1px solid var(--line);border-radius:13px;padding:10px;background:#fff;font-size:11px}.surface-status b{display:block;font-size:13px;margin-top:2px}
-    .source-note{font-size:11px;color:#68738f;line-height:1.5}.source-note a{color:#4f59d7;text-decoration:underline}
-    .callout-strong{padding:12px;border-radius:14px;background:#fff7e6;border:1px solid #f0ddb6;color:#785313;font-size:12px}
-    .actions-sticky{position:sticky;bottom:12px;display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding:10px;border-radius:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:0 12px 30px rgba(31,41,90,.08)}
-    @media(max-width:1050px){.tz-layout{grid-template-columns:1fr}.actions-sticky{position:static}}
+    .callout-strong{padding:12px;border-radius:14px;background:#fff7e6;border:1px solid #f0ddb6;color:#785313;font-size:12px}.actions-sticky{position:sticky;bottom:12px;display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding:10px;border-radius:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:0 12px 30px rgba(31,41,90,.08)}
+    @media(max-width:1050px){.tz-layout{grid-template-columns:1fr}.actions-sticky{position:static}.brief-grid{grid-template-columns:150px 1fr}}
+    @media(max-width:650px){.brief-grid{grid-template-columns:1fr}.balcony-plan{height:290px}}
   </style>
 </head>
 <body>
@@ -24,43 +21,37 @@
   <aside class="sidebar">
     <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
     <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Шаг 2</div><b>ТЗ — это единая база сравнения</b><p>Исполнители получают одинаковый объём и отдельно предлагают технологию.</p></div>
+    <div class="side-note"><div class="kicker">Шаг 2</div><b>Одно ТЗ для всех</b><p>Фиксируем одинаковый объём, чтобы потом честно сравнить предложения.</p></div>
     <div class="side-bottom"><a class="back-link" href="create-task.html">← Изменить задачу</a></div>
   </aside>
-
   <main class="main">
     <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step active">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-    <div class="content">
-      <div class="tz-layout">
-        <section class="brief-card">
-          <div class="brief-head"><div class="kicker">Техническое задание</div><h2 id="briefTitle">Утепление балкона / лоджии</h2><div class="muted">Сервис фиксирует объём. Конкретную технологию и толщину утепления подрядчик должен предложить и обосновать.</div></div>
-          <div class="brief-body">
-            <div class="brief-section"><h3>1. Исходные данные</h3><div id="baseInfo" class="brief-grid"></div></div>
-            <div class="brief-section"><h3>2. Что входит в объём</h3><div id="surfaceList" class="surface-list"></div><div id="openingList" class="surface-list mt"></div></div>
-            <div class="brief-section"><h3>3. Существующие окна и двери</h3><div id="windowRule" class="note"></div></div>
-            <div class="brief-section"><h3>4. Что исполнитель должен указать в предложении</h3>
-              <div class="req-list">
-                <div class="req"><i>1</i><span><b>Подготовка основания.</b> Что нужно очистить, заделать или выровнять; есть ли щели, промерзание, влажность или дефекты, которые нужно устранить до утепления.</span></div>
-                <div class="req"><i>2</i><span><b>Конструкция утепления.</b> Материал, марка/тип, толщина, число слоёв, способ крепления и почему эта система подходит именно для выбранных поверхностей и цели клиента.</span></div>
-                <div class="req"><i>3</i><span><b>Герметичность и примыкания.</b> Как будут выполнены стыки, углы и примыкания к окнам/дверям, полу, потолку и соседним конструкциям; как исключаются мостики холода.</span></div>
-                <div class="req"><i>4</i><span><b>Пароизоляция / контроль влаги.</b> Нужна ли пароизоляция выбранной системе, где она располагается и как герметизируются нахлёсты и примыкания. Если не нужна — пояснить почему.</span></div>
-                <div class="req"><i>5</i><span><b>Результат поверхности.</b> Что будет после работ: только утеплитель, основание под отделку или готовая чистовая отделка.</span></div>
-                <div class="req"><i>6</i><span><b>Цена отдельно.</b> Работы, материалы, откосы/примыкания, доставка, подъём, расходники, вывоз мусора и дополнительные работы — отдельными строками.</span></div>
-                <div class="req"><i>7</i><span><b>Организация работ.</b> Нужен ли замер, ближайшая дата, срок выполнения, договор и гарантия.</span></div>
-              </div>
+    <div class="content"><div class="tz-layout">
+      <section class="brief-card">
+        <div class="brief-head"><div class="kicker">Техническое задание</div><h2 id="briefTitle">Утепление балкона / лоджии</h2><div class="muted">ТЗ описывает задачу клиента. Способ выполнения и материалы исполнитель предлагает в своём расчёте.</div></div>
+        <div class="brief-body">
+          <div class="brief-section"><h3>1. Исходные данные</h3><div id="baseInfo" class="brief-grid"></div></div>
+          <div class="brief-section"><h3>2. Что входит в объём</h3><div id="surfaceList" class="surface-list"></div><div id="openingList" class="surface-list mt"></div></div>
+          <div class="brief-section"><h3>3. Существующие окна и двери</h3><div id="windowRule" class="note"></div></div>
+          <div class="brief-section"><h3>4. Что просим указать в расчёте</h3>
+            <div class="req-list">
+              <div class="req"><i>1</i><span><b>Подготовка.</b> Что нужно сделать с основанием, щелями и проблемными местами до утепления.</span></div>
+              <div class="req"><i>2</i><span><b>Материалы.</b> Какой утеплитель и толщину предлагаете, что входит в состав работ.</span></div>
+              <div class="req"><i>3</i><span><b>Примыкания.</b> Как будут выполнены участки у окна/двери, углы и стыки с соседними поверхностями.</span></div>
+              <div class="req"><i>4</i><span><b>Результат.</b> Что останется после работ: только утепление, основание под отделку или готовая отделка.</span></div>
+              <div class="req"><i>5</i><span><b>Цена.</b> Работы, материалы, откосы/примыкания, доставка, расходники и вывоз мусора — отдельно.</span></div>
+              <div class="req"><i>6</i><span><b>Условия.</b> Нужен ли замер, ближайшая дата, срок выполнения, минимальная стоимость заказа, договор и гарантия.</span></div>
             </div>
-            <div class="brief-section"><h3>5. Правило изменения объёма</h3><div class="callout-strong">Если исполнитель считает выбранный клиентом объём технически недостаточным для заявленной цели, он не должен молча расширять смету. Нужен <b>отдельный альтернативный вариант</b> с объяснением причины и отдельной ценой.</div></div>
-            <div class="brief-section"><h3>6. Почему эти пункты появились в ТЗ</h3><div class="source-note">В официальной системе ТЕХНОНИКОЛЬ для утепления балкона отдельно описаны теплоизоляция, пароизоляция и герметизация нахлёстов/примыканий; в инструкции отдельно показана герметизация примыканий пароизоляции к стенам и окну. В рекомендациях по круглогодично тёплому балкону также подчёркивается комплексный подход: одного улучшенного стеклопакета или утепления только стен недостаточно. ПЕНОПЛЭКС относит XPS к материалам для балконов/лоджий и подчёркивает важность непрерывного слоя теплоизоляции. <a href="https://www.tn.ru/upload/iblock/ed5/as4olelzk0y5w16tb3tfvu534oh166e9/Balkon_Instruction_01_10_2025.pdf" target="_blank" rel="noopener">ТЕХНОНИКОЛЬ: система балкона ↗</a> · <a href="https://www.penoplex.ru/katalog/komfort/" target="_blank" rel="noopener">ПЕНОПЛЭКС: применение XPS ↗</a></div></div>
           </div>
-        </section>
-
-        <aside>
-          <div class="plan-card"><div class="kicker">Схема объёма</div><h2 style="margin:4px 0 10px">Что именно считаем</h2><div class="balcony-plan"><div id="wallFront" class="wall front"></div><div id="wallLeft" class="wall left"></div><div id="wallRight" class="wall right"></div><div id="wallApartment" class="wall apartment"></div><div class="plan-room">Балкон / лоджия</div></div><div class="surface-status"><div><span>Пол</span><b id="floorState">Не входит</b></div><div><span>Потолок</span><b id="ceilingState">Не входит</b></div></div></div>
-          <div id="warmNote" class="callout-strong mt hidden"><b>Цель — полностью тёплый балкон.</b> В таком случае подрядчик должен отдельно проверить качество остекления и непрерывность всего холодного контура. Эти проверки не означают автоматическое включение замены окон в смету.</div>
-          <div class="actions-sticky"><a class="btn secondary" href="create-task.html">Редактировать</a><button class="btn ghost" type="button" onclick="window.print()">Печать / PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
-        </aside>
-      </div>
-    </div>
+          <div class="brief-section"><h3>5. Если нужен другой объём</h3><div class="callout-strong">Если исполнитель считает выбранный клиентом объём недостаточным, базовую смету не расширяем. Дополнительные работы нужно предложить <b>отдельным вариантом</b> с объяснением и отдельной ценой.</div></div>
+        </div>
+      </section>
+      <aside>
+        <div class="plan-card"><div class="kicker">Схема объёма</div><h2 style="margin:4px 0 10px">Что именно считаем</h2><div class="balcony-plan"><div id="wallFront" class="wall front"></div><div id="wallLeft" class="wall left"></div><div id="wallRight" class="wall right"></div><div id="wallApartment" class="wall apartment"></div><div class="plan-room">Балкон / лоджия</div></div><div class="surface-status"><div><span>Пол</span><b id="floorState">Не входит</b></div><div><span>Потолок</span><b id="ceilingState">Не входит</b></div></div></div>
+        <div id="warmNote" class="callout-strong mt hidden"><b>Выбран весь тёплый контур.</b> Исполнитель должен проверить, достаточно ли выбранного объёма для цели клиента. Работы с окнами автоматически в заказ не добавляются.</div>
+        <div class="actions-sticky"><a class="btn secondary" href="create-task.html">Редактировать</a><button class="btn ghost" type="button" onclick="window.print()">Печать / PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
+      </aside>
+    </div></div>
   </main>
 </div>
 <script src="assets/app.js"></script>
@@ -72,9 +63,10 @@ const openings=job.openings||{front:'window'};
 briefTitle.textContent=(job.scopeMode==='whole'?'Утепление всего балкона / лоджии':'Утепление выбранных поверхностей балкона');
 baseInfo.innerHTML=[['Категория',job.category||'Утепление балкона / лоджии'],['Объект',job.locationDetail?job.locationDetail+', '+(job.location||''):job.location||'Москва'],['Цель',job.goal||'Локальное утепление'],['Срок',job.time||'В ближайшее время'],['Размер выбранной стены',job.wallSize||'Нужен замер'],['Размер существующего проёма',job.openingSize||'Нужен замер'],['Результат отделки',job.finish||'Основание под отделку']].map(([a,b])=>'<span>'+a+'</span><b>'+b+'</b>').join('');
 const s=[];walls.forEach(w=>s.push('<span class="surface-pill">'+names[w]+'</span>'));if(job.floor)s.push('<span class="surface-pill">Пол</span>');if(job.ceiling)s.push('<span class="surface-pill">Потолок</span>');surfaceList.innerHTML=s.join('')||'<span class="muted">Поверхности не выбраны</span>';
-openingList.innerHTML=Object.entries(openings).map(([w,k])=>'<span class="surface-pill opening-pill">'+names[w]+': '+(k==='door'?'дверь':'окно')+'</span>').join('')||'<span class="muted">Проёмы не отмечены</span>';
-windowRule.innerHTML='<b>'+ (job.windowWork||'Существующие окна/двери не входят в объём') +'.</b> Проёмы используются для геометрии и проектирования примыканий. Замена окна, стеклопакета, монтаж нового блока или ремонт фурнитуры — отдельные работы и должны считаться отдельной строкой.';
-function mark(id,key){const el=document.getElementById(id);el.classList.toggle('selected',walls.includes(key));if(openings[key]){const o=document.createElement('span');o.className='opening '+(openings[key]==='door'?'door':'');el.appendChild(o)}}mark('wallFront','front');mark('wallLeft','left');mark('wallRight','right');mark('wallApartment','apartment');floorState.textContent=job.floor?'Входит':'Не входит';ceilingState.textContent=job.ceiling?'Входит':'Не входит';warmNote.classList.toggle('hidden',!(job.goal||'').includes('полностью тёплый'));
+openingList.innerHTML=Object.entries(openings).map(([w,k])=>'<span class="surface-pill opening-pill">'+(k==='door'?'Дверь':'Окно')+' · '+names[w]+'</span>').join('')||'<span class="muted">Проёмы не отмечены</span>';
+windowRule.textContent=job.windowWork||'Существующие окна/двери остаются. Их размеры нужны для геометрии и примыканий; работы с ними в утепление автоматически не входят.';
+walls.forEach(w=>{const el=document.getElementById('wall'+w[0].toUpperCase()+w.slice(1));if(el)el.classList.add('selected')});Object.entries(openings).forEach(([w,k])=>{const el=document.getElementById('wall'+w[0].toUpperCase()+w.slice(1));if(el){const o=document.createElement('div');o.className='opening '+(k==='door'?'door':'');o.title=k==='door'?'Дверь':'Окно';el.appendChild(o)}});
+floorState.textContent=job.floor?'Входит':'Не входит';ceilingState.textContent=job.ceiling?'Входит':'Не входит';if((job.goal||'').toLowerCase().includes('полностью тёп'))warmNote.classList.remove('hidden');
 </script>
 </body>
 </html>
