@@ -46,16 +46,11 @@ async function sdRenderFiles(target,bucket='job'){
   if(!el) return;
   const rows=await sdLoadFiles(bucket);
   el.innerHTML='';
-  if(!rows.length){ el.innerHTML='<div class="file-empty">Файлы пока не добавлены</div>'; return; }
+  if(!rows.length){el.innerHTML='<div class="file-empty">Файлы пока не добавлены</div>';return;}
   rows.forEach(row=>{
-    const card=document.createElement('div'); card.className='file-preview';
-    if(row.type&&row.type.startsWith('image/')){
-      const img=document.createElement('img'); img.src=URL.createObjectURL(row.blob); img.alt=row.name; card.appendChild(img);
-    } else {
-      const icon=document.createElement('div'); icon.className='file-doc'; icon.textContent='PDF'; card.appendChild(icon);
-    }
-    const meta=document.createElement('div'); meta.className='file-meta'; meta.innerHTML='<b>'+row.name+'</b><span>'+Math.max(1,Math.round(row.size/1024))+' КБ</span>'; card.appendChild(meta);
-    el.appendChild(card);
+    const card=document.createElement('div');card.className='file-preview';
+    if(row.type&&row.type.startsWith('image/')){const img=document.createElement('img');img.src=URL.createObjectURL(row.blob);img.alt=row.name;card.appendChild(img);}else{const icon=document.createElement('div');icon.className='file-doc';icon.textContent='PDF';card.appendChild(icon);}
+    const meta=document.createElement('div');meta.className='file-meta';meta.innerHTML='<b>'+row.name+'</b><span>'+Math.max(1,Math.round(row.size/1024))+' КБ</span>';card.appendChild(meta);el.appendChild(card);
   });
 }
 
@@ -65,3 +60,8 @@ function sdSaveReply(candidate,data){localStorage.setItem('sdelaet.reply.'+candi
 function sdLoadReply(candidate){try{return JSON.parse(localStorage.getItem('sdelaet.reply.'+candidate)||'{}')}catch(e){return{}}}
 
 window.Sdelaet={saveFiles:sdSaveFiles,loadFiles:sdLoadFiles,renderFiles:sdRenderFiles,saveJob:sdSaveJob,loadJob:sdLoadJob,saveReply:sdSaveReply,loadReply:sdLoadReply};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const dl=document.getElementById('regions');
+  if(dl){['Республика Крым','Севастополь','Донецкая Народная Республика','Луганская Народная Республика','Запорожская область','Херсонская область'].forEach(name=>{if(![...dl.options].some(o=>o.value===name)){const o=document.createElement('option');o.value=name;dl.appendChild(o);}});}
+});
