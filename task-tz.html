@@ -1,72 +1,181 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Техническое задание — Сделает</title><link rel="stylesheet" href="assets/styles.css">
-  <style>
-    .tz-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(380px,.75fr);gap:16px;align-items:start}
-    .brief-card{border:1px solid var(--line);border-radius:20px;background:#fff;overflow:hidden}.brief-head{padding:16px 18px;border-bottom:1px solid #eef1f7;background:linear-gradient(180deg,#fff,#fbfcff)}.brief-head h2{margin:3px 0 5px}.brief-body{padding:0 18px 18px}
-    .brief-section{padding:15px 0;border-bottom:1px solid #eef1f7}.brief-section:last-child{border-bottom:0}.brief-section h3{font-size:15px;margin:0 0 10px}.brief-grid{display:grid;grid-template-columns:170px 1fr;gap:8px 12px;font-size:12px}.brief-grid span{color:#75809a}.brief-grid b{font-weight:700}
-    .surface-list{display:flex;gap:7px;flex-wrap:wrap}.surface-pill{padding:7px 9px;border-radius:999px;background:#eef0ff;color:#514bdc;border:1px solid #d4d3ff;font-size:11px;font-weight:700}.opening-pill{background:#ecfaff;color:#287bb0;border-color:#ccecf7}
-    .req-list{display:grid;gap:8px}.req{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:#fbfcff;color:#53607d;font-size:12px}.req i{font-style:normal;width:22px;height:22px;border-radius:8px;background:#eef0ff;color:#514bdc;display:grid;place-items:center;flex:0 0 22px;font-weight:800}
-    .plan-card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfcff,#f1f6ff);padding:16px}.balcony-plan{position:relative;height:330px;max-width:470px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:inset 0 0 0 1px #e5e9f4}.plan-room{position:absolute;inset:72px 82px;border-radius:18px;background:linear-gradient(180deg,#f8f9fd,#eef3fb);display:grid;place-items:center;text-align:center;color:#78839e;font-size:12px}.wall{position:absolute;border:2px solid #cfd6e8;background:#fff;border-radius:12px}.wall.selected{border-color:#5b55f5;background:linear-gradient(135deg,#ecebff,#edf8ff)}.front{left:82px;right:82px;top:18px;height:46px}.apartment{left:82px;right:82px;bottom:18px;height:46px}.left{left:18px;top:72px;bottom:72px;width:46px}.right{right:18px;top:72px;bottom:72px;width:46px}.opening{position:absolute;background:#27c9ed;border:2px solid #fff;box-shadow:0 0 0 1px #4d92f5;border-radius:6px;z-index:3}.opening.door{background:#f5a524}.front .opening,.apartment .opening{width:70px;height:13px;left:50%;transform:translateX(-50%);top:14px}.left .opening,.right .opening{width:13px;height:70px;top:50%;transform:translateY(-50%);left:14px}
-    .surface-status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.surface-status div{border:1px solid var(--line);border-radius:13px;padding:10px;background:#fff;font-size:11px}.surface-status b{display:block;font-size:13px;margin-top:2px}
-    .callout-strong{padding:12px;border-radius:14px;background:#fff7e6;border:1px solid #f0ddb6;color:#785313;font-size:12px}.actions-sticky{position:sticky;bottom:12px;display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding:10px;border-radius:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:0 12px 30px rgba(31,41,90,.08)}
-    @media(max-width:1050px){.tz-layout{grid-template-columns:1fr}.actions-sticky{position:static}.brief-grid{grid-template-columns:150px 1fr}}
-    @media(max-width:650px){.brief-grid{grid-template-columns:1fr}.balcony-plan{height:290px}}
-  </style>
-</head>
-<body>
-<div class="app-shell">
-  <aside class="sidebar">
-    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
-    <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Шаг 2</div><b>Одно ТЗ для всех</b><p>Фиксируем одинаковый объём, чтобы потом честно сравнить предложения.</p></div>
-    <div class="side-bottom"><a class="back-link" href="create-task.html">← Изменить задачу</a></div>
-  </aside>
-  <main class="main">
-    <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step active">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-    <div class="content"><div class="tz-layout">
-      <section class="brief-card">
-        <div class="brief-head"><div class="kicker">Техническое задание</div><h2 id="briefTitle">Утепление балкона / лоджии</h2><div class="muted">ТЗ описывает задачу клиента. Способ выполнения и материалы исполнитель предлагает в своём расчёте.</div></div>
-        <div class="brief-body">
-          <div class="brief-section"><h3>1. Исходные данные</h3><div id="baseInfo" class="brief-grid"></div></div>
-          <div class="brief-section"><h3>2. Что входит в объём</h3><div id="surfaceList" class="surface-list"></div><div id="openingList" class="surface-list mt"></div></div>
-          <div class="brief-section"><h3>3. Существующие окна и двери</h3><div id="windowRule" class="note"></div></div>
-          <div class="brief-section"><h3>4. Что просим указать в расчёте</h3>
-            <div class="req-list">
-              <div class="req"><i>1</i><span><b>Подготовка.</b> Что нужно сделать с основанием, щелями и проблемными местами до утепления.</span></div>
-              <div class="req"><i>2</i><span><b>Материалы.</b> Какой утеплитель и толщину предлагаете, что входит в состав работ.</span></div>
-              <div class="req"><i>3</i><span><b>Примыкания.</b> Как будут выполнены участки у окна/двери, углы и стыки с соседними поверхностями.</span></div>
-              <div class="req"><i>4</i><span><b>Результат.</b> Что останется после работ: только утепление, основание под отделку или готовая отделка.</span></div>
-              <div class="req"><i>5</i><span><b>Цена.</b> Работы, материалы, откосы/примыкания, доставка, расходники и вывоз мусора — отдельно.</span></div>
-              <div class="req"><i>6</i><span><b>Условия.</b> Нужен ли замер, ближайшая дата, срок выполнения, минимальная стоимость заказа, договор и гарантия.</span></div>
-            </div>
-          </div>
-          <div class="brief-section"><h3>5. Если нужен другой объём</h3><div class="callout-strong">Если исполнитель считает выбранный клиентом объём недостаточным, базовую смету не расширяем. Дополнительные работы нужно предложить <b>отдельным вариантом</b> с объяснением и отдельной ценой.</div></div>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script>
+(function(){
+  var host=location.hostname.toLowerCase();
+  if(host==='onsdelaet.ru'||host==='www.onsdelaet.ru'){
+    var cleanPath=location.pathname.replace(/\/index\.html$/,'/')||'/';
+    if(location.protocol!=='https:'||host==='www.onsdelaet.ru'||cleanPath!==location.pathname){
+      location.replace('https://onsdelaet.ru'+cleanPath+location.search+location.hash);
+    }
+  }
+})();
+</script><title>ТЗ — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+ --bg:#f5f6fb;--surface:#fff;--text:#12182f;--muted:#66708d;--line:#e4e9f5;
+ --indigo:#5B55F5;--blue:#2F7DF8;--cyan:#27C9ED;--green:#11a96d;
+ --soft:#f7f9ff;--soft2:#eef4ff;
+ --grad:linear-gradient(135deg,#5d51f4 0%,#2f7df8 52%,#27c9ed 100%);
+ --shadow:0 14px 38px rgba(30,40,90,.07);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Roboto",Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,.logo,.btn,.menu,.steps,.kicker,.pill,.step,.tab{font-family:"Montserrat","Roboto",sans-serif}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app-shell{min-height:100vh;display:grid;grid-template-columns:210px minmax(0,1fr);background:#fff}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:linear-gradient(180deg,#fcfcff,#f7f9ff);padding:18px 12px;display:flex;flex-direction:column;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;letter-spacing:-.03em;padding:4px 6px}
+.logo img{width:32px;height:32px}.logo span{color:var(--blue)}
+.menu{display:grid;gap:6px}.menu a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;color:#495675;font-size:13px;font-weight:700}
+.menu a.active{background:linear-gradient(135deg,rgba(91,85,245,.12),rgba(47,125,248,.10));color:#4b47ca}
+.menu .ico{width:18px;text-align:center;color:#6d7791}
+.side-note{margin-top:6px;border:1px solid #d9e2ff;border-radius:18px;background:linear-gradient(180deg,#f8f4ff,#eef9ff);padding:14px}
+.side-note .kicker{font-size:10px}
+.side-note b{display:block;font-size:18px;line-height:1.12;margin:6px 0}.side-note p{margin:0;color:#65708e;font-size:12px}
+.side-bottom{margin-top:auto}.back-link{display:block;padding:10px 12px;color:#6b7592;font-size:12px;font-weight:700}
+.main{min-width:0;background:#fff}
+.top{position:sticky;top:0;z-index:10;padding:16px 18px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid #eef2fa}
+.steps{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.step{height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;color:#7a849c;font-size:10px;padding:0 6px;text-align:center;min-width:0}
+.step.done{background:#ecfbf3;border-color:#d6eee1;color:var(--green);font-weight:800}
+.step.active{border-color:transparent;background:var(--grad);color:#fff;font-weight:800;box-shadow:0 10px 24px rgba(91,85,245,.16)}
+.content{padding:18px 18px 34px}
+.page{max-width:1240px}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card + .card{margin-top:14px}
+.kicker{text-transform:uppercase;letter-spacing:.09em;color:#5663d7;font-size:10px;font-weight:800}
+.hero-title{font-size:34px;line-height:1.08;letter-spacing:-.04em;margin:4px 0 8px}
+.section-title{font-size:28px;line-height:1.12;letter-spacing:-.04em;margin:4px 0 8px}
+.lead,.muted{color:var(--muted)} .lead{font-size:16px;margin:0 0 12px}.muted{margin:0}
+.label{display:block;font-size:12px;color:#6d7894;font-weight:700;margin-bottom:6px}
+.field,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;color:var(--text)}
+textarea{min-height:120px;resize:vertical}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stack{display:grid;gap:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:14px;padding:11px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.1}
+.btn.primary{color:#fff;background:var(--grad);box-shadow:0 10px 22px rgba(91,85,245,.16)}
+.btn.secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.btn.ghost{background:#f7f9ff;border:1px solid var(--line);color:#4d5b7a}
+.btn.block{width:100%}
+.pills,.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.pill,.tab{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#5f6a87;font-size:13px;font-weight:700}
+.pill.active,.tab.active{background:#f1f0ff;border-color:#c8c6ff;color:#4f49d8}
+.helper{font-size:12px;color:#6f7996}
+.notice{padding:12px 14px;border-radius:14px;background:#f7fbff;border:1px solid #d8e7ff;color:#4f5e7e;font-size:13px}
+.notice.green{background:#ecfbf3;border-color:#d2eee0;color:#177651}
+.notice.warn{background:#fff8ea;border-color:#ecd7a3;color:#8a6517}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.metric span{display:block;font-size:11px;color:#75819c}.metric b{display:block;font-size:18px;margin-top:3px;word-break:break-word}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.summary-list{display:grid;gap:10px}.summary-item{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.summary-item span{display:block;font-size:11px;color:#77839e}.summary-item b{display:block;margin-top:2px;font-size:16px}
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.list li{display:flex;gap:10px;align-items:flex-start}.list li:before{content:"✓";color:#0f9d66;font-weight:900;margin-top:1px}
+.upload{border:1.5px dashed #cbd4ea;border-radius:16px;background:#fbfcff;padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.file-list{display:flex;gap:8px;flex-wrap:wrap}.file-chip{padding:7px 9px;border-radius:10px;background:#eef3ff;color:#5d6885;font-size:12px}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.diagram-card{border:1px solid var(--line);border-radius:20px;padding:14px;background:linear-gradient(180deg,#fcfdff,#f5f8ff)}
+.diagram-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.balcony{background:#fff;border:1px solid #dbe2f4;border-radius:18px;padding:12px}
+.balcony svg{width:100%;height:auto;display:block}
+.diagram-legend{display:grid;gap:10px}
+.mini-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:14px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #edf1f8;white-space:normal}th{background:#f8f9fd;font-size:12px;color:#6e7894}tr:last-child td{border-bottom:0}
+.flag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;background:#fff4d9;color:#8b661a;font-size:11px;font-weight:700}
+.candidate-list{display:grid;gap:12px}.candidate{border:1px solid var(--line);border-radius:20px;padding:14px}.candidate-top{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start}.avatar{width:52px;height:52px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-weight:900;font-family:"Montserrat"}.candidate h3{margin:0 0 4px;font-size:18px;line-height:1.2}.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tag{padding:4px 8px;border-radius:999px;background:#f4f6fa;color:#66708d;font-size:11px}.score-col{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.score{min-width:84px;border:1px solid var(--line);border-radius:16px;padding:8px 10px;text-align:center}.score b{display:block;font-size:22px;line-height:1;color:#4e58d7}.score span{font-size:10px;color:#7a849d}.score.green b{color:#109a63}
+.row-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.next-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,rgba(91,85,245,.09),rgba(47,125,248,.08),rgba(39,201,237,.09));border:1px solid #d7e2fb;margin-top:14px;flex-wrap:wrap}
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.state{padding:13px;border-radius:16px;border:1px solid var(--line);background:#fbfcff}.state small{display:block;color:#77839d;font-size:11px}.state b{display:block;font-size:18px;margin-top:3px}
+.timeline{display:grid;gap:10px}.timeline .item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft2);color:#4f58db;font-weight:800}
+.rate-row{display:flex;gap:8px;flex-wrap:wrap}.star{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:800}
+.footer-actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+
+@media(max-width:1120px){.layout,.section-grid,.diagram-grid,.row-split{grid-template-columns:1fr}.steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:840px){.app-shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.menu{grid-template-columns:repeat(2,1fr)}.side-note{display:none}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.top{position:relative}.content,.top{padding-left:12px;padding-right:12px}}
+@media(max-width:620px){.grid-2,.grid-3,.metric-grid,.state-grid{grid-template-columns:1fr}.candidate-top{grid-template-columns:52px 1fr}.score-col{grid-column:1/-1;justify-content:flex-start}.hero-title,.section-title{font-size:28px}.card{padding:16px}.toolbar,.actions{flex-direction:column}.btn{width:100%}}
+</style></head><body><div class="app-shell"><aside class="sidebar"><a class="logo" href="/"><img src="assets/logo-icon.svg" alt="Сделает"><div>Сдела<span>ет</span></div></a><nav class="menu">
+      <a class="active" href="create-task.html"><span class="ico">＋</span>Создать задачу</a>
+      <a href="#"><span class="ico">▤</span>Мои задачи</a>
+      <a href="#"><span class="ico">☆</span>Избранное</a>
+      <a href="#"><span class="ico">✓</span>Проверки</a>
+      <a href="#"><span class="ico">⚙</span>Настройки</a>
+    </nav><div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>Сначала понятно собираем объём, потом ищем тех, кому он подходит.</p></div><div class="side-bottom"><a class="back-link" href="/">← На главную</a></div></aside><main class="main"><div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step active">2. ТЗ</div><div class="step ">3. Кандидаты</div><div class="step ">4. Запросы</div><div class="step ">5. Ответы</div><div class="step ">6. Сравнение</div><div class="step ">7. Работа</div><div class="step ">8. Отзыв</div></div></div><div class="content"><div class="page">
+<div class="layout">
+  <section class="card">
+    <div class="kicker">Шаг 2</div>
+    <h1 class="hero-title">Техническое задание готово</h1>
+    <p class="lead">Экран поправили: схема стала крупнее и пропорциональнее, а действия вынесены в отдельные кнопки — PDF, JPEG и ссылка.</p>
+    <div class="row-split">
+      <div>
+        <div class="summary-list">
+          <div class="summary-item"><span>Объект</span><b>Одна стена балкона вокруг окна</b></div>
+          <div class="summary-item"><span>География</span><b>Мытищи</b></div>
+          <div class="summary-item"><span>Размер стены</span><b>3140 × 2870 мм</b></div>
+          <div class="summary-item"><span>Размер окна</span><b>1800 × 2200 мм</b></div>
+          <div class="summary-item"><span>Площадь</span><b>≈ 5,05 м² без откосов</b></div>
+          <div class="summary-item"><span>Нужно</span><b>Подготовка основания + утепление + основание под отделку</b></div>
         </div>
-      </section>
-      <aside>
-        <div class="plan-card"><div class="kicker">Схема объёма</div><h2 style="margin:4px 0 10px">Что именно считаем</h2><div class="balcony-plan"><div id="wallFront" class="wall front"></div><div id="wallLeft" class="wall left"></div><div id="wallRight" class="wall right"></div><div id="wallApartment" class="wall apartment"></div><div class="plan-room">Балкон / лоджия</div></div><div class="surface-status"><div><span>Пол</span><b id="floorState">Не входит</b></div><div><span>Потолок</span><b id="ceilingState">Не входит</b></div></div></div>
-        <div id="warmNote" class="callout-strong mt hidden"><b>Выбран весь тёплый контур.</b> Исполнитель должен проверить, достаточно ли выбранного объёма для цели клиента. Работы с окнами автоматически в заказ не добавляются.</div>
-        <div class="actions-sticky"><a class="btn secondary" href="create-task.html">Редактировать</a><button class="btn ghost" type="button" onclick="window.print()">Печать / PDF</button><a class="btn primary" href="candidates.html">Найти исполнителей →</a></div>
-      </aside>
-    </div></div>
-  </main>
+      </div>
+      <div class="card" style="padding:14px;background:linear-gradient(180deg,#fcfdff,#f5f8ff)">
+        <div class="toolbar" style="justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div>
+            <div class="kicker">Схема объёма</div>
+            <div style="font-weight:800">Что именно считаем</div>
+          </div>
+          <div class="notice green" style="padding:8px 10px">ТЗ готово к отправке ✓</div>
+        </div>
+        <div style="border:1px solid #d7e1f8;border-radius:18px;background:#fff;overflow:hidden">
+          <svg id="planSvg" viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg" aria-label="Схема стены с окном">
+            <defs>
+              <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#eef4ff"/></linearGradient>
+              <linearGradient id="wg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#dceaff"/><stop offset="100%" stop-color="#f8fbff"/></linearGradient>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b66d6"/></marker>
+            </defs>
+            <rect x="1" y="1" width="698" height="518" rx="22" fill="url(#bg)"/>
+            <text x="36" y="42" fill="#5b66d6" font-size="15" font-family="Montserrat, Roboto, sans-serif" font-weight="800">Схема для отправки исполнителю</text>
+            <rect x="200" y="90" width="310" height="340" rx="4" fill="#ffffff" stroke="#7686b5" stroke-width="4"/>
+            <rect x="275" y="130" width="180" height="260" rx="2" fill="url(#wg)" stroke="#4f72de" stroke-width="6"/>
+            <line x1="365" y1="130" x2="365" y2="390" stroke="#9fb5ea" stroke-width="3"/>
+            <line x1="200" y1="62" x2="510" y2="62" stroke="#5b66d6" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+            <line x1="170" y1="90" x2="170" y2="430" stroke="#5b66d6" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+            <line x1="275" y1="410" x2="455" y2="410" stroke="#2f7df8" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+            <line x1="474" y1="130" x2="474" y2="390" stroke="#2f7df8" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+            <rect x="303" y="44" width="104" height="28" rx="10" fill="#ffffff" stroke="#d9e1f5"/><text x="355" y="62" text-anchor="middle" fill="#44507b" font-size="14" font-family="Montserrat, Roboto, sans-serif" font-weight="800">3140 мм</text>
+            <rect x="126" y="224" width="88" height="28" rx="10" fill="#ffffff" stroke="#d9e1f5" transform="rotate(-90 170 238)"/><text x="170" y="240" text-anchor="middle" fill="#44507b" font-size="14" font-family="Montserrat, Roboto, sans-serif" font-weight="800" transform="rotate(-90 170 240)">2870 мм</text>
+            <rect x="309" y="420" width="112" height="28" rx="10" fill="#ffffff" stroke="#d9e1f5"/><text x="365" y="438" text-anchor="middle" fill="#2f67d4" font-size="14" font-family="Montserrat, Roboto, sans-serif" font-weight="800">1800 мм</text>
+            <rect x="488" y="246" width="112" height="28" rx="10" fill="#ffffff" stroke="#d9e1f5" transform="rotate(-90 544 260)"/><text x="544" y="262" text-anchor="middle" fill="#2f67d4" font-size="14" font-family="Montserrat, Roboto, sans-serif" font-weight="800" transform="rotate(-90 544 262)">2200 мм</text>
+            <rect x="246" y="458" width="218" height="34" rx="12" fill="#ffffff" stroke="#d9e1f5"/><text x="355" y="479" text-anchor="middle" fill="#5060ce" font-size="15" font-family="Montserrat, Roboto, sans-serif" font-weight="800">Окно 1800 × 2200 мм</text>
+          </svg>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" onclick="window.print()">Печать / PDF</button>
+          <button class="btn secondary" onclick="downloadPlanJpeg()">Скачать JPEG</button>
+          <button class="btn secondary" onclick="shareTz()">Поделиться</button>
+          <a class="btn primary" href="candidates.html">Найти исполнителей →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <aside>
+    <section class="card">
+      <div class="kicker">Что запросить в смете</div>
+      <h2 class="section-title">Чтобы ответы можно было сравнить</h2>
+      <ul class="list">
+        <li>Какой материал и какую толщину предлагает исполнитель.</li>
+        <li>Что входит в работу, а что отдельно.</li>
+        <li>Как считает откосы и примыкания.</li>
+        <li>Когда может начать и сколько займёт работа.</li>
+        <li>Какая гарантия и будет ли договор.</li>
+      </ul>
+      <div class="notice" style="margin-top:12px">Сервис не навязывает конкретный материал. Подрядчик сам предлагает решение, а вы сравниваете его на одинаковом объёме.</div>
+    </section>
+  </aside>
 </div>
-<script src="assets/app.js"></script>
 <script>
-const names={front:'Фасадная / внешняя стена',left:'Левая стена',right:'Правая стена',apartment:'Стена к квартире'};
-const job=Sdelaet.loadJob();
-const walls=job.selectedWalls||['front'];
-const openings=job.openings||{front:'window'};
-briefTitle.textContent=(job.scopeMode==='whole'?'Утепление всего балкона / лоджии':'Утепление выбранных поверхностей балкона');
-baseInfo.innerHTML=[['Категория',job.category||'Утепление балкона / лоджии'],['Объект',job.locationDetail?job.locationDetail+', '+(job.location||''):job.location||'Москва'],['Цель',job.goal||'Локальное утепление'],['Срок',job.time||'В ближайшее время'],['Размер выбранной стены',job.wallSize||'Нужен замер'],['Размер существующего проёма',job.openingSize||'Нужен замер'],['Результат отделки',job.finish||'Основание под отделку']].map(([a,b])=>'<span>'+a+'</span><b>'+b+'</b>').join('');
-const s=[];walls.forEach(w=>s.push('<span class="surface-pill">'+names[w]+'</span>'));if(job.floor)s.push('<span class="surface-pill">Пол</span>');if(job.ceiling)s.push('<span class="surface-pill">Потолок</span>');surfaceList.innerHTML=s.join('')||'<span class="muted">Поверхности не выбраны</span>';
-openingList.innerHTML=Object.entries(openings).map(([w,k])=>'<span class="surface-pill opening-pill">'+(k==='door'?'Дверь':'Окно')+' · '+names[w]+'</span>').join('')||'<span class="muted">Проёмы не отмечены</span>';
-windowRule.textContent=job.windowWork||'Существующие окна/двери остаются. Их размеры нужны для геометрии и примыканий; работы с ними в утепление автоматически не входят.';
-walls.forEach(w=>{const el=document.getElementById('wall'+w[0].toUpperCase()+w.slice(1));if(el)el.classList.add('selected')});Object.entries(openings).forEach(([w,k])=>{const el=document.getElementById('wall'+w[0].toUpperCase()+w.slice(1));if(el){const o=document.createElement('div');o.className='opening '+(k==='door'?'door':'');o.title=k==='door'?'Дверь':'Окно';el.appendChild(o)}});
-floorState.textContent=job.floor?'Входит':'Не входит';ceilingState.textContent=job.ceiling?'Входит':'Не входит';if((job.goal||'').toLowerCase().includes('полностью тёп'))warmNote.classList.remove('hidden');
+function downloadPlanJpeg(){const svg=document.getElementById('planSvg');const data=new XMLSerializer().serializeToString(svg);const blob=new Blob([data],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=function(){const c=document.createElement('canvas');c.width=1400;c.height=1040;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);const a=document.createElement('a');a.href=c.toDataURL('image/jpeg',.95);a.download='tz-balkon-stena.jpg';a.click()};img.src=url}
+function shareTz(){if(navigator.share){navigator.share({title:'Техническое задание — Сделает',url:window.location.href}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(window.location.href);alert('Ссылка скопирована.')}else{window.prompt('Скопируйте ссылку:',window.location.href)}}
 </script>
-</body>
-</html>
+</div></div></main></div></body></html>

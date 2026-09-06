@@ -1,54 +1,123 @@
-<!doctype html>
-<html lang="ru">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ответы исполнителей — Сделает</title><link rel="stylesheet" href="assets/styles.css">
-<style>.demo-banner{padding:12px 14px;border-radius:14px;background:#fff7e6;border:1px solid #f0ddb6;color:#785313;margin-bottom:12px}.demo-badge{display:inline-flex;padding:4px 7px;border-radius:999px;background:#fff1c9;color:#875900;font-size:10px;font-weight:800}.reply-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}</style></head>
-<body>
-<div class="app-shell">
-  <aside class="sidebar"><a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a><nav class="menu"><a href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav><div class="side-note"><div class="kicker">Шаг 5</div><b>Добавляем ответы</b><p>Можно вставить текст или загрузить скрин/PDF. Доступ к личному мессенджеру не нужен.</p></div><div class="side-bottom"><a class="back-link" href="requests.html">← К запросам</a></div></aside>
-  <main class="main">
-    <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step done">2. ТЗ</div><div class="step done">3. Кандидаты</div><div class="step done">4. Запросы</div><div class="step active">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-    <div class="content"><div class="layout">
-      <section class="card">
-        <div class="demo-banner"><b>Тестовый режим.</b> Я временно добавил три демонстрационных ответа, чтобы можно было оценить экран. Это <b>не реальные ответы компаний</b> и не их цены.</div>
-        <div class="kicker">Шаг 5</div><h1>Ответы исполнителей</h1><p class="muted">Выберите исполнителя. Тестовый текст можно заменить своим реальным ответом — тогда пометка «тест» исчезнет.</p>
-        <div id="candidateTabs" class="chips mt"></div>
-        <div class="reply-card mt">
-          <div class="reply-head"><div><h2 id="replyName" style="margin:0"></h2><div class="mini">Вставьте сообщение целиком — сервис выделит основные условия.</div></div><span id="replyStatus" class="channel">нет ответа</span></div>
-          <textarea id="replyText" class="mt" placeholder="Вставьте сюда ответ исполнителя"></textarea>
-          <div class="upload-zone mt"><b>Скриншот или PDF-смета</b><div class="mini">До подключения сервера файл хранится только локально в браузере.</div><label class="btn secondary mt">Загрузить<input id="replyFiles" type="file" multiple accept="image/*,.pdf" style="display:none"></label></div>
-          <div id="replyFilePreview" class="file-preview-grid"></div>
-          <div class="reply-tools"><button id="parseReply" class="btn primary">Разобрать ответ</button><button id="clearReply" class="btn ghost">Очистить этот ответ</button><button id="clearDemo" class="btn ghost">Удалить все тестовые ответы</button></div>
-        </div>
-      </section>
-      <aside class="card">
-        <div class="kicker">Что удалось выделить</div><h2 id="parsedTitle">Ответ ещё не добавлен</h2>
-        <div id="parsedEmpty" class="note">После добавления ответа здесь появятся сумма, материал, толщина, срок, гарантия и договор.</div>
-        <div id="parsedData" class="hidden">
-          <div id="demoMark" class="demo-badge hidden">Тестовые данные</div>
-          <div class="summary mt"><div class="metric"><span>Суммы в ответе</span><b id="pPrices">—</b></div><div class="metric"><span>Материал</span><b id="pMaterial">—</b></div><div class="metric"><span>Толщина</span><b id="pThickness">—</b></div><div class="metric"><span>Срок</span><b id="pDays">—</b></div><div class="metric"><span>Гарантия</span><b id="pWarranty">—</b></div><div class="metric"><span>Договор</span><b id="pContract">—</b></div></div>
-          <div id="missingBox" class="warn mt"></div>
-        </div>
-        <div class="row mt"><a class="btn primary" href="compare.html">Перейти к сравнению →</a></div>
-      </aside>
-    </div></div>
-  </main>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script>
+(function(){
+  var host=location.hostname.toLowerCase();
+  if(host==='onsdelaet.ru'||host==='www.onsdelaet.ru'){
+    var cleanPath=location.pathname.replace(/\/index\.html$/,'/')||'/';
+    if(location.protocol!=='https:'||host==='www.onsdelaet.ru'||cleanPath!==location.pathname){
+      location.replace('https://onsdelaet.ru'+cleanPath+location.search+location.hash);
+    }
+  }
+})();
+</script><title>Ответы — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+ --bg:#f5f6fb;--surface:#fff;--text:#12182f;--muted:#66708d;--line:#e4e9f5;
+ --indigo:#5B55F5;--blue:#2F7DF8;--cyan:#27C9ED;--green:#11a96d;
+ --soft:#f7f9ff;--soft2:#eef4ff;
+ --grad:linear-gradient(135deg,#5d51f4 0%,#2f7df8 52%,#27c9ed 100%);
+ --shadow:0 14px 38px rgba(30,40,90,.07);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Roboto",Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,.logo,.btn,.menu,.steps,.kicker,.pill,.step,.tab{font-family:"Montserrat","Roboto",sans-serif}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app-shell{min-height:100vh;display:grid;grid-template-columns:210px minmax(0,1fr);background:#fff}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:linear-gradient(180deg,#fcfcff,#f7f9ff);padding:18px 12px;display:flex;flex-direction:column;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;letter-spacing:-.03em;padding:4px 6px}
+.logo img{width:32px;height:32px}.logo span{color:var(--blue)}
+.menu{display:grid;gap:6px}.menu a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;color:#495675;font-size:13px;font-weight:700}
+.menu a.active{background:linear-gradient(135deg,rgba(91,85,245,.12),rgba(47,125,248,.10));color:#4b47ca}
+.menu .ico{width:18px;text-align:center;color:#6d7791}
+.side-note{margin-top:6px;border:1px solid #d9e2ff;border-radius:18px;background:linear-gradient(180deg,#f8f4ff,#eef9ff);padding:14px}
+.side-note .kicker{font-size:10px}
+.side-note b{display:block;font-size:18px;line-height:1.12;margin:6px 0}.side-note p{margin:0;color:#65708e;font-size:12px}
+.side-bottom{margin-top:auto}.back-link{display:block;padding:10px 12px;color:#6b7592;font-size:12px;font-weight:700}
+.main{min-width:0;background:#fff}
+.top{position:sticky;top:0;z-index:10;padding:16px 18px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid #eef2fa}
+.steps{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.step{height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;color:#7a849c;font-size:10px;padding:0 6px;text-align:center;min-width:0}
+.step.done{background:#ecfbf3;border-color:#d6eee1;color:var(--green);font-weight:800}
+.step.active{border-color:transparent;background:var(--grad);color:#fff;font-weight:800;box-shadow:0 10px 24px rgba(91,85,245,.16)}
+.content{padding:18px 18px 34px}
+.page{max-width:1240px}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card + .card{margin-top:14px}
+.kicker{text-transform:uppercase;letter-spacing:.09em;color:#5663d7;font-size:10px;font-weight:800}
+.hero-title{font-size:34px;line-height:1.08;letter-spacing:-.04em;margin:4px 0 8px}
+.section-title{font-size:28px;line-height:1.12;letter-spacing:-.04em;margin:4px 0 8px}
+.lead,.muted{color:var(--muted)} .lead{font-size:16px;margin:0 0 12px}.muted{margin:0}
+.label{display:block;font-size:12px;color:#6d7894;font-weight:700;margin-bottom:6px}
+.field,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;color:var(--text)}
+textarea{min-height:120px;resize:vertical}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stack{display:grid;gap:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:14px;padding:11px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.1}
+.btn.primary{color:#fff;background:var(--grad);box-shadow:0 10px 22px rgba(91,85,245,.16)}
+.btn.secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.btn.ghost{background:#f7f9ff;border:1px solid var(--line);color:#4d5b7a}
+.btn.block{width:100%}
+.pills,.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.pill,.tab{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#5f6a87;font-size:13px;font-weight:700}
+.pill.active,.tab.active{background:#f1f0ff;border-color:#c8c6ff;color:#4f49d8}
+.helper{font-size:12px;color:#6f7996}
+.notice{padding:12px 14px;border-radius:14px;background:#f7fbff;border:1px solid #d8e7ff;color:#4f5e7e;font-size:13px}
+.notice.green{background:#ecfbf3;border-color:#d2eee0;color:#177651}
+.notice.warn{background:#fff8ea;border-color:#ecd7a3;color:#8a6517}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.metric span{display:block;font-size:11px;color:#75819c}.metric b{display:block;font-size:18px;margin-top:3px;word-break:break-word}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.summary-list{display:grid;gap:10px}.summary-item{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.summary-item span{display:block;font-size:11px;color:#77839e}.summary-item b{display:block;margin-top:2px;font-size:16px}
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.list li{display:flex;gap:10px;align-items:flex-start}.list li:before{content:"✓";color:#0f9d66;font-weight:900;margin-top:1px}
+.upload{border:1.5px dashed #cbd4ea;border-radius:16px;background:#fbfcff;padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.file-list{display:flex;gap:8px;flex-wrap:wrap}.file-chip{padding:7px 9px;border-radius:10px;background:#eef3ff;color:#5d6885;font-size:12px}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.diagram-card{border:1px solid var(--line);border-radius:20px;padding:14px;background:linear-gradient(180deg,#fcfdff,#f5f8ff)}
+.diagram-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.balcony{background:#fff;border:1px solid #dbe2f4;border-radius:18px;padding:12px}
+.balcony svg{width:100%;height:auto;display:block}
+.diagram-legend{display:grid;gap:10px}
+.mini-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:14px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #edf1f8;white-space:normal}th{background:#f8f9fd;font-size:12px;color:#6e7894}tr:last-child td{border-bottom:0}
+.flag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;background:#fff4d9;color:#8b661a;font-size:11px;font-weight:700}
+.candidate-list{display:grid;gap:12px}.candidate{border:1px solid var(--line);border-radius:20px;padding:14px}.candidate-top{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start}.avatar{width:52px;height:52px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-weight:900;font-family:"Montserrat"}.candidate h3{margin:0 0 4px;font-size:18px;line-height:1.2}.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tag{padding:4px 8px;border-radius:999px;background:#f4f6fa;color:#66708d;font-size:11px}.score-col{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.score{min-width:84px;border:1px solid var(--line);border-radius:16px;padding:8px 10px;text-align:center}.score b{display:block;font-size:22px;line-height:1;color:#4e58d7}.score span{font-size:10px;color:#7a849d}.score.green b{color:#109a63}
+.row-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.next-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,rgba(91,85,245,.09),rgba(47,125,248,.08),rgba(39,201,237,.09));border:1px solid #d7e2fb;margin-top:14px;flex-wrap:wrap}
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.state{padding:13px;border-radius:16px;border:1px solid var(--line);background:#fbfcff}.state small{display:block;color:#77839d;font-size:11px}.state b{display:block;font-size:18px;margin-top:3px}
+.timeline{display:grid;gap:10px}.timeline .item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft2);color:#4f58db;font-weight:800}
+.rate-row{display:flex;gap:8px;flex-wrap:wrap}.star{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:800}
+.footer-actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+
+@media(max-width:1120px){.layout,.section-grid,.diagram-grid,.row-split{grid-template-columns:1fr}.steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:840px){.app-shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.menu{grid-template-columns:repeat(2,1fr)}.side-note{display:none}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.top{position:relative}.content,.top{padding-left:12px;padding-right:12px}}
+@media(max-width:620px){.grid-2,.grid-3,.metric-grid,.state-grid{grid-template-columns:1fr}.candidate-top{grid-template-columns:52px 1fr}.score-col{grid-column:1/-1;justify-content:flex-start}.hero-title,.section-title{font-size:28px}.card{padding:16px}.toolbar,.actions{flex-direction:column}.btn{width:100%}}
+</style></head><body><div class="app-shell"><aside class="sidebar"><a class="logo" href="/"><img src="assets/logo-icon.svg" alt="Сделает"><div>Сдела<span>ет</span></div></a><nav class="menu">
+      <a class="active" href="create-task.html"><span class="ico">＋</span>Создать задачу</a>
+      <a href="#"><span class="ico">▤</span>Мои задачи</a>
+      <a href="#"><span class="ico">☆</span>Избранное</a>
+      <a href="#"><span class="ico">✓</span>Проверки</a>
+      <a href="#"><span class="ico">⚙</span>Настройки</a>
+    </nav><div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>Сначала понятно собираем объём, потом ищем тех, кому он подходит.</p></div><div class="side-bottom"><a class="back-link" href="/">← На главную</a></div></aside><main class="main"><div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step done">2. ТЗ</div><div class="step done">3. Кандидаты</div><div class="step done">4. Запросы</div><div class="step active">5. Ответы</div><div class="step ">6. Сравнение</div><div class="step ">7. Работа</div><div class="step ">8. Отзыв</div></div></div><div class="content"><div class="page">
+<div class="layout">
+  <section class="card">
+    <div class="kicker">Шаг 5</div>
+    <h1 class="hero-title">Ответы собраны в одном месте</h1>
+    <p class="lead">Чтобы ты мог оценить интерфейс, тестово заполнили экран примерами. Они помечены как демонстрационные и не считаются реальными предложениями.</p>
+    <div class="notice warn"><b>Тестовые данные.</b> Ниже временные примеры ответов для проверки интерфейса.</div>
+    <div class="candidate-list" style="margin-top:12px">
+      <div class="candidate"><div class="flag">тест</div><h3 style="margin-top:8px">МосБалкон</h3><div class="helper">Цена: 38 000 ₽ · материал: пенополистирол 50 мм · срок: 2 дня · гарантия: 24 месяца</div><div class="notice" style="margin-top:10px">Ответ уже приведён к структуре: итог, материал, толщина, срок, гарантия, договор.</div></div>
+      <div class="candidate"><div class="flag">тест</div><h3 style="margin-top:8px">Отделка Балкона</h3><div class="helper">Цена: 45 000 ₽ · материал: минеральная вата 50 мм · срок: 3 дня · гарантия: 12 месяцев</div></div>
+      <div class="candidate"><div class="flag">тест</div><h3 style="margin-top:8px">Сателс-Мытищи</h3><div class="helper">Цена: 52 000 ₽ · материал: пенополистирол 50 мм · срок: 5 дней · гарантия: 36 месяцев</div></div>
+    </div>
+    <div class="next-banner"><div><b>Следующий шаг:</b> сравним ответы рядом и выберем, у кого условия сейчас понятнее и выгоднее.</div><a class="btn primary" href="compare.html">Перейти к сравнению →</a></div>
+  </section>
+  <aside>
+    <section class="card"><div class="kicker">Как это будет работать потом</div><h2 class="section-title">Реальный сценарий</h2><ul class="list"><li>вставили текст ответа в поле;</li><li>или приложили скрин / PDF;</li><li>сервис разобрал ключевые условия;</li><li>если чего-то не хватает — предложил уточняющий вопрос.</li></ul></section>
+  </aside>
 </div>
-<script src="assets/app.js"></script>
-<script>
-const candidates={mosbalkon:'МосБалкон',otdelka:'Отделка Балкона',balkony:'Балконы Цены',strana:'Страна Балконов',satels:'Сателс-Мытищи'};const ids=Object.keys(candidates);let current=new URLSearchParams(location.search).get('candidate')||'mosbalkon';if(!candidates[current])current='mosbalkon';
-function parseText(text){const prices=[...text.matchAll(/(\d[\d\s]{2,})\s*(?:₽|руб)/gi)].map(m=>m[1].replace(/\s/g,'')+' ₽');const material=(text.match(/(экструдированн\w* пенополистирол\w*|каменн\w* ват\w*|минеральн\w* ват\w*|пенополистирол\w*|XPS|ЭППС|ППУ|пенопласт)/i)||[])[0]||'';const thickness=(text.match(/(\d{2,3})\s*мм/i)||[])[1];const days=(text.match(/(\d+)\s*(день|дня|дней)/i)||[])[0]||'';const warranty=(text.match(/гарант\w*[^\d]{0,15}(\d+)\s*(месяц\w*|год\w*|лет)/i)||[]);const contract=/договор/i.test(text)?'указан':'не указан';return{prices,material,thickness:thickness?thickness+' мм':'',days,warranty:warranty.length?(warranty[1]+' '+warranty[2]):'',contract}}
-function missing(p){const a=[];if(!p.prices.length)a.push('итоговая цена/состав цены');if(!p.material)a.push('материал');if(!p.thickness)a.push('толщина');if(!p.days)a.push('срок');if(!p.warranty)a.push('гарантия');if(p.contract==='не указан')a.push('договор');return a}
-function seedDemo(){const hasReal=ids.some(id=>{const r=Sdelaet.loadReply(id);return r.raw&&!r.demo});if(hasReal)return;const demos={
- mosbalkon:'Предварительный тестовый ответ для макета. Работы 28 000 ₽, материалы 18 000 ₽, откосы и примыкания 7 000 ₽. Предлагаем экструдированный пенополистирол 50 мм. Срок 2 дня. Работаем по договору, гарантия 24 месяца. Замер бесплатный.',
- otdelka:'Предварительный тестовый ответ для макета. Работа 25 000 ₽, материалы 17 000 ₽, откосы 6 000 ₽. Предлагаем каменную вату 50 мм. Срок 3 дня. Договор есть, гарантия 12 месяцев. Вывоз мусора включён.',
- balkony:'Предварительный тестовый ответ для макета. Работа 24 000 ₽, материалы 16 000 ₽. Предлагаем экструдированный пенополистирол 30 мм. Срок 2 дня. Договор есть. Гарантию уточним после замера.'
- };Object.entries(demos).forEach(([id,raw])=>{const old=Sdelaet.loadReply(id);if(!old.raw)Sdelaet.saveReply(id,{raw,parsed:parseText(raw),demo:true,savedAt:new Date().toISOString()})})}
-function showParsed(data){const p=data.parsed;if(!p)return;parsedEmpty.classList.add('hidden');parsedData.classList.remove('hidden');demoMark.classList.toggle('hidden',!data.demo);parsedTitle.textContent=candidates[current]+' — условия из ответа';pPrices.textContent=p.prices.length?p.prices.join(' · '):'не найдено';pMaterial.textContent=p.material||'не указано';pThickness.textContent=p.thickness||'не указано';pDays.textContent=p.days||'не указано';pWarranty.textContent=p.warranty||'не указано';pContract.textContent=p.contract;const m=missing(p);missingBox.textContent=m.length?'Нужно уточнить: '+m.join(', ')+'.':'Основные условия найдены.'}
-async function render(){candidateTabs.innerHTML=ids.map(id=>{const r=Sdelaet.loadReply(id);return `<button class="chip ${id===current?'active':''}" data-id="${id}">${candidates[id]}${r.raw?(r.demo?' · тест':' ✓'):''}</button>`}).join('');document.querySelectorAll('#candidateTabs .chip').forEach(b=>b.onclick=()=>{current=b.dataset.id;render()});replyName.textContent=candidates[current];const saved=Sdelaet.loadReply(current);replyText.value=saved.raw||'';replyStatus.textContent=saved.raw?(saved.demo?'тестовый ответ':'ответ сохранён'):'нет ответа';parsedData.classList.add('hidden');parsedEmpty.classList.remove('hidden');parsedTitle.textContent=saved.raw?'Ответ сохранён':'Ответ ещё не добавлен';if(saved.parsed)showParsed(saved);await Sdelaet.renderFiles('replyFilePreview','reply-'+current)}
-replyFiles.onchange=async e=>{await Sdelaet.saveFiles(e.target.files,'reply-'+current);await Sdelaet.renderFiles('replyFilePreview','reply-'+current)};
-parseReply.onclick=()=>{const raw=replyText.value.trim();if(!raw){alert('Сначала вставьте текст ответа.');return}const data={raw,parsed:parseText(raw),demo:false,savedAt:new Date().toISOString()};Sdelaet.saveReply(current,data);showParsed(data);render()};
-clearReply.onclick=()=>{localStorage.removeItem('sdelaet.reply.'+current);replyText.value='';render()};
-clearDemo.onclick=()=>{ids.forEach(id=>{const r=Sdelaet.loadReply(id);if(r.demo)localStorage.removeItem('sdelaet.reply.'+id)});render()};
-seedDemo();render();
-</script>
-</body></html>
+</div></div></main></div></body></html>

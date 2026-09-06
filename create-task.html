@@ -1,134 +1,241 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Создать задачу — Сделает</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  <style>
-    .scope-mode{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.scope-mode .chip{font-weight:700}
-    .balcony-editor{display:grid;grid-template-columns:minmax(360px,.95fr) minmax(280px,1.05fr);gap:16px;margin-top:12px}
-    .plan-wrap{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfcff,#f2f6ff);padding:18px}
-    .plan-help{font-size:12px;color:var(--muted);margin-bottom:12px}
-    .tool-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}.tool-row .tool.active{background:var(--grad);color:#fff;border-color:transparent}
-    .balcony-plan{position:relative;height:310px;max-width:430px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:inset 0 0 0 1px #e5e9f4}
-    .plan-room{position:absolute;inset:64px 74px;border-radius:18px;background:linear-gradient(180deg,#f8f9fd,#eef3fb);display:grid;place-items:center;text-align:center;color:#78839e;font-size:12px;pointer-events:none}
-    .wall-btn{position:absolute;border:2px solid #cfd6e8;background:#fff;color:#5d6885;border-radius:12px;font:700 11px/1.1 'Montserrat','Roboto',sans-serif;transition:.15s;overflow:visible}
-    .wall-btn:hover{border-color:#91a0cd}.wall-btn.selected{border-color:#5b55f5;background:linear-gradient(135deg,#ecebff,#edf8ff);color:#3f47b9;box-shadow:0 8px 22px rgba(91,85,245,.12)}
-    .wall-front{left:74px;right:74px;top:16px;height:42px}.wall-apartment{left:74px;right:74px;bottom:16px;height:42px}.wall-left{left:16px;top:64px;bottom:64px;width:42px}.wall-right{right:16px;top:64px;bottom:64px;width:42px}
-    .wall-left span.label,.wall-right span.label{display:block;transform:rotate(-90deg);white-space:nowrap}.wall-right span.label{transform:rotate(90deg)}
-    .opening-marker{position:absolute;background:#27c9ed;border:2px solid #fff;box-shadow:0 0 0 1px #4d92f5;border-radius:6px;z-index:3}
-    .wall-front .opening-marker,.wall-apartment .opening-marker{width:64px;height:12px;left:50%;transform:translateX(-50%);top:13px}.wall-left .opening-marker,.wall-right .opening-marker{width:12px;height:64px;top:50%;transform:translateY(-50%);left:13px}
-    .opening-marker.door{background:#f5a524}.opening-marker::after{content:attr(data-kind);position:absolute;font:700 9px 'Roboto',sans-serif;color:#51607d;background:#fff;border-radius:6px;padding:2px 4px;white-space:nowrap}
-    .wall-front .opening-marker::after{top:14px;left:50%;transform:translateX(-50%)}.wall-apartment .opening-marker::after{bottom:14px;left:50%;transform:translateX(-50%)}.wall-left .opening-marker::after{left:14px;top:50%;transform:translateY(-50%)}.wall-right .opening-marker::after{right:14px;top:50%;transform:translateY(-50%)}
-    .surface-toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.surface-toggle{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;text-align:left}.surface-toggle.active{background:#eef0ff;border-color:#c8c6ff;color:#514bdc}
-    .config-panel{border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px}.config-panel h3{margin:0 0 8px}.config-list{display:grid;gap:8px}.config-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #eef1f7;font-size:12px}.config-row:last-child{border-bottom:0}.config-row span{color:#76819a}.config-row b{text-align:right}
-    .opening-explainer{margin-top:12px;padding:11px;border-radius:14px;background:#f7f9ff;border:1px solid #e2e7fb;color:#596584;font-size:12px}
-    .whole-note{margin-top:10px;padding:11px;border-radius:14px;background:#fff7e7;border:1px solid #f0ddb8;color:#7b5515;font-size:12px}
-    @media(max-width:900px){.balcony-editor{grid-template-columns:1fr}.balcony-plan{height:290px}}
-  </style>
-</head>
-<body>
-<div class="app-shell">
-  <aside class="sidebar">
-    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
-    <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>Сначала точно понимаем объём, потом ищем тех, кому он подходит.</p></div>
-    <div class="side-bottom"><a class="back-link" href="index.html">← На главную</a></div>
-  </aside>
-
-  <main class="main">
-    <div class="top"><div class="steps"><div class="step active">1. Задача</div><div class="step">2. ТЗ</div><div class="step">3. Кандидаты</div><div class="step">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-    <div class="content">
-      <div class="wide-layout">
-        <section class="card">
-          <div class="kicker">Шаг 1 · Утепление балкона</div>
-          <h1>Что нужно сделать?</h1>
-          <p class="muted">Опишите задачу обычными словами, добавьте фото и на схеме отметьте, какие поверхности утепляем и где находятся существующие проёмы.</p>
-
-          <textarea id="taskText">Нужно утеплить одну стену балкона вокруг существующего окна в Мытищах. Окно менять не нужно. Пол, потолок и остальные стены пока не трогаем.</textarea>
-          <div class="upload"><div><b>Фото / схема / замеры</b><div class="mini">JPG, PNG или PDF · временно храним в браузере до подключения сервера</div></div><label class="btn secondary">Добавить<input id="jobFiles" type="file" multiple accept="image/*,.pdf" style="display:none"></label></div>
-          <div id="filePreview" class="file-preview-grid"></div>
-
-          <div class="q">
-            <b>Где объект?</b>
-            <div class="form-grid mt"><div class="field"><label>Город / регион</label><input id="locationSearch" list="regions" value="Москва" placeholder="Начните вводить регион или город"></div><div class="field"><label>Район / улица — необязательно</label><input id="locationDetail" placeholder="Например: Мытищи, Перловка"></div></div>
-            <div class="chips"><button id="applyDetectedLocation" class="chip">Из описания найдено: Мытищи, Московская область</button></div>
-            <datalist id="regions">
-              <option value="Москва"><option value="Санкт-Петербург"><option value="Московская область"><option value="Ленинградская область"><option value="Республика Адыгея"><option value="Республика Алтай"><option value="Республика Башкортостан"><option value="Республика Бурятия"><option value="Республика Дагестан"><option value="Республика Ингушетия"><option value="Кабардино-Балкарская Республика"><option value="Республика Калмыкия"><option value="Карачаево-Черкесская Республика"><option value="Республика Карелия"><option value="Республика Коми"><option value="Республика Марий Эл"><option value="Республика Мордовия"><option value="Республика Саха (Якутия)"><option value="Республика Северная Осетия — Алания"><option value="Республика Татарстан"><option value="Республика Тыва"><option value="Удмуртская Республика"><option value="Республика Хакасия"><option value="Чеченская Республика"><option value="Чувашская Республика"><option value="Алтайский край"><option value="Забайкальский край"><option value="Камчатский край"><option value="Краснодарский край"><option value="Красноярский край"><option value="Пермский край"><option value="Приморский край"><option value="Ставропольский край"><option value="Хабаровский край"><option value="Амурская область"><option value="Архангельская область"><option value="Астраханская область"><option value="Белгородская область"><option value="Брянская область"><option value="Владимирская область"><option value="Волгоградская область"><option value="Вологодская область"><option value="Воронежская область"><option value="Ивановская область"><option value="Иркутская область"><option value="Калининградская область"><option value="Калужская область"><option value="Кемеровская область — Кузбасс"><option value="Кировская область"><option value="Костромская область"><option value="Курганская область"><option value="Курская область"><option value="Липецкая область"><option value="Магаданская область"><option value="Мурманская область"><option value="Нижегородская область"><option value="Новгородская область"><option value="Новосибирская область"><option value="Омская область"><option value="Оренбургская область"><option value="Орловская область"><option value="Пензенская область"><option value="Псковская область"><option value="Ростовская область"><option value="Рязанская область"><option value="Самарская область"><option value="Саратовская область"><option value="Сахалинская область"><option value="Свердловская область"><option value="Смоленская область"><option value="Тамбовская область"><option value="Тверская область"><option value="Томская область"><option value="Тульская область"><option value="Тюменская область"><option value="Ульяновская область"><option value="Челябинская область"><option value="Ярославская область"><option value="Еврейская автономная область"><option value="Ненецкий автономный округ"><option value="Ханты-Мансийский автономный округ — Югра"><option value="Чукотский автономный округ"><option value="Ямало-Ненецкий автономный округ">
-            </datalist>
-          </div>
-
-          <div class="q">
-            <b>Что утепляем?</b>
-            <div class="scope-mode"><button class="chip active" data-scope-mode="partial">Отдельные поверхности</button><button class="chip" data-scope-mode="whole">Весь балкон / лоджию</button></div>
-            <div class="balcony-editor">
-              <div class="plan-wrap">
-                <div class="plan-help">Выберите режим ниже и нажимайте на стены. Синяя метка — существующее окно, оранжевая — дверь. Проём и работы с окном считаются отдельно.</div>
-                <div class="tool-row"><button class="chip tool active" data-tool="scope">Выбирать утепление</button><button class="chip tool" data-tool="window">Поставить окно</button><button class="chip tool" data-tool="door">Поставить дверь</button><button class="chip tool" data-tool="clear">Убрать проём</button></div>
-                <div class="balcony-plan">
-                  <button class="wall-btn wall-front" data-wall="front"><span class="label">Фасадная / внешняя</span></button>
-                  <button class="wall-btn wall-left" data-wall="left"><span class="label">Левая стена</span></button>
-                  <button class="wall-btn wall-right" data-wall="right"><span class="label">Правая стена</span></button>
-                  <button class="wall-btn wall-apartment" data-wall="apartment"><span class="label">Стена к квартире</span></button>
-                  <div class="plan-room">Балкон / лоджия<br><span>нажимайте на стены</span></div>
-                </div>
-                <div class="surface-toggles"><button id="floorToggle" class="surface-toggle">Пол</button><button id="ceilingToggle" class="surface-toggle">Потолок</button></div>
-              </div>
-              <div class="config-panel">
-                <div class="kicker">Выбранный объём</div><h3 id="scopeTitle">Одна фасадная стена</h3>
-                <div id="scopeSummary" class="config-list"></div>
-                <div class="opening-explainer"><b>Важно:</b> наличие окна/двери влияет на геометрию, площадь утепления и узлы примыкания. Но замена/монтаж окна не становится частью утепления автоматически.</div>
-                <div id="wholeNote" class="whole-note hidden">Для «всего балкона» сервис попросит подрядчика проверить весь холодный контур и отдельно подтвердить, какие поверхности действительно нужно утеплять.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="q"><b>Какой результат нужен?</b><div class="chips" id="goalChips"><button class="chip active" data-value="Локально утеплить выбранные поверхности / убрать промерзание">Локально утеплить выбранные поверхности</button><button class="chip" data-value="Сделать полностью тёплый балкон">Полностью тёплый балкон</button><button class="chip" data-value="Подготовить под дальнейшую отделку">Подготовить под отделку</button></div><div id="fullWarmWarning" class="warn mt hidden">Для круглогодично тёплого балкона нужно оценивать не одну стену, а непрерывный тепловой контур, остекление и сопряжённые поверхности.</div></div>
-
-          <div class="q"><b>Нужны работы с окном / остеклением?</b><div class="chips" id="windowWorkChips"><button class="chip active" data-value="Нет, существующие окна/двери остаются и не входят в объём">Нет, не входят</button><button class="chip" data-value="Да, посчитать отдельной строкой">Да, посчитать отдельно</button><button class="chip" data-value="Не знаю — нужна диагностика исполнителя">Не знаю, нужна диагностика</button></div><div class="scope-note">Даже если окно отмечено на схеме, оно считается существующим проёмом. Работы с ним — отдельная позиция.</div></div>
-
-          <div class="q"><b>Какой результат отделки?</b><div class="chips" id="finishChips"><button class="chip active" data-value="Утепление + основание под дальнейшую отделку">Основание под отделку</button><button class="chip" data-value="Только утепление без финишного основания">Только утепление</button><button class="chip" data-value="Утепление + готовая чистовая отделка">Сразу чистовая</button></div></div>
-          <div class="q"><b>Когда планируете?</b><div class="chips" id="timeChips"><button class="chip active" data-value="В ближайшее время">В ближайшее время</button><button class="chip" data-value="Не тороплюсь">Не тороплюсь</button></div></div>
-
-          <div class="q"><b>Размеры известны?</b><div class="chips" id="sizeChips"><button class="chip active" data-value="Да">Да</button><button class="chip" data-value="Нет, нужен замер">Нет, нужен замер</button></div><div class="form-grid mt"><div class="field"><label>Размер выбранной стены, мм (Ш × В)</label><input id="wallSize" value="3140 × 2870"></div><div class="field"><label>Размер существующего проёма, мм (Ш × В)</label><input id="windowSize" value="1800 × 2200"></div></div></div>
-
-          <div class="row mt"><button id="buildTz" class="btn primary">Собрать ТЗ →</button></div>
-        </section>
-
-        <aside class="card">
-          <div class="kicker">Логика категории</div><h2>Утепление ≠ остекление</h2>
-          <div class="note"><b>Для выбранной поверхности</b> подрядчик должен предложить конструкцию утепления: подготовка основания, материал и толщину, монтаж, герметизацию швов/примыканий и пароизоляционный слой — если он нужен выбранной системе.</div>
-          <div class="note mt"><b>Для окна</b> мы только фиксируем существующий проём и его примыкания. Замена окна, стеклопакета или монтаж нового блока — отдельная услуга и отдельная цена.</div>
-          <div class="note mt"><b>Для всего тёплого балкона</b> подрядчик должен отдельно проверить достаточность остекления и непрерывность утепления холодных поверхностей.</div>
-        </aside>
-      </div>
-    </div>
-  </main>
-</div>
-<script src="assets/app.js"></script>
-<script>
-const wallNames={front:'Фасадная / внешняя',left:'Левая стена',right:'Правая стена',apartment:'Стена к квартире'};
-let state={scopeMode:'partial',selectedWalls:new Set(['front']),openings:{front:'window'},floor:false,ceiling:false,tool:'scope'};
-function activeValue(id){const x=document.querySelector('#'+id+' .chip.active');return x?x.dataset.value||x.textContent.trim():''}
-function renderPlan(){
-  document.querySelectorAll('.wall-btn').forEach(btn=>{const w=btn.dataset.wall;btn.classList.toggle('selected',state.selectedWalls.has(w));btn.querySelectorAll('.opening-marker').forEach(x=>x.remove());if(state.openings[w]){const m=document.createElement('span');m.className='opening-marker '+(state.openings[w]==='door'?'door':'');m.dataset.kind=state.openings[w]==='door'?'дверь':'окно';btn.appendChild(m);}});
-  floorToggle.classList.toggle('active',state.floor);ceilingToggle.classList.toggle('active',state.ceiling);
-  const rows=[];state.selectedWalls.forEach(w=>rows.push('<div class="config-row"><span>Утепляем</span><b>'+wallNames[w]+'</b></div>'));
-  if(state.floor)rows.push('<div class="config-row"><span>Утепляем</span><b>Пол</b></div>');if(state.ceiling)rows.push('<div class="config-row"><span>Утепляем</span><b>Потолок</b></div>');
-  Object.entries(state.openings).forEach(([w,k])=>rows.push('<div class="config-row"><span>Проём</span><b>'+wallNames[w]+': '+(k==='door'?'дверь':'окно')+'</b></div>'));
-  scopeSummary.innerHTML=rows.join('')||'<div class="config-row"><span>Объём</span><b>ничего не выбрано</b></div>';
-  scopeTitle.textContent=state.scopeMode==='whole'?'Весь балкон / лоджия':(state.selectedWalls.size===1&&!state.floor&&!state.ceiling?'Одна выбранная поверхность':'Выбранные поверхности');wholeNote.classList.toggle('hidden',state.scopeMode!=='whole');
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script>
+(function(){
+  var host=location.hostname.toLowerCase();
+  if(host==='onsdelaet.ru'||host==='www.onsdelaet.ru'){
+    var cleanPath=location.pathname.replace(/\/index\.html$/,'/')||'/';
+    if(location.protocol!=='https:'||host==='www.onsdelaet.ru'||cleanPath!==location.pathname){
+      location.replace('https://onsdelaet.ru'+cleanPath+location.search+location.hash);
+    }
+  }
+})();
+</script><title>Создать задачу — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+ --bg:#f5f6fb;--surface:#fff;--text:#12182f;--muted:#66708d;--line:#e4e9f5;
+ --indigo:#5B55F5;--blue:#2F7DF8;--cyan:#27C9ED;--green:#11a96d;
+ --soft:#f7f9ff;--soft2:#eef4ff;
+ --grad:linear-gradient(135deg,#5d51f4 0%,#2f7df8 52%,#27c9ed 100%);
+ --shadow:0 14px 38px rgba(30,40,90,.07);
 }
-document.querySelectorAll('[data-scope-mode]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-scope-mode]').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.scopeMode=b.dataset.scopeMode;if(state.scopeMode==='whole'){state.selectedWalls=new Set(['front','left','right']);state.floor=true;state.ceiling=true;}renderPlan();});
-document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tool]').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.tool=b.dataset.tool;});
-document.querySelectorAll('.wall-btn').forEach(btn=>btn.onclick=()=>{const w=btn.dataset.wall;if(state.tool==='scope'){state.selectedWalls.has(w)?state.selectedWalls.delete(w):state.selectedWalls.add(w);}else if(state.tool==='window'||state.tool==='door'){state.openings[w]=state.tool;}else if(state.tool==='clear'){delete state.openings[w];}renderPlan();});
-floorToggle.onclick=()=>{state.floor=!state.floor;renderPlan()};ceilingToggle.onclick=()=>{state.ceiling=!state.ceiling;renderPlan()};
-['goalChips','windowWorkChips','finishChips','timeChips','sizeChips'].forEach(id=>document.querySelectorAll('#'+id+' .chip').forEach(b=>b.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(id==='goalChips')fullWarmWarning.classList.toggle('hidden',!b.dataset.value.includes('полностью тёплый'));}));
-applyDetectedLocation.onclick=()=>{locationSearch.value='Московская область';locationDetail.value='Мытищи'};
-jobFiles.onchange=async()=>{await Sdelaet.saveFiles(jobFiles.files,'job');await Sdelaet.renderFiles('filePreview','job')};Sdelaet.renderFiles('filePreview','job');
-buildTz.onclick=()=>{const job={task:taskText.value,location:locationSearch.value,locationDetail:locationDetail.value,category:'Утепление балкона / лоджии',scopeMode:state.scopeMode,selectedWalls:[...state.selectedWalls],openings:state.openings,floor:state.floor,ceiling:state.ceiling,goal:activeValue('goalChips'),windowWork:activeValue('windowWorkChips'),finish:activeValue('finishChips'),time:activeValue('timeChips'),sizesKnown:activeValue('sizeChips'),wallSize:wallSize.value,openingSize:windowSize.value};Sdelaet.saveJob(job);location.href='task-tz.html'};
-renderPlan();
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Roboto",Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,.logo,.btn,.menu,.steps,.kicker,.pill,.step,.tab{font-family:"Montserrat","Roboto",sans-serif}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app-shell{min-height:100vh;display:grid;grid-template-columns:210px minmax(0,1fr);background:#fff}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:linear-gradient(180deg,#fcfcff,#f7f9ff);padding:18px 12px;display:flex;flex-direction:column;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;letter-spacing:-.03em;padding:4px 6px}
+.logo img{width:32px;height:32px}.logo span{color:var(--blue)}
+.menu{display:grid;gap:6px}.menu a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;color:#495675;font-size:13px;font-weight:700}
+.menu a.active{background:linear-gradient(135deg,rgba(91,85,245,.12),rgba(47,125,248,.10));color:#4b47ca}
+.menu .ico{width:18px;text-align:center;color:#6d7791}
+.side-note{margin-top:6px;border:1px solid #d9e2ff;border-radius:18px;background:linear-gradient(180deg,#f8f4ff,#eef9ff);padding:14px}
+.side-note .kicker{font-size:10px}
+.side-note b{display:block;font-size:18px;line-height:1.12;margin:6px 0}.side-note p{margin:0;color:#65708e;font-size:12px}
+.side-bottom{margin-top:auto}.back-link{display:block;padding:10px 12px;color:#6b7592;font-size:12px;font-weight:700}
+.main{min-width:0;background:#fff}
+.top{position:sticky;top:0;z-index:10;padding:16px 18px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid #eef2fa}
+.steps{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.step{height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;color:#7a849c;font-size:10px;padding:0 6px;text-align:center;min-width:0}
+.step.done{background:#ecfbf3;border-color:#d6eee1;color:var(--green);font-weight:800}
+.step.active{border-color:transparent;background:var(--grad);color:#fff;font-weight:800;box-shadow:0 10px 24px rgba(91,85,245,.16)}
+.content{padding:18px 18px 34px}
+.page{max-width:1240px}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card + .card{margin-top:14px}
+.kicker{text-transform:uppercase;letter-spacing:.09em;color:#5663d7;font-size:10px;font-weight:800}
+.hero-title{font-size:34px;line-height:1.08;letter-spacing:-.04em;margin:4px 0 8px}
+.section-title{font-size:28px;line-height:1.12;letter-spacing:-.04em;margin:4px 0 8px}
+.lead,.muted{color:var(--muted)} .lead{font-size:16px;margin:0 0 12px}.muted{margin:0}
+.label{display:block;font-size:12px;color:#6d7894;font-weight:700;margin-bottom:6px}
+.field,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;color:var(--text)}
+textarea{min-height:120px;resize:vertical}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stack{display:grid;gap:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:14px;padding:11px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.1}
+.btn.primary{color:#fff;background:var(--grad);box-shadow:0 10px 22px rgba(91,85,245,.16)}
+.btn.secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.btn.ghost{background:#f7f9ff;border:1px solid var(--line);color:#4d5b7a}
+.btn.block{width:100%}
+.pills,.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.pill,.tab{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#5f6a87;font-size:13px;font-weight:700}
+.pill.active,.tab.active{background:#f1f0ff;border-color:#c8c6ff;color:#4f49d8}
+.helper{font-size:12px;color:#6f7996}
+.notice{padding:12px 14px;border-radius:14px;background:#f7fbff;border:1px solid #d8e7ff;color:#4f5e7e;font-size:13px}
+.notice.green{background:#ecfbf3;border-color:#d2eee0;color:#177651}
+.notice.warn{background:#fff8ea;border-color:#ecd7a3;color:#8a6517}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.metric span{display:block;font-size:11px;color:#75819c}.metric b{display:block;font-size:18px;margin-top:3px;word-break:break-word}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.summary-list{display:grid;gap:10px}.summary-item{border:1px solid var(--line);background:#fbfcff;border-radius:16px;padding:12px}.summary-item span{display:block;font-size:11px;color:#77839e}.summary-item b{display:block;margin-top:2px;font-size:16px}
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.list li{display:flex;gap:10px;align-items:flex-start}.list li:before{content:"✓";color:#0f9d66;font-weight:900;margin-top:1px}
+.upload{border:1.5px dashed #cbd4ea;border-radius:16px;background:#fbfcff;padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.file-list{display:flex;gap:8px;flex-wrap:wrap}.file-chip{padding:7px 9px;border-radius:10px;background:#eef3ff;color:#5d6885;font-size:12px}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.diagram-card{border:1px solid var(--line);border-radius:20px;padding:14px;background:linear-gradient(180deg,#fcfdff,#f5f8ff)}
+.diagram-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.balcony{background:#fff;border:1px solid #dbe2f4;border-radius:18px;padding:12px}
+.balcony svg{width:100%;height:auto;display:block}
+.diagram-legend{display:grid;gap:10px}
+.mini-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:14px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #edf1f8;white-space:normal}th{background:#f8f9fd;font-size:12px;color:#6e7894}tr:last-child td{border-bottom:0}
+.flag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;background:#fff4d9;color:#8b661a;font-size:11px;font-weight:700}
+.candidate-list{display:grid;gap:12px}.candidate{border:1px solid var(--line);border-radius:20px;padding:14px}.candidate-top{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start}.avatar{width:52px;height:52px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-weight:900;font-family:"Montserrat"}.candidate h3{margin:0 0 4px;font-size:18px;line-height:1.2}.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tag{padding:4px 8px;border-radius:999px;background:#f4f6fa;color:#66708d;font-size:11px}.score-col{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.score{min-width:84px;border:1px solid var(--line);border-radius:16px;padding:8px 10px;text-align:center}.score b{display:block;font-size:22px;line-height:1;color:#4e58d7}.score span{font-size:10px;color:#7a849d}.score.green b{color:#109a63}
+.row-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.next-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,rgba(91,85,245,.09),rgba(47,125,248,.08),rgba(39,201,237,.09));border:1px solid #d7e2fb;margin-top:14px;flex-wrap:wrap}
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.state{padding:13px;border-radius:16px;border:1px solid var(--line);background:#fbfcff}.state small{display:block;color:#77839d;font-size:11px}.state b{display:block;font-size:18px;margin-top:3px}
+.timeline{display:grid;gap:10px}.timeline .item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft2);color:#4f58db;font-weight:800}
+.rate-row{display:flex;gap:8px;flex-wrap:wrap}.star{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:800}
+.footer-actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+
+@media(max-width:1120px){.layout,.section-grid,.diagram-grid,.row-split{grid-template-columns:1fr}.steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:840px){.app-shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.menu{grid-template-columns:repeat(2,1fr)}.side-note{display:none}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.top{position:relative}.content,.top{padding-left:12px;padding-right:12px}}
+@media(max-width:620px){.grid-2,.grid-3,.metric-grid,.state-grid{grid-template-columns:1fr}.candidate-top{grid-template-columns:52px 1fr}.score-col{grid-column:1/-1;justify-content:flex-start}.hero-title,.section-title{font-size:28px}.card{padding:16px}.toolbar,.actions{flex-direction:column}.btn{width:100%}}
+</style></head><body><div class="app-shell"><aside class="sidebar"><a class="logo" href="/"><img src="assets/logo-icon.svg" alt="Сделает"><div>Сдела<span>ет</span></div></a><nav class="menu">
+      <a class="active" href="create-task.html"><span class="ico">＋</span>Создать задачу</a>
+      <a href="#"><span class="ico">▤</span>Мои задачи</a>
+      <a href="#"><span class="ico">☆</span>Избранное</a>
+      <a href="#"><span class="ico">✓</span>Проверки</a>
+      <a href="#"><span class="ico">⚙</span>Настройки</a>
+    </nav><div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>Сначала понятно собираем объём, потом ищем тех, кому он подходит.</p></div><div class="side-bottom"><a class="back-link" href="/">← На главную</a></div></aside><main class="main"><div class="top"><div class="steps"><div class="step active">1. Задача</div><div class="step ">2. ТЗ</div><div class="step ">3. Кандидаты</div><div class="step ">4. Запросы</div><div class="step ">5. Ответы</div><div class="step ">6. Сравнение</div><div class="step ">7. Работа</div><div class="step ">8. Отзыв</div></div></div><div class="content"><div class="page">
+<div class="layout">
+  <div>
+    <section class="card">
+      <div class="kicker">Шаг 1 · утепление балкона</div>
+      <h1 class="hero-title">Что нужно сделать?</h1>
+      <p class="lead">Сделали экран компактнее: сначала коротко описываете задачу, потом отмечаете объём и важные условия. Без длинного полотна текста.</p>
+      <div class="stack">
+        <div>
+          <label class="label">Опишите задачу своими словами</label>
+          <textarea id="taskText">Нужно утеплить одну стену балкона вокруг существующего окна в Мытищах. Окно менять не нужно. Пол, потолок и остальные стены пока не трогаем.</textarea>
+        </div>
+        <div class="upload">
+          <div>
+            <b>Фото / схема / замеры</b>
+            <div class="helper">JPG, PNG или PDF · до подключения сервера временно храним в браузере</div>
+          </div>
+          <label class="btn secondary">Добавить файлы<input id="files" type="file" multiple accept="image/*,.pdf" hidden></label>
+        </div>
+        <div id="fileList" class="file-list"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="kicker">Где объект</div>
+      <h2 class="section-title">Локация</h2>
+      <div class="grid-2">
+        <div><label class="label">Город / регион</label><input class="field" value="Москва"></div>
+        <div><label class="label">Район / улица — необязательно</label><input class="field" placeholder="Например: Мытищи, Перловка"></div>
+      </div>
+      <div class="notice" style="margin-top:12px">Из описания можно дополнительно понять: <b>Мытищи, Московская область</b>. Это не меняет ваши поля, а помогает сервису при подборе.</div>
+    </section>
+
+    <section class="card">
+      <div class="kicker">Что именно считаем</div>
+      <h2 class="section-title">Объём работ</h2>
+      <div class="tabs" style="margin-bottom:12px"><button class="tab active">Отдельные поверхности</button><button class="tab">Весь балкон / лоджию</button></div>
+      <div class="diagram-grid">
+        <div class="diagram-card">
+          <div class="diagram-tools">
+            <button class="pill active">Выбрать утепление</button>
+            <button class="pill">Поставить окно</button>
+            <button class="pill">Поставить дверь</button>
+            <button class="pill">Убрать проём</button>
+          </div>
+          <div class="balcony">
+            <svg viewBox="0 0 360 290" xmlns="http://www.w3.org/2000/svg" aria-label="Схема балкона">
+              <rect x="90" y="24" width="180" height="38" rx="12" fill="#f8f9ff" stroke="#5b55f5" stroke-width="2.5"/>
+              <text x="180" y="46" text-anchor="middle" font-family="Montserrat, Roboto, sans-serif" font-size="12" font-weight="800" fill="#4a53d5">Фасадная / внешняя</text>
+              <rect x="144" y="31" width="72" height="16" rx="8" fill="#27c9ed" stroke="#ffffff" stroke-width="2"/>
+              <text x="180" y="64" text-anchor="middle" font-family="Roboto, sans-serif" font-size="10" fill="#67728f">окно</text>
+              <rect x="28" y="74" width="42" height="150" rx="10" fill="#fff" stroke="#bcc8e6" stroke-width="2"/>
+              <text x="49" y="150" text-anchor="middle" transform="rotate(-90 49 150)" font-family="Montserrat, Roboto, sans-serif" font-size="11" font-weight="700" fill="#6a7391">Левая стена</text>
+              <rect x="290" y="74" width="42" height="150" rx="10" fill="#fff" stroke="#bcc8e6" stroke-width="2"/>
+              <text x="311" y="150" text-anchor="middle" transform="rotate(90 311 150)" font-family="Montserrat, Roboto, sans-serif" font-size="11" font-weight="700" fill="#6a7391">Правая стена</text>
+              <rect x="96" y="74" width="168" height="150" rx="18" fill="#f4f6fb"/>
+              <text x="180" y="145" text-anchor="middle" font-family="Montserrat, Roboto, sans-serif" font-size="16" font-weight="700" fill="#8a93ad">Балкон / лоджия</text>
+              <text x="180" y="183" text-anchor="middle" font-family="Roboto, sans-serif" font-size="12" fill="#8a93ad">нажимайте на стены</text>
+              <rect x="102" y="230" width="156" height="38" rx="12" fill="#fff" stroke="#bcc8e6" stroke-width="2"/>
+              <text x="180" y="253" text-anchor="middle" font-family="Montserrat, Roboto, sans-serif" font-size="12" font-weight="700" fill="#6a7391">Стена к квартире</text>
+            </svg>
+          </div>
+          <div class="grid-2" style="margin-top:12px">
+            <div class="mini-box"><span>Пол</span><b>Не входит</b></div>
+            <div class="mini-box"><span>Потолок</span><b>Не входит</b></div>
+          </div>
+        </div>
+        <div class="diagram-legend">
+          <div class="mini-box"><span>Выбранный объём</span><b>Одна выбранная поверхность</b><div class="helper" style="margin-top:6px">Утепляем: <b>фасадная / внешняя</b><br>Проём: <b>фасадная / внешняя: окно</b></div></div>
+          <div class="mini-box"><span>Важно</span><b>Окно не равно утеплению</b><div class="helper" style="margin-top:6px">Наличие окна влияет на геометрию, площадь и узлы примыкания. Замена или монтаж окна считается отдельной услугой.</div></div>
+          <div class="mini-box"><span>Для расчёта</span><b>Что должен указать исполнитель</b><ul class="list" style="margin-top:8px"><li>материал и толщину</li><li>подготовку основания и щели</li><li>что входит в цену</li><li>сроки и гарантию</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="kicker">Что ещё важно</div>
+      <h2 class="section-title">Параметры задачи</h2>
+      <div class="stack">
+        <div>
+          <label class="label">Какой результат нужен?</label>
+          <div class="pills"><button class="pill active">Локально утеплить выбранные поверхности</button><button class="pill">Полностью тёплый балкон</button><button class="pill">Подготовить под отделку</button></div>
+        </div>
+        <div>
+          <label class="label">Нужны работы с окном / остеклением?</label>
+          <div class="pills"><button class="pill active">Нет, не входят</button><button class="pill">Да, посчитать отдельно</button><button class="pill">Не знаю, нужна диагностика</button></div>
+        </div>
+        <div class="grid-2">
+          <div><label class="label">Когда планируете?</label><div class="pills"><button class="pill active">В ближайшее время</button><button class="pill">Не тороплюсь</button></div></div>
+          <div><label class="label">Какой результат отделки?</label><div class="pills"><button class="pill active">Основание под отделку</button><button class="pill">Только утепление</button><button class="pill">Сразу чистовая</button></div></div>
+        </div>
+        <div>
+          <label class="label">Размеры известны?</label>
+          <div class="pills"><button class="pill active">Да</button><button class="pill">Нет, нужен замер</button></div>
+        </div>
+        <div class="grid-2">
+          <div><label class="label">Размер выбранной стены, мм (Ш × В)</label><input class="field" value="3140 × 2870"></div>
+          <div><label class="label">Размер существующего проёма, мм (Ш × В)</label><input class="field" value="1800 × 2200"></div>
+        </div>
+      </div>
+      <div class="actions"><a class="btn primary" href="task-tz.html">Собрать ТЗ →</a></div>
+    </section>
+  </div>
+
+  <aside>
+    <section class="card">
+      <div class="kicker">Короткий итог</div>
+      <h2 class="section-title">Что сервис уже понял</h2>
+      <div class="metric-grid">
+        <div class="metric"><span>Категория</span><b>Балкон / утепление</b></div>
+        <div class="metric"><span>География</span><b>Москва + Мытищи</b></div>
+        <div class="metric"><span>Объём</span><b>1 стена вокруг окна</b></div>
+        <div class="metric"><span>Площадь</span><b>≈ 5,05 м²</b></div>
+      </div>
+      <div class="summary-list" style="margin-top:12px">
+        <div class="summary-item"><span>Окно</span><b>Остаётся существующее</b></div>
+        <div class="summary-item"><span>Не входит</span><b>Пол, потолок и остальные стены</b></div>
+        <div class="summary-item"><span>Срок</span><b>В ближайшее время</b></div>
+      </div>
+      <div class="notice" style="margin-top:12px"><b>Что улучшили по удобству:</b> разбили экран на смысловые блоки, сократили пояснения и перенесли важный итог в правую колонку.</div>
+      <div class="actions"><a class="btn secondary block" href="task-tz.html">Открыть готовое ТЗ</a></div>
+    </section>
+    <section class="card">
+      <div class="kicker">Логика категории</div>
+      <h2 class="section-title">Утепление ≠ остекление</h2>
+      <ul class="list">
+        <li>Подрядчик должен предложить конструкцию утепления и состав слоёв.</li>
+        <li>Для окна мы фиксируем существующий проём и примыкания.</li>
+        <li>Если одной стены мало, исполнитель должен дать отдельный альтернативный вариант, а не расширять смету молча.</li>
+      </ul>
+    </section>
+  </aside>
+</div>
+<script>
+document.getElementById('files').addEventListener('change',e=>{const out=document.getElementById('fileList');out.innerHTML='';[...e.target.files].forEach(f=>{const el=document.createElement('div');el.className='file-chip';el.textContent='📎 '+f.name;out.appendChild(el);});});
 </script>
-</body>
-</html>
+</div></div></main></div></body></html>
