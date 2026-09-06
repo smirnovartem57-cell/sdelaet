@@ -1,68 +1,81 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Запросы исполнителям — Сделает</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Запросы исполнителям — Сделает</title><link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:12px}.contact-field{border:1px solid var(--line);border-radius:13px;padding:10px;background:#fbfcff}.contact-field label{display:block;font-size:10px;color:#76819a;margin-bottom:5px}.contact-field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff}.mass-box{border:1px solid #dce5ff;border-radius:16px;background:#f7faff;padding:13px}.mass-stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.mass-stat div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.mass-stat span{display:block;font-size:10px;color:#7b85a0}.mass-stat b{display:block;font-size:18px;margin-top:2px}.btn.disabled{opacity:.45;pointer-events:none}.channel-note{font-size:11px;color:#6e7894;margin-top:7px}
+    @media(max-width:800px){.contact-grid{grid-template-columns:1fr}.mass-stat{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 <div class="app-shell">
   <aside class="sidebar">
     <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
     <nav class="menu"><a href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
-    <div class="side-note"><div class="kicker">Шаг 4</div><b>Пишем без доступа к мессенджеру</b><p>Сервис готовит сообщение, а пользователь отправляет его через найденный канал.</p></div>
+    <div class="side-note"><div class="kicker">Шаг 4</div><b>Готовим один запрос</b><p>Для каждого исполнителя сохраняем телефон, email и мессенджер, если они найдены.</p></div>
     <div class="side-bottom"><a class="back-link" href="candidates.html">← К кандидатам</a></div>
   </aside>
-
   <main class="main">
     <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step done">2. ТЗ</div><div class="step done">3. Кандидаты</div><div class="step active">4. Запросы</div><div class="step">5. Ответы</div><div class="step">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
-
-    <div class="content">
-      <div class="layout">
-        <section class="card">
-          <div class="kicker">Шаг 4 · Первый запрос</div><h1>Готовое сообщение исполнителю</h1>
-          <p class="muted">Выберите кандидата. Мы используем его реальные открытые контакты и готовим одно и то же ТЗ, чтобы ответы потом можно было сравнить.</p>
-
-          <div id="candidateTabs" class="chips mt"></div>
-
-          <div class="request-card mt">
-            <div class="request-head">
-              <div><h2 id="candidateName" style="margin:0"></h2><div id="candidateMeta" class="mini"></div></div>
-              <span id="candidateChannel" class="channel"></span>
-            </div>
-            <div id="messageText" class="message-box"></div>
-            <div class="row mt"><button id="copyMessage" class="btn primary">Скопировать сообщение</button><a id="openSite" class="btn secondary" target="_blank" rel="noopener">Открыть сайт</a><a id="callPhone" class="btn ghost">Позвонить</a><button id="markSent" class="btn ghost">Отметить отправленным</button></div>
+    <div class="content"><div class="layout">
+      <section class="card">
+        <div class="kicker">Шаг 4</div><h1>Готовое сообщение исполнителю</h1>
+        <p class="muted">Выберите кандидата. Контакты можно дополнить вручную — это пригодится для массовой отправки.</p>
+        <div id="candidateTabs" class="chips mt"></div>
+        <div class="request-card mt">
+          <div class="request-head"><div><h2 id="candidateName" style="margin:0"></h2><div id="candidateMeta" class="mini"></div></div><span id="candidateChannel" class="channel"></span></div>
+          <div class="contact-grid">
+            <div class="contact-field"><label>Телефон</label><input id="contactPhone" readonly></div>
+            <div class="contact-field"><label>Email</label><input id="contactEmail" type="email" placeholder="email не найден — можно добавить"></div>
+            <div class="contact-field"><label>Мессенджер</label><input id="contactMessenger" placeholder="ссылка Telegram / WhatsApp"></div>
           </div>
-
-          <div class="note mt"><b>Что прикладываем:</b> пока можно отправить текст и сохранить ТЗ через «Печать → PDF» на предыдущем шаге. Когда подключим backend, сервис будет формировать постоянную ссылку на задачу и PDF автоматически.</div>
-          <div class="row mt"><a class="btn primary" href="replies.html">Я отправил запросы → перейти к ответам</a></div>
-        </section>
-
-        <aside class="card">
-          <div class="kicker">Статус тендера</div><h2>Кому уже написали</h2>
-          <div id="statusList" class="side-list"></div>
-          <div class="note mt">Для реального теста я бы сначала написал МосБалкону, «Отделке Балкона» и «Балконы Цены». Стране Балконов — четвёртым. Сателс — после короткого вопроса, берут ли они утепление одной стены без замены окна.</div>
-        </aside>
-      </div>
-    </div>
+          <div class="row mt"><button id="saveContacts" class="btn secondary">Сохранить контакты</button></div>
+          <div id="messageText" class="message-box mt"></div>
+          <div class="row mt">
+            <button id="copyMessage" class="btn primary">Скопировать сообщение</button>
+            <a id="emailCandidate" class="btn secondary">Написать на email</a>
+            <a id="openMessenger" class="btn secondary" target="_blank" rel="noopener">Открыть мессенджер</a>
+            <a id="openSite" class="btn secondary" target="_blank" rel="noopener">Открыть сайт</a>
+            <a id="callPhone" class="btn ghost">Позвонить</a>
+            <button id="markSent" class="btn ghost">Отметить отправленным</button>
+          </div>
+          <div class="channel-note">Сейчас email открывается в вашей почтовой программе, а мессенджер — по сохранённой ссылке. После подключения backend можно будет отправлять централизованно и собирать ответы внутри «Сделает».</div>
+        </div>
+        <div class="note mt"><b>Что отправляем:</b> короткий текст + одинаковое ТЗ. Технические справочные материалы и внутренние источники Product Spec исполнителю не показываем.</div>
+        <div class="row mt"><a class="btn primary" href="replies.html">Перейти к ответам →</a></div>
+      </section>
+      <aside class="card">
+        <div class="kicker">Массовая отправка</div><h2>Какие каналы собраны</h2>
+        <div class="mass-box">
+          <div class="mass-stat"><div><span>Email найден</span><b id="emailCount">0</b></div><div><span>Мессенджер добавлен</span><b id="messengerCount">0</b></div></div>
+          <div class="row"><a id="massEmail" class="btn primary">Открыть письмо всем с email</a><button id="copyEmails" class="btn secondary">Скопировать email</button></div>
+          <div class="channel-note">Для мессенджеров универсальной массовой отправки без подключения аккаунта/официальной интеграции нет — пока открываем чаты по одному.</div>
+        </div>
+        <h3 class="mt">Статус запросов</h3><div id="statusList" class="side-list"></div>
+      </aside>
+    </div></div>
   </main>
 </div>
 <script src="assets/app.js"></script>
 <script>
 const candidates={
- mosbalkon:{name:'МосБалкон',meta:'утепление балконов · Мытищи',channel:'Телефон / форма сайта',phone:'+74956478337',phoneLabel:'+7 (495) 647-83-37',site:'https://mytishi.mosbalkon.ru/uteplenie-balkonov/'},
- otdelka:{name:'Отделка Балкона',meta:'утепление и отделка · Мытищи',channel:'Телефон / сайт',phone:'+74954899069',phoneLabel:'+7 (495) 489-90-69',site:'https://mitishi.otdelkabalkon.ru/'},
- balkony:{name:'Балконы Цены',meta:'утепление и отделка · Мытищи',channel:'Телефон / email / сайт',phone:'+74950235646',phoneLabel:'+7 (495) 023-56-46',site:'https://mitishi.balkony-tseny.ru/'},
- strana:{name:'Страна Балконов',meta:'локальная компания · Мытищи',channel:'Телефон / сайт',phone:'+74957676296',phoneLabel:'+7 (495) 767-62-96',site:'https://strana-balkonov.ru'},
- satels:{name:'Сателс-Мытищи',meta:'офис оконной компании · Мытищи',channel:'Телефон / email / сайт',phone:'+74951269751',phoneLabel:'+7 (495) 126-97-51',site:'https://mytishchi.satels-okna.ru/'}
+ mosbalkon:{name:'МосБалкон',meta:'утепление балконов · Мытищи',phone:'+74956478337',phoneLabel:'+7 (495) 647-83-37',email:'zakaz-mosbalkon@yandex.ru',messenger:'',site:'https://mytishi.mosbalkon.ru/uteplenie-balkonov/'},
+ otdelka:{name:'Отделка Балкона',meta:'утепление и отделка · Мытищи',phone:'+74954899069',phoneLabel:'+7 (495) 489-90-69',email:'',messenger:'',site:'https://mitishi.otdelkabalkon.ru/'},
+ balkony:{name:'Балконы Цены',meta:'утепление и отделка · Мытищи',phone:'+74950235646',phoneLabel:'+7 (495) 023-56-46',email:'',messenger:'',site:'https://mitishi.balkony-tseny.ru/'},
+ strana:{name:'Страна Балконов',meta:'локальная компания · Мытищи',phone:'+74957676296',phoneLabel:'+7 (495) 767-62-96',email:'',messenger:'',site:'https://strana-balkonov.ru'},
+ satels:{name:'Сателс-Мытищи',meta:'офис компании · Мытищи',phone:'+74951269751',phoneLabel:'+7 (495) 126-97-51',email:'elis_okna@mail.ru',messenger:'',site:'https://mytishchi.satels-okna.ru/'}
 };
-const ids=Object.keys(candidates); let current=new URLSearchParams(location.search).get('candidate')||'mosbalkon'; if(!candidates[current]) current='mosbalkon';
+const ids=Object.keys(candidates);let current=new URLSearchParams(location.search).get('candidate')||'mosbalkon';if(!candidates[current])current='mosbalkon';
+function getContacts(){try{return JSON.parse(localStorage.getItem('sdelaet.contacts.v1')||'{}')}catch(e){return{}}}
+function setContacts(v){localStorage.setItem('sdelaet.contacts.v1',JSON.stringify(v))}
+function merged(id){const saved=getContacts()[id]||{};return{...candidates[id],...saved}}
 function sentState(){try{return JSON.parse(localStorage.getItem('sdelaet.sent.v1')||'{}')}catch(e){return{}}}
-function buildMessage(c){const j=Sdelaet.loadJob();const where=[j.locationDetail,j.region].filter(Boolean).join(', ')||'Мытищи';const scope=(j.scopes||['Стена вокруг окна']).join(', ');return `Добрый день.\n\nНужен предварительный расчёт по задаче в ${where}.\n\nЧто нужно сделать: ${scope}.\nЦель: ${j.goal||'локально утеплить стену / убрать промерзание'}.\nРазмер стены: ${j.wallSize||'3140 × 2870 мм'}.\nОконный проём: ${j.windowSize||'1800 × 2200 мм'} — размер нужен для геометрии стены. ${j.windowWork||'Работы с окном/остеклением в текущий заказ не входят.'}\nРезультат: ${j.finish||'утепление + основание под дальнейшую отделку'}.\nСрок: ${j.timing||'в ближайшее время'}.\n\nПросьба указать:\n— подготовку основания и как устраняются щели/мостики холода;\n— утеплитель, толщину и полный состав слоёв;\n— герметизацию стыков и пароизоляцию для предложенной системы;\n— решение примыканий к оконному проёму, полу, потолку и соседним стенам;\n— работы и материалы отдельно, откосы/примыкания, доставку и мусор;\n— минимальную стоимость заказа, нужен ли замер, срок, договор и гарантию.\n\nЕсли считаете, что только этой стены недостаточно, пожалуйста, базовую смету не расширяйте: дополнительный объём предложите отдельным вариантом с объяснением причины.\n\nСможете взять такой объём?`}
-function render(){const c=candidates[current],sent=sentState();document.getElementById('candidateName').textContent=c.name;document.getElementById('candidateMeta').textContent=c.meta+' · '+c.phoneLabel;document.getElementById('candidateChannel').textContent=c.channel;document.getElementById('messageText').textContent=buildMessage(c);document.getElementById('openSite').href=c.site;document.getElementById('callPhone').href='tel:'+c.phone;document.getElementById('candidateTabs').innerHTML=ids.map(id=>`<button class="chip ${id===current?'active':''}" data-id="${id}">${candidates[id].name}${sent[id]?' ✓':''}</button>`).join('');document.querySelectorAll('#candidateTabs .chip').forEach(b=>b.onclick=()=>{current=b.dataset.id;render()});document.getElementById('statusList').innerHTML=ids.map(id=>`<div class="side-item"><b>${candidates[id].name}</b><br>${sent[id]?'✓ отмечено отправленным':'ещё не отправлено'}</div>`).join('')}
-document.getElementById('copyMessage').onclick=async()=>{await navigator.clipboard.writeText(document.getElementById('messageText').textContent);const b=document.getElementById('copyMessage');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Скопировать сообщение',1500)};
-document.getElementById('markSent').onclick=()=>{const s=sentState();s[current]=true;localStorage.setItem('sdelaet.sent.v1',JSON.stringify(s));render()};render();
+function buildMessage(){const j=Sdelaet.loadJob();const where=[j.locationDetail,j.location].filter(Boolean).join(', ')||'Мытищи';const surfaces=(j.selectedWalls||[]).length?(j.selectedWalls||[]).map(x=>({front:'фасадная стена',left:'левая стена',right:'правая стена',apartment:'стена к квартире'}[x]||x)).join(', '):'выбранная стена';return `Добрый день.\n\nНужен предварительный расчёт по задаче в ${where}.\n\nОбъём: ${surfaces}${j.floor?', пол':''}${j.ceiling?', потолок':''}.\nЦель: ${j.goal||'локально утеплить выбранную поверхность'}.\nРазмер стены: ${j.wallSize||'нужен замер'}.\nРазмер существующего проёма: ${j.openingSize||'нужен замер'}.\nОкно/дверь: ${j.windowWork||'существующие, работы с ними отдельно не заказывали'}.\nРезультат: ${j.finish||'основание под дальнейшую отделку'}.\nСрок: ${j.time||'в ближайшее время'}.\n\nПросьба указать:\n— что нужно сделать с основанием и щелями до утепления;\n— какой материал и толщину предлагаете;\n— как будут выполнены углы и примыкания к окну/двери и соседним поверхностям;\n— что входит в итоговый результат;\n— работы и материалы отдельно, дополнительные расходы;\n— нужен ли замер, минимальную стоимость заказа, срок, договор и гарантию.\n\nЕсли считаете, что для результата нужен больший объём, пожалуйста, дайте его отдельным вариантом с отдельной ценой.\n\nСможете взять такую задачу?`}
+function updateMass(){const all=ids.map(id=>merged(id));const emails=all.map(x=>x.email).filter(Boolean);const mess=all.map(x=>x.messenger).filter(Boolean);emailCount.textContent=emails.length;messengerCount.textContent=mess.length;copyEmails.classList.toggle('disabled',!emails.length);massEmail.classList.toggle('disabled',!emails.length);const body=encodeURIComponent(buildMessage());massEmail.href=emails.length?'mailto:?bcc='+encodeURIComponent(emails.join(','))+'&subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+body:'#';copyEmails.onclick=async()=>{if(emails.length){await navigator.clipboard.writeText(emails.join(', '));copyEmails.textContent='Скопировано ✓';setTimeout(()=>copyEmails.textContent='Скопировать email',1200)}}}
+function render(){const c=merged(current),sent=sentState();candidateName.textContent=c.name;candidateMeta.textContent=c.meta;candidateChannel.textContent=[c.email?'email':'',c.messenger?'мессенджер':'',c.phone?'телефон':''].filter(Boolean).join(' / ')||'сайт';contactPhone.value=c.phoneLabel||'';contactEmail.value=c.email||'';contactMessenger.value=c.messenger||'';messageText.textContent=buildMessage();openSite.href=c.site;callPhone.href='tel:'+c.phone;emailCandidate.classList.toggle('disabled',!c.email);emailCandidate.href=c.email?'mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent('Запрос на предварительный расчёт')+'&body='+encodeURIComponent(buildMessage()):'#';openMessenger.classList.toggle('disabled',!c.messenger);openMessenger.href=c.messenger||'#';candidateTabs.innerHTML=ids.map(id=>`<button class="chip ${id===current?'active':''}" data-id="${id}">${candidates[id].name}${sent[id]?' ✓':''}</button>`).join('');document.querySelectorAll('#candidateTabs .chip').forEach(b=>b.onclick=()=>{current=b.dataset.id;render()});statusList.innerHTML=ids.map(id=>{const x=merged(id);return `<div class="side-item"><b>${x.name}</b><br>${sent[id]?'✓ запрос отмечен отправленным':'ещё не отправлено'}<br><span class="mini">${x.email?'email ✓':'email —'} · ${x.messenger?'мессенджер ✓':'мессенджер —'}</span></div>`}).join('');updateMass()}
+saveContacts.onclick=()=>{const all=getContacts();all[current]={email:contactEmail.value.trim(),messenger:contactMessenger.value.trim()};setContacts(all);render();saveContacts.textContent='Сохранено ✓';setTimeout(()=>saveContacts.textContent='Сохранить контакты',1200)};
+copyMessage.onclick=async()=>{await navigator.clipboard.writeText(messageText.textContent);copyMessage.textContent='Скопировано ✓';setTimeout(()=>copyMessage.textContent='Скопировать сообщение',1200)};
+markSent.onclick=()=>{const s=sentState();s[current]=true;localStorage.setItem('sdelaet.sent.v1',JSON.stringify(s));render()};render();
 </script>
-</body>
-</html>
+</body></html>
