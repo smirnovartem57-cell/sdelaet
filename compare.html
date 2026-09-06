@@ -1,21 +1,27 @@
 <!doctype html>
 <html lang="ru">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Сравнение — Сделает</title><link rel="stylesheet" href="assets/styles.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Сравнение — Сделает</title><link rel="stylesheet" href="assets/styles.css"><style>.demo-banner{padding:12px 14px;border-radius:14px;background:#fff7e6;border:1px solid #f0ddb6;color:#785313;margin-bottom:12px}.demo-badge{display:inline-flex;padding:4px 7px;border-radius:999px;background:#fff1c9;color:#875900;font-size:10px;font-weight:800}.compare-table td,.compare-table th{vertical-align:top}</style></head>
 <body>
 <div class="app-shell">
-  <aside class="sidebar"><a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a><nav class="menu"><a href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav><div class="side-note"><div class="kicker">Шаг 6</div><b>Не сравниваем рекламные цены</b><p>В таблицу попадают только ответы исполнителей на ваше ТЗ.</p></div><div class="side-bottom"><a class="back-link" href="replies.html">← К ответам</a></div></aside>
+  <aside class="sidebar"><a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a><nav class="menu"><a href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav><div class="side-note"><div class="kicker">Шаг 6</div><b>Сравниваем одинаковый объём</b><p>Смотрим ответы на одно ТЗ, а не рекламные цены с сайтов.</p></div><div class="side-bottom"><a class="back-link" href="replies.html">← К ответам</a></div></aside>
   <main class="main">
     <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step done">2. ТЗ</div><div class="step done">3. Кандидаты</div><div class="step done">4. Запросы</div><div class="step done">5. Ответы</div><div class="step active">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
     <div class="content"><div class="layout">
       <section class="card">
-        <div class="kicker">Шаг 6 · Только реальные ответы</div><h1>Сравнение предложений</h1><p class="muted">Если исполнитель ещё не ответил — мы не подставляем выдуманную цену. Добавьте реальные ответы на предыдущем шаге.</p>
-        <div style="overflow:auto" class="mt"><table class="compare-table"><thead><tr><th>Исполнитель</th><th>Суммы из ответа</th><th>Материал</th><th>Толщина</th><th>Срок</th><th>Гарантия</th><th>Договор</th><th>Полнота</th></tr></thead><tbody id="compareBody"></tbody></table></div>
-        <div id="emptyCompare" class="note mt hidden">Пока нет сохранённых ответов. Вернитесь на шаг 5 и вставьте хотя бы два ответа, чтобы сравнение стало полезным.</div>
-        <div class="row mt"><a class="btn secondary" href="replies.html">Добавить ещё ответы</a></div>
+        <div id="demoBanner" class="demo-banner hidden"><b>Тестовые данные.</b> В таблице есть временные примеры ответов для проверки интерфейса. Они не являются предложениями или ценами указанных компаний.</div>
+        <div class="kicker">Шаг 6</div><h1>Сравнение предложений</h1><p class="muted">После реальных ответов здесь останется та же структура: цена, материал, срок, гарантия и договор.</p>
+        <div style="overflow:auto" class="mt"><table class="compare-table"><thead><tr><th>Исполнитель</th><th>Суммы из ответа</th><th>Материал</th><th>Толщина</th><th>Срок</th><th>Гарантия</th><th>Договор</th><th>Заполнено</th></tr></thead><tbody id="compareBody"></tbody></table></div>
+        <div id="emptyCompare" class="note mt hidden">Пока нет сохранённых ответов. Вернитесь на шаг 5 и добавьте хотя бы два ответа.</div>
+        <div class="row mt"><a class="btn secondary" href="replies.html">Изменить ответы</a></div>
       </section>
       <aside class="card">
-        <div class="kicker">Предварительная рекомендация</div><h2 id="recTitle">Нужно минимум 2 ответа</h2><div id="recText" class="note">До этого момента сервис не должен делать вид, что знает лучшего исполнителя.</div>
-        <div class="side-list mt"><div class="side-item"><b>Цена</b><br>Сначала сравниваем одинаковый объём ТЗ, а не рекламные «от … ₽» на сайтах.</div><div class="side-item"><b>Комплектность</b><br>Материал + толщина + слои + срок + гарантия + договор должны быть понятны до выбора.</div><div class="side-item"><b>Match / Trust</b><br>После нормализации предложения добавим соответствие задаче и доверие к исполнителю отдельными колонками.</div></div>
+        <div class="kicker">Предварительный вывод</div><h2 id="recTitle">Нужно минимум 2 ответа</h2><div id="recText" class="note">Сервис сначала проверяет полноту предложений, а не выбирает исполнителя только по минимальной цене.</div>
+        <div class="side-list mt">
+          <div class="side-item"><b>Цена</b><br>Сравниваем только одинаковый объём работ и отдельно смотрим, что включено.</div>
+          <div class="side-item"><b>Полнота предложения</b><br>Материал, толщина, срок, гарантия и договор должны быть понятны до выбора.</div>
+          <div class="side-item"><b>Насколько подходит задаче</b><br>Отдельно учитываем специализацию и соответствие именно вашему объёму.</div>
+          <div class="side-item"><b>Проверка исполнителя</b><br>Отдельно учитываем подтверждённые внешние сведения и будущую историю заказов через «Сделает».</div>
+        </div>
       </aside>
     </div></div>
   </main>
@@ -23,9 +29,9 @@
 <script src="assets/app.js"></script>
 <script>
 const candidates={mosbalkon:'МосБалкон',otdelka:'Отделка Балкона',balkony:'Балконы Цены',strana:'Страна Балконов',satels:'Сателс-Мытищи'};
-function completeness(p){if(!p)return 0;let n=0,total=6;if(p.prices?.length)n++;if(p.material)n++;if(p.thickness)n++;if(p.days)n++;if(p.warranty)n++;if(p.contract==='упомянут')n++;return Math.round(n/total*100)}
-const rows=[];Object.keys(candidates).forEach(id=>{const r=Sdelaet.loadReply(id);if(r.raw&&r.parsed)rows.push({id,name:candidates[id],...r.parsed,complete:completeness(r.parsed)})});
-const body=document.getElementById('compareBody');if(!rows.length){document.getElementById('emptyCompare').classList.remove('hidden');body.innerHTML='<tr><td colspan="8" class="muted">Ответов пока нет</td></tr>'}else{body.innerHTML=rows.map(r=>`<tr><td><b>${r.name}</b></td><td>${r.prices?.length?r.prices.join('<br>'):'—'}</td><td>${r.material||'—'}</td><td>${r.thickness||'—'}</td><td>${r.days||'—'}</td><td>${r.warranty||'—'}</td><td>${r.contract}</td><td><b>${r.complete}%</b></td></tr>`).join('')}
-if(rows.length>=2){const best=[...rows].sort((a,b)=>b.complete-a.complete)[0];document.getElementById('recTitle').textContent='Самый полный ответ сейчас — '+best.name;document.getElementById('recText').innerHTML='Заполнено примерно <b>'+best.complete+'%</b> ключевых условий. Это ещё не означает «лучший исполнитель»: следующий шаг — уточнить пробелы, привести цены к одинаковому составу и только потом учитывать Match/Trust.'}
+function completeness(p){if(!p)return 0;let n=0,total=6;if(p.prices?.length)n++;if(p.material)n++;if(p.thickness)n++;if(p.days)n++;if(p.warranty)n++;if(p.contract==='указан'||p.contract==='упомянут')n++;return Math.round(n/total*100)}
+const rows=[];Object.keys(candidates).forEach(id=>{const r=Sdelaet.loadReply(id);if(r.raw&&r.parsed)rows.push({id,name:candidates[id],demo:!!r.demo,...r.parsed,complete:completeness(r.parsed)})});
+const body=document.getElementById('compareBody');if(!rows.length){emptyCompare.classList.remove('hidden');body.innerHTML='<tr><td colspan="8" class="muted">Ответов пока нет</td></tr>'}else{if(rows.some(r=>r.demo))demoBanner.classList.remove('hidden');body.innerHTML=rows.map(r=>`<tr><td><b>${r.name}</b>${r.demo?'<br><span class="demo-badge">тест</span>':''}</td><td>${r.prices?.length?r.prices.join('<br>'):'—'}</td><td>${r.material||'—'}</td><td>${r.thickness||'—'}</td><td>${r.days||'—'}</td><td>${r.warranty||'—'}</td><td>${r.contract||'—'}</td><td><b>${r.complete}%</b></td></tr>`).join('')}
+if(rows.length>=2){const best=[...rows].sort((a,b)=>b.complete-a.complete)[0];recTitle.textContent='Самое полное предложение сейчас — '+best.name;recText.innerHTML=(best.demo?'<span class="demo-badge">тестовые данные</span><br><br>':'')+'Заполнено примерно <b>'+best.complete+'%</b> ключевых условий. Дальше сервис должен уточнить пробелы и привести итоговые цены к одинаковому составу. Это ещё не означает, что исполнитель лучший.'}
 </script>
 </body></html>
