@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Сравнение предложений — Сделает</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .compare-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}.compare{width:100%;border-collapse:collapse;min-width:680px;background:#fff}.compare th,.compare td{padding:12px 11px;border-bottom:1px solid #eef1f7;text-align:left;font-size:12px;vertical-align:top}.compare th{background:#fafbff;color:#68738f;font-family:'Montserrat',sans-serif;font-size:11px}.compare tr:last-child td{border-bottom:0}.best{background:#f2fbf6}.score-pill{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:30px;padding:0 9px;border-radius:999px;font-weight:900}.score-pill.green{background:#eafaf3;color:#0d9860}.score-pill.blue{background:#eff3ff;color:#4f5ad6}.score-pill.gray{background:#f3f4f7;color:#68738f}.rec{margin-top:14px;padding:15px;border-radius:17px;background:linear-gradient(180deg,#fafdff,#f2f7ff);border:1px solid #d7e5ff}.rec h3{margin:4px 0 7px;font-size:18px}.why{display:grid;gap:8px;margin-top:10px}.why div{display:flex;gap:8px;color:#52607c;font-size:12px}.why i{font-style:normal;color:#0f9d66;font-weight:900}.risk-line{margin-top:10px;padding:10px 11px;border-radius:13px;background:var(--amber-bg);border:1px solid #f1ddb6;color:#805611;font-size:11px}.compare-side{display:grid;gap:9px}.compare-side div{padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#fbfcff;font-size:12px;color:#55617f}.money{font-family:'Montserrat',sans-serif;font-weight:800;color:#202a47}
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="logo" href="index.html"><div class="logo-mark">✓</div><div>Сдела<span>ет</span></div></a>
+    <nav class="menu"><a class="active" href="create-task.html">＋ Создать задачу</a><a href="#">▤ Мои задачи</a><a href="#">☆ Избранное</a><a href="#">✓ Проверки</a><a href="#">⚙ Настройки</a></nav>
+    <div class="side-note"><div class="kicker">Принцип сервиса</div><b>Найдём, кто сделает</b><p>А вы выберете уже из нескольких понятных вариантов.</p></div>
+    <div class="side-bottom"><a class="back-link" href="index.html">← На главную</a></div>
+  </aside>
+  <main class="main">
+    <div class="top"><div class="steps"><div class="step done">1. Задача</div><div class="step done">2. ТЗ</div><div class="step done">3. Кандидаты</div><div class="step done">4. Запросы</div><div class="step done">5. Ответы</div><div class="step active">6. Сравнение</div><div class="step">7. Работа</div><div class="step">8. Отзыв</div></div></div>
+    <div class="content"><div class="layout">
+      <section class="card">
+        <div class="kicker">Шаг 6</div><h1>Сравнение предложений</h1>
+        <p class="muted">Все ответы приведены к единой структуре. Внешние факты и наша рекомендация разделены, чтобы было понятно, на чём основан выбор.</p>
+        <div class="compare-wrap">
+          <table class="compare">
+            <thead><tr><th>Параметр</th><th>Алексей</th><th>Максим</th><th>Satels</th></tr></thead>
+            <tbody>
+              <tr><td><b>Итого</b></td><td class="best"><span class="money">52 000 ₽</span></td><td><span class="money">50 000 ₽</span></td><td><span class="money">61 000 ₽</span></td></tr>
+              <tr><td>Материал</td><td class="best">XPS 50 мм</td><td>XPS 30 мм</td><td>PIR 50 мм</td></tr>
+              <tr><td>Срок</td><td class="best">1 день</td><td>2 дня</td><td>2 дня</td></tr>
+              <tr><td>Откосы</td><td>7 000 ₽</td><td>не указано</td><td>включены</td></tr>
+              <tr><td>Договор</td><td class="best">Да</td><td>уточнить</td><td>Да</td></tr>
+              <tr><td>Гарантия</td><td>уточнить</td><td>не указано</td><td class="best">3 года</td></tr>
+              <tr><td>Match</td><td><span class="score-pill blue">96%</span></td><td><span class="score-pill blue">91%</span></td><td><span class="score-pill gray">82%</span></td></tr>
+              <tr><td>Trust</td><td><span class="score-pill green">93</span></td><td><span class="score-pill green">89</span></td><td><span class="score-pill gray">85</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rec">
+          <div class="kicker">Рекомендация «Сделает»</div>
+          <h3>Алексей — наиболее сбалансированный вариант</h3>
+          <div class="muted">Максим дешевле на 2 000 ₽, но у Алексея лучше совпадение с задачей, XPS 50 мм, более короткий срок и выше Trust Score.</div>
+          <div class="why"><div><i>✓</i><span>Лучший Match среди полученных предложений</span></div><div><i>✓</i><span>Подходит по сроку и профилю работ</span></div><div><i>✓</i><span>Высокий Trust Score</span></div></div>
+          <div class="risk-line">! Перед окончательным выбором нужно подтвердить гарантию и убедиться, что вывоз мусора/расходники входят в итоговую цену.</div>
+        </div>
+
+        <div class="row mt"><a class="btn secondary" href="replies.html">← К ответам</a><button class="btn primary">Выбрать Алексея →</button></div>
+      </section>
+      <aside class="card">
+        <div class="kicker">Как считаем выбор</div><h2>Не только цена</h2>
+        <div class="compare-side">
+          <div><b>Цена:</b><br>сравниваем итог, а не только стоимость работ.</div>
+          <div><b>Условия:</b><br>материалы, сроки, договор, гарантия и что включено.</div>
+          <div><b>Match:</b><br>насколько исполнитель подходит именно под вашу задачу.</div>
+          <div><b>Trust:</b><br>доверие по внешним данным и позднее по реальным заказам внутри сервиса.</div>
+        </div>
+        <div class="note mt">Рекомендация — мнение сервиса на основании перечисленных факторов. Исходные сведения остаются видимыми и проверяемыми.</div>
+      </aside>
+    </div></div>
+  </main>
+</div>
+</body>
+</html>
