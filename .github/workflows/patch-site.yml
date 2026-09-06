@@ -17,7 +17,7 @@ jobs:
       - name: Assemble and verify prepared pages
         shell: bash
         run: |
-          cat .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_05 > /tmp/site_v15.b64
+          cat .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04a .github/payload_chunk_04b .github/payload_chunk_05 > /tmp/site_v15.b64
           test "$(wc -c < /tmp/site_v15.b64)" -eq 22992
           echo "e13fa98db837ae4c08b77e74525933dd9b308e690d39cf59df79b14ea77de45d  /tmp/site_v15.b64" | sha256sum -c -
           base64 -d /tmp/site_v15.b64 > /tmp/site_v15.tar.gz
@@ -113,7 +113,7 @@ jobs:
       - name: Remove one-time publication payload
         shell: bash
         run: |
-          rm -f .github/site_patch_payload.b64 .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_05
+          rm -f .github/site_patch_payload.b64 .github/payload_chunk_00 .github/payload_chunk_01 .github/payload_chunk_02 .github/payload_chunk_03 .github/payload_chunk_04 .github/payload_chunk_04a .github/payload_chunk_04b .github/payload_chunk_05
 
       - name: Commit published flow
         shell: bash
