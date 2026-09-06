@@ -1,0 +1,40 @@
+name: One-time site patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-site.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply requested site fixes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(
+              'https://rutube.ru/play/embed/66efbf9c12cd8d8883912f2916c344d1/?p=teTmlscm3XWaxUv_uMY3-A&autoplay=1',
+              'https://rutube.ru/play/embed/512e9f504aaf3f656030e28182b20979/?p=gBbkrUb_nErXboTSvQOxJQ&autoplay=1'
+          )
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No changes needed'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Update presentation video link'
+          git push
