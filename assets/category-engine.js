@@ -2,9 +2,10 @@
   function clean(v){return (v||'').trim()}
   function low(v){return clean(v).toLowerCase().replace(/ё/g,'е')}
   function has(s,re){return re.test(s)}
-  function firstMatch(text,re){var m=text.match(re);return m?m[0]:''}
   function dimMatches(text){return text.match(/\d{2,4}\s*[×xх]\s*\d{2,4}\s*(?:мм|см|м)?/gi)||[]}
   function normalizeDim(v){return clean(v).replace(/\s+/g,' ').replace(/[xх]/gi,'×')}
+  function parseDim(v){var m=clean(v).match(/(\d+(?:[.,]\d+)?)\s*[×xх]\s*(\d+(?:[.,]\d+)?)\s*(мм|см|м)?/i);if(!m)return null;var a=parseFloat(m[1].replace(',','.')),b=parseFloat(m[2].replace(',','.')),u=(m[3]||'мм').toLowerCase(),k=u==='м'?1:(u==='см'?.01:.001);return{a:a*k,b:b*k,unit:u}}
+  function calcNetArea(wall,opening){var w=parseDim(wall);if(!w)return'';var area=w.a*w.b,o=parseDim(opening);if(o)area-=o.a*o.b;if(area<=0)return'';return '≈ '+area.toFixed(2).replace('.',',')+' м²'+(o?' без проёма':'')}
 
   var categories={
     'balcony-insulation':{
@@ -60,14 +61,16 @@
         if(p.floor==='Не входит') exclusions.push('пол не включать');
         if(p.ceiling==='Не входит') exclusions.push('потолок не включать');
         if(p.otherWalls==='Не входят') exclusions.push('остальные стены не включать');
+        var wall=p.wallSize||(p.sizesUnknown?'Уточнить на замере':''),opening=p.openingSize||(p.sizesUnknown?'Уточнить на замере':'');
         return {
           scope:p.scope||'Объём уточнить',
           goal:p.goal||'Цель уточнить',
           window:p.window||'Работы с окном уточнить',
           finish:p.finish||'Отделку уточнить',
           exclusions:exclusions.join('; '),
-          wallSize:p.wallSize||(p.sizesUnknown?'Уточнить на замере':''),
-          openingSize:p.openingSize||(p.sizesUnknown?'Уточнить на замере':''),
+          wallSize:wall,
+          openingSize:opening,
+          area:calcNetArea(wall,opening),
           timing:p.timing||'Срок не критичен'
         }
       }
