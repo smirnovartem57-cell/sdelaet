@@ -81,21 +81,6 @@ jobs:
           echo "Search API: $worker_url"
           curl -fsS "$worker_url/health" | python -m json.tool
 
-      - name: Connect production frontend to worker
-        shell: bash
-        env:
-          WORKER_URL: ${{ steps.endpoint.outputs.worker_url }}
-        run: |
-          set -euo pipefail
-          printf "window.SDELAET_SEARCH_API='%s/v1/candidates/search';\n" "$WORKER_URL" > assets/search-config.js
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/search-config.js
-          if ! git diff --cached --quiet; then
-            git commit -m "Connect live contractor search API"
-            git push
-          fi
-
       - name: Live search smoke test
         shell: bash
         env:
@@ -105,4 +90,36 @@ jobs:
           response="$(curl -fsS -X POST "$WORKER_URL/v1/candidates/search" \
             -H 'content-type: application/json' \
             --data '{"categoryId":"balcony-insulation","category":"Утепление / отделка балкона","city":"Мытищи","description":"Нужно утеплить стену балкона вокруг окна","scope":"Одна стена балкона","executorPreference":"any","limit":5}')"
-          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True, d; print('count=', d.get('count')); print('providers=', d.get('providers')); print('candidates=', [x.get('name') for x in d.get('candidates', [])])"
+          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True, d; assert d.get('count',0)>0, d; print('count=', d.get('count')); print('providers=', d.get('providers')); print('candidates=', [x.get('name') for x in d.get('candidates', [])])"
+
+      - name: Connect production frontend to worker
+        shell: bash
+        env:
+          WORKER_URL: ${{ steps.endpoint.outputs.worker_url }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path('assets/live-search.js')
+          text = path.read_text(encoding='utf-8')
+          old = "const API_URL=window.SDELAET_SEARCH_API||'https://api.onsdelaet.ru/v1/candidates/search';"
+          new = "const API_URL=window.SDELAET_SEARCH_API||'" + os.environ['WORKER_URL'] + "/v1/candidates/search';"
+          if old not in text:
+              import re
+              text, n = re.subn(r"const API_URL=window\.SDELAET_SEARCH_API\|\|'https://[^']+/v1/candidates/search';", new, text, count=1)
+              if n != 1:
+                  raise SystemExit('Could not locate API_URL in assets/live-search.js')
+          else:
+              text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+          Path('assets/search-config.js').write_text("window.SDELAET_SEARCH_API='" + os.environ['WORKER_URL'] + "/v1/candidates/search';\n", encoding='utf-8')
+          PY
+          node --check assets/live-search.js
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/live-search.js assets/search-config.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Connect live contractor search API"
+            git push
+          fi
