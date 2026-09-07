@@ -1,0 +1,9 @@
+(function(){
+var VERSION_KEY='sdelaet.task.versions.v1';
+function readAll(){try{return JSON.parse(localStorage.getItem(VERSION_KEY)||'{}')}catch(e){return{}}}
+function writeAll(v){localStorage.setItem(VERSION_KEY,JSON.stringify(v));return v}
+window.sdGetTaskVersions=function(taskId){var all=readAll();return (all[taskId]||[]).slice().sort(function(a,b){return (b.version||0)-(a.version||0)})};
+window.sdArchiveTask=function(task){if(!task||!task.id)return;var all=readAll(),arr=all[task.id]||[],copy=JSON.parse(JSON.stringify(task));if(!copy.version)copy.version=1;var exists=arr.some(function(x){return x.version===copy.version});if(!exists)arr.push(copy);arr.sort(function(a,b){return (b.version||0)-(a.version||0)});all[task.id]=arr.slice(0,10);writeAll(all)};
+window.sdBuildVersionedTask=function(next,previous){var now=new Date().toISOString();if(previous&&previous.id){next.id=previous.id;next.version=(previous.version||1)+1;next.createdAt=previous.createdAt||previous.updatedAt||now;next.updatedAt=now;if(previous.executorPreference&&!next.executorPreference)next.executorPreference=previous.executorPreference}else{next.version=1;next.createdAt=now;next.updatedAt=now}return next};
+window.sdFormatVersionDate=function(v){if(!v)return'';try{return new Date(v).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return''}};
+})();
