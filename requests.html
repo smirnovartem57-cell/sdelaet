@@ -1,1 +1,311 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Подготовка запроса — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script></head><body><div class="app-shell"><aside class="sidebar"><a class="brand" href="/"><img src="assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a><nav class="app-nav"><a href="my-tasks.html">▤ Мои задачи</a><a href="create-task.html">＋ Новая задача</a><a href="profile.html">◉ Профиль</a></nav><div class="sidebar-spacer"></div><a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a></aside><main class="app-main"><div class="progress-wrap"><div class="progress3"><div class="stage done"><span class="n">✓</span>Задача</div><div class="progress-line done"></div><div class="stage active"><span class="n">2</span>Подбор</div><div class="progress-line"></div><div class="stage"><span class="n">3</span>Выбор</div></div></div><div class="app-content"><div class="page"><div class="layout"><section class="card"><div class="eyebrow">Запрос исполнителю</div><h1 class="hero-title" id="candidateName">Подготовка запроса</h1><p class="lead">Всем выбранным исполнителям отправляется одинаковый объём работ и одинаковый набор вопросов.</p><div class="request-box"><div class="request-head"><div><div class="label" style="margin:0">Статус запроса</div><span class="request-state" id="requestState">Не отправлен</span></div><button class="btn ghost" id="copyTop">Скопировать текст</button></div><div class="request-body" id="requestText"></div></div><div class="actions"><button class="btn primary large" id="sendBtn">Отправить запрос</button><a class="btn secondary large" href="candidates.html">← К кандидатам</a></div><div id="channelsWrap" class="hidden" style="margin-top:14px"><div class="label">Доступные каналы</div><div class="channels" id="channels"></div><div class="actions"><button class="btn secondary" id="markSent">Отметить как отправленный</button></div></div></section><aside><section class="card"><div class="eyebrow">Одинаковая структура</div><h2 class="section-title">Что запросим у каждого</h2><div class="understood"><div class="understood-row"><span class="ok">✓</span><span>стоимость работы и материалов</span></div><div class="understood-row"><span class="ok">✓</span><span>предлагаемое решение и материалы</span></div><div class="understood-row"><span class="ok">✓</span><span>срок и возможную дату старта</span></div><div class="understood-row"><span class="ok">✓</span><span>гарантию и договор</span></div><div class="understood-row"><span class="ok">✓</span><span>замер, допработы и исключения</span></div></div></section></aside></div></div></div></main></div><script>var task=sdGetTask()||sdDefaultTask(),id=new URLSearchParams(location.search).get('candidate')||'mosbalkon';var candidates={mosbalkon:{name:'МосБалкон',email:'zakaz-mosbalkon@yandex.ru',site:'https://www.mosbalkon.ru/'},otdelka:{name:'Отделка балконов',site:'https://balkonotdelka.ru/'},balkony:{name:'Балконы Цены',email:'zakaz@balkony-tseny.ru',site:'https://balkony-tseny.ru/'},strana:{name:'Страна Балконов',email:'info@stranabalkonov.ru',site:'https://stranabalkonov.ru/'},satels:{name:'Сателс-Мытищи',email:'elis_okna@mail.ru',site:'https://mytishchi.satels-okna.ru/'}};var c=candidates[id]||candidates.mosbalkon;document.getElementById('candidateName').textContent='Запрос для «'+c.name+'»';var lines=['Добрый день.','','Нужен предварительный расчёт по задаче'+(task.city?' в '+task.city:'')+'.','',task.description||task.scope,''];if(task.wallSize&&task.wallSize.indexOf('Уточнить')!==0)lines.push('Размер основной поверхности: '+task.wallSize+'.');if(task.openingSize&&task.openingSize.indexOf('Уточнить')!==0)lines.push('Размер проёма: '+task.openingSize+'.');if(task.window)lines.push('Важно: '+task.window+'.');if(task.finish)lines.push('Желаемый результат: '+task.finish+'.');lines.push('','Просьба указать:','— итоговую стоимость;','— работу отдельно;','— материалы отдельно, если возможно;','— предлагаемое решение и материалы;','— срок выполнения и когда можете начать;','— гарантию и будет ли договор;','— нужен ли замер и платный ли он;','— дополнительные работы;','— что не входит в стоимость.','','Если нужен больший объём работ, укажите его отдельным вариантом с отдельной ценой.');var message=lines.join('\n');document.getElementById('requestText').textContent=message;sdTrack('request_view',{candidate_id:id,category:task.category,city:task.city});var states=sdGetRequests(),state=states[id]||'not_sent',stateEl=document.getElementById('requestState');function renderState(){stateEl.className='request-state '+(state==='prepared'?'prepared':state==='sent'?'sent':'');stateEl.textContent=state==='prepared'?'Подготовлен':state==='sent'?'Отправлен':'Не отправлен'}function setState(v){state=v;states[id]=v;sdSetRequests(states);renderState()}renderState();function copyRequest(){navigator.clipboard.writeText(message).then(function(){alert('Текст скопирован');if(state!=='sent')setState('prepared');sdTrack('request_copy',{candidate_id:id,category:task.category,city:task.city})})}document.getElementById('copyTop').onclick=copyRequest;var channels=document.getElementById('channels');function addButton(label,href,eventName){var a=document.createElement('a');a.className='btn secondary channel';a.textContent=label;a.href=href;if(href.indexOf('http')===0){a.target='_blank';a.rel='noopener'}a.onclick=function(){if(state!=='sent')setState('prepared');sdTrack(eventName,{candidate_id:id,category:task.category,city:task.city})};channels.appendChild(a)}if(c.email)addButton('Почта', 'mailto:'+c.email+'?subject='+encodeURIComponent('Запрос на расчёт — '+(task.category||'задача'))+'&body='+encodeURIComponent(message),'request_email');addButton('Открыть сайт исполнителя',c.site,'request_site');var copy=document.createElement('button');copy.className='btn secondary channel';copy.textContent='Скопировать запрос';copy.onclick=copyRequest;channels.appendChild(copy);document.getElementById('sendBtn').onclick=function(){document.getElementById('channelsWrap').classList.remove('hidden');if(state!=='sent')setState('prepared')};document.getElementById('markSent').onclick=function(){setState('sent');sdTrack('request_mark_sent',{candidate_id:id,category:task.category,city:task.city});alert('Запрос отмечен как отправленный')};</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Подготовка запроса — Сделает</title>
+  <link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/prod-ui.css">
+  <script src="assets/prod-ui.js"></script>
+  <style>
+    .candidate-context{margin:12px 0 0;padding:12px 14px;border:1px solid #dce5f5;border-radius:15px;background:#f9fbff;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.candidate-context .type{display:inline-flex;padding:4px 8px;border-radius:999px;background:#f1f3f8;color:#596681;font:800 10px Montserrat}.candidate-context .type.private{background:#edf5ff;color:#2f67c7}.candidate-context .type.unverified{background:#fff6e2;color:#9a6512}.candidate-context .source{font-size:11px;color:#6c7894}.channel-note{font-size:11px;color:#6e7894;margin-top:7px}.channel-note.warn{padding:9px 11px;border-radius:12px;background:#fff8ea;border:1px solid #ecd7a3;color:#745d32}.request-error{padding:18px;border:1px solid #ecd7a3;border-radius:16px;background:#fff8ea}.request-error b,.request-error span{display:block}.request-error span{font-size:12px;margin-top:4px;color:#6c6046}
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/"><img src="assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a>
+      <nav class="app-nav">
+        <a href="my-tasks.html">▤ Мои задачи</a>
+        <a href="create-task.html">＋ Новая задача</a>
+        <a href="profile.html">◉ Профиль</a>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a>
+    </aside>
+
+    <main class="app-main">
+      <div class="progress-wrap">
+        <div class="progress3">
+          <a class="stage done" href="create-task.html?edit=1"><span class="n">✓</span>Задача</a>
+          <div class="progress-line done"></div>
+          <a class="stage active" href="candidates.html"><span class="n">2</span>Подбор</a>
+          <div class="progress-line"></div>
+          <div class="stage"><span class="n">3</span>Выбор</div>
+        </div>
+      </div>
+
+      <div class="app-content">
+        <div class="page">
+          <div class="layout">
+            <section class="card">
+              <div class="eyebrow">Запрос исполнителю</div>
+              <h1 class="hero-title" id="candidateName">Подготовка запроса</h1>
+              <p class="lead">Для сравнения предложений каждому исполнителю отправляем одинаковое ТЗ и одинаковый набор вопросов.</p>
+
+              <div class="candidate-context" id="candidateContext"></div>
+
+              <div class="request-box" id="requestBox">
+                <div class="request-head">
+                  <div>
+                    <div class="label" style="margin:0">Статус запроса</div>
+                    <span class="request-state" id="requestState">Не отправлен</span>
+                  </div>
+                  <button class="btn ghost" id="copyTop">Скопировать текст</button>
+                </div>
+                <div class="request-body" id="requestText"></div>
+              </div>
+
+              <div class="actions" id="mainActions">
+                <button class="btn primary large" id="sendBtn">Отправить запрос</button>
+                <a class="btn secondary large" href="candidates.html">← К кандидатам</a>
+              </div>
+
+              <div id="channelsWrap" class="hidden" style="margin-top:14px">
+                <div class="label">Доступные каналы</div>
+                <div class="channels" id="channels"></div>
+                <div class="channel-note" id="channelNote"></div>
+                <div class="actions"><button class="btn secondary" id="markSent">Отметить как отправленный</button></div>
+              </div>
+            </section>
+
+            <aside>
+              <section class="card">
+                <div class="eyebrow">Одинаковая структура</div>
+                <h2 class="section-title">Что запросим у каждого</h2>
+                <div class="understood">
+                  <div class="understood-row"><span class="ok">✓</span><span>стоимость работы и материалов</span></div>
+                  <div class="understood-row"><span class="ok">✓</span><span>предлагаемое решение и материалы</span></div>
+                  <div class="understood-row"><span class="ok">✓</span><span>срок и возможную дату старта</span></div>
+                  <div class="understood-row"><span class="ok">✓</span><span>гарантию и договор</span></div>
+                  <div class="understood-row"><span class="ok">✓</span><span>замер, допработы и исключения</span></div>
+                </div>
+              </section>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var task = sdGetTask() || sdDefaultTask();
+      var id = new URLSearchParams(location.search).get('candidate') || '';
+
+      function readJson(key) {
+        try { return JSON.parse(localStorage.getItem(key) || 'null'); }
+        catch (e) { return null; }
+      }
+
+      function hostOf(url) {
+        try { return new URL(url).hostname.replace(/^www\./, ''); }
+        catch (e) { return ''; }
+      }
+
+      function isPlatform(url) {
+        var h = hostOf(url);
+        return ['yandex.ru','yandex.com','uslugi.yandex.ru','avito.ru','2gis.ru'].some(function (x) {
+          return h === x || h.endsWith('.' + x);
+        });
+      }
+
+      function outbound(url, candidateId) {
+        try {
+          var u = new URL(url);
+          if (isPlatform(url)) return u.href;
+          u.searchParams.set('utm_source', 'onsdelaet.ru');
+          u.searchParams.set('utm_medium', 'referral');
+          u.searchParams.set('utm_campaign', 'candidate_outbound');
+          u.searchParams.set('utm_content', (candidateId || 'candidate') + '_request');
+          return u.href;
+        } catch (e) {
+          return url;
+        }
+      }
+
+      function typeInfo(type) {
+        if (type === 'private') return { label: 'Частный мастер', cls: 'private' };
+        if (type === 'unverified') return { label: 'Тип не подтверждён', cls: 'unverified' };
+        return { label: 'Компания', cls: 'company' };
+      }
+
+      function resolveCandidate() {
+        var selected = readJson('sdelaet.candidate.selected.v1');
+        var search = readJson('sdelaet.search.results.v1');
+        var list = search && Array.isArray(search.candidates) ? search.candidates : [];
+        var found = id ? list.find(function (x) { return x.id === id; }) : null;
+        if (found) return found;
+        if (selected && (!id || selected.id === id)) return selected;
+        return null;
+      }
+
+      function primarySource(candidate) {
+        var sources = candidate.sources || [];
+        return sources.find(function (s) { return s.kind === 'official_site'; }) ||
+          sources.find(function (s) { return s.kind === 'yandex_services'; }) ||
+          sources.find(function (s) { return s.kind === 'avito'; }) ||
+          sources[0] || null;
+      }
+
+      var candidate = resolveCandidate();
+      if (!candidate) {
+        document.getElementById('candidateName').textContent = 'Кандидат не найден';
+        document.getElementById('candidateContext').innerHTML = '<div class="request-error"><b>Нужно выбрать исполнителя из текущей подборки.</b><span>Резервные или вымышленные данные не подставляются.</span></div>';
+        document.getElementById('requestBox').classList.add('hidden');
+        document.getElementById('channelsWrap').classList.add('hidden');
+        document.getElementById('mainActions').innerHTML = '<a class="btn primary large" href="candidates.html">Вернуться к кандидатам</a>';
+        return;
+      }
+
+      id = candidate.id;
+      var type = typeInfo(candidate.type);
+      var source = primarySource(candidate);
+
+      document.getElementById('candidateName').textContent = 'Запрос для «' + candidate.name + '»';
+      document.getElementById('candidateContext').innerHTML =
+        '<span class="type ' + type.cls + '">' + type.label + '</span>' +
+        '<span class="source">Источник: ' + (source ? (source.label || source.host || hostOf(source.url)) : 'открытые источники') + '</span>';
+
+      var lines = [
+        'Добрый день.',
+        '',
+        'Нужен предварительный расчёт по задаче' + (task.city ? ' в ' + task.city : '') + '.',
+        '',
+        task.description || task.scope || 'Описание задачи приложено в ТЗ.',
+        ''
+      ];
+
+      if (task.wallSize && task.wallSize.indexOf('Уточнить') !== 0) {
+        lines.push('Размер основной поверхности: ' + task.wallSize + '.');
+      }
+      if (task.openingSize && task.openingSize.indexOf('Уточнить') !== 0) {
+        lines.push('Размер проёма: ' + task.openingSize + '.');
+      }
+      if (task.window) lines.push('Важно: ' + task.window + '.');
+      if (task.finish) lines.push('Желаемый результат: ' + task.finish + '.');
+
+      lines.push(
+        '',
+        'Просьба указать:',
+        '— итоговую стоимость;',
+        '— работу отдельно;',
+        '— материалы отдельно, если возможно;',
+        '— предлагаемое решение и материалы;',
+        '— срок выполнения и когда можете начать;',
+        '— гарантию и будет ли договор;',
+        '— нужен ли замер и платный ли он;',
+        '— дополнительные работы;',
+        '— что не входит в стоимость.',
+        '',
+        'Если для результата нужен больший объём работ, укажите его отдельным вариантом с отдельной ценой.'
+      );
+
+      var message = lines.join('\n');
+      document.getElementById('requestText').textContent = message;
+      sdTrack('request_view', { candidate_id: id, candidate_type: candidate.type, category: task.category, city: task.city });
+
+      var states = sdGetRequests();
+      var state = states[id] || 'not_sent';
+      var stateEl = document.getElementById('requestState');
+
+      function renderState() {
+        stateEl.className = 'request-state ' + (state === 'prepared' ? 'prepared' : state === 'sent' ? 'sent' : '');
+        stateEl.textContent = state === 'prepared' ? 'Подготовлен' : state === 'sent' ? 'Отправлен' : 'Не отправлен';
+      }
+
+      function setState(value) {
+        state = value;
+        states[id] = value;
+        sdSetRequests(states);
+        renderState();
+      }
+
+      function copyRequest() {
+        navigator.clipboard.writeText(message).then(function () {
+          alert('Текст скопирован');
+          if (state !== 'sent') setState('prepared');
+          sdTrack('request_copy', { candidate_id: id, candidate_type: candidate.type, category: task.category, city: task.city });
+        });
+      }
+
+      renderState();
+      document.getElementById('copyTop').onclick = copyRequest;
+
+      var channels = document.getElementById('channels');
+      var channelNote = document.getElementById('channelNote');
+      var channelCount = 0;
+
+      function addButton(label, href, eventName) {
+        if (!href) return;
+        var a = document.createElement('a');
+        a.className = 'btn secondary channel';
+        a.textContent = label;
+        a.href = href;
+        if (href.indexOf('http') === 0) {
+          a.target = '_blank';
+          a.rel = 'noopener';
+        }
+        a.onclick = function () {
+          if (state !== 'sent') setState('prepared');
+          sdTrack(eventName, { candidate_id: id, candidate_type: candidate.type, category: task.category, city: task.city });
+        };
+        channels.appendChild(a);
+        channelCount++;
+      }
+
+      if (candidate.phone) {
+        addButton('Позвонить', 'tel:' + String(candidate.phone).replace(/[^+\d]/g, ''), 'request_phone');
+      }
+
+      if (candidate.email) {
+        addButton(
+          'Почта',
+          'mailto:' + candidate.email + '?subject=' + encodeURIComponent('Запрос на расчёт — ' + (task.category || 'задача')) + '&body=' + encodeURIComponent(message),
+          'request_email'
+        );
+      }
+
+      if (candidate.website) {
+        addButton('Открыть сайт исполнителя', outbound(candidate.website, id), 'request_site');
+      } else if (source && source.kind === 'yandex_services') {
+        addButton('Открыть профиль исполнителя', source.url, 'request_profile');
+      } else if (source && source.kind === 'avito') {
+        addButton('Открыть объявление Avito', source.url, 'request_avito');
+      } else if (source && source.url) {
+        addButton('Открыть источник', source.url, 'request_source');
+      }
+
+      var copy = document.createElement('button');
+      copy.className = 'btn secondary channel';
+      copy.textContent = 'Скопировать запрос';
+      copy.onclick = copyRequest;
+      channels.appendChild(copy);
+
+      if (candidate.type === 'unverified') {
+        channelNote.className = 'channel-note warn';
+        channelNote.textContent = 'Для этого кандидата тип исполнителя пока не подтверждён. Перед договорённостью уточните, кто оказывает услугу и на каких реквизитах будет договор.';
+      } else if (!candidate.phone && !candidate.email) {
+        channelNote.textContent = 'Прямые контакты в открытых данных не найдены. Откройте профиль или источник и отправьте подготовленный текст через доступный там канал.';
+      } else {
+        channelNote.textContent = 'Отправка происходит только после вашего действия. «Сделает» не отмечает запрос отправленным автоматически.';
+      }
+
+      document.getElementById('sendBtn').onclick = function () {
+        document.getElementById('channelsWrap').classList.remove('hidden');
+        if (state !== 'sent') setState('prepared');
+        sdTrack('request_channels_open', { candidate_id: id, candidate_type: candidate.type });
+      };
+
+      document.getElementById('markSent').onclick = function () {
+        setState('sent');
+        sdTrack('request_mark_sent', { candidate_id: id, candidate_type: candidate.type, category: task.category, city: task.city });
+        alert('Запрос отмечен как отправленный');
+      };
+    })();
+  </script>
+</body>
+</html>
