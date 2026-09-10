@@ -1,0 +1,68 @@
+name: Deploy site to FirstVDS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - 'assets/**'
+      - 'docs/product/**'
+      - '.github/workflows/deploy-site-vds.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate frontend JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/category-engine.js
+          node --check assets/expert-agent.js
+          node --check assets/offer-normalizer.js
+          node --check assets/launch-v2.js
+
+      - name: Prepare SSH
+        shell: bash
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+          VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VDS_HOST" || { echo 'Missing VDS_HOST'; exit 1; }
+          test -n "$VDS_USER" || { echo 'Missing VDS_USER'; exit 1; }
+          test -n "$VDS_SSH_KEY" || { echo 'Missing VDS_SSH_KEY'; exit 1; }
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VDS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VDS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy current repository files
+        shell: bash
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+        run: |
+          set -euo pipefail
+          TARGET=/opt/sdelaet/current
+          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents'"
+          rsync -az --checksum \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'search-api/' \
+            ./ "$VDS_USER@$VDS_HOST:$TARGET/"
+
+      - name: Production smoke check
+        shell: bash
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+        run: |
+          set -euo pipefail
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/expert-agent.js && test -f /opt/sdelaet/current/assets/offer-normalizer.js && test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          echo 'FirstVDS deploy smoke check passed'
