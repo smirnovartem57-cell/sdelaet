@@ -1,38 +1,26 @@
-name: Deploy live contractor search API
+name: Configure OpenAI for Sdelaet API on FirstVDS
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  deploy:
+  configure:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      YANDEX_SEARCH_API_KEY: ${{ secrets.YANDEX_SEARCH_API_KEY }}
-      YANDEX_FOLDER_ID: ${{ secrets.YANDEX_FOLDER_ID }}
-      DGIS_API_KEY: ${{ secrets.DGIS_API_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      OPENAI_MODEL: gpt-5.4-mini
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Validate required secrets
+      - name: Validate repository secrets
         shell: bash
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+          VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
           missing=0
-          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID YANDEX_SEARCH_API_KEY YANDEX_FOLDER_ID OPENAI_API_KEY; do
+          for name in VDS_HOST VDS_USER VDS_SSH_KEY OPENAI_API_KEY; do
             if [ -z "${!name:-}" ]; then
               echo "Missing repository secret: $name"
               missing=1
@@ -40,87 +28,73 @@ jobs:
           done
           if [ "$missing" -ne 0 ]; then exit 1; fi
 
-      - name: Validate JavaScript
-        run: |
-          node --check search-api/core.mjs
-          node --check search-api/expert.mjs
-          node --check search-api/worker.js
-          node --check assets/live-search.js
-          node --check assets/ai-expert.js
-          node --check assets/expert-agent.js
-
-      - name: Create worker shell
-        working-directory: search-api
-        run: npx --yes wrangler@4 deploy
-
-      - name: Configure provider secrets
-        working-directory: search-api
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf '%s' "$YANDEX_SEARCH_API_KEY" | npx --yes wrangler@4 secret put YANDEX_SEARCH_API_KEY
-          printf '%s' "$YANDEX_FOLDER_ID" | npx --yes wrangler@4 secret put YANDEX_FOLDER_ID
-          printf '%s' "$OPENAI_API_KEY" | npx --yes wrangler@4 secret put OPENAI_API_KEY
-          printf '%s' "$OPENAI_MODEL" | npx --yes wrangler@4 secret put OPENAI_MODEL
-          if [ -n "${DGIS_API_KEY:-}" ]; then
-            printf '%s' "$DGIS_API_KEY" | npx --yes wrangler@4 secret put DGIS_API_KEY
-          fi
-
-      - name: Deploy configured worker
-        working-directory: search-api
-        run: npx --yes wrangler@4 deploy
-
-      - name: Resolve worker URL and health check
-        id: endpoint
-        shell: bash
-        run: |
-          set -euo pipefail
-          json="$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain")"
-          subdomain="$(printf '%s' "$json" | python -c "import json,sys; print((json.load(sys.stdin).get('result') or {}).get('subdomain') or '')")"
-          test -n "$subdomain"
-          worker_url="https://sdelaet-search-api.${subdomain}.workers.dev"
-          echo "worker_url=$worker_url" >> "$GITHUB_OUTPUT"
-          curl -fsS "$worker_url/health" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok'); assert d.get('providers',{}).get('openai') is True; print(d)"
-
-      - name: LLM expert smoke test
+      - name: Prepare SSH
         shell: bash
         env:
-          WORKER_URL: ${{ steps.endpoint.outputs.worker_url }}
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
         run: |
           set -euo pipefail
-          response="$(curl -fsS -X POST "$WORKER_URL/v1/expert/construction/analyze" -H 'content-type: application/json' --data '{"task":{"serviceCode":"BALCONY_INSULATION","description":"Хочу утеплить лоджию под кабинет, пользоваться зимой. Остекление уже есть, иногда появляется конденсат.","city":"Мытищи","goal":"Кабинет / использование зимой","window":"Остекление есть — сохранить","currentState":"Есть сырость / конденсат / промерзание","wallSize":"3,1 × 1,1 м"}}')"
-          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; e=d.get('expert') or {}; assert e.get('serviceCode')=='BALCONY_INSULATION',d; assert isinstance(e.get('technicalRisks'),list),d; assert e.get('contractorBrief'),d; print('model=',d.get('model')); print('risks=',len(e.get('technicalRisks',[])))"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VDS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VDS_HOST" >> ~/.ssh/known_hosts
 
-      - name: Live search smoke test
+      - name: Configure OpenAI secret on FirstVDS
         shell: bash
         env:
-          WORKER_URL: ${{ steps.endpoint.outputs.worker_url }}
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
-          response="$(curl -fsS -X POST "$WORKER_URL/v1/candidates/search" -H 'content-type: application/json' --data '{"categoryId":"balcony-insulation","category":"Утепление / отделка балкона","city":"Мытищи","description":"Нужно утеплить стену балкона вокруг окна","scope":"Одна стена балкона","executorPreference":"any","limit":5}')"
-          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('count',0)>0,d; print('count=',d.get('count'))"
+          local_key_file="$(mktemp)"
+          remote_key_file="$(ssh "$VDS_USER@$VDS_HOST" 'mktemp /tmp/sdelaet-openai-key.XXXXXX')"
+          trap 'rm -f "$local_key_file"; ssh "$VDS_USER@$VDS_HOST" "rm -f '"'"'$remote_key_file'"'"'" >/dev/null 2>&1 || true' EXIT
+          printf '%s\n' "$OPENAI_API_KEY" > "$local_key_file"
+          chmod 600 "$local_key_file"
+          scp -q "$local_key_file" "$VDS_USER@$VDS_HOST:$remote_key_file"
 
-      - name: Connect production frontend to worker
+          ssh "$VDS_USER@$VDS_HOST" "REMOTE_KEY_FILE='$remote_key_file' bash -s" <<'REMOTE'
+          set -euo pipefail
+          ENV_FILE=/etc/sdelaet/api.env
+          SERVICE=sdelaet-api.service
+
+          test "$(id -u)" -eq 0 || { echo 'VDS_USER must have root access'; exit 1; }
+          test -f "$ENV_FILE" || { echo "Missing $ENV_FILE"; exit 1; }
+          test -f "$REMOTE_KEY_FILE" || { echo 'Temporary OpenAI key file is missing'; exit 1; }
+          systemctl cat "$SERVICE" >/dev/null
+
+          IFS= read -r openai_key < "$REMOTE_KEY_FILE"
+          rm -f "$REMOTE_KEY_FILE"
+          test -n "$openai_key" || { echo 'OPENAI_API_KEY is empty'; exit 1; }
+
+          stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+          cp -a "$ENV_FILE" "${ENV_FILE}.bak-${stamp}"
+
+          tmp="$(mktemp /etc/sdelaet/api.env.XXXXXX)"
+          trap 'rm -f "$tmp"' EXIT
+          awk '!/^OPENAI_API_KEY=/' "$ENV_FILE" > "$tmp"
+          printf 'OPENAI_API_KEY=%s\n' "$openai_key" >> "$tmp"
+          chown --reference="$ENV_FILE" "$tmp"
+          chmod --reference="$ENV_FILE" "$tmp"
+          mv "$tmp" "$ENV_FILE"
+          trap - EXIT
+
+          systemctl restart "$SERVICE"
+          systemctl is-active --quiet "$SERVICE"
+
+          pid="$(systemctl show "$SERVICE" -p MainPID --value)"
+          test "$pid" -gt 0
+          tr '\0' '\n' < "/proc/$pid/environ" | grep -q '^OPENAI_API_KEY='
+          echo 'OPENAI_API_KEY is loaded by sdelaet-api.service'
+          REMOTE
+          rm -f "$local_key_file"
+          trap - EXIT
+
+      - name: Production health check
         shell: bash
-        env:
-          WORKER_URL: ${{ steps.endpoint.outputs.worker_url }}
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import os,re
-          from pathlib import Path
-          worker=os.environ['WORKER_URL']
-          path=Path('assets/live-search.js'); text=path.read_text(encoding='utf-8')
-          text,n=re.subn(r"const API_URL=window\.SDELAET_SEARCH_API\|\|'https://[^']+/v1/candidates/search';", "const API_URL=window.SDELAET_SEARCH_API||'"+worker+"/v1/candidates/search';", text, count=1)
-          if n!=1: raise SystemExit('Could not locate API_URL')
-          path.write_text(text,encoding='utf-8')
-          Path('assets/search-config.js').write_text("window.SDELAET_SEARCH_API='"+worker+"/v1/candidates/search';\nwindow.SDELAET_API_BASE='"+worker+"';\nwindow.SDELAET_OUTREACH_EMAIL_ENABLED=false;\n",encoding='utf-8')
-          PY
-          node --check assets/live-search.js
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/live-search.js assets/search-config.js
-          if ! git diff --cached --quiet; then
-            git commit -m "Connect live search and expert API"
-            git push
-          fi
+          response="$(curl -fsS --retry 5 --retry-delay 2 https://api.onsdelaet.ru/health)"
+          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('database')=='ok',d; assert d.get('providers',{}).get('yandexSearch') is True,d; print(d)"
