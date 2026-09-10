@@ -2,6 +2,10 @@ name: Configure OpenAI for Sdelaet API on FirstVDS
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-search-api.yml'
 
 jobs:
   configure:
