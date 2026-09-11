@@ -1,0 +1,6 @@
+(function(){
+  function uniq(arr){var out=[];(arr||[]).forEach(function(x){x=String(x||'').trim();if(x&&out.indexOf(x)<0)out.push(x)});return out}
+  function mergeScalar(base,next,key){return next&&next[key]!=null&&next[key]!==''?next[key]:base[key]}
+  function merge(base,followup,parser){base=base||{};followup=String(followup||'').trim();if(!followup)return JSON.parse(JSON.stringify(base));var parsed=parser&&parser.parse?parser.parse(followup):{};var out=JSON.parse(JSON.stringify(base));out.followUps=Array.isArray(out.followUps)?out.followUps:[];out.followUps.push({text:followup,at:new Date().toISOString(),parsed:parsed});['totalPrice','materialsPrice','materialsIncluded','leadTime','warranty','measurement','priceType'].forEach(function(k){out[k]=mergeScalar(out,parsed,k)});out.worksIncluded=uniq((out.worksIncluded||[]).concat(parsed.worksIncluded||[]));out.exclusions=uniq((out.exclusions||[]).concat(parsed.exclusions||[]));out.extraCosts=uniq((out.extraCosts||[]).concat(parsed.extraCosts||[]));out.rawResponse=[out.rawResponse,followup].filter(Boolean).join('\n\n[Уточнение исполнителя]\n');out.lastUpdatedAt=new Date().toISOString();return out}
+  window.sdOfferMerge={merge:merge};
+})();
