@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "1.0",
+  "profileVersion": "1.1",
   "categoryId": "balcony-insulation",
   "serviceCode": "BALCONY_INSULATION",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
   "subcategory": "WINDOWS_BALCONIES",
-  "status": "EXPERT_MODEL",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "autumn_winter_high",
   "intakePolicy": {"maxPrimaryActions": 5, "askOnlyIfChangesQuoteOrScope": true, "preferPhotos": true},
@@ -21,5 +21,6 @@
   "siteInspectionOnly": ["точная геометрия","состояние скрытых оснований","фактические монтажные швы","точный состав существующего пирога","несущая способность конструкций"],
   "contractorResponseRequired": ["totalPrice","workPrice","materialsPrice","worksIncluded","materialsSystem","exclusions","leadTime","measurement","warranty","extraCosts"],
   "normalization": {"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
-  "qaStatuses": ["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
+  "qaStatuses": ["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"],
+  "regressionSuite": {"file":"tests/balcony-insulation-regression.mjs","cases":8,"lastResult":"PASS","expertAgentVersion":"1.1","reviewerVersion":"1.1"}
 }
