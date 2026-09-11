@@ -7,6 +7,7 @@ on:
     paths:
       - '*.html'
       - 'assets/**'
+      - 'tests/**'
       - 'docs/product/**'
       - '.github/workflows/deploy-site-vds.yml'
 
@@ -25,6 +26,7 @@ jobs:
           node --check assets/expert-agent.js
           node --check assets/offer-normalizer.js
           node --check assets/launch-v2.js
+          node tests/balcony-insulation-regression.mjs
 
       - name: Prepare SSH
         shell: bash
@@ -50,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           TARGET=/opt/sdelaet/current
-          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents'"
+          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/tests'"
           rsync -az --checksum \
             --exclude '.git/' \
             --exclude '.github/' \
@@ -64,5 +66,5 @@ jobs:
           VDS_USER: ${{ secrets.VDS_USER }}
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/expert-agent.js && test -f /opt/sdelaet/current/assets/offer-normalizer.js && test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/expert-agent.js && test -f /opt/sdelaet/current/assets/offer-normalizer.js && test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/tests/balcony-insulation-regression.mjs && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
           echo 'FirstVDS deploy smoke check passed'
