@@ -6,7 +6,7 @@
 | Service code | Category id | Name | Lifecycle | Priority |
 |---|---|---|---|---|
 | `BALCONY_INSULATION` | `balcony-insulation` | Утепление балкона / лоджии | READY | P1 |
-| `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | EXPERT_MODEL | P1 |
+| `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | TESTING | P1 |
 | `WINDOW_REPLACEMENT` | `window-replacement` | Замена / установка окон | RESEARCH | P1 |
 | `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | RESEARCH | P1 |
 | `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | RESEARCH | P1 |
