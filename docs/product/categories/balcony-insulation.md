@@ -8,8 +8,8 @@ category: HOME_REPAIR
 subcategory: WINDOWS_BALCONIES
 name: Утепление балкона / лоджии
 shortName: Утепление балкона
-status: EXPERT_MODEL
-expertProfileVersion: 1.0
+status: READY
+expertProfileVersion: 1.1
 seasonality: autumn_winter_high
 launchPriority: P1
 ```
@@ -628,3 +628,15 @@ notes:
 - прогнать тестовые сценарии через Construction Domain Expert и Expert QA.
 
 До завершения этих проверок статус категории остаётся `EXPERT_MODEL`, а не `READY`.
+
+## Release gate — READY
+
+Статус READY зафиксирован 12.09.2026 после прохождения полного release gate.
+
+- Expert regression: PASS (8 сценариев).
+- Offer Parser / Follow-up / Merge / Normalizer: PASS.
+- Recommendation Status / Action Layer / Comparison Explainer: PASS.
+- End-to-end 	ests/balcony-e2e-regression.mjs: PASS.
+- Production deploy на /opt/sdelaet/current: PASS.
+- Основной production-flow не зависит от внешнего LLM.
+
