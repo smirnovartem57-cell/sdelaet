@@ -9,7 +9,7 @@
 | `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | TESTING | P1 |
 | `WINDOW_REPLACEMENT` | `window-replacement` | Замена / установка окон | TESTING | P1 |
 | `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | TESTING | P1 |
-| `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | RESEARCH | P1 |
+| `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | TESTING | P1 |
 | `BALCONY_LEAK_REPAIR` | `balcony-leak-repair` | Протечки / сырость балкона | RESEARCH | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.

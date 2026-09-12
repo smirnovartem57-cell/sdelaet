@@ -1,24 +1,53 @@
-# BALCONY_FINISHING — Research dossier
+# BALCONY_FINISHING — Expert Model
 
-Lifecycle: `RESEARCH`
+Lifecycle: `TESTING`
 Profile: `assets/category-profiles/balcony-finishing.json`
+Version: 1.1
 
-## Current working model
-JTBD: finish bare balcony surfaces; finish after insulation; redo old finish; obtain turnkey finish without choosing professional construction details.
+## JTBD
+Сделать внутреннюю отделку балкона/лоджии, переделать старую отделку либо завершить пространство после утепления так, чтобы сравнивались одинаковые составы работ, а декоративная обшивка не скрывала нерешённые дефекты.
 
-QUOTE_REQUIRED: desired scope; surfaces; current state; approximate size or unknown; photos; geography.
+## Client Intake
+QUOTE_REQUIRED: объём отделки; поверхности; текущее состояние; примерные размеры или unknown; фото; география. Вопросы не должны превращаться в техническую анкету.
 
-INSTALLATION_REQUIRED / site inspection: substrate condition/flatness; hidden defects; moisture; actual preparation/demolition volume; exact finish area.
+## Site inspection only
+Точная площадь; ровность и прочность основания; скрытые дефекты; влажность; фактический объём демонтажа; необходимость выравнивания; состояние и уровень пола.
 
-Contractor must propose/confirm: finish system/materials; substrate preparation; demolition; finishing scope by surface; junction/trim details; waste removal; measurement; warranty; exclusions; alternatives.
+## Contractor must specify
+Итоговую цену; работы/материалы; систему чистовой отделки; демонтаж; подготовку основания; конструкцию пола; исключения; доплаты; срок; замер; гарантию; условия договора; альтернативы.
 
-Estimate model must separate: demolition; substrate preparation; walls; ceiling; floor; materials; consumables; delivery/lifting; disposal; optional electrics/heating; extras.
+## Estimate model
+1. Демонтаж старой отделки/мебели.
+2. Очистка, грунтование, выравнивание и иная подготовка основания.
+3. Каркас/обрешётка/основание под отделку.
+4. Стены и потолок: материал + монтаж.
+5. Пол: черновое основание + финишное покрытие + плинтус.
+6. Откосы, подоконники, пороги при наличии.
+7. Доставка/подъём/вывоз.
+8. Утепление, электрика, тёплый пол, мебель — отдельными строками, если входят в задачу.
+9. Допработы после демонтажа — только как отдельный потенциальный риск/согласование.
+## Non-comparable offers
+- цена «от» против фиксированной сметы;
+- только декоративная обшивка против сметы с демонтажом и подготовкой;
+- стены/потолок против полного состава со стенами/потолком/полом;
+- материалы заказчика против материалов исполнителя без пересчёта;
+- утепление/электрика включены только в одной смете;
+- неизвестная подготовка основания или пола при заявленном полном объёме.
 
-Known red flags to validate in RESEARCH: covering wet/leaking substrate without eliminating cause; turnkey price that omits preparation/demolition; mixing insulation scope with finishing without separate lines; material substitution without explanation.
+## Technical risks / red flags
+- Нельзя закрывать отделкой сырость, плесень или активную протечку без устранения причины.
+- После демонтажа старой отделки возможны скрытые дефекты и дополнительные восстановительные работы.
+- Цена за м² без перечня подготовительных операций не является полной сметой.
+- «Под ключ» должно раскрываться по составу, а не приниматься как доказательство полноты.
+- Утепление и электрика не должны автоматически считаться частью отделки.
 
-Non-comparable examples: cosmetic cladding vs full substrate preparation; finish-only vs insulation+finish; labour-only vs materials included.
+## Search qualification
+Исполнитель должен реально выполнять внутреннюю отделку балконов/лоджий в Москве/МО, работать с подготовкой основания и полом, уметь дать смету с материалами/работами и не быть только продавцом окон/материалов.
 
-Search qualification draft: contractor must actually perform balcony/loggia interior finishing and be able to quote preparation/demolition separately.
+## Research evidence
+12.09.2026 изучены актуальные московские/МО предложения и прайс-листы. На рынке отдельно тарифицируются демонтаж, подготовка, обрешётка/основание, стены/потолок, черновой и чистовой пол, откосы/подоконники и дополнительные работы. Утепление/электрика часто являются отдельными опциями. Отдельно подтверждён риск закрытия сырого основания отделкой.
 
-## RESEARCH still required
-Verify material/manufacturer guidance, applicable technical requirements, representative Moscow/MO offers and estimates, hidden extras, moisture-related limitations, qualification signals and 12+ QA scenarios. Until complete, this file is not an approved Expert Model.
+## Testing gate
+- QA: `14/14 PASS`.
+- E2E: `PASS`, полная смета 72 000 ₽ выбрана вместо дешёвой цены «от 35 000 ₽» без подтверждённой комплектации.
+- `READY` пока заблокирован ручной пользовательской проверкой и общим production gate.

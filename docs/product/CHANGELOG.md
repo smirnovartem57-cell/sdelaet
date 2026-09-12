@@ -1,3 +1,10 @@
+# 2026-09-12 — BALCONY_FINISHING moved to TESTING
+- Completed category research on Moscow/MO estimate structure: demolition, substrate preparation, wall/ceiling finish, floor base/finish and optional extras.
+- Added finishing-specific parser, normalization and follow-up rules.
+- Added moisture gate: active dampness/mould/leak must be resolved before finish can be treated as comparable.
+- Added 14 QA scenarios: `14/14 PASS`.
+- Added full E2E: `PASS`, complete 72 000 ₽ offer selected over `от 35 000 ₽` incomplete offer.
+
 # CHANGELOG
 
 ## 2026-09-12 — WINDOW_REPAIR moved to TESTING

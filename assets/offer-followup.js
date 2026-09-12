@@ -21,6 +21,12 @@
       if(offer.reveals!==true)items.push('входят ли откосы');
       if(offer.flashing!==true)items.push('входит ли наружный отлив');
       if(!offer.warranty)items.push('гарантию на конструкцию и монтаж');
+    }else if(task.serviceCode==='BALCONY_FINISHING'){
+      if(!offer.finishSystem)items.push('какой материал / система чистовой отделки предлагается');
+      if(offer.preparationIncluded!==true)items.push('какая подготовка основания входит в стоимость');
+      if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
+      if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
+      if(!offer.warranty)items.push('гарантию на отделочные работы');
     }else if(task.serviceCode==='WINDOW_REPAIR'){
       if(!offer.diagnosis)items.push('какая причина неисправности подтверждена после осмотра');
       if(!offer.repairType)items.push('какой конкретно ремонт требуется');

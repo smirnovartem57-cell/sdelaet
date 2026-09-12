@@ -21,6 +21,10 @@
     var dg=raw.match(/(?:диагноз|причина|неисправность)\s*[:\-]?\s*([^.;\n]{3,120})/i);if(dg)o.diagnosis=dg[1].trim();
     if(/регулиров/.test(low)){o.repairType='adjustment';o.worksIncluded.push('регулировка')}else if(/замен.{0,15}уплотн/.test(low)){o.repairType='seal';o.worksIncluded.push('замена уплотнителя')}else if(/замен.{0,15}фурнитур|ремонт.{0,15}фурнитур/.test(low)){o.repairType='hardware';o.worksIncluded.push('ремонт / замена фурнитуры')}else if(/замен.{0,15}стеклопак/.test(low)){o.repairType='glass_unit';o.worksIncluded.push('замена стеклопакета')}else if(/гермет|монтажн.{0,8}шв/.test(low)){o.repairType='joint';o.worksIncluded.push('ремонт монтажного шва')}
     if(/запчаст|детал|комплектующ|фурнитур.{0,20}(вход|включ)|уплотнител.{0,20}(вход|включ)/.test(low))o.partsIncluded=true;else if(/запчаст|детал|комплектующ|фурнитур.{0,20}(отдельно|не вход)|уплотнител.{0,20}(отдельно|не вход)/.test(low))o.partsIncluded=false;
+    var fs=raw.match(/(?:отделка|материал(?:ы)? отделки|финиш)\s*[:\-]?\s*([^,;\n.]{2,80})/i);if(fs)o.finishSystem=fs[1].trim();
+    if(/пвх.?панел|вагонк|гипсокарт|ламинат|линолеум|плитк|краск/.test(low)&&!o.finishSystem){var fm=raw.match(/(ПВХ.?панел[^,;\n.]*|вагонк[^,;\n.]*|гипсокарт[^,;\n.]*|ламинат[^,;\n.]*|линолеум[^,;\n.]*|плитк[^,;\n.]*)/i);if(fm)o.finishSystem=fm[1].trim()}
+    if(/подготовк.{0,20}(основан|поверх)|выравнив|грунтов/.test(low)){o.preparationIncluded=true;o.worksIncluded.push('подготовка основания')}
+    if(/чернов.{0,10}пол|основан.{0,10}пол|стяжк|фанер|osb|осп/.test(low)){o.floorBaseIncluded=true;o.worksIncluded.push('основание пола')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}
