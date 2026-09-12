@@ -15,6 +15,7 @@ jobs:
         run: |
           set -euo pipefail
           for f in assets/category-engine.js assets/expert-agent.js assets/offer-parser.js assets/offer-followup.js assets/offer-merge.js assets/offer-normalizer.js assets/recommendation-status.js assets/recommendation-actions.js assets/comparison-explainer.js assets/launch-v2.js; do node --check "$f"; done
+          node tests/category-lifecycle-regression.mjs
           node tests/seasonal-category-routing-regression.mjs
           node tests/seasonal-expert-regression.mjs
           node tests/balcony-insulation-regression.mjs
@@ -41,12 +42,12 @@ jobs:
         run: |
           set -euo pipefail
           TARGET=/opt/sdelaet/current
-          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/tests'"
+          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/docs/product/EXPERT_MODELS' '$TARGET/tests'"
           rsync -az --checksum --exclude '.git/' --exclude '.github/' --exclude 'search-api/' ./ "$VDS_USER@$VDS_HOST:$TARGET/"
       - name: Production smoke check
         shell: bash
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/assets/category-profiles/window-replacement.json && test -f /opt/sdelaet/current/assets/category-profiles/window-repair.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-finishing.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-leak-repair.json && test -f /opt/sdelaet/current/tests/seasonal-category-routing-regression.mjs && test -f /opt/sdelaet/current/tests/seasonal-expert-regression.mjs && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/assets/category-profiles/window-replacement.json && test -f /opt/sdelaet/current/assets/category-profiles/window-repair.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-finishing.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-leak-repair.json && test -f /opt/sdelaet/current/tests/category-lifecycle-regression.mjs && test -f /opt/sdelaet/current/tests/seasonal-category-routing-regression.mjs && test -f /opt/sdelaet/current/tests/seasonal-expert-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_INSULATION.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
           echo 'FirstVDS deploy smoke check passed'
