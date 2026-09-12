@@ -1,9 +1,10 @@
 const CATEGORY_CONFIG = {
-  'balcony-insulation': {
-    companyQueries: ['утепление балконов', 'отделка балконов', 'ремонт балконов'],
-    privateQueries: ['утепление балкона', 'отделка балкона'],
-    keywords: ['балкон', 'лоджи', 'утепл', 'отделк', 'ремонт'],
-  },
+  'balcony-insulation': {companyQueries:['утепление балконов','утепление лоджий','ремонт балконов'],privateQueries:['утепление балкона','утепление лоджии'],keywords:['балкон','лоджи','утепл'],qualifyKeywords:['утепл','теплоизоляц']},
+  'balcony-glazing': {companyQueries:['остекление балконов','остекление лоджий','теплое остекление балкона'],privateQueries:['остекление балкона','остекление лоджии'],keywords:['балкон','лоджи','остекл'],qualifyKeywords:['остекл','окон','балкон','лоджи']},
+  'window-replacement': {companyQueries:['замена окон','установка пластиковых окон','окна пвх монтаж'],privateQueries:['установка окон','замена окон'],keywords:['окн','пвх','стеклопак'],qualifyKeywords:['окн','стеклопак','пвх']},
+  'window-repair': {companyQueries:['ремонт пластиковых окон','регулировка окон','ремонт фурнитуры окон'],privateQueries:['ремонт окон','регулировка окон'],keywords:['ремонт','окн','регулиров','фурнитур'],qualifyKeywords:['ремонт окон','регулиров','фурнитур','стеклопак','уплотн']},
+  'balcony-finishing': {companyQueries:['отделка балконов','ремонт балконов','внутренняя отделка лоджий'],privateQueries:['отделка балкона','ремонт балкона'],keywords:['балкон','лоджи','отделк','ремонт'],qualifyKeywords:['отделк','обшив','ремонт балкон','ремонт лоджи']},
+  'balcony-leak-repair': {companyQueries:['герметизация балконов','ремонт протечек балкона','герметизация швов балкона'],privateQueries:['герметизация балкона','ремонт протечки балкона'],keywords:['балкон','лоджи','гермет','протеч','шв'],qualifyKeywords:['гермет','протеч','гидроизоляц','шв','козыр','фасад']},
 };
 
 const PLATFORM_HOSTS = [
@@ -144,8 +145,23 @@ function mergeCandidates(candidates){
   return out;
 }
 
+export function qualifyCandidateForTask(c,task,configOverride){
+  const config=configOverride||CATEGORY_CONFIG[text(task&&task.categoryId)||''];
+  if(!config)return {status:'unsupported',qualified:false,reasons:['Категория не поддерживается поиском.']};
+  const hay=lower([c&&c.name,c&&c.description,c&&c.geo].join(' '));
+  const matched=(config.qualifyKeywords||config.keywords||[]).filter(k=>hay.includes(lower(k)));
+  const city=lower(task&&task.city); const geoKnown=lower(c&&c.geo);
+  const geoOk=!city||!geoKnown||geoKnown.includes(city)||city.includes(geoKnown);
+  const reasons=[]; if(matched.length)reasons.push('В данных кандидата подтверждена профильная специализация.');
+  if(geoOk)reasons.push('География не противоречит задаче.');
+  const qualified=matched.length>0&&geoOk;
+  return {status:qualified?'qualified':(matched.length?'geo_check':'needs_verification'),qualified,matchedKeywords:matched,reasons};
+}
+
 function scoreCandidate(c,task,config){
   let s=25; const why=[];
+  const qualification=qualifyCandidateForTask(c,task,config); c.qualification=qualification;
+  if(qualification.qualified){s+=15;why.push('Профильность исполнителя подтверждена найденными данными.');}else{s-=12;why.push('Профильность по этой услуге требует дополнительной проверки.');}
   const hay=lower([c.name,c.description,c.geo,c.query].join(' '));
   const kw=config.keywords.filter(k=>hay.includes(k));
   if(kw.length){s+=20;why.push('В найденных данных есть профильные слова по нужной услуге.');}
