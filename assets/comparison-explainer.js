@@ -1,6 +1,6 @@
 (function(){
   function uniq(a){return Array.from(new Set((a||[]).filter(Boolean)))}
-  function money(v){return v==null?'':Number(v).toLocaleString('ru-RU')+' ₽'}
+  function money(v){return v==null?'':Number(v).toLocaleString('ru-RU').replace(/[\u00a0\u202f]/g,' ')+' ₽'}
   function explain(offers,task){offers=offers||[];task=task||{};var winner=offers.find(function(o){return o.recommendationStatus==='RECOMMENDED'})||null;var comparable=offers.filter(function(o){return o.comparable&&o.comparableTotalPrice!=null&&o.recommendationStatus!=='HIGH_RISK'});if(!winner&&comparable.length)winner=comparable.slice().sort(function(a,b){return a.comparableTotalPrice-b.comparableTotalPrice})[0];if(!winner)return{winner:null,reasons:[],checks:['Получить хотя бы одно сопоставимое предложение с понятной итоговой ценой, составом работ и без критичных рисков.'],summary:'Пока нельзя выбрать лучший вариант: предложения требуют уточнения или дополнительной проверки.'};var others=offers.filter(function(o){return o!==winner}),reasons=[];
     var cheaperHeadline=others.find(function(o){return o.totalPrice!=null&&winner.totalPrice!=null&&o.totalPrice<winner.totalPrice&&o.recommendationStatus!=='RECOMMENDED'});if(cheaperHeadline)reasons.push('Есть более низкая заявленная цена ('+money(cheaperHeadline.totalPrice)+'), но этот вариант не получил статус «Рекомендуем» из-за неполных данных, несопоставимой комплектации или риска.');
     if(winner.materialsIncluded===true)reasons.push('Материалы включены в подтверждённую стоимость.');
