@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-12 — First 10-category system audit
+- Added permanent cross-category audit regression: 98 PASS / 0 FAIL.
+- Added mixed-category detection and split metadata; mixed tasks now require expert review before continuing as one brief.
+- Normalized the BALCONY_INSULATION profile to the current lifecycle/intake/truth-state contract.
+- Fixed common conversational routing gaps and refreshed project source-of-truth.
+- Full regression suite passed; manual user-facing review remains deferred before READY promotion.
+
 ## 2026-09-12 — MINOR_APARTMENT_REPAIR moved to TESTING
 - Split broad minor repair into mounting, furniture, door hardware, finish patch and mixed scenarios.
 - Engineering work inside a mixed task is routed to expert review / separate category.
@@ -20,7 +27,7 @@
 - Added 14 QA scenarios (`14/14 PASS`) and full E2E (`PASS`, complete 96 000 ₽ offer selected over `от 45 000 ₽`).
 - Added search qualification and production wiring; manual user-facing review remains deferred before READY.
 
-# 2026-09-12 — ELECTRICAL_INSTALLATION moved to TESTING
+## 2026-09-12 — ELECTRICAL_INSTALLATION moved to TESTING
 - Completed research and Expert Model for household electrical installation in apartments.
 - Added routing, expert rules, parser fields, normalization and follow-up for points/lines, cable specification, route/chasing, panel/protection and post-install checks.
 - Added 14 QA scenarios: `14/14 PASS`.
@@ -34,14 +41,13 @@
 - Added E2E: `PASS`; 18 000 ₽ diagnosed offer selected over `от 6 000 ₽` without confirmed cause.
 - Manual user-facing review remains deferred before READY.
 
-# 2026-09-12 — BALCONY_FINISHING moved to TESTING
+## 2026-09-12 — BALCONY_FINISHING moved to TESTING
 - Completed category research on Moscow/MO estimate structure: demolition, substrate preparation, wall/ceiling finish, floor base/finish and optional extras.
 - Added finishing-specific parser, normalization and follow-up rules.
 - Added moisture gate: active dampness/mould/leak must be resolved before finish can be treated as comparable.
 - Added 14 QA scenarios: `14/14 PASS`.
 - Added full E2E: `PASS`, complete 72 000 ₽ offer selected over `от 35 000 ₽` incomplete offer.
 
-# CHANGELOG
 
 ## 2026-09-12 — WINDOW_REPAIR moved to TESTING
 - Completed category-specific RESEARCH for Moscow/MO window repair offers and pricing structure.

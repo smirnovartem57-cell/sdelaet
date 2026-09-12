@@ -22,12 +22,10 @@ External LLM is not a required dependency for the core flow.
 - `RADIATOR_HEATING` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
 - `MINOR_APARTMENT_REPAIR` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
 
-Routing and deterministic expert rules exist for all seven categories. `BALCONY_GLAZING` and `WINDOW_REPLACEMENT` now have category-specific parsing, follow-up, normalization, QA and full comparison E2E. Manual user-facing review for TESTING categories is intentionally deferred.
-
-`WINDOW_REPAIR` now has diagnostic-first parsing, normalization and follow-up: offers are comparable only after the defect/cause and repair type are clear.
+Routing, deterministic expert rules, category-specific parsing, follow-up, normalization, search qualification and E2E coverage exist for all 10 launch categories. Mixed-category descriptions are now detected and marked for splitting into separate profile-specific Contractor Briefs. Manual user-facing review for TESTING categories is intentionally deferred.
 
 ## Current focus
-Continue category production work without waiting for manual review: `ELECTRICAL_INSTALLATION` is now in TESTING; next categories are plumbing, radiators/heating and minor apartment repair. Return to manual review before promoting TESTING categories to READY.
+Technical audit of the 10-category launch package. After automated audit fixes: run deferred manual user-facing review, resolve wording/UX findings, then promote eligible TESTING categories to READY. Production deployment remains a separate infrastructure gate.
 
 ## Release discipline
 A category is not ready because a form, routing rule or expert function exists. Follow `docs/product/CATEGORY_LIFECYCLE.md` and category-specific production gates.

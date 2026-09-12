@@ -9,19 +9,170 @@
   "status": "READY",
   "launchPriority": "P1",
   "seasonality": "autumn_winter_high",
-  "intakePolicy": {"maxPrimaryActions": 5, "askOnlyIfChangesQuoteOrScope": true, "preferPhotos": true},
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true,
+    "maxTriggeredQuestions": 3
+  },
   "intake": [
-    {"id":"goal","type":"choice","required":"QUOTE_REQUIRED","label":"Для чего нужен балкон или лоджия?","options":[["Кабинет / пользоваться зимой","winter_workspace"],["Круглый год","year_round_use"],["Просто сделать теплее","make_warmer"],["Утеплить и отделать под ключ","turnkey_finish"],["Исправить холод / промерзание","fix_cold_issue"]]},
-    {"id":"glazing","type":"choice","required":"QUOTE_REQUIRED","label":"Остекление уже есть?","options":[["Есть, оставить","exists_keep"],["Есть, но не знаю подходит ли","exists_assess"],["Нужно заменить / сделать новое","replace_or_new"],["Не знаю","unknown"]]},
-    {"id":"currentState","type":"choice","required":"QUOTE_REQUIRED","label":"Что сейчас на балконе?","options":[["Без отделки / бетон","bare"],["Есть отделка","finished"],["Уже утеплён, нужна переделка","old_insulation"],["Есть сырость / конденсат / промерзание","moisture_or_freezing"],["Не знаю","unknown"]]},
-    {"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},
-    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид и проблемные места","maxFiles":6}
+    {
+      "id": "goal",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "Для чего нужен балкон или лоджия?",
+      "options": [
+        [
+          "Кабинет / пользоваться зимой",
+          "winter_workspace"
+        ],
+        [
+          "Круглый год",
+          "year_round_use"
+        ],
+        [
+          "Просто сделать теплее",
+          "make_warmer"
+        ],
+        [
+          "Утеплить и отделать под ключ",
+          "turnkey_finish"
+        ],
+        [
+          "Исправить холод / промерзание",
+          "fix_cold_issue"
+        ]
+      ]
+    },
+    {
+      "id": "glazing",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "Остекление уже есть?",
+      "options": [
+        [
+          "Есть, оставить",
+          "exists_keep"
+        ],
+        [
+          "Есть, но не знаю подходит ли",
+          "exists_assess"
+        ],
+        [
+          "Нужно заменить / сделать новое",
+          "replace_or_new"
+        ],
+        [
+          "Не знаю",
+          "unknown"
+        ]
+      ]
+    },
+    {
+      "id": "currentState",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "Что сейчас на балконе?",
+      "options": [
+        [
+          "Без отделки / бетон",
+          "bare"
+        ],
+        [
+          "Есть отделка",
+          "finished"
+        ],
+        [
+          "Уже утеплён, нужна переделка",
+          "old_insulation"
+        ],
+        [
+          "Есть сырость / конденсат / промерзание",
+          "moisture_or_freezing"
+        ],
+        [
+          "Не знаю",
+          "unknown"
+        ]
+      ]
+    },
+    {
+      "id": "dimensions",
+      "type": "dimensions_or_unknown",
+      "required": "QUOTE_REQUIRED",
+      "label": "Примерные размеры известны?"
+    },
+    {
+      "id": "photos",
+      "type": "files",
+      "required": "RECOMMENDED",
+      "label": "Добавьте общий вид и проблемные места",
+      "maxFiles": 6
+    }
   ],
-  "truthStates": ["confirmed","observed","inferred","unknown","requires_site_inspection"],
-  "siteInspectionOnly": ["точная геометрия","состояние скрытых оснований","фактические монтажные швы","точный состав существующего пирога","несущая способность конструкций"],
-  "contractorResponseRequired": ["totalPrice","workPrice","materialsPrice","worksIncluded","materialsSystem","exclusions","leadTime","measurement","warranty","extraCosts"],
-  "normalization": {"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
-  "qaStatuses": ["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"],
-  "regressionSuite": {"file":"tests/balcony-insulation-regression.mjs","cases":8,"lastResult":"PASS","expertAgentVersion":"1.1","reviewerVersion":"1.1","e2eFile":"tests/balcony-e2e-regression.mjs","e2eResult":"PASS"},
-  "releaseGate": {"status":"PASS","categoryRegression":"PASS","offerPipelineRegression":"PASS","e2e":"PASS","productionDeploy":"PASS","productionPath":"/opt/sdelaet/current","readyAt":"2026-09-12"}
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "точная геометрия",
+    "состояние скрытых оснований",
+    "фактические монтажные швы",
+    "точный состав существующего пирога",
+    "несущая способность конструкций"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "workPrice",
+    "materialsPrice",
+    "worksIncluded",
+    "materialsSystem",
+    "exclusions",
+    "leadTime",
+    "measurement",
+    "warranty",
+    "extraCosts"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "materialsExcludedPenalty": "mark_non_comparable",
+    "missingCriticalWorks": "request_clarification"
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "regressionSuite": {
+    "file": "tests/balcony-insulation-regression.mjs",
+    "cases": 8,
+    "lastResult": "PASS",
+    "expertAgentVersion": "1.1",
+    "reviewerVersion": "1.1",
+    "e2eFile": "tests/balcony-e2e-regression.mjs",
+    "e2eResult": "PASS"
+  },
+  "releaseGate": {
+    "status": "PASS",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "productionDeploy": "PASS",
+    "productionPath": "/opt/sdelaet/current",
+    "readyAt": "2026-09-12"
+  },
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "PASS",
+    "ready": "PASS"
+  }
 }
