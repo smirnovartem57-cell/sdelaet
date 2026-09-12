@@ -12,16 +12,16 @@ External LLM is not a required dependency for the core flow.
 
 ## Category state
 - `BALCONY_INSULATION` — `READY`, reference category, profile v1.1.
-- `BALCONY_GLAZING` — `EXPERT_MODEL`, research PASS, profile v1.1.
+- `BALCONY_GLAZING` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.1.
 - `WINDOW_REPLACEMENT` — `RESEARCH`.
 - `WINDOW_REPAIR` — `RESEARCH`.
 - `BALCONY_FINISHING` — `RESEARCH`.
 - `BALCONY_LEAK_REPAIR` — `RESEARCH`.
 
-Routing and deterministic expert rules exist for all six categories. `BALCONY_GLAZING` now has completed category-specific research covering normative references, manufacturer guidance, market offer structure, estimate lines, hidden extras, risk rules and contractor qualification.
+Routing and deterministic expert rules exist for all six categories. `BALCONY_GLAZING` now has category-specific parsing, follow-up, normalization, QA and full comparison E2E. The full validation suite is green before the deployment step; GitHub VDS SSH secrets remain an infrastructure blocker for automatic deploy only.
 
 ## Current focus
-Move `BALCONY_GLAZING` through `EXPERT_MODEL → TESTING`: category-specific offer parsing/normalization/follow-up, 12+ QA scenarios, realistic offers, search qualification regression and full E2E. In parallel continue RESEARCH for the remaining four seasonal categories.
+Finish manual/user-facing review and realistic contractor-offer checks for `BALCONY_GLAZING`, then decide `TESTING → READY`. Continue RESEARCH for the remaining four seasonal categories.
 
 ## Release discipline
 A category is not ready because a form, routing rule or expert function exists. Follow `docs/product/CATEGORY_LIFECYCLE.md` and category-specific production gates.
