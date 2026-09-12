@@ -1,16 +1,11 @@
 {
-  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-glazing","serviceCode":"BALCONY_GLAZING","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"DRAFT","launchPriority":"P1","seasonality":"autumn_winter_high",
-  "intakePolicy":{"maxPrimaryActions":5,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
-  "intake":[
-    {"id":"goal","type":"choice","required":"QUOTE_REQUIRED","label":"Как планируете использовать балкон?","options":[["Тёплый / пользоваться зимой","warm"],["Холодное остекление от дождя и ветра","cold"],["Заменить старое остекление","replacement"],["Пока не знаю — подобрать вариант","recommend"]]},
-    {"id":"currentGlazing","type":"choice","required":"QUOTE_REQUIRED","label":"Что сейчас с остеклением?","options":[["Остекления нет","none"],["Есть старое — заменить","replace"],["Есть, нужна диагностика / ремонт","assess"],["Не знаю","unknown"]]},
-    {"id":"construction","type":"choice","required":"QUOTE_REQUIRED","label":"Балкон или лоджия?","options":[["Балкон","balcony"],["Лоджия","loggia"],["Не знаю","unknown"]]},
-    {"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},
-    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид, проём и фасад снаружи","maxFiles":6}
-  ],
-  "truthStates":["confirmed","observed","inferred","unknown","requires_site_inspection"],
+  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-glazing","serviceCode":"BALCONY_GLAZING","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"RESEARCH","launchPriority":"P1","seasonality":"autumn_winter_high",
+  "lifecycle":{"research":"IN_PROGRESS","expertModel":"PENDING","testing":"PENDING","ready":"PENDING"},
+  "intakePolicy":{"maxPrimaryActions":5,"maxTriggeredQuestions":3,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
+  "intake":[{"id":"goal","type":"choice","required":"QUOTE_REQUIRED","label":"Как планируете использовать балкон?","options":[["Тёплый / пользоваться зимой","warm"],["Холодное остекление от дождя и ветра","cold"],["Заменить старое остекление","replacement"],["Пока не знаю — подобрать вариант","recommend"]]},{"id":"currentGlazing","type":"choice","required":"QUOTE_REQUIRED","label":"Что сейчас с остеклением?","options":[["Остекления нет","none"],["Есть старое — заменить","replace"],["Есть, нужна диагностика / ремонт","assess"],["Не знаю","unknown"]]},{"id":"construction","type":"choice","required":"QUOTE_REQUIRED","label":"Балкон или лоджия?","options":[["Балкон","balcony"],["Лоджия","loggia"],["Не знаю","unknown"]]},{"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},{"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид, проём и фасад снаружи","maxFiles":6}],
+  "truthStates":["confirmed","claimed","observed","inferred","unknown","risk","requires_site_inspection"],
   "siteInspectionOnly":["точные монтажные размеры","состояние плиты и парапета","геометрия проёма","состояние монтажных швов","допустимость крепления и выноса"],
-  "contractorResponseRequired":["totalPrice","workPrice","materialsPrice","profileSystem","glassUnit","worksIncluded","exclusions","leadTime","measurement","warranty","extraCosts"],
+  "contractorResponseRequired":["totalPrice","workPrice","materialsPrice","profileSystem","glassUnit","worksIncluded","exclusions","leadTime","measurement","warranty","contractTerms","alternatives","extraCosts"],
   "normalization":{"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
   "qaStatuses":["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
 }
