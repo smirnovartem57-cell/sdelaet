@@ -1,0 +1,9 @@
+import fs from 'node:fs';import vm from 'node:vm';
+const code=fs.readFileSync(new URL('../assets/recommendation-actions.js',import.meta.url),'utf8');const sandbox={window:{}};vm.createContext(sandbox);vm.runInContext(code,sandbox);const api=sandbox.window.sdRecommendationActions;let fails=0;function ok(c,m){if(!c){fails++;console.error('FAIL',m)}else console.log('PASS',m)}
+const task={goal:'Кабинет / использование зимой'};
+let r=api.build({status:'RECOMMENDED'},{warranty:'2 года'},task);ok(r.status==='RECOMMENDED','recommended status preserved');ok(r.steps.some(x=>/замер/i.test(x)),'recommended asks for measurement');ok(r.steps.some(x=>/остеклен/i.test(x)),'winter recommended checks glazing');
+r=api.build({status:'GOOD_ALTERNATIVE'},{},task);ok(r.steps.some(x=>/резерв|финальн/i.test(x)),'alternative kept as reserve');
+r=api.build({status:'NEEDS_CLARIFICATION'},{gaps:['Не указана гарантия'],missingCriticalWorks:['пол']},task);ok(r.steps.some(x=>/гарант/i.test(x))&&r.steps.some(x=>/пол/i.test(x)),'clarification exposes missing items');
+r=api.build({status:'NOT_COMPARABLE'},{isFromPrice:true,materialsIncluded:false,materialsPrice:null,worksIncluded:[]},task);ok(r.steps.some(x=>/фиксирован/i.test(x))&&r.steps.some(x=>/материал/i.test(x)),'not comparable asks for fixed price and materials');
+r=api.build({status:'HIGH_RISK'},{exclusions:['без остекления']},task);ok(r.steps.some(x=>/предоплат/i.test(x))&&r.steps.some(x=>/риск|исключ/i.test(x)),'high risk action is defensive');
+ok(r.steps.length<=5,'actions remain concise');if(fails)process.exit(1);console.log('Recommendation actions regression: PASS');
