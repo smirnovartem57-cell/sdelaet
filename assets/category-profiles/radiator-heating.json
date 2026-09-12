@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "radiator-heating",
+  "serviceCode": "RADIATOR_HEATING",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "HEATING",
+  "status": "TESTING",
+  "launchPriority": "P1",
+  "seasonality": "autumn_winter_high",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "тип системы и схема подключения",
+    "состояние подводок и арматуры",
+    "необходимость отключения стояка",
+    "совместимость радиатора с системой"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "radiatorSpec",
+    "connectionScheme",
+    "valves",
+    "riserWork",
+    "demolition",
+    "installation",
+    "pressureTest",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty",
+    "contractTerms"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "scopeRequired": true,
+    "radiatorSpecRequired": true,
+    "pressureTestRequired": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-12",
+    "marketEvidence": "Moscow/MO radiator replacement and heating installation estimate structures reviewed",
+    "result": "PASS"
+  }
+}

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-12 — RADIATOR_HEATING moved to TESTING
+- Added radiator/heating Expert Model, parser, normalization and follow-up.
+- Added central-heating/riser safeguards; relocation and emergency leaks require expert review.
+- QA 14/14 PASS; E2E PASS, complete 42 000 ₽ offer selected over `от 18 000 ₽`.
+- Manual user-facing review remains deferred before READY.
+
 ## 2026-09-12 — PLUMBING_WORKS moved to TESTING
 - Completed research using SP 30.13330.2020 and Moscow/MO plumbing offer structures.
 - Added scenario-aware intake: repair, fixture replacement, water distribution, drainage and point relocation.

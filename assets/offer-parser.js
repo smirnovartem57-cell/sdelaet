@@ -49,6 +49,13 @@
     if(/демонтаж.{0,20}(труб|сантех|смесител|унитаз|раковин|ванн)/.test(low)){o.plumbingDemolitionIncluded=true;o.worksIncluded.push('демонтаж сантехники / труб')}
     if(/опрессов|гидравлическ.{0,15}испыт|провер.{0,20}герметич|испытан.{0,20}герметич/.test(low)){o.pressureTestIncluded=true;o.worksIncluded.push('опрессовка / проверка герметичности')}
     if(/смесител/.test(low))o.fixtureType='смеситель';else if(/унитаз|инсталляц/.test(low))o.fixtureType='унитаз / инсталляция';else if(/раковин|мойк/.test(low))o.fixtureType='раковина / мойка';else if(/ванн|душев/.test(low))o.fixtureType='ванна / душ';
+    var rm=raw.match(/(?:радиатор|батарея)\s*[:\-]?\s*([^.;\n]{3,80})/i);if(rm)o.radiatorSpec=rm[1].trim();
+    if(/боков.{0,12}подключ|диагональн.{0,12}подключ|нижн.{0,12}подключ/.test(low)){o.heatingConnection=/нижн/.test(low)?'нижнее':/диагональн/.test(low)?'диагональное':'боковое'}
+    if(/шаров.{0,10}кран|термостат|терморегулятор|клапан/.test(low)){o.heatingValvesIncluded=true;o.worksIncluded.push('арматура радиатора')}
+    if(/отключен.{0,15}стояк|слив.{0,15}стояк|работ.{0,15}стояк|замен.{0,15}стояк/.test(low)){o.riserWorkIncluded=true;o.worksIncluded.push('работы со стояком / отключение')}
+    if(/демонтаж.{0,20}(радиатор|батар)/.test(low)){o.radiatorDemolitionIncluded=true;o.worksIncluded.push('демонтаж радиатора')}
+    if(/монтаж.{0,20}(радиатор|батар)|установк.{0,20}(радиатор|батар)/.test(low)){o.radiatorInstallationIncluded=true;o.worksIncluded.push('монтаж радиатора')}
+    if(/опрессов|провер.{0,20}гермет|испытан.{0,15}давлен/.test(low)){o.heatingPressureTestIncluded=true;o.worksIncluded.push('опрессовка / проверка отопления')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

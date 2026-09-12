@@ -32,6 +32,14 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='RADIATOR_HEATING'){
+      var hs=((task.goal||'')+' '+(task.scope||'')+' '+(task.heatingJob||'')+' '+(task.system||'')+' '+(task.riserWork||'')).toLowerCase();
+      if(!offer.radiatorSpec&&!/valves/.test(hs))items.push('какой радиатор: модель / мощность / размер предлагается');
+      if(!offer.heatingConnection&&!/valves/.test(hs))items.push('какая схема подключения радиатора');
+      if(offer.heatingValvesIncluded!==true)items.push('какие краны / клапаны / комплектующие входят');
+      if(/central|стояк|yes/.test(hs)&&offer.riserWorkIncluded!==true)items.push('как организуется отключение и работы со стояком');
+      if(offer.heatingPressureTestIncluded!==true)items.push('входит ли опрессовка / проверка герметичности после монтажа');
+      if(!offer.warranty)items.push('гарантию на монтаж и соединения');
     }else if(task.serviceCode==='PLUMBING_WORKS'){
       var pscope=((task.goal||'')+' '+(task.scope||'')+' '+(task.plumbingJob||'')+' '+(task.currentState||'')).toLowerCase();
       var network=/(развод|water_distribution|relocation|труб|водоснабж)/.test(pscope),drain=/(канализац|drainage|слив)/.test(pscope),fixture=/(fixture|смесител|унитаз|раковин|ванн)/.test(pscope);
