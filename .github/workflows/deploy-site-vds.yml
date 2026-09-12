@@ -33,6 +33,10 @@ jobs:
           node tests/balcony-finishing-e2e-regression.mjs
           node tests/balcony-leak-repair-qa-regression.mjs
           node tests/balcony-leak-repair-e2e-regression.mjs
+          node tests/flooring-installation-qa-regression.mjs
+          node tests/flooring-installation-e2e-regression.mjs
+          node tests/flooring-installation-qa-regression.mjs
+          node tests/flooring-installation-e2e-regression.mjs
           node tests/tile-installation-qa-regression.mjs
           node tests/tile-installation-e2e-regression.mjs
           node tests/minor-apartment-repair-qa-regression.mjs

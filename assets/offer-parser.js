@@ -71,6 +71,16 @@
     if(/запил.{0,10}45|45.{0,10}град/.test(low)){o.miter45Included=true;o.worksIncluded.push('запил 45°')}
     if(/подрезк|резк.{0,15}плит|отверст.{0,15}(плит|керамогран)/.test(low)){o.tileCutsIncluded=true;o.worksIncluded.push('подрезка / отверстия')}
     if(/демонтаж.{0,15}(плит|кафел|керамогран)/.test(low)){o.tileDemolitionIncluded=true;o.worksIncluded.push('демонтаж плитки')}
+    var fa=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(fa)o.floorArea=Number(fa[1].replace(',','.'));
+    if(/spc|кварц.?винил/.test(low))o.flooringType='spc';else if(/линолеум/.test(low))o.flooringType='linoleum';else if(/паркетн.{0,10}доск|инженерн.{0,10}доск/.test(low))o.flooringType='engineered';else if(/ламинат/.test(low))o.flooringType='laminate';
+    if(/диагонал|елоч|ёлоч/.test(low))o.flooringLayout='complex';else if(/прям.{0,10}уклад|прям.{0,10}настил/.test(low))o.flooringLayout='straight';
+    if(/выравнив.{0,20}(пол|основан)|самонивелир|наливн.{0,10}пол|стяжк/.test(low)){o.floorBasePreparationIncluded=true;o.worksIncluded.push('подготовка / выравнивание пола')}
+    if(/подложк/.test(low)){o.underlayIncluded=true;o.worksIncluded.push('подложка')}
+    if(/пароизоляц/.test(low)){o.vaporBarrierIncluded=true;o.worksIncluded.push('пароизоляция')}
+    if(/укладк.{0,15}на клей|клеев.{0,10}(монтаж|уклад)|приклеив/.test(low)){o.floorGlueIncluded=true;o.installationMethod='glued'}else if(/замков.{0,15}(уклад|монтаж)|плавающ.{0,15}(уклад|монтаж)/.test(low)){o.installationMethod='floating'}
+    if(/демонтаж.{0,15}(ламинат|линолеум|паркет|покрыт)/.test(low)){o.floorDemolitionIncluded=true;o.worksIncluded.push('демонтаж старого покрытия')}
+    if(/монтаж.{0,12}плинтус|плинтус.{0,12}вход/.test(low)){o.skirtingIncluded=true;o.worksIncluded.push('плинтус')}
+    if(/порожк|порог.{0,10}(меж|двер)/.test(low)){o.thresholdsIncluded=true;o.worksIncluded.push('порожки')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

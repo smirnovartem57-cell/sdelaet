@@ -8,8 +8,8 @@ Expand the Home / Repair launch set only with services where technical scope, hi
 
 ## Package order
 1. `TILE_INSTALLATION` — плитка / керамогранит — TESTING.
-2. `FLOORING_INSTALLATION` — ламинат / SPC / линолеум / паркетная доска — NEXT.
-3. `WALL_FINISHING` — подготовка стен / покраска / обои — PLANNED.
+2. `FLOORING_INSTALLATION` — ламинат / SPC / линолеум / паркетная доска — TESTING.
+3. `WALL_FINISHING` — подготовка стен / покраска / обои — NEXT.
 4. `INTERIOR_DOORS` — установка / замена межкомнатных дверей — PLANNED.
 5. `STRETCH_CEILING` — натяжные потолки — PLANNED.
 

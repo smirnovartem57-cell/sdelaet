@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "flooring-installation",
+  "serviceCode": "FLOORING_INSTALLATION",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "FLOORING",
+  "status": "TESTING",
+  "launchPriority": "P2",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "ровность и прочность основания",
+    "влажность основания",
+    "высотные отметки и примыкания",
+    "необходимость подрезки дверей"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "flooringType",
+    "area",
+    "layout",
+    "basePreparation",
+    "underlayOrGlue",
+    "demolition",
+    "skirting",
+    "thresholds",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "sameFlooringTypeRequired": true,
+    "basePreparationRequired": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-13",
+    "marketEvidence": "Moscow/MO flooring estimates: base preparation, underlay/glue, demolition, skirting and thresholds reviewed",
+    "result": "PASS"
+  }
+}

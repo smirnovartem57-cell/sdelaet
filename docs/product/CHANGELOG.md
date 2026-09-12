@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-09-13 — FLOORING_INSTALLATION moved to TESTING
+- Added flooring-specific intake, expert rules, parser, normalization and follow-up.
+- Base preparation, underlay/glue, demolition, skirting and thresholds are normalized separately.
+- QA 15/15 PASS; E2E PASS, complete 42 000 ₽ offer selected over `от 22 000 ₽`.
+- Manual user-facing review remains deferred before READY.
+
+## 2026-09-13 — FLOORING_INSTALLATION moved to TESTING
+- Added flooring-specific intake, expert rules, parser, normalization and follow-up.
+- Base preparation, underlay/glue, demolition, skirting and thresholds are normalized separately.
+- QA 15/15 PASS; E2E PASS, complete 42 000 ₽ offer selected over `от 22 000 ₽`.
+- Manual user-facing review remains deferred before READY.
+
 ## 2026-09-13 — Category Production Agent Pipeline
 - Added 8 independent dev-time category agents and deterministic orchestrator.
 - Added safe RESEARCH scaffold for new categories.

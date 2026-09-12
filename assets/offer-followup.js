@@ -32,6 +32,14 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='FLOORING_INSTALLATION'){
+      var fs=((task.goal||'')+' '+(task.scope||'')+' '+(task.flooringType||'')+' '+(task.layout||'')+' '+(task.baseState||'')).toLowerCase();
+      if(!offer.flooringType)items.push('какой тип покрытия учтён');
+      if(!offer.flooringLayout)items.push('какая схема укладки учтена');
+      if(offer.floorBasePreparationIncluded!==true)items.push('входит ли подготовка / выравнивание основания');
+      if(/laminate|spc|engineered|ламинат|паркет|кварц/.test(fs)&&offer.underlayIncluded!==true&&offer.installationMethod!=='glued')items.push('входит ли подложка и какая');
+      if(/engineered|паркет/.test(fs)&&!offer.installationMethod)items.push('укладка замковая или клеевая');
+      if(/old_covering|стар.{0,10}покрыт/.test(fs)&&offer.floorDemolitionIncluded!==true)items.push('входит ли демонтаж старого покрытия');
     }else if(task.serviceCode==='TILE_INSTALLATION'){
       var ts=((task.goal||'')+' '+(task.scope||'')+' '+(task.tileZone||'')+' '+(task.tileFormat||'')+' '+(task.layout||'')).toLowerCase();
       if(!offer.tileFormat)items.push('какой тип и формат плитки учтён в цене');
