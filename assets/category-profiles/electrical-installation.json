@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "electrical-installation",
+  "serviceCode": "ELECTRICAL_INSTALLATION",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "ELECTRICAL",
+  "status": "TESTING",
+  "launchPriority": "P1",
+  "seasonality": "year_round_autumn_high",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "intake": [
+    {
+      "id": "electricalJob",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "Что нужно сделать?",
+      "options": [["Добавить розетки / выключатели", "points"], ["Провести новую линию для техники", "new_line"], ["Частично заменить проводку", "partial_rewire"], ["Полностью заменить проводку", "full_rewire"], ["Собрать / переделать электрощит", "panel"]]
+    },
+    {
+      "id": "objectState",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "В каком состоянии помещение?",
+      "options": [["Идёт ремонт, стены открыты", "renovation"], ["Есть чистовая отделка", "finished"], ["Новостройка без отделки", "shell"], ["Не знаю / разное состояние", "unknown"]]
+    },
+    {
+      "id": "quantity",
+      "type": "text",
+      "required": "QUOTE_REQUIRED",
+      "label": "Примерный объём?",
+      "placeholder": "Например: 8 розеток и 2 новые линии / вся квартира 55 м²"
+    },
+    {
+      "id": "panelScope",
+      "type": "choice",
+      "required": "TRIGGERED",
+      "label": "Нужно работать с электрощитом?",
+      "options": [["Да, собрать / заменить", "replace"], ["Нужно добавить автоматы / защиту", "extend"], ["Нет, щит не трогаем", "none"], ["Пусть проверит электрик", "inspect"]]
+    },
+    {
+      "id": "photos",
+      "type": "files",
+      "required": "RECOMMENDED",
+      "label": "Добавьте фото щита и мест работ, если возможно",
+      "maxFiles": 8
+    }
+  ],
+  "truthStates": ["confirmed", "claimed", "observed", "inferred", "unknown", "risk", "requires_site_inspection"],
+  "siteInspectionOnly": [
+    "состояние существующей проводки и соединений",
+    "фактическая трасса и возможность скрытой прокладки",
+    "материал стен и объём штробления",
+    "состояние и резерв квартирного щита",
+    "наличие и состояние PE-проводника",
+    "результаты электрических измерений"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "materialsIncluded",
+    "workScope",
+    "pointsAndLines",
+    "cableSpec",
+    "routeAndChasing",
+    "panelAndProtection",
+    "testing",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty",
+    "contractTerms",
+    "alternatives"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "scopeRequired": true,
+    "cableSpecRequiredForNewLines": true,
+    "protectionSpecRequiredForPanelOrRewire": true,
+    "testingRequiredForPanelOrRewire": true
+  },
+  "qaStatuses": ["PASS", "PASS_WITH_WARNINGS", "NEEDS_DATA", "EXPERT_REVIEW_REQUIRED", "FAIL"],
+  "research": {
+    "completedAt": "2026-09-12",
+    "marketEvidence": "Moscow/MO electrician offers and current wiring/protection requirements reviewed",
+    "result": "PASS"
+  }
+}
