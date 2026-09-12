@@ -18,6 +18,8 @@ jobs:
           node tests/category-lifecycle-regression.mjs
           node tests/seasonal-category-routing-regression.mjs
           node tests/seasonal-expert-regression.mjs
+          node tests/balcony-glazing-qa-regression.mjs
+          node tests/balcony-glazing-e2e-regression.mjs
           node tests/balcony-insulation-regression.mjs
           node tests/offer-parser-regression.mjs
           node tests/offer-followup-regression.mjs
@@ -49,5 +51,5 @@ jobs:
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/assets/category-profiles/window-replacement.json && test -f /opt/sdelaet/current/assets/category-profiles/window-repair.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-finishing.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-leak-repair.json && test -f /opt/sdelaet/current/tests/category-lifecycle-regression.mjs && test -f /opt/sdelaet/current/tests/seasonal-category-routing-regression.mjs && test -f /opt/sdelaet/current/tests/seasonal-expert-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_INSULATION.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/tests/balcony-glazing-qa-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-glazing-e2e-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_GLAZING.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
           echo 'FirstVDS deploy smoke check passed'
