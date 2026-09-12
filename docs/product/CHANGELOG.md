@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-12 — WINDOW_REPAIR moved to TESTING
+- Completed category-specific RESEARCH for Moscow/MO window repair offers and pricing structure.
+- Approved diagnostic-first Expert Model: adjustment, seals, hardware, glass unit and mounting-joint repairs are normalized as different scopes.
+- Added repair-specific parser fields: visit/diagnostic cost, diagnosis, repair type and parts inclusion.
+- Added category-specific normalization/follow-up, 14 QA scenarios (`14/14 PASS`) and full E2E (`PASS`, winner 2 500 ₽ over advertising price `от 800 ₽`).
+- Manual user-facing review is deferred; `READY` remains blocked.
+
 ## 2026-09-12 — WINDOW_REPLACEMENT moved to TESTING
 - Completed category-specific RESEARCH and approved Expert Model v1.1 for `WINDOW_REPLACEMENT`.
 - Extended Offer Parser with window-specific fields: profile system, glass unit, hardware, sill, reveals and exterior flashing.

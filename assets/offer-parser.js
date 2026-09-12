@@ -16,6 +16,11 @@
     var pm=raw.match(/(?:профиль|профильная\s+система)\s*[:\-]?\s*([^,;\n.]{2,60})/i);if(pm)o.profileSystem=pm[1].trim();else{var brand=raw.match(/\b(VEKA|REHAU|KBE|Deceuninck|Melke|Provedal|Alutech|АЛЮТЕХ)\b[^,;\n.]*/i);if(brand)o.profileSystem=brand[0].trim()}
     var gu=raw.match(/(?:стеклопакет|заполнение)\s*[:\-]?\s*([^;\n.]{2,80})/i);if(gu)o.glassUnit=gu[1].trim();else{var chambers=low.match(/(однокамерн|двухкамерн|трехкамерн)[^,;\n.]*(?:стеклопакет)?/i);if(chambers)o.glassUnit=chambers[0].trim()}
     var hw=raw.match(/(?:фурнитура|hardware)\s*[:\-]?\s*([^,;\n.]{2,60})/i);if(hw)o.hardware=hw[1].trim();else{var hwb=raw.match(/\b(Roto|Maco|Siegenia|Winkhaus|Vorne)\b[^,;\n.]*/i);if(hwb)o.hardware=hwb[0].trim()}
+    var vc=raw.match(/(?:выезд|диагностик)[^\n]{0,25}?(\d[\d\s\u00a0.]*)\s*(?:₽|руб)/i);if(vc)o.visitCost=Number(vc[1].replace(/[\s\u00a0.]/g,''));
+    if(/(?:выезд|диагностик)[^\n]{0,25}(?:бесплат|0\s*(?:₽|руб))/.test(low)){o.visitCost=0;o.diagnosticsIncluded=true}else if(/диагност|осмотр мастера/.test(low))o.diagnosticsIncluded=true;
+    var dg=raw.match(/(?:диагноз|причина|неисправность)\s*[:\-]?\s*([^.;\n]{3,120})/i);if(dg)o.diagnosis=dg[1].trim();
+    if(/регулиров/.test(low)){o.repairType='adjustment';o.worksIncluded.push('регулировка')}else if(/замен.{0,15}уплотн/.test(low)){o.repairType='seal';o.worksIncluded.push('замена уплотнителя')}else if(/замен.{0,15}фурнитур|ремонт.{0,15}фурнитур/.test(low)){o.repairType='hardware';o.worksIncluded.push('ремонт / замена фурнитуры')}else if(/замен.{0,15}стеклопак/.test(low)){o.repairType='glass_unit';o.worksIncluded.push('замена стеклопакета')}else if(/гермет|монтажн.{0,8}шв/.test(low)){o.repairType='joint';o.worksIncluded.push('ремонт монтажного шва')}
+    if(/запчаст|детал|комплектующ|фурнитур.{0,20}(вход|включ)|уплотнител.{0,20}(вход|включ)/.test(low))o.partsIncluded=true;else if(/запчаст|детал|комплектующ|фурнитур.{0,20}(отдельно|не вход)|уплотнител.{0,20}(отдельно|не вход)/.test(low))o.partsIncluded=false;
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

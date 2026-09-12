@@ -22,6 +22,8 @@ jobs:
           node tests/balcony-glazing-e2e-regression.mjs
           node tests/window-replacement-qa-regression.mjs
           node tests/window-replacement-e2e-regression.mjs
+          node tests/window-repair-qa-regression.mjs
+          node tests/window-repair-e2e-regression.mjs
           node tests/balcony-insulation-regression.mjs
           node tests/offer-parser-regression.mjs
           node tests/offer-followup-regression.mjs

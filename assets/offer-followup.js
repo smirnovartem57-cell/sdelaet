@@ -21,6 +21,13 @@
       if(offer.reveals!==true)items.push('входят ли откосы');
       if(offer.flashing!==true)items.push('входит ли наружный отлив');
       if(!offer.warranty)items.push('гарантию на конструкцию и монтаж');
+    }else if(task.serviceCode==='WINDOW_REPAIR'){
+      if(!offer.diagnosis)items.push('какая причина неисправности подтверждена после осмотра');
+      if(!offer.repairType)items.push('какой конкретно ремонт требуется');
+      if(offer.visitCost==null&&!offer.diagnosticsIncluded)items.push('сколько стоит выезд / диагностика');
+      if(offer.partsIncluded==null)items.push('входят ли необходимые детали / запчасти в цену');
+      if(!offer.warranty)items.push('гарантию на выполненный ремонт и заменённые детали');
+      if(/конден|запот/i.test((task.goal||'')+' '+(task.scope||'')+' '+(task.description||''))&&!/(вентиляц|влажност|температур|причин)/i.test(offer.rawResponse||''))items.push('как будет диагностирована причина конденсата, а не только само окно');
     }else{
       if(!offer.leadTime)items.push('срок выполнения');
       if(!offer.warranty)items.push('гарантию на работы');

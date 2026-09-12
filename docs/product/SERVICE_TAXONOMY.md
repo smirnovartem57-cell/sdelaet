@@ -8,7 +8,7 @@
 | `BALCONY_INSULATION` | `balcony-insulation` | Утепление балкона / лоджии | READY | P1 |
 | `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | TESTING | P1 |
 | `WINDOW_REPLACEMENT` | `window-replacement` | Замена / установка окон | TESTING | P1 |
-| `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | RESEARCH | P1 |
+| `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | TESTING | P1 |
 | `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | RESEARCH | P1 |
 | `BALCONY_LEAK_REPAIR` | `balcony-leak-repair` | Протечки / сырость балкона | RESEARCH | P1 |
 

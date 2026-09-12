@@ -1,24 +1,58 @@
-# WINDOW_REPAIR — Research dossier
+# WINDOW_REPAIR — Expert Model
 
-Lifecycle: `RESEARCH`
+Lifecycle: `TESTING`
 Profile: `assets/category-profiles/window-repair.json`
+Version: `1.1`
+Research completed: 2026-09-12
 
-## Current working model
-JTBD: remove draft/cold spots; restore opening/closing; replace or repair hardware/seals/glass units; diagnose condensation; planned adjustment/maintenance.
+## JTBD
+Пользователь хочет устранить конкретную неисправность окна без ненужной полной замены: продувание/холод, плохое открывание и закрывание, неисправность фурнитуры, износ уплотнителя, повреждение стеклопакета, конденсат либо профилактическая регулировка.
 
-QUOTE_REQUIRED: symptom; number of affected windows; photos; geography. Age/urgency are optional and should be asked only if they change selection or scope.
+## Минимальный Client Intake
+`QUOTE_REQUIRED`: симптом, количество проблемных окон, фото, география. Возраст окна и срочность спрашиваются только если реально меняют выбор исполнителя или объём.
 
-INSTALLATION_REQUIRED / site inspection: sash geometry; pressure/adjustment; hardware condition; seals; mounting joints; exact cause of condensation or draft.
+## Главный принцип категории
+Сначала диагностируется причина и узел, затем сравнивается цена конкретного ремонта. Регулировка, замена уплотнителя, ремонт фурнитуры, замена стеклопакета и ремонт монтажного шва — разные объёмы и не должны сравниваться как одинаковые предложения.
 
-Contractor must confirm after diagnosis: defect/cause; work required; parts/consumables; visit/diagnostic fee; total price or clear pricing basis; exclusions; extras; warranty.
+## Что определяется только после осмотра
+Геометрия створки, прижим, состояние фурнитуры и уплотнителя, состояние монтажного шва, точный дефект стеклопакета, причина продувания и причина конденсата.
+## Что должен вернуть исполнитель
+- стоимость выезда / диагностики;
+- подтверждённую причину неисправности;
+- конкретный вид ремонта;
+- стоимость работ;
+- входят ли детали / расходники;
+- возможные дополнительные работы;
+- срок;
+- гарантию на работы и заменённые детали.
 
-Estimate model must separate: visit/diagnostics; adjustment; hardware; seals; glass unit; installation-joint repair; consumables; delivery; extras.
+## Сметная модель
+Отдельно нормализуются: диагностика/выезд, регулировка, уплотнитель, фурнитура/детали, стеклопакет, ремонт монтажного шва, расходники, доставка крупногабаритных деталей, дополнительные работы.
 
-Known red flags to validate in RESEARCH: diagnosing condensation as a window failure without checking ventilation/humidity/temperature; replacing the whole window before diagnosing a local defect; vague 'from' pricing without visit cost and parts.
+## Red flags
+- диагноз по телефону без осмотра;
+- автоматическая рекомендация полной замены окна при локальной неисправности;
+- конденсат объявляется дефектом окна без проверки влажности, вентиляции и температурного режима;
+- цена «от» без стоимости выезда и деталей;
+- предложение не указывает, что именно ремонтируется.
+## Несопоставимые предложения
+- регулировка vs замена фурнитуры;
+- работа без деталей vs работа с деталями;
+- замена стеклопакета vs замена всего окна;
+- ремонт монтажного шва vs регулировка створки;
+- цена после диагностики vs рекламная цена «от».
 
-Non-comparable examples: adjustment-only vs hardware replacement; quote with parts included vs labour only; glass-unit replacement vs full frame replacement.
+## Search qualification
+Исполнитель должен явно заниматься ремонтом/регулировкой окон в Москве и МО, выполнять диагностику, работать с фурнитурой/уплотнителями/стеклопакетами и уметь выдавать понятную расшифровку работ. Компании, которые только продают новые окна, не проходят qualification.
 
-Search qualification draft: profile must explicitly include window repair/adjustment rather than only new-window sales.
+## Research evidence
+Проверены актуальные предложения московского рынка: отдельно тарифицируются регулировка, уплотнитель, фурнитура, стеклопакеты, герметизация/монтажные швы и диагностика; часть цен указана «от» и уточняется после осмотра. Это подтверждает обязательность diagnostic-first normalization.
 
-## RESEARCH still required
-Verify technical guidance and component manufacturer instructions, representative Moscow/MO repair offers, normal visit/diagnostic pricing patterns, common parts/exclusions, risk boundaries and 12+ QA scenarios. Until complete, this file is not an approved Expert Model.
+## Testing gate
+- category routing: PASS;
+- deterministic Expert QA: PASS;
+- category-specific parser/normalizer/follow-up: PASS;
+- QA regression: `14/14 PASS`;
+- full E2E: PASS;
+- manual user-facing review: deferred;
+- READY: blocked.
