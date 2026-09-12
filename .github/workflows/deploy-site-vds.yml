@@ -29,6 +29,7 @@ jobs:
           node --check assets/offer-merge.js
           node --check assets/offer-normalizer.js
           node --check assets/recommendation-status.js
+          node --check assets/recommendation-actions.js
           node --check assets/comparison-explainer.js
           node --check assets/launch-v2.js
           node tests/balcony-insulation-regression.mjs
@@ -37,6 +38,7 @@ jobs:
           node tests/offer-merge-regression.mjs
           node tests/balcony-offer-normalizer-regression.mjs
           node tests/recommendation-status-regression.mjs
+          node tests/recommendation-actions-regression.mjs
           node tests/comparison-explainer-regression.mjs
 
       - name: Prepare SSH
@@ -77,5 +79,5 @@ jobs:
           VDS_USER: ${{ secrets.VDS_USER }}
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/expert-agent.js && test -f /opt/sdelaet/current/assets/offer-parser.js && test -f /opt/sdelaet/current/assets/offer-followup.js && test -f /opt/sdelaet/current/assets/offer-merge.js && test -f /opt/sdelaet/current/assets/offer-normalizer.js && test -f /opt/sdelaet/current/assets/recommendation-status.js && test -f /opt/sdelaet/current/assets/comparison-explainer.js && test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/tests/balcony-insulation-regression.mjs && test -f /opt/sdelaet/current/tests/offer-parser-regression.mjs && test -f /opt/sdelaet/current/tests/offer-followup-regression.mjs && test -f /opt/sdelaet/current/tests/offer-merge-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-offer-normalizer-regression.mjs && test -f /opt/sdelaet/current/tests/recommendation-status-regression.mjs && test -f /opt/sdelaet/current/tests/comparison-explainer-regression.mjs && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/expert-agent.js && test -f /opt/sdelaet/current/assets/offer-parser.js && test -f /opt/sdelaet/current/assets/offer-followup.js && test -f /opt/sdelaet/current/assets/offer-merge.js && test -f /opt/sdelaet/current/assets/offer-normalizer.js && test -f /opt/sdelaet/current/assets/recommendation-status.js && test -f /opt/sdelaet/current/assets/recommendation-actions.js && test -f /opt/sdelaet/current/assets/comparison-explainer.js && test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/tests/balcony-insulation-regression.mjs && test -f /opt/sdelaet/current/tests/offer-parser-regression.mjs && test -f /opt/sdelaet/current/tests/offer-followup-regression.mjs && test -f /opt/sdelaet/current/tests/offer-merge-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-offer-normalizer-regression.mjs && test -f /opt/sdelaet/current/tests/recommendation-status-regression.mjs && test -f /opt/sdelaet/current/tests/recommendation-actions-regression.mjs && test -f /opt/sdelaet/current/tests/comparison-explainer-regression.mjs && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
           echo 'FirstVDS deploy smoke check passed'
