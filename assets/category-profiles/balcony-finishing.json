@@ -1,16 +1,11 @@
 {
-  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-finishing","serviceCode":"BALCONY_FINISHING","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"DRAFT","launchPriority":"P1","seasonality":"autumn_winter_high",
-  "intakePolicy":{"maxPrimaryActions":5,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
-  "intake":[
-    {"id":"scope","type":"choice","required":"QUOTE_REQUIRED","label":"Что нужно сделать?","options":[["Только внутренняя отделка","finish_only"],["Отделка после утепления","after_insulation"],["Утепление + отделка под ключ","turnkey"],["Переделать старую отделку","redo"]]},
-    {"id":"surfaces","type":"choice","required":"QUOTE_REQUIRED","label":"Что отделываем?","options":[["Стены + потолок + пол","all"],["Стены и потолок","walls_ceiling"],["Только стены","walls"],["Не знаю — предложить вариант","recommend"]]},
-    {"id":"currentState","type":"choice","required":"QUOTE_REQUIRED","label":"Что сейчас на балконе?","options":[["Бетон / без отделки","bare"],["Есть старая отделка","old_finish"],["Уже утеплён","insulated"],["Не знаю","unknown"]]},
-    {"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},
-    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид стен, пола и потолка","maxFiles":6}
-  ],
-  "truthStates":["confirmed","observed","inferred","unknown","requires_site_inspection"],
+  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-finishing","serviceCode":"BALCONY_FINISHING","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"RESEARCH","launchPriority":"P1","seasonality":"autumn_winter_high",
+  "lifecycle":{"research":"IN_PROGRESS","expertModel":"PENDING","testing":"PENDING","ready":"PENDING"},
+  "intakePolicy":{"maxPrimaryActions":5,"maxTriggeredQuestions":3,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
+  "intake":[{"id":"scope","type":"choice","required":"QUOTE_REQUIRED","label":"Что нужно сделать?","options":[["Только внутренняя отделка","finish_only"],["Отделка после утепления","after_insulation"],["Утепление + отделка под ключ","turnkey"],["Переделать старую отделку","redo"]]},{"id":"surfaces","type":"choice","required":"QUOTE_REQUIRED","label":"Что отделываем?","options":[["Стены + потолок + пол","all"],["Стены и потолок","walls_ceiling"],["Только стены","walls"],["Не знаю — предложить вариант","recommend"]]},{"id":"currentState","type":"choice","required":"QUOTE_REQUIRED","label":"Что сейчас на балконе?","options":[["Бетон / без отделки","bare"],["Есть старая отделка","old_finish"],["Уже утеплён","insulated"],["Не знаю","unknown"]]},{"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},{"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид стен, пола и потолка","maxFiles":6}],
+  "truthStates":["confirmed","claimed","observed","inferred","unknown","risk","requires_site_inspection"],
   "siteInspectionOnly":["ровность оснований","скрытые дефекты","влажность основания","точная площадь отделки","необходимость демонтажа и подготовки"],
-  "contractorResponseRequired":["totalPrice","workPrice","materialsPrice","finishSystem","worksIncluded","demolitionIncluded","exclusions","leadTime","measurement","warranty","extraCosts"],
+  "contractorResponseRequired":["totalPrice","workPrice","materialsPrice","finishSystem","worksIncluded","demolitionIncluded","exclusions","leadTime","measurement","warranty","contractTerms","alternatives","extraCosts"],
   "normalization":{"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
   "qaStatuses":["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
 }
