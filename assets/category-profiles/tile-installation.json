@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "tile-installation",
+  "serviceCode": "TILE_INSTALLATION",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "TILE_FINISH",
+  "status": "TESTING",
+  "launchPriority": "P2",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "ровность и прочность основания",
+    "влажность основания",
+    "геометрия углов и примыканий",
+    "фактический объём подрезок / отверстий"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "area",
+    "tileFormat",
+    "layout",
+    "substratePreparation",
+    "waterproofing",
+    "grout",
+    "cuts",
+    "demolition",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "sameFormatAndLayoutRequired": true,
+    "wetAreaWaterproofingRequired": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-13",
+    "marketEvidence": "Moscow/MO tile estimates: preparation, waterproofing, format/layout, 45-degree miters and epoxy grout reviewed",
+    "result": "PASS"
+  }
+}

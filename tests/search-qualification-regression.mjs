@@ -6,7 +6,8 @@ const cases=[
 ['electrical-installation','Электромонтаж, замена проводки и сборка электрощита','Москва'],
 ['plumbing-works','Сантехнические работы, разводка труб и канализация','Москва'],
 ['radiator-heating','Замена радиаторов отопления, батареи и стояки','Москва'],
-['minor-apartment-repair','Мелкий ремонт, муж на час, сборка мебели и навес полок','Москва']
+['minor-apartment-repair','Мелкий ремонт, муж на час, сборка мебели и навес полок','Москва'],
+['tile-installation','Укладка плитки, керамогранита, затирка и облицовка','Москва']
 ];
 let fail=0;
 for(const [categoryId,description,geo] of cases){
@@ -15,4 +16,4 @@ for(const [categoryId,description,geo] of cases){
 }
 const bad=qualifyCandidateForTask({name:'Репетитор',description:'английский язык',geo:'Москва'},{categoryId:'window-repair',city:'Москва'});if(bad.qualified){console.log('FAIL unrelated candidate qualified');fail++;}else console.log('PASS unrelated candidate rejected');
 const geo=qualifyCandidateForTask({name:'Окна',description:'ремонт окон регулировка',geo:'Казань'},{categoryId:'window-repair',city:'Москва'});if(geo.qualified){console.log('FAIL wrong geo qualified');fail++;}else console.log('PASS wrong geo rejected');
-if(fail)process.exit(1);console.log('Search qualification regression: 22/22 PASS');
+if(fail)process.exit(1);console.log('Search qualification regression: 24/24 PASS');

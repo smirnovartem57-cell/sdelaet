@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-13 — TILE_INSTALLATION moved to TESTING
+- Started second category package after first-10 system audit.
+- Added tile-specific intake, expert rules, parser, normalization and follow-up.
+- Wet rooms require waterproofing; format/layout/preparation/grout/cuts are normalized separately.
+- QA 14/14 PASS; E2E PASS, complete 118 000 ₽ offer selected over `от 65 000 ₽`.
+- Manual user-facing review remains deferred before READY.
+
 ## 2026-09-12 — First 10-category system audit
 - Added permanent cross-category audit regression: 98 PASS / 0 FAIL.
 - Added mixed-category detection and split metadata; mixed tasks now require expert review before continuing as one brief.

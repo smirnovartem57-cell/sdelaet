@@ -62,6 +62,15 @@
     if(/сверлен|бурен|отверст/.test(low)){o.drillingIncluded=true;o.worksIncluded.push('сверление / крепление')}
     if(/сборк.{0,15}(мебел|шкаф|стол|комод)/.test(low)){o.furnitureAssemblyIncluded=true;o.worksIncluded.push('сборка мебели')}
     if(/регулиров.{0,15}(двер|петл)|замен.{0,15}(ручк|замок|петл)/.test(low)){o.doorHardwareIncluded=true;o.worksIncluded.push('двери / фурнитура')}
+    var ta=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(ta)o.tileArea=Number(ta[1].replace(',','.'));
+    var tf=raw.match(/(?:плитк|керамогранит)\s*[:\-]?\s*(\d{2,4}\s*[xх×]\s*\d{2,4})/i);if(tf)o.tileFormat=tf[1].replace(/[xх]/gi,'×');else if(/крупноформат|60\s*[xх×]\s*120/.test(low))o.tileFormat='large';
+    if(/диагонал|елоч|ёлоч|рисунк|смещени/.test(low))o.tileLayout='complex';else if(/прям.{0,10}расклад/.test(low))o.tileLayout='straight';
+    if(/выравнив.{0,20}(стен|пол|основан)|штукатур|стяжк/.test(low)){o.substratePreparationIncluded=true;o.worksIncluded.push('подготовка основания')}
+    if(/гидроизоляц/.test(low)){o.waterproofingIncluded=true;o.worksIncluded.push('гидроизоляция')}
+    if(/эпоксидн.{0,10}затир/.test(low))o.groutType='epoxy';else if(/затир/.test(low))o.groutType='cement_or_standard';
+    if(/запил.{0,10}45|45.{0,10}град/.test(low)){o.miter45Included=true;o.worksIncluded.push('запил 45°')}
+    if(/подрезк|резк.{0,15}плит|отверст.{0,15}(плит|керамогран)/.test(low)){o.tileCutsIncluded=true;o.worksIncluded.push('подрезка / отверстия')}
+    if(/демонтаж.{0,15}(плит|кафел|керамогран)/.test(low)){o.tileDemolitionIncluded=true;o.worksIncluded.push('демонтаж плитки')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

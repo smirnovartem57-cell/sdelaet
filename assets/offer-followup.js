@@ -32,6 +32,14 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='TILE_INSTALLATION'){
+      var ts=((task.goal||'')+' '+(task.scope||'')+' '+(task.tileZone||'')+' '+(task.tileFormat||'')+' '+(task.layout||'')).toLowerCase();
+      if(!offer.tileFormat)items.push('какой тип и формат плитки учтён в цене');
+      if(!offer.tileLayout)items.push('какая раскладка учтена в цене');
+      if(offer.substratePreparationIncluded!==true)items.push('входит ли подготовка / выравнивание основания');
+      if(/wet_room|ванн|сануз|душ/.test(ts)&&offer.waterproofingIncluded!==true)items.push('входит ли гидроизоляция пола и мокрых зон');
+      if(!offer.groutType)items.push('какая затирка входит');
+      if(offer.tileCutsIncluded!==true)items.push('входят ли подрезки и отверстия');
     }else if(task.serviceCode==='MINOR_APARTMENT_REPAIR'){
       var ms=((task.goal||'')+' '+(task.scope||'')+' '+(task.repairJob||'')+' '+(task.workList||'')).toLowerCase();
       if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.fastenersSpecified!==true)items.push('какой крепёж / расходники входят и кто их предоставляет');

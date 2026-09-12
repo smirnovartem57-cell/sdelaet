@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 const allowed=new Set(['IDEA','RESEARCH','EXPERT_MODEL','TESTING','READY','ACTIVE','SEASONAL_PAUSE']);
-const files=['balcony-insulation.json','balcony-glazing.json','window-replacement.json','window-repair.json','balcony-finishing.json','balcony-leak-repair.json','electrical-installation.json','plumbing-works.json','radiator-heating.json','minor-apartment-repair.json'];
+const files=['balcony-insulation.json','balcony-glazing.json','window-replacement.json','window-repair.json','balcony-finishing.json','balcony-leak-repair.json','electrical-installation.json','plumbing-works.json','radiator-heating.json','minor-apartment-repair.json','tile-installation.json'];
 let fail=0;
 for(const file of files){
   const p=new URL('../assets/category-profiles/'+file,import.meta.url);
