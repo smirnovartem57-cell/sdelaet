@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-09-12 — WINDOW_REPLACEMENT moved to TESTING
+- Completed category-specific RESEARCH and approved Expert Model v1.1 for `WINDOW_REPLACEMENT`.
+- Extended Offer Parser with window-specific fields: profile system, glass unit, hardware, sill, reveals and exterior flashing.
+- Added window-specific normalization and follow-up rules. Offers without confirmed profile/glass/hardware, installation, required dismantling, sill, reveals or flashing are not treated as fully comparable.
+- Added 14 QA scenarios; result `14/14 PASS`.
+- Added `WINDOW_REPLACEMENT` E2E with three realistic offers; result `PASS`, selecting the complete 89 000 ₽ offer over a cheaper `от 55 000 ₽` headline.
+- Regression checks for `BALCONY_GLAZING` and `BALCONY_INSULATION` remained green.
+- Lifecycle changed `EXPERT_MODEL → TESTING`; manual user-facing review remains deferred and `READY` is still blocked.
+
 ## 2026-09-12 — BALCONY_GLAZING moved to TESTING
 - Added glazing-specific Offer Parser fields: profile system, glass unit, opening scheme, parapet reinforcement and external water-management elements.
 - Added glazing-specific normalization and follow-up rules.
