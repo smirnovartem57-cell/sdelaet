@@ -174,5 +174,10 @@
     "expertModel": "PASS",
     "testing": "PASS",
     "ready": "PASS"
+  },
+  "research": {
+    "completedAt": "2026-09-12",
+    "marketEvidence": "Reference category research and real-offer validation completed during BALCONY_INSULATION production cycle",
+    "result": "PASS"
   }
 }

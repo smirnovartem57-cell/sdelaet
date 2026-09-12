@@ -1,0 +1,3 @@
+import {exists,result,runNode} from '../helpers.mjs';
+export const meta={id:'REGRESSION_SCENARIO_AGENT',name:'Regression Scenario Agent',stage:'TESTING'};
+export function run(ctx){const id=ctx.profile.categoryId,ev=[],act=[];const qa=`tests/${id}-qa-regression.mjs`,e2e=`tests/${id}-e2e-regression.mjs`;const special=id==='balcony-insulation'?['tests/balcony-insulation-regression.mjs','tests/balcony-e2e-regression.mjs']:null;const files=special||[qa,e2e];for(const f of files){if(!exists(f)){act.push(`Добавить regression test: ${f}.`);continue}const r=runNode(f);if(!r.ok)act.push(`Исправить failing test ${f}.`);else ev.push(`${f}=PASS`)}return result(meta.id,act.length?'BLOCK':'PASS',act.length?'Regression gate не закрыт.':'Category QA/E2E regression зелёный.',ev,act)}

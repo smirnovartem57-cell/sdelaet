@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-13 — Category Production Agent Pipeline
+- Added 8 independent dev-time category agents and deterministic orchestrator.
+- Added safe RESEARCH scaffold for new categories.
+- Added Release Controller: no automatic TESTING→READY without manual review + production gate.
+- Added agent pipeline regression and CI gate; no external LLM dependency.
+
 ## 2026-09-13 — TILE_INSTALLATION moved to TESTING
 - Started second category package after first-10 system audit.
 - Added tile-specific intake, expert rules, parser, normalization and follow-up.

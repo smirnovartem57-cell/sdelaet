@@ -28,5 +28,8 @@ Routing, deterministic expert rules, category-specific parsing, follow-up, norma
 ## Current focus
 Technical audit of the 10-category launch package. After automated audit fixes: run deferred manual user-facing review, resolve wording/UX findings, then promote eligible TESTING categories to READY. Production deployment remains a separate infrastructure gate.
 
+## Category Production Agents
+Dev-time pipeline из 8 независимых ролей введён в проект: research, domain expert, intake, contractor brief, comparison, technical QA, regression и release controller. Новые категории должны проходить `node tools/category-agents/run.mjs --all --ci`; внешняя LLM не является обязательной зависимостью.
+
 ## Release discipline
 A category is not ready because a form, routing rule or expert function exists. Follow `docs/product/CATEGORY_LIFECYCLE.md` and category-specific production gates.

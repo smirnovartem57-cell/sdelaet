@@ -1,0 +1,4 @@
+import {exists,expertModelPath,result} from '../helpers.mjs';
+
+export const meta={id:'CATEGORY_RESEARCH_AGENT',name:'Category Research Agent',stage:'RESEARCH'};
+export function run(ctx){const p=ctx.profile,ev=[],act=[];if(p.lifecycle?.research!=='PASS')act.push('Закрыть research-gate и зафиксировать PASS в profile lifecycle.');else ev.push('profile.lifecycle.research=PASS');if(!p.research?.completedAt)act.push('Зафиксировать дату завершения исследования.');else ev.push(`research.completedAt=${p.research.completedAt}`);if(!p.research?.marketEvidence)act.push('Добавить описание рыночных/технических источников исследования.');else ev.push('marketEvidence present');const model=expertModelPath(p.serviceCode);if(!exists(model))act.push(`Создать ${model}`);else ev.push('Expert Model file exists');const status=act.length?'BLOCK':'PASS';return result(meta.id,status,status==='PASS'?'Исследовательский пакет формально закрыт.':'Исследовательский пакет неполный.',ev,act)}

@@ -17,6 +17,8 @@ jobs:
           for f in assets/category-engine.js assets/expert-agent.js assets/offer-parser.js assets/offer-followup.js assets/offer-merge.js assets/offer-normalizer.js assets/recommendation-status.js assets/recommendation-actions.js assets/comparison-explainer.js assets/launch-v2.js search-api/core.mjs; do node --check "$f"; done
           node tests/category-lifecycle-regression.mjs
           node tests/category-system-audit-regression.mjs
+          node tests/category-agent-pipeline-regression.mjs
+          node tools/category-agents/run.mjs --all --ci
           node tests/production-category-wiring-regression.mjs
           node tests/search-qualification-regression.mjs
           node tests/seasonal-category-routing-regression.mjs
