@@ -23,9 +23,9 @@ const rawC='48 000 ₽, материалы включены. Утепление 
 let offerA=w.sdOfferParser.parse(rawA);offerA.candidateName='Исполнитель A';
 let offerB=w.sdOfferParser.parse(rawB);offerB.candidateName='Исполнитель B';
 let offerC=w.sdOfferParser.parse(rawC);offerC.candidateName='Исполнитель C';
-const fu=w.sdOfferFollowup.generate(offerA,task);
+const fu=w.sdOfferFollowup.build(task,offerA);
 ok(fu.needed===true,'incomplete offer must require follow-up');
-ok(fu.questions.length>0,'follow-up must contain questions');
+ok(fu.items.length>0,'follow-up must contain questions');
 const replyA='Материалы будут стоить 18 000 ₽. Потолок и пол тоже входят, герметизация примыканий входит. Остекление проверим на замере. Гарантия 1 год.';
 offerA=w.sdOfferMerge.merge(offerA,replyA,w.sdOfferParser);
 const ranked=w.sdOfferNormalizer.rank([offerA,offerB,offerC],task);
