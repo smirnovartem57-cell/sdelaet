@@ -32,6 +32,17 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='PLUMBING_WORKS'){
+      var pscope=((task.goal||'')+' '+(task.scope||'')+' '+(task.plumbingJob||'')+' '+(task.currentState||'')).toLowerCase();
+      var network=/(развод|water_distribution|relocation|труб|водоснабж)/.test(pscope),drain=/(канализац|drainage|слив)/.test(pscope),fixture=/(fixture|смесител|унитаз|раковин|ванн)/.test(pscope);
+      if(network&&!offer.pipeSystem)items.push('какая система труб и фитингов предлагается');
+      if(network&&!offer.distributionScheme)items.push('какая схема разводки предлагается — коллекторная или тройниковая');
+      if(network&&offer.waterDistributionIncluded!==true)items.push('что именно входит в разводку водоснабжения');
+      if(network&&offer.pressureTestIncluded!==true)items.push('будет ли выполнена опрессовка / проверка герметичности после монтажа');
+      if(drain&&offer.drainageIncluded!==true)items.push('что входит в канализацию / слив и как определяется трасса');
+      if(fixture&&!offer.fixtureType)items.push('какой именно прибор / узел устанавливается или заменяется');
+      if(/замен/.test(pscope)&&offer.plumbingDemolitionIncluded!==true)items.push('входит ли демонтаж существующего оборудования');
+      if(!offer.warranty)items.push('гарантию на сантехнические работы и соединения');
     }else if(task.serviceCode==='ELECTRICAL_INSTALLATION'){
       var scope=((task.goal||'')+' '+(task.scope||'')+' '+(task.electricalJob||'')+' '+(task.panelScope||'')).toLowerCase();
       if(!offer.cableSpec&&/(лини|проводк|розет|выключател)/.test(scope))items.push('какой кабель и сечение закладываются');

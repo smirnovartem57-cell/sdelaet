@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-12 — PLUMBING_WORKS moved to TESTING
+- Completed research using SP 30.13330.2020 and Moscow/MO plumbing offer structures.
+- Added scenario-aware intake: repair, fixture replacement, water distribution, drainage and point relocation.
+- Added plumbing-specific parser/normalizer/follow-up for points/meters, pipe system, distribution scheme, drainage, demolition/chasing and pressure testing.
+- Added safety/expert-review gates for active emergency leaks and riser/common-building work.
+- Added 14 QA scenarios (`14/14 PASS`) and full E2E (`PASS`, complete 96 000 ₽ offer selected over `от 45 000 ₽`).
+- Added search qualification and production wiring; manual user-facing review remains deferred before READY.
+
 # 2026-09-12 — ELECTRICAL_INSTALLATION moved to TESTING
 - Completed research and Expert Model for household electrical installation in apartments.
 - Added routing, expert rules, parser fields, normalization and follow-up for points/lines, cable specification, route/chasing, panel/protection and post-install checks.

@@ -3,7 +3,8 @@ const cases=[
 ['balcony-insulation','Утепление балконов и лоджий','Москва'],['balcony-glazing','Остекление балконов и лоджий','Москва'],
 ['window-replacement','Пластиковые окна и стеклопакеты','Москва'],['window-repair','Ремонт окон, регулировка фурнитуры','Москва'],
 ['balcony-finishing','Отделка и обшивка балконов','Москва'],['balcony-leak-repair','Герметизация швов и ремонт протечек','Москва'],
-['electrical-installation','Электромонтаж, замена проводки и сборка электрощита','Москва']
+['electrical-installation','Электромонтаж, замена проводки и сборка электрощита','Москва'],
+['plumbing-works','Сантехнические работы, разводка труб и канализация','Москва']
 ];
 let fail=0;
 for(const [categoryId,description,geo] of cases){
@@ -12,4 +13,4 @@ for(const [categoryId,description,geo] of cases){
 }
 const bad=qualifyCandidateForTask({name:'Репетитор',description:'английский язык',geo:'Москва'},{categoryId:'window-repair',city:'Москва'});if(bad.qualified){console.log('FAIL unrelated candidate qualified');fail++;}else console.log('PASS unrelated candidate rejected');
 const geo=qualifyCandidateForTask({name:'Окна',description:'ремонт окон регулировка',geo:'Казань'},{categoryId:'window-repair',city:'Москва'});if(geo.qualified){console.log('FAIL wrong geo qualified');fail++;}else console.log('PASS wrong geo rejected');
-if(fail)process.exit(1);console.log('Search qualification regression: 16/16 PASS');
+if(fail)process.exit(1);console.log('Search qualification regression: 18/18 PASS');

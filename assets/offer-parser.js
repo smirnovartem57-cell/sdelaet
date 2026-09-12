@@ -39,6 +39,16 @@
     if(/электрощит|щиток|сборк.{0,12}щит|монтаж.{0,12}щит/.test(low)){o.panelIncluded=true;o.worksIncluded.push('электрощит')}
     var ps=raw.match(/([^.;\n]{0,80}(?:дифавтомат|УЗО|автомат(?:ы|ов)?|реле\s+напряжения)[^.;\n]{0,100})/i);if(ps)o.protectionSpec=ps[1].trim();
     if(/измерен.{0,20}(изоляц|сопротив)|электроизмер|прозвон|провер.{0,20}(лини|защит|узо|автомат)|испытан/.test(low)){o.testingIncluded=true;o.worksIncluded.push('проверка / измерения')}
+    var pp=low.match(/(\d+)\s*(?:точек|точки|точка|водорозеток|приборов)/i);if(pp)o.plumbingPoints=Number(pp[1]);
+    var pm=low.match(/(\d+(?:[.,]\d+)?)\s*(?:пог\.?\s*)?м(?:етр(?:ов|а)?)?\s*(?:труб|трасс)?/i);if(pm)o.pipeMeters=Number(pm[1].replace(',','.'));
+    var pipe=raw.match(/\b(REHAU|РЕХАУ|Uponor|PEX(?:-a)?|PE-Xa|полипропилен|ППР|PPR|металлопластик)\b[^,;\n]{0,50}/i);if(pipe)o.pipeSystem=pipe[0].trim();
+    if(/коллекторн.{0,15}(развод|схем)|гребенк/.test(low))o.distributionScheme='коллекторная';else if(/тройников.{0,15}(развод|схем)/.test(low))o.distributionScheme='тройниковая';
+    if(/разводк.{0,20}(вод|хвс|гвс)|монтаж.{0,20}труб.{0,20}(вод|хвс|гвс)|водорозет/.test(low)){o.waterDistributionIncluded=true;o.worksIncluded.push('разводка водоснабжения')}
+    if(/канализац|сливн.{0,10}труб|фанов.{0,10}труб/.test(low)){o.drainageIncluded=true;o.worksIncluded.push('канализация / слив')}
+    if(/штроб|борозд/.test(low)){o.plumbingChasingIncluded=true;o.worksIncluded.push('штробление под трубы')}
+    if(/демонтаж.{0,20}(труб|сантех|смесител|унитаз|раковин|ванн)/.test(low)){o.plumbingDemolitionIncluded=true;o.worksIncluded.push('демонтаж сантехники / труб')}
+    if(/опрессов|гидравлическ.{0,15}испыт|провер.{0,20}герметич|испытан.{0,20}герметич/.test(low)){o.pressureTestIncluded=true;o.worksIncluded.push('опрессовка / проверка герметичности')}
+    if(/смесител/.test(low))o.fixtureType='смеситель';else if(/унитаз|инсталляц/.test(low))o.fixtureType='унитаз / инсталляция';else if(/раковин|мойк/.test(low))o.fixtureType='раковина / мойка';else if(/ванн|душев/.test(low))o.fixtureType='ванна / душ';
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

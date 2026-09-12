@@ -32,6 +32,8 @@ jobs:
           node tests/balcony-leak-repair-e2e-regression.mjs
           node tests/electrical-installation-qa-regression.mjs
           node tests/electrical-installation-e2e-regression.mjs
+          node tests/plumbing-works-qa-regression.mjs
+          node tests/plumbing-works-e2e-regression.mjs
           node tests/balcony-insulation-regression.mjs
           node tests/offer-parser-regression.mjs
           node tests/offer-followup-regression.mjs
@@ -63,5 +65,5 @@ jobs:
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/tests/balcony-glazing-qa-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-glazing-e2e-regression.mjs && test -f /opt/sdelaet/current/tests/electrical-installation-e2e-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_GLAZING.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/tests/balcony-glazing-qa-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-glazing-e2e-regression.mjs && test -f /opt/sdelaet/current/tests/electrical-installation-e2e-regression.mjs && test -f /opt/sdelaet/current/tests/plumbing-works-e2e-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_GLAZING.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
           echo 'FirstVDS deploy smoke check passed'

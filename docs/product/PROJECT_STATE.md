@@ -18,6 +18,7 @@ External LLM is not a required dependency for the core flow.
 - `BALCONY_FINISHING` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.1.
 - `BALCONY_LEAK_REPAIR` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.1.
 - `ELECTRICAL_INSTALLATION` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
+- `PLUMBING_WORKS` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
 
 Routing and deterministic expert rules exist for all seven categories. `BALCONY_GLAZING` and `WINDOW_REPLACEMENT` now have category-specific parsing, follow-up, normalization, QA and full comparison E2E. Manual user-facing review for TESTING categories is intentionally deferred.
 

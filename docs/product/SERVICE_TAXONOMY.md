@@ -12,6 +12,7 @@
 | `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | TESTING | P1 |
 | `BALCONY_LEAK_REPAIR` | `balcony-leak-repair` | Протечки / сырость балкона | TESTING | P1 |
 | `ELECTRICAL_INSTALLATION` | `electrical-installation` | Электромонтажные работы | TESTING | P1 |
+| `PLUMBING_WORKS` | `plumbing-works` | Сантехнические работы | TESTING | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 

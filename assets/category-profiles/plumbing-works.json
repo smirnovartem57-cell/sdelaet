@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "plumbing-works",
+  "serviceCode": "PLUMBING_WORKS",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "PLUMBING",
+  "status": "TESTING",
+  "launchPriority": "P1",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "intake": [
+    {
+      "id": "plumbingJob",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "Что нужно сделать?",
+      "options": [
+        [
+          "Устранить протечку / неисправность",
+          "repair"
+        ],
+        [
+          "Заменить сантехнику",
+          "fixture"
+        ],
+        [
+          "Сделать разводку воды",
+          "water_distribution"
+        ],
+        [
+          "Сделать / переделать канализацию",
+          "drainage"
+        ],
+        [
+          "Перенести точки / комплексно переделать санузел",
+          "relocation"
+        ]
+      ]
+    },
+    {
+      "id": "objectState",
+      "type": "choice",
+      "required": "QUOTE_REQUIRED",
+      "label": "В каком состоянии помещение?",
+      "options": [
+        [
+          "Идёт ремонт, стены открыты",
+          "renovation"
+        ],
+        [
+          "Есть чистовая отделка",
+          "finished"
+        ],
+        [
+          "Новостройка без отделки",
+          "shell"
+        ],
+        [
+          "Не знаю",
+          "unknown"
+        ]
+      ]
+    },
+    {
+      "id": "scope",
+      "type": "text",
+      "required": "QUOTE_REQUIRED",
+      "label": "Примерный объём?",
+      "placeholder": "Например: 5 точек воды + канализация для раковины, ванны и стиральной машины"
+    },
+    {
+      "id": "shutoff",
+      "type": "choice",
+      "required": "TRIGGERED",
+      "label": "Можно перекрыть воду в квартире?",
+      "options": [
+        [
+          "Да",
+          "yes"
+        ],
+        [
+          "Нет / не знаю",
+          "unknown"
+        ],
+        [
+          "Нужна работа со стояком",
+          "riser"
+        ]
+      ]
+    },
+    {
+      "id": "photos",
+      "type": "files",
+      "required": "RECOMMENDED",
+      "label": "Добавьте фото мест работ, труб и стояков, если возможно",
+      "maxFiles": 8
+    }
+  ],
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "состояние существующих труб и соединений",
+    "фактические трассы и доступ к ним",
+    "возможность скрытой прокладки",
+    "состояние стояков и запорной арматуры",
+    "уклоны и фактическая трасса канализации",
+    "результаты опрессовки / проверки герметичности"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "materialsIncluded",
+    "workScope",
+    "pointsAndMeters",
+    "pipeSystem",
+    "distributionScheme",
+    "drainageScope",
+    "demolition",
+    "chasingAndRestoration",
+    "pressureTest",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty",
+    "contractTerms",
+    "alternatives"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "scopeRequired": true,
+    "pipeSystemRequiredForNewDistribution": true,
+    "pressureTestRequiredForNewDistribution": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-12",
+    "marketEvidence": "Moscow/MO plumbing offers and SP 30.13330.2020 reviewed",
+    "result": "PASS"
+  }
+}
