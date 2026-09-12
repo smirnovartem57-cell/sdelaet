@@ -1,10 +1,19 @@
 # CHANGELOG
 
+## 2026-09-12 — BALCONY_GLAZING moved to TESTING
+- Added glazing-specific Offer Parser fields: profile system, glass unit, opening scheme, parapet reinforcement and external water-management elements.
+- Added glazing-specific normalization and follow-up rules.
+- Added 14 QA scenarios; result `14/14 PASS`.
+- Added `BALCONY_GLAZING` E2E covering category detection, Expert QA, three realistic offers, normalization, Recommendation Status, Comparison Explainer and Action Layer; result `PASS` with the complete 118 000 ₽ offer selected over a cheaper `от 75 000 ₽` offer.
+- Restored two BALCONY_INSULATION safeguards discovered by the full regression suite: cold-glazing year-round warning and separate demolition of hidden old finish.
+- Full GitHub validation step is green. Automatic VDS deploy remains blocked only by missing `VDS_HOST / VDS_USER / VDS_SSH_KEY` repository secrets.
+- Lifecycle changed `EXPERT_MODEL → TESTING`; `READY` remains blocked pending manual user-facing review and remaining production-gate checks.
+
 ## 2026-09-12 — BALCONY_GLAZING research completed
 - Completed category-specific RESEARCH for `BALCONY_GLAZING` using current normative references, manufacturer guidance and Moscow/MO market offers.
 - Expanded `docs/product/EXPERT_MODELS/BALCONY_GLAZING.md` into an approved Expert Model.
 - Added estimate decomposition, hidden extras, technical/commercial red flags, non-comparable cases and contractor search qualification.
-- Updated profile to v1.1 and lifecycle `EXPERT_MODEL`; `TESTING` and `READY` remain blocked.
+- Updated profile to v1.1 and lifecycle `EXPERT_MODEL`.
 
 ## 2026-09-12 — Category lifecycle governance
 - Added mandatory lifecycle `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
