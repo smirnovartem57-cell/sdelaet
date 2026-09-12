@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-12 — BALCONY_GLAZING research completed
+- Completed category-specific RESEARCH for `BALCONY_GLAZING` using current normative references, manufacturer guidance and Moscow/MO market offers.
+- Expanded `docs/product/EXPERT_MODELS/BALCONY_GLAZING.md` into an approved Expert Model.
+- Added estimate decomposition, hidden extras, technical/commercial red flags, non-comparable cases and contractor search qualification.
+- Updated profile to v1.1 and lifecycle `EXPERT_MODEL`; `TESTING` and `READY` remain blocked.
+
 ## 2026-09-12 — Category lifecycle governance
 - Added mandatory lifecycle `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 - Added `docs/product/CATEGORY_LIFECYCLE.md`.
