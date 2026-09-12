@@ -27,7 +27,7 @@ const fu=w.sdOfferFollowup.generate(offerA,task);
 ok(fu.needed===true,'incomplete offer must require follow-up');
 ok(fu.questions.length>0,'follow-up must contain questions');
 const replyA='Материалы будут стоить 18 000 ₽. Потолок и пол тоже входят, герметизация примыканий входит. Остекление проверим на замере. Гарантия 1 год.';
-offerA=w.sdOfferMerge.merge(offerA,w.sdOfferParser.parse(replyA));
+offerA=w.sdOfferMerge.merge(offerA,replyA,w.sdOfferParser);
 const ranked=w.sdOfferNormalizer.rank([offerA,offerB,offerC],task);
 const status=w.sdRecommendationStatus.assign(ranked,task);
 const recommended=status.filter(x=>x.recommendationStatus==='RECOMMENDED');
@@ -37,7 +37,7 @@ ok(status.find(x=>x.candidateName==='Исполнитель C').recommendationSt
 const insight=w.sdComparisonExplainer.explain(status,task);
 ok(insight.winner&&insight.winner.candidateName==='Исполнитель B','explainer winner must match recommendation');
 ok(insight.reasons.length>=2,'winner must have concrete reasons');
-const action=w.sdRecommendationActions.forOffer(recommended[0],task);
+const action=w.sdRecommendationActions.build({status:recommended[0].recommendationStatus},recommended[0],task);
 ok(action.title&&action.steps.length>0,'recommended offer must have action plan');
 ok(action.steps.length<=5,'action plan must stay compact');
 console.log('BALCONY_E2E PASS',{category:analysis.serviceCode,qa:expert.qa.status,winner:recommended[0].candidateName,price:recommended[0].comparableTotalPrice,action:action.title});
