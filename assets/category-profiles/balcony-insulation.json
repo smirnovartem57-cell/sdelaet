@@ -6,7 +6,7 @@
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
   "subcategory": "WINDOWS_BALCONIES",
-  "status": "TESTING",
+  "status": "READY",
   "launchPriority": "P1",
   "seasonality": "autumn_winter_high",
   "intakePolicy": {"maxPrimaryActions": 5, "askOnlyIfChangesQuoteOrScope": true, "preferPhotos": true},
@@ -22,5 +22,6 @@
   "contractorResponseRequired": ["totalPrice","workPrice","materialsPrice","worksIncluded","materialsSystem","exclusions","leadTime","measurement","warranty","extraCosts"],
   "normalization": {"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
   "qaStatuses": ["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"],
-  "regressionSuite": {"file":"tests/balcony-insulation-regression.mjs","cases":8,"lastResult":"PASS","expertAgentVersion":"1.1","reviewerVersion":"1.1"}
+  "regressionSuite": {"file":"tests/balcony-insulation-regression.mjs","cases":8,"lastResult":"PASS","expertAgentVersion":"1.1","reviewerVersion":"1.1","e2eFile":"tests/balcony-e2e-regression.mjs","e2eResult":"PASS"},
+  "releaseGate": {"status":"PASS","categoryRegression":"PASS","offerPipelineRegression":"PASS","e2e":"PASS","productionDeploy":"PASS","productionPath":"/opt/sdelaet/current","readyAt":"2026-09-12"}
 }
