@@ -28,6 +28,17 @@
     var dc=raw.match(/(?:диагностик[аи]|выезд)\s*[:\-]?\s*(\d[\d\s\u00a0.]*)\s*(?:₽|руб)/i);if(dc)o.diagnosticsCost=Number(dc[1].replace(/[\s\u00a0.]/g,''));
     if(/козыр|верхн.{0,12}примыкан|кровл/.test(low))o.leakSource='козырёк / верхнее примыкание';else if(/фасадн.{0,12}шв|межпанел/.test(low))o.leakSource='фасадный / межпанельный шов';else if(/монтажн.{0,12}шв|окон.{0,12}примыкан|примыкан.{0,12}окон/.test(low))o.leakSource='оконный монтажный шов / примыкание';else if(/конденсат|вентиляц|влажностн.{0,10}режим/.test(low))o.leakSource='конденсация / влажностный режим';else if(/балконн.{0,10}плит|трещин/.test(low))o.leakSource='плита / трещины';
     if(/фасадн.{0,12}шв|межпанел/.test(low))o.worksIncluded.push('герметизация фасадного / межпанельного шва');if(/ремонт.{0,15}козыр|замен.{0,15}козыр|гермет.{0,15}козыр|верхн.{0,12}примыкан/.test(low))o.worksIncluded.push('ремонт козырька / верхнего примыкания');if(/ремонт.{0,15}плит|заделк.{0,15}трещин/.test(low))o.worksIncluded.push('ремонт плиты / трещин');
+    var pc=low.match(/(\d+)\s*(?:розеток|розетки|розетк|точек|точки)/i);if(pc)o.pointsCount=Number(pc[1]);
+    var lc=low.match(/(\d+)\s*(?:линий|линии|линия|групп|группы)/i);if(lc)o.lineCount=Number(lc[1]);
+    var cs=raw.match(/(ВВГнг(?:-LS)?|NYM|ПВС|КГ)[^,;\n]{0,35}?(\d\s*[xх×]\s*\d(?:[.,]\d+)?)/i);if(cs)o.cableSpec=(cs[1]+' '+cs[2]).replace(/х/g,'x').replace(/×/g,'x');
+    if(/прокладк.{0,20}кабел|кабел.{0,20}проклад/.test(low)){o.cableLayingIncluded=true;o.worksIncluded.push('прокладка кабеля')}
+    if(/штроб|борозд/.test(low)){o.chasingIncluded=true;o.worksIncluded.push('штробление')}
+    if(/кабель.?канал|открыт.{0,12}проклад/.test(low))o.routeSpec='открытая прокладка / кабель-канал';else if(/скрыт.{0,12}проклад|штроб|борозд/.test(low))o.routeSpec='скрытая прокладка';
+    if(/подрозетник/.test(low))o.worksIncluded.push('подрозетники');
+    if(/заделк.{0,15}штроб|восстанов.{0,20}(стен|отдел)/.test(low)){o.restorationIncluded=true;o.worksIncluded.push('заделка штроб / восстановление')}
+    if(/электрощит|щиток|сборк.{0,12}щит|монтаж.{0,12}щит/.test(low)){o.panelIncluded=true;o.worksIncluded.push('электрощит')}
+    var ps=raw.match(/([^.;\n]{0,80}(?:дифавтомат|УЗО|автомат(?:ы|ов)?|реле\s+напряжения)[^.;\n]{0,100})/i);if(ps)o.protectionSpec=ps[1].trim();
+    if(/измерен.{0,20}(изоляц|сопротив)|электроизмер|прозвон|провер.{0,20}(лини|защит|узо|автомат)|испытан/.test(low)){o.testingIncluded=true;o.worksIncluded.push('проверка / измерения')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

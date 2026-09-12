@@ -32,6 +32,15 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='ELECTRICAL_INSTALLATION'){
+      var scope=((task.goal||'')+' '+(task.scope||'')+' '+(task.electricalJob||'')+' '+(task.panelScope||'')).toLowerCase();
+      if(!offer.cableSpec&&/(лини|проводк|розет|выключател)/.test(scope))items.push('какой кабель и сечение закладываются');
+      if(!offer.routeSpec&&/(лини|проводк|розет|выключател)/.test(scope))items.push('как будет проложен кабель и что входит в подготовку трассы');
+      if(offer.cableLayingIncluded!==true&&/(лини|проводк|розет|выключател)/.test(scope))items.push('входит ли прокладка кабеля в указанную стоимость');
+      if(/щит|panel|replace|extend/.test(scope)&&offer.panelIncluded!==true)items.push('что именно входит в работы по электрощиту');
+      if(/щит|panel|replace|extend/.test(scope)&&!offer.protectionSpec)items.push('какие автоматы / УЗО / дифавтоматы входят в смету');
+      if(offer.testingIncluded!==true)items.push('какая проверка / измерения выполняются после монтажа');
+      if(!offer.warranty)items.push('гарантию на электромонтажные работы');
     }else if(task.serviceCode==='WINDOW_REPAIR'){
       if(!offer.diagnosis)items.push('какая причина неисправности подтверждена после осмотра');
       if(!offer.repairType)items.push('какой конкретно ремонт требуется');

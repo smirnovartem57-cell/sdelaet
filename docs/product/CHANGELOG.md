@@ -1,5 +1,13 @@
 # CHANGELOG
 
+# 2026-09-12 — ELECTRICAL_INSTALLATION moved to TESTING
+- Completed research and Expert Model for household electrical installation in apartments.
+- Added routing, expert rules, parser fields, normalization and follow-up for points/lines, cable specification, route/chasing, panel/protection and post-install checks.
+- Added 14 QA scenarios: `14/14 PASS`.
+- Added full E2E: `PASS`; complete 148 000 ₽ offer selected over `от 95 000 ₽` incomplete offer.
+- Added contractor search qualification and production wiring for the category.
+- Manual user-facing review remains deferred before READY.
+
 ## 2026-09-12 — BALCONY_LEAK_REPAIR moved to TESTING
 - Added diagnostic-first Expert Model and leak-source normalization.
 - Added 14 QA scenarios: `14/14 PASS`.
