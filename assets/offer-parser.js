@@ -81,6 +81,15 @@
     if(/демонтаж.{0,15}(ламинат|линолеум|паркет|покрыт)/.test(low)){o.floorDemolitionIncluded=true;o.worksIncluded.push('демонтаж старого покрытия')}
     if(/монтаж.{0,12}плинтус|плинтус.{0,12}вход/.test(low)){o.skirtingIncluded=true;o.worksIncluded.push('плинтус')}
     if(/порожк|порог.{0,10}(меж|двер)/.test(low)){o.thresholdsIncluded=true;o.worksIncluded.push('порожки')}
+    var wa=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(wa)o.wallArea=Number(wa[1].replace(',','.'));
+    if(/обо/.test(low))o.wallFinishType='wallpaper';else if(/покрас|краск/.test(low))o.wallFinishType='paint';
+    if(/демонтаж.{0,20}(обо|краск)|снят.{0,20}(обо|краск)/.test(low)){o.wallDemolitionIncluded=true;o.worksIncluded.push('демонтаж старого покрытия')}
+    if(/грунтов/.test(low)){o.wallPrimerIncluded=true;o.worksIncluded.push('грунтовка стен')}
+    if(/шпакл/.test(low)){o.wallPuttyIncluded=true;o.worksIncluded.push('шпаклёвка стен')}
+    if(/шлифов|ошкур/.test(low)){o.wallSandingIncluded=true;o.worksIncluded.push('шлифовка стен')}
+    if(/стеклохолст|паутинк/.test(low)){o.wallFiberglassIncluded=true;o.worksIncluded.push('стеклохолст')}
+    if(/поклейк.{0,15}обо|наклейк.{0,15}обо/.test(low)){o.wallpaperInstallationIncluded=true;o.worksIncluded.push('поклейка обоев')}
+    if(/покраск.{0,15}стен|окраск.{0,15}стен/.test(low)){o.wallPaintingIncluded=true;o.worksIncluded.push('покраска стен')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

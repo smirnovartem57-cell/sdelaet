@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-13 — WALL_FINISHING moved to TESTING via Category Agent Pipeline
+- Research confirmed separate estimate layers for primer, putty, sanding, fiberglass, wallpaper/paint and demolition.
+- Added routing, Expert Model, parser, normalizer, follow-up, search qualification and production wiring.
+- QA 15/15 PASS; E2E PASS, complete 76 000 ₽ offer selected over `от 18 000 ₽`.
+- Category Agent Pipeline PASS; manual user-facing review remains deferred before READY.
+
 ## 2026-09-13 — FLOORING_INSTALLATION moved to TESTING
 - Added flooring-specific intake, expert rules, parser, normalization and follow-up.
 - Base preparation, underlay/glue, demolition, skirting and thresholds are normalized separately.

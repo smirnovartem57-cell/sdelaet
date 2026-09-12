@@ -17,6 +17,7 @@
 | `MINOR_APARTMENT_REPAIR` | `minor-apartment-repair` | Мелкий ремонт квартиры | TESTING | P1 |
 | `TILE_INSTALLATION` | `tile-installation` | Укладка плитки / керамогранита | TESTING | P2 |
 | `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
+| `WALL_FINISHING` | `wall-finishing` | Стены / обои / покраска | TESTING | P1 |
 | `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.

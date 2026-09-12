@@ -32,6 +32,15 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='WALL_FINISHING'){
+      var ws=((task.goal||'')+' '+(task.scope||'')+' '+(task.finishType||'')+' '+(task.wallState||'')+' '+(task.quality||'')).toLowerCase();
+      var wallpaper=/wallpaper|обо/.test(ws),paint=/paint|покрас|краск/.test(ws);
+      if(offer.wallPrimerIncluded!==true)items.push('входит ли грунтовка стен');
+      if(offer.wallPuttyIncluded!==true)items.push('какая подготовка / шпаклёвка основания входит');
+      if(paint&&offer.wallSandingIncluded!==true)items.push('входит ли шлифовка под покраску');
+      if(paint&&offer.wallPaintingIncluded!==true)items.push('сколько слоёв покраски входит');
+      if(wallpaper&&offer.wallpaperInstallationIncluded!==true)items.push('входит ли поклейка обоев');
+      if(/old_wallpaper|old_paint|стар/.test(ws)&&offer.wallDemolitionIncluded!==true)items.push('входит ли демонтаж старого покрытия');
     }else if(task.serviceCode==='FLOORING_INSTALLATION'){
       var fs=((task.goal||'')+' '+(task.scope||'')+' '+(task.flooringType||'')+' '+(task.layout||'')+' '+(task.baseState||'')).toLowerCase();
       if(!offer.flooringType)items.push('какой тип покрытия учтён');

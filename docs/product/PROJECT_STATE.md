@@ -23,6 +23,7 @@ External LLM is not a required dependency for the core flow.
 - `MINOR_APARTMENT_REPAIR` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
 - `TILE_INSTALLATION` — `TESTING`, research PASS, Expert Model PASS, QA 14/14 PASS, E2E PASS, profile v1.0.
 - `FLOORING_INSTALLATION` — `TESTING`, research PASS, Expert Model PASS, QA 15/15 PASS, E2E PASS, profile v1.0.
+- `WALL_FINISHING` — `TESTING`, research PASS, Agent Pipeline PASS, QA 15/15 PASS, E2E PASS, profile v1.0.
 - `FLOORING_INSTALLATION` — `TESTING`, research PASS, Expert Model PASS, QA 15/15 PASS, E2E PASS, profile v1.0.
 
 Routing, deterministic expert rules, category-specific parsing, follow-up, normalization, search qualification and E2E coverage exist for all 10 launch categories. Mixed-category descriptions are now detected and marked for splitting into separate profile-specific Contractor Briefs. Manual user-facing review for TESTING categories is intentionally deferred.

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "wall-finishing",
+  "serviceCode": "WALL_FINISHING",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "TBD",
+  "status": "TESTING",
+  "launchPriority": "P1",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "ровность и прочность основания",
+    "трещины и отслоения",
+    "требуемый уровень подготовки под выбранный финиш"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "area",
+    "finishType",
+    "demolition",
+    "primer",
+    "putty",
+    "sanding",
+    "fiberglass",
+    "materials",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "sameFinishAndPreparationRequired": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-13",
+    "marketEvidence": "Moscow/MO 2026 wall preparation, wallpaper and painting price structures reviewed; preparation, primer, putty, sanding, fiberglass and demolition are separate estimate items.",
+    "result": "PASS"
+  }
+}
