@@ -90,6 +90,15 @@
     if(/стеклохолст|паутинк/.test(low)){o.wallFiberglassIncluded=true;o.worksIncluded.push('стеклохолст')}
     if(/поклейк.{0,15}обо|наклейк.{0,15}обо/.test(low)){o.wallpaperInstallationIncluded=true;o.worksIncluded.push('поклейка обоев')}
     if(/покраск.{0,15}стен|окраск.{0,15}стен/.test(low)){o.wallPaintingIncluded=true;o.worksIncluded.push('покраска стен')}
+    var dc=low.match(/(\d+)\s*(?:двер|полот)/);if(dc)o.doorCount=Number(dc[1]);
+    o.doorType=/раздвиж|купе/.test(low)?'sliding':/скрыт|invisible/.test(low)?'hidden':/двуствор/.test(low)?'double':(/межкомнат|двер/.test(low)?'swing':'');
+    if(/демонтаж.{0,20}(двер|полот|короб)/.test(low)){o.doorDemolitionIncluded=true;o.worksIncluded.push('демонтаж двери')}
+    if(/дверн.{0,10}короб|сборк.{0,10}короб|монтаж.{0,10}короб/.test(low)){o.doorBoxIncluded=true;o.worksIncluded.push('дверная коробка')}
+    if(/наличник/.test(low)){o.doorTrimIncluded=true;o.worksIncluded.push('наличники')}
+    if(/добор/.test(low)){o.doorExtensionsIncluded=true;o.worksIncluded.push('доборы')}
+    if(/петел|петл/.test(low)){o.doorHingesIncluded=true;o.worksIncluded.push('петли')}
+    if(/руч|замок|замк|защелк/.test(low)){o.doorLockHandleIncluded=true;o.worksIncluded.push('ручки / замки')}
+    if(/расшир.{0,15}проем|суж.{0,15}проем|подготов.{0,15}проем|коррект.{0,15}проем/.test(low)){o.doorOpeningPrepIncluded=true;o.worksIncluded.push('подготовка проёма')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

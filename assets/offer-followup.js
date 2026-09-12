@@ -32,6 +32,14 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='INTERIOR_DOORS'){
+      var ds=((task.goal||'')+' '+(task.scope||'')+' '+(task.doorType||'')+' '+(task.oldDoors||'')+' '+(task.doorKit||'')).toLowerCase();
+      if(offer.doorBoxIncluded!==true)items.push('входит ли сборка / монтаж дверной коробки');
+      if(offer.doorTrimIncluded!==true)items.push('входит ли установка наличников');
+      if(offer.doorHingesIncluded!==true)items.push('входит ли врезка / установка петель');
+      if(offer.doorLockHandleIncluded!==true)items.push('входит ли установка ручек / замков / защёлок');
+      if(/yes|замен|стар/.test(ds)&&offer.doorDemolitionIncluded!==true)items.push('входит ли демонтаж старой двери');
+      if(/hidden|sliding|double/.test(ds)&&offer.doorOpeningPrepIncluded!==true)items.push('какая подготовка / проверка проёма входит');
     }else if(task.serviceCode==='WALL_FINISHING'){
       var ws=((task.goal||'')+' '+(task.scope||'')+' '+(task.finishType||'')+' '+(task.wallState||'')+' '+(task.quality||'')).toLowerCase();
       var wallpaper=/wallpaper|обо/.test(ws),paint=/paint|покрас|краск/.test(ws);
