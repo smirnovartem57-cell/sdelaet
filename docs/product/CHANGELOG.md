@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-12 — MINOR_APARTMENT_REPAIR moved to TESTING
+- Split broad minor repair into mounting, furniture, door hardware, finish patch and mixed scenarios.
+- Engineering work inside a mixed task is routed to expert review / separate category.
+- QA 14/14 PASS; E2E PASS, complete 8 500 ₽ offer selected over `от 3 000 ₽`.
+- Manual user-facing review remains deferred before READY.
+
 ## 2026-09-12 — RADIATOR_HEATING moved to TESTING
 - Added radiator/heating Expert Model, parser, normalization and follow-up.
 - Added central-heating/riser safeguards; relocation and emergency leaks require expert review.

@@ -32,6 +32,12 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='MINOR_APARTMENT_REPAIR'){
+      var ms=((task.goal||'')+' '+(task.scope||'')+' '+(task.repairJob||'')+' '+(task.workList||'')).toLowerCase();
+      if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.fastenersSpecified!==true)items.push('какой крепёж / расходники входят и кто их предоставляет');
+      if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.drillingIncluded!==true)items.push('входит ли сверление и монтаж крепежа');
+      if(offer.minimumVisit==null)items.push('есть ли минимальная стоимость выезда / заказа');
+      if(!offer.warranty)items.push('гарантию на выполненные работы');
     }else if(task.serviceCode==='RADIATOR_HEATING'){
       var hs=((task.goal||'')+' '+(task.scope||'')+' '+(task.heatingJob||'')+' '+(task.system||'')+' '+(task.riserWork||'')).toLowerCase();
       if(!offer.radiatorSpec&&!/valves/.test(hs))items.push('какой радиатор: модель / мощность / размер предлагается');

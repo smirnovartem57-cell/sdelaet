@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "minor-apartment-repair",
+  "serviceCode": "MINOR_APARTMENT_REPAIR",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "MINOR_REPAIR",
+  "status": "TESTING",
+  "launchPriority": "P1",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "материал основания для крепления",
+    "скрытые коммуникации в зоне сверления",
+    "фактическое состояние ремонтируемых элементов"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "minimumVisit",
+    "workList",
+    "quantity",
+    "fasteners",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "scopeRequired": true,
+    "sameWorkListRequired": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-12",
+    "marketEvidence": "Moscow/MO handyman and minor repair offer structures reviewed",
+    "result": "PASS"
+  }
+}

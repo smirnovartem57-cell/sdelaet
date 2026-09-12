@@ -56,6 +56,12 @@
     if(/демонтаж.{0,20}(радиатор|батар)/.test(low)){o.radiatorDemolitionIncluded=true;o.worksIncluded.push('демонтаж радиатора')}
     if(/монтаж.{0,20}(радиатор|батар)|установк.{0,20}(радиатор|батар)/.test(low)){o.radiatorInstallationIncluded=true;o.worksIncluded.push('монтаж радиатора')}
     if(/опрессов|провер.{0,20}гермет|испытан.{0,15}давлен/.test(low)){o.heatingPressureTestIncluded=true;o.worksIncluded.push('опрессовка / проверка отопления')}
+    var mv=raw.match(/(?:минимальн(?:ый|ая)\s+(?:выезд|заказ)|выезд)\s*[:\-]?\s*(\d[\d\s\u00a0.]*)\s*(?:₽|руб)/i);if(mv)o.minimumVisit=Number(mv[1].replace(/[\s\u00a0.]/g,''));
+    var wc=low.match(/(\d+)\s*(?:полк|карниз|зеркал|предмет|двер|руч|задач|работ)/i);if(wc)o.minorWorkCount=Number(wc[1]);
+    if(/крепеж|дюбел|анкер|саморез|расходник/.test(low)){o.fastenersSpecified=true;o.worksIncluded.push('крепёж / расходники')}
+    if(/сверлен|бурен|отверст/.test(low)){o.drillingIncluded=true;o.worksIncluded.push('сверление / крепление')}
+    if(/сборк.{0,15}(мебел|шкаф|стол|комод)/.test(low)){o.furnitureAssemblyIncluded=true;o.worksIncluded.push('сборка мебели')}
+    if(/регулиров.{0,15}(двер|петл)|замен.{0,15}(ручк|замок|петл)/.test(low)){o.doorHardwareIncluded=true;o.worksIncluded.push('двери / фурнитура')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

@@ -14,6 +14,7 @@
 | `ELECTRICAL_INSTALLATION` | `electrical-installation` | Электромонтажные работы | TESTING | P1 |
 | `PLUMBING_WORKS` | `plumbing-works` | Сантехнические работы | TESTING | P1 |
 | `RADIATOR_HEATING` | `radiator-heating` | Радиаторы / отопление | TESTING | P1 |
+| `MINOR_APARTMENT_REPAIR` | `minor-apartment-repair` | Мелкий ремонт квартиры | TESTING | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
