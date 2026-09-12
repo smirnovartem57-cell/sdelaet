@@ -1,0 +1,16 @@
+{
+  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"window-repair","serviceCode":"WINDOW_REPAIR","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"DRAFT","launchPriority":"P1","seasonality":"autumn_winter_high",
+  "intakePolicy":{"maxPrimaryActions":5,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
+  "intake":[
+    {"id":"problem","type":"choice","required":"QUOTE_REQUIRED","label":"Что не так с окном?","options":[["Дует / холодно","draft"],["Плохо открывается или закрывается","hardware"],["Конденсат / запотевание","condensation"],["Разбит / повреждён стеклопакет","glass"],["Нужна регулировка / профилактика","maintenance"],["Другое","other"]]},
+    {"id":"quantity","type":"count_or_unknown","required":"QUOTE_REQUIRED","label":"Сколько окон проблемные?"},
+    {"id":"age","type":"choice","required":"OPTIONAL","label":"Примерный возраст окон?","options":[["До 5 лет","lt5"],["5–10 лет","5_10"],["Больше 10 лет","gt10"],["Не знаю","unknown"]]},
+    {"id":"urgency","type":"choice","required":"OPTIONAL","label":"Насколько срочно?","options":[["Как можно скорее","urgent"],["В ближайшие дни","days"],["Можно планово","planned"]]},
+    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид и проблемное место крупно","maxFiles":6}
+  ],
+  "truthStates":["confirmed","observed","inferred","unknown","requires_site_inspection"],
+  "siteInspectionOnly":["состояние фурнитуры","геометрия створки","прижим","состояние уплотнителя","монтажные швы","причина конденсата"],
+  "contractorResponseRequired":["totalPrice","diagnosticsIncluded","worksIncluded","partsIncluded","exclusions","leadTime","visitCost","warranty","extraCosts"],
+  "normalization":{"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"missingCriticalWorks":"request_clarification"},
+  "qaStatuses":["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
+}
