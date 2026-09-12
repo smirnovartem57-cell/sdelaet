@@ -1,3 +1,11 @@
+# CHANGELOG
+
+## 2026-09-12 — BALCONY_LEAK_REPAIR moved to TESTING
+- Added diagnostic-first Expert Model and leak-source normalization.
+- Added 14 QA scenarios: `14/14 PASS`.
+- Added E2E: `PASS`; 18 000 ₽ diagnosed offer selected over `от 6 000 ₽` without confirmed cause.
+- Manual user-facing review remains deferred before READY.
+
 # 2026-09-12 — BALCONY_FINISHING moved to TESTING
 - Completed category research on Moscow/MO estimate structure: demolition, substrate preparation, wall/ceiling finish, floor base/finish and optional extras.
 - Added finishing-specific parser, normalization and follow-up rules.

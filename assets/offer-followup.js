@@ -4,7 +4,12 @@
   function build(task,offer){task=task||{};offer=offer||{};var items=[];var winter=/зим|круглогод/i.test(task.goal||'');
     if(offer.priceType==='from'||offer.isFromPrice===true)items.push('какая фиксированная цена после замера и от чего она может измениться');else if(offer.totalPrice==null)items.push('итоговую стоимость');
     if(offer.materialsIncluded==null)items.push('входят ли материалы в цену');
-    if(task.serviceCode==='BALCONY_GLAZING'){
+    if(task.serviceCode==='BALCONY_LEAK_REPAIR'){
+      if(!offer.diagnosis)items.push('какая причина протечки / сырости подтверждена после диагностики');
+      if(!offer.leakSource)items.push('где локализован источник проблемы');
+      if(offer.diagnosticsCost==null&&!/диагностик.{0,20}(бесплат|включ)/i.test(offer.rawResponse||''))items.push('сколько стоит диагностика / выезд и входит ли она в итоговую цену');
+      if(!offer.warranty)items.push('какая гарантия даётся именно на устранённый узел');
+    }else if(task.serviceCode==='BALCONY_GLAZING'){
       if(!offer.profileSystem)items.push('какая профильная система предлагается');
       if(winter&&!offer.glassUnit)items.push('какой стеклопакет / заполнение предлагается для зимнего режима');
       if(!hasWork(offer,/(монтаж|установк).{0,18}(остеклен|окон|рам|профил)|монтаж остекления/))items.push('входит ли монтаж остекления в указанную стоимость');

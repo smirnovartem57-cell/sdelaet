@@ -1,24 +1,52 @@
-# BALCONY_LEAK_REPAIR — Research dossier
+# BALCONY_LEAK_REPAIR — Expert Model
 
-Lifecycle: `RESEARCH`
+Lifecycle: `TESTING`
 Profile: `assets/category-profiles/balcony-leak-repair.json`
+Research result: `PASS`
 
-## Current working model
-JTBD: diagnose and eliminate rain leakage, persistent dampness, mould/condensation or freezing symptoms on a balcony/loggia.
+## JTBD
+Найти и устранить фактическую причину протечки, сырости, промерзания или конденсации на балконе / лоджии, а не замаскировать следствие.
 
-QUOTE_REQUIRED: symptom; visible location; glazing state; when the symptom appears; photos; geography.
+## Core rule
+Сначала локализуется источник, затем формируется смета. След воды или пятно не доказывают место проникновения: источник может находиться выше или в стороне.
 
-INSTALLATION_REQUIRED / site inspection: actual water-entry source; exterior joints; roof/facade condition; hidden moisture; mounting joints; drainage path.
+## Main cause classes
+- козырёк / верхнее примыкание / кровельный узел;
+- оконный монтажный шов / примыкание;
+- фасадный или межпанельный шов;
+- балконная плита / трещины / водоотвод;
+- конденсация и влажностный режим, не связанный с наружной протечкой.
 
-Contractor must diagnose before asserting cause, then specify: suspected/confirmed source; diagnostic fee; corrective works; materials; access requirements; exclusions; extras; timing; warranty on the repaired node; alternatives if diagnosis changes the scope.
+## Quote required
+Симптом; где проявляется; связь с дождём / морозом / постоянным режимом; наличие остекления; фото; география.
 
-Estimate model must separate: diagnostics; access/inspection; sealant/joint repair; roof/flashing/drainage repair; glazing-joint work; materials; lifting/access equipment if needed; restoration; extras.
+## Site inspection required
+Точный источник воды; наружные примыкания; фасад / кровля / козырёк; монтажные швы; скрытая влажность; доступ и необходимость высотных работ.
 
-Known red flags to validate in RESEARCH: treating the visible wet spot as proof of entry point; sealing from inside without exterior diagnosis; confusing rain leakage with condensation; guaranteeing elimination without inspection; excluding access equipment only after work starts.
+## Contractor response required
+Подтверждённая причина; локализованный узел; стоимость диагностики; итоговая стоимость устранения; работы и материалы; исключения и доплаты; срок; гарантия именно на устранённый узел.
 
-Non-comparable examples: diagnostic-only offer vs repair offer; interior sealing vs exterior-node repair; roof/facade work vs window-junction work.
+## Estimate model
+Диагностика / выезд; доступ / альпинистские работы при необходимости; демонтаж для доступа; герметизация / ремонт конкретного узла; материалы; восстановление отделки; вывоз; дополнительные работы.
+## Comparison rules
+Не сравнивать предложения, если подрядчики диагностировали разные причины или один из них не указал причину вообще. Цена «от» без диагностированного узла не считается оффером.
 
-Search qualification draft: contractor must perform leak diagnostics and relevant exterior/junction repairs, not only interior finishing.
+## Red flags
+- «Загерметизируем всё» без локализации источника;
+- обещание устранить конденсат герметиком без проверки влажности / вентиляции;
+- предложение закрыть следы отделкой до устранения причины;
+- гарантия «на балкон вообще» без указания узла;
+- отсутствие информации о доступе к наружным работам и возможных доплатах.
 
-## RESEARCH still required
-Verify facade/roof/window-junction technical guidance, access/safety constraints, representative Moscow/MO offers and estimates, common hidden extras, qualification signals and 12+ QA scenarios. Until complete, this file is not an approved Expert Model.
+## Search qualification
+Исполнитель должен реально заниматься герметизацией / ремонтом балконов и наружных узлов в Москве / МО, а не только отделкой; для фасадных / высотных работ должен иметь подходящий способ доступа.
+
+## Market evidence
+В московских предложениях отдельно встречаются герметизация балкона, межпанельных / фасадных швов, замена козырька, ремонт плиты и комплексный ремонт. Это подтверждает необходимость сравнения по диагностированному узлу, а не по общей категории услуги.
+
+## Testing gate
+- QA: `14/14 PASS`;
+- E2E: `PASS`;
+- дешёвая цена без диагноза блокируется;
+- конденсация не нормализуется как обычная наружная протечка;
+- `READY` остаётся заблокирован до ручной проверки пользовательских формулировок.

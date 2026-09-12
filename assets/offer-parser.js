@@ -25,6 +25,9 @@
     if(/пвх.?панел|вагонк|гипсокарт|ламинат|линолеум|плитк|краск/.test(low)&&!o.finishSystem){var fm=raw.match(/(ПВХ.?панел[^,;\n.]*|вагонк[^,;\n.]*|гипсокарт[^,;\n.]*|ламинат[^,;\n.]*|линолеум[^,;\n.]*|плитк[^,;\n.]*)/i);if(fm)o.finishSystem=fm[1].trim()}
     if(/подготовк.{0,20}(основан|поверх)|выравнив|грунтов/.test(low)){o.preparationIncluded=true;o.worksIncluded.push('подготовка основания')}
     if(/чернов.{0,10}пол|основан.{0,10}пол|стяжк|фанер|osb|осп/.test(low)){o.floorBaseIncluded=true;o.worksIncluded.push('основание пола')}
+    var dc=raw.match(/(?:диагностик[аи]|выезд)\s*[:\-]?\s*(\d[\d\s\u00a0.]*)\s*(?:₽|руб)/i);if(dc)o.diagnosticsCost=Number(dc[1].replace(/[\s\u00a0.]/g,''));
+    if(/козыр|верхн.{0,12}примыкан|кровл/.test(low))o.leakSource='козырёк / верхнее примыкание';else if(/фасадн.{0,12}шв|межпанел/.test(low))o.leakSource='фасадный / межпанельный шов';else if(/монтажн.{0,12}шв|окон.{0,12}примыкан|примыкан.{0,12}окон/.test(low))o.leakSource='оконный монтажный шов / примыкание';else if(/конденсат|вентиляц|влажностн.{0,10}режим/.test(low))o.leakSource='конденсация / влажностный режим';else if(/балконн.{0,10}плит|трещин/.test(low))o.leakSource='плита / трещины';
+    if(/фасадн.{0,12}шв|межпанел/.test(low))o.worksIncluded.push('герметизация фасадного / межпанельного шва');if(/ремонт.{0,15}козыр|замен.{0,15}козыр|гермет.{0,15}козыр|верхн.{0,12}примыкан/.test(low))o.worksIncluded.push('ремонт козырька / верхнего примыкания');if(/ремонт.{0,15}плит|заделк.{0,15}трещин/.test(low))o.worksIncluded.push('ремонт плиты / трещин');
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}
