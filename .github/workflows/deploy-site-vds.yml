@@ -20,6 +20,8 @@ jobs:
           node tests/seasonal-expert-regression.mjs
           node tests/balcony-glazing-qa-regression.mjs
           node tests/balcony-glazing-e2e-regression.mjs
+          node tests/window-replacement-qa-regression.mjs
+          node tests/window-replacement-e2e-regression.mjs
           node tests/balcony-insulation-regression.mjs
           node tests/offer-parser-regression.mjs
           node tests/offer-followup-regression.mjs

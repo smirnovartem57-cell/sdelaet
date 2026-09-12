@@ -11,6 +11,16 @@
       if(/стар|замен/i.test((task.currentGlazing||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старого остекления');
       if(!/(козыр|отлив|водоотвод|нащельник|добор)/i.test((offer.rawResponse||'')+' '+(offer.worksIncluded||[]).join(' ')))items.push('учтены ли необходимые наружные элементы и водоотвод');
       if(!offer.warranty)items.push('гарантию на конструкцию и монтаж');
+    }else if(task.serviceCode==='WINDOW_REPLACEMENT'){
+      if(!offer.profileSystem)items.push('какая профильная система предлагается');
+      if(!offer.glassUnit)items.push('какой стеклопакет предлагается');
+      if(!offer.hardware)items.push('какая фурнитура предлагается');
+      if(!hasWork(offer,/(монтаж|установк).{0,18}(окон|рам|профил)|монтаж окна/))items.push('входит ли монтаж окна в указанную стоимость');
+      if(/замен|стар/i.test((task.goal||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старого окна');
+      if(offer.sill!==true)items.push('входит ли подоконник');
+      if(offer.reveals!==true)items.push('входят ли откосы');
+      if(offer.flashing!==true)items.push('входит ли наружный отлив');
+      if(!offer.warranty)items.push('гарантию на конструкцию и монтаж');
     }else{
       if(!offer.leadTime)items.push('срок выполнения');
       if(!offer.warranty)items.push('гарантию на работы');
