@@ -1,16 +1,11 @@
 {
-  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-leak-repair","serviceCode":"BALCONY_LEAK_REPAIR","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"DRAFT","launchPriority":"P1","seasonality":"autumn_winter_high",
-  "intakePolicy":{"maxPrimaryActions":5,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
-  "intake":[
-    {"id":"symptom","type":"choice","required":"QUOTE_REQUIRED","label":"Что происходит?","options":[["Течёт после дождя","rain_leak"],["Сыреет / мокнет постоянно","moisture"],["Плесень / конденсат","condensation"],["Промерзает зимой","freezing"],["Не понимаю источник","unknown"]]},
-    {"id":"location","type":"choice","required":"QUOTE_REQUIRED","label":"Где проявляется проблема?","options":[["Потолок / сверху","ceiling"],["Окна / примыкания","windows"],["Стена / угол","wall"],["Пол / снизу","floor"],["В нескольких местах","multiple"]]},
-    {"id":"glazing","type":"choice","required":"QUOTE_REQUIRED","label":"Балкон остеклён?","options":[["Да","yes"],["Нет","no"],["Не знаю / частично","unknown"]]},
-    {"id":"timing","type":"choice","required":"QUOTE_REQUIRED","label":"Когда появляется проблема?","options":[["После дождя","rain"],["Зимой / в мороз","winter"],["Постоянно","always"],["Не знаю","unknown"]]},
-    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид и следы воды / плесени крупно","maxFiles":8}
-  ],
-  "truthStates":["confirmed","observed","inferred","unknown","requires_site_inspection"],
+  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"balcony-leak-repair","serviceCode":"BALCONY_LEAK_REPAIR","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"RESEARCH","launchPriority":"P1","seasonality":"autumn_winter_high",
+  "lifecycle":{"research":"IN_PROGRESS","expertModel":"PENDING","testing":"PENDING","ready":"PENDING"},
+  "intakePolicy":{"maxPrimaryActions":5,"maxTriggeredQuestions":3,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
+  "intake":[{"id":"symptom","type":"choice","required":"QUOTE_REQUIRED","label":"Что происходит?","options":[["Течёт после дождя","rain_leak"],["Сыреет / мокнет постоянно","moisture"],["Плесень / конденсат","condensation"],["Промерзает зимой","freezing"],["Не понимаю источник","unknown"]]},{"id":"location","type":"choice","required":"QUOTE_REQUIRED","label":"Где проявляется проблема?","options":[["Потолок / сверху","ceiling"],["Окна / примыкания","windows"],["Стена / угол","wall"],["Пол / снизу","floor"],["В нескольких местах","multiple"]]},{"id":"glazing","type":"choice","required":"QUOTE_REQUIRED","label":"Балкон остеклён?","options":[["Да","yes"],["Нет","no"],["Не знаю / частично","unknown"]]},{"id":"timing","type":"choice","required":"QUOTE_REQUIRED","label":"Когда появляется проблема?","options":[["После дождя","rain"],["Зимой / в мороз","winter"],["Постоянно","always"],["Не знаю","unknown"]]},{"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте общий вид и следы воды / плесени крупно","maxFiles":8}],
+  "truthStates":["confirmed","claimed","observed","inferred","unknown","risk","requires_site_inspection"],
   "siteInspectionOnly":["источник поступления воды","герметичность наружных узлов","состояние кровли и фасада","скрытая влажность","состояние монтажных швов"],
-  "contractorResponseRequired":["diagnosis","totalPrice","diagnosticsCost","worksIncluded","materialsIncluded","exclusions","leadTime","warranty","extraCosts"],
+  "contractorResponseRequired":["diagnosis","totalPrice","diagnosticsCost","worksIncluded","materialsIncluded","exclusions","leadTime","warranty","contractTerms","alternatives","extraCosts"],
   "normalization":{"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"diagnosisRequired":true,"missingCriticalWorks":"request_clarification"},
   "qaStatuses":["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
 }
