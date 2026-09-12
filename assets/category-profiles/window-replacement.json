@@ -1,0 +1,16 @@
+{
+  "schemaVersion":"1.0","profileVersion":"1.0","categoryId":"window-replacement","serviceCode":"WINDOW_REPLACEMENT","domain":"CONSTRUCTION","category":"HOME_REPAIR","subcategory":"WINDOWS_BALCONIES","status":"DRAFT","launchPriority":"P1","seasonality":"autumn_winter_high",
+  "intakePolicy":{"maxPrimaryActions":5,"askOnlyIfChangesQuoteOrScope":true,"preferPhotos":true},
+  "intake":[
+    {"id":"goal","type":"choice","required":"QUOTE_REQUIRED","label":"Что нужно сделать с окнами?","options":[["Заменить старые окна","replace"],["Установить окна в новый проём","new"],["Стало холодно / дует — понять, нужна ли замена","diagnose"],["Нужна шумоизоляция","noise"]]},
+    {"id":"object","type":"choice","required":"QUOTE_REQUIRED","label":"Где находятся окна?","options":[["Квартира","apartment"],["Частный дом","house"],["Балкон / лоджия","balcony"],["Коммерческое помещение","commercial"]]},
+    {"id":"openings","type":"count_or_unknown","required":"QUOTE_REQUIRED","label":"Сколько окон / проёмов?"},
+    {"id":"dimensions","type":"dimensions_or_unknown","required":"QUOTE_REQUIRED","label":"Примерные размеры известны?"},
+    {"id":"photos","type":"files","required":"RECOMMENDED","label":"Добавьте окна изнутри и общий вид проёмов","maxFiles":8}
+  ],
+  "truthStates":["confirmed","observed","inferred","unknown","requires_site_inspection"],
+  "siteInspectionOnly":["точные размеры проёмов","состояние четвертей и откосов","геометрия проёма","монтажные зазоры","состояние основания"],
+  "contractorResponseRequired":["totalPrice","workPrice","materialsPrice","profileSystem","glassUnit","hardware","worksIncluded","exclusions","leadTime","measurement","warranty","extraCosts"],
+  "normalization":{"primaryMetric":"comparableTotalPrice","fromPriceIsOffer":false,"materialsExcludedPenalty":"mark_non_comparable","missingCriticalWorks":"request_clarification"},
+  "qaStatuses":["PASS","PASS_WITH_WARNINGS","NEEDS_DATA","EXPERT_REVIEW_REQUIRED","FAIL"]
+}
