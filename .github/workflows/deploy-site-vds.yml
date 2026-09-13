@@ -10,29 +10,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Validate frontend JavaScript
-        shell: bash
-        run: |
-          set -euo pipefail
-          for f in assets/category-engine.js assets/expert-agent.js assets/offer-parser.js assets/offer-followup.js assets/offer-merge.js assets/offer-normalizer.js assets/recommendation-status.js assets/recommendation-actions.js assets/comparison-explainer.js assets/launch-v2.js search-api/core.mjs; do node --check "$f"; done
-          node tests/category-lifecycle-regression.mjs
-          node tests/category-system-audit-regression.mjs
-          node tests/category-agent-pipeline-regression.mjs
-          node tests/category-create-command-regression.mjs
-          node tests/category-generated-registry-regression.mjs
-          node tests/category-regression-manifest.mjs
-          node tools/category-agents/run.mjs --all --ci
-          node tests/production-category-wiring-regression.mjs
-          node tests/search-qualification-regression.mjs
-          node tests/seasonal-category-routing-regression.mjs
-          node tests/seasonal-expert-regression.mjs
-          node tests/offer-parser-regression.mjs
-          node tests/offer-followup-regression.mjs
-          node tests/offer-merge-regression.mjs
-          node tests/balcony-offer-normalizer-regression.mjs
-          node tests/recommendation-status-regression.mjs
-          node tests/recommendation-actions-regression.mjs
-          node tests/comparison-explainer-regression.mjs
+      - name: Validate platform readiness
+        run: node tools/platform-readiness.mjs
       - name: Prepare SSH
         shell: bash
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}", VDS_SSH_KEY: "${{ secrets.VDS_SSH_KEY }}" }

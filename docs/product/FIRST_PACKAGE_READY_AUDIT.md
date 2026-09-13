@@ -1,6 +1,6 @@
 # First package READY audit
 
-Updated: 2026-09-12
+Updated: 2026-09-13
 
 Scope:
 - BALCONY_INSULATION
@@ -27,18 +27,18 @@ Scope:
 | Recommendation / explanation / action | PASS | Shared deterministic layers tested by category E2E. |
 | Realistic complete/incomplete/ambiguous offers | PASS | Covered in category QA/E2E suites. |
 | Deterministic fallback without external LLM | PASS | Core category flow does not require external LLM. |
-| Contractor search qualification | BLOCKED | Rules exist in Expert Models, but are not yet an executable production gate for all categories. |
-| Production expert-layer wiring | BLOCKED | `assets/launch-v2.js` currently invokes the expert layer only for BALCONY_INSULATION. |
-| Search backend category wiring | BLOCKED | `search-api/core.mjs` currently has automatic search config only for `balcony-insulation`; other categories can return CATEGORY_NOT_SUPPORTED. |
+| Contractor search qualification | PASS | Category-aware service/exclusion signals, Moscow/MO compatibility, source strength and verification state are executable and regression-tested. |
+| Production expert-layer wiring | PASS | All registered categories use the shared expert runtime; local deterministic output is authoritative and external LLM enhancement is optional. |
+| Search backend category wiring | PASS | Search configuration and generated registries cover every registered production category. |
 | Manual user-facing review | DEFERRED | User explicitly chose to perform this later. |
 | Automatic VDS deploy | INFRA BLOCKED | GitHub VDS SSH secrets remain absent; this is separate from product logic. |
 
 ## Release rule
-No TESTING category is promoted to READY until the three product blockers above are closed and the deferred manual review is completed.
+All automated product gates are closed. TESTING categories remain below READY until the deferred manual user-facing review is completed. ACTIVE additionally requires representative live-task verification.
 
-## Immediate technical work
-1. Wire Construction Domain Expert in the real UI for all six service codes.
-2. Add automatic search config for all six category IDs.
-3. Implement deterministic contractor qualification with category specialization + geography evidence and expose qualification state in search results.
-4. Add regression tests for production wiring and contractor qualification.
-5. Re-run the full validation gate and update this audit.
+## Automated evidence
+`node tools/platform-readiness.mjs` is the canonical automated gate. It runs independently in `.github/workflows/platform-readiness.yml` on pull requests and main pushes, and is reused before VDS deployment.
+
+## Remaining external gates
+1. Perform the intentionally deferred manual review of Intake, warnings, Contractor Brief and recommendation text.
+2. Restore `VDS_HOST`, `VDS_USER` and `VDS_SSH_KEY` to enable automatic deployment and production smoke verification.

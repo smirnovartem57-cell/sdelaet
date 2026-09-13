@@ -4,7 +4,7 @@ const src=fs.readFileSync(new URL('../assets/offer-followup.js',import.meta.url)
 const ctx={window:{}};vm.createContext(ctx);vm.runInContext(src,ctx);const build=ctx.window.sdOfferFollowup.build;
 function ok(name,cond){if(!cond)throw new Error('FAIL '+name);console.log('PASS',name)}
 const winter={goal:'Кабинет / использование зимой'};
-let r=build(winter,{totalPrice:37000,materialsIncluded:true,leadTime:'4 дня',warranty:'2 года',worksIncluded:['утепление пола','утепление потолка','утепление стен / парапета','герметизация / примыкания','проверка остекления'],exclusions:['Электрика отдельно'],priceType:'fixed'});
+let r=build(winter,{totalPrice:37000,materialsIncluded:true,leadTime:'4 дня',warranty:'2 года',worksIncluded:['утепление пола','утепление потолка','утепление стен / парапета','герметизация / примыкания','проверка остекления'],exclusions:['Электрика отдельно'],priceType:'fixed',contractOffered:true,paymentTerms:'поэтапно',priceValidity:'14 дней',acceptanceDocumentIncluded:true});
 ok('F01 complete offer needs no follow-up',r.needed===false);
 r=build(winter,{totalPrice:37000,materialsIncluded:true,leadTime:'4 дня',worksIncluded:[],exclusions:[],priceType:'fixed'});
 ok('F02 asks warranty',r.items.some(x=>/гарант/i.test(x)));

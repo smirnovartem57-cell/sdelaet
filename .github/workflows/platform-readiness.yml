@@ -1,0 +1,25 @@
+name: Platform readiness
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/**'
+      - 'config/**'
+      - 'docs/product/**'
+      - 'search-api/**'
+      - 'tests/**'
+      - 'tools/category-agents/**'
+      - 'tools/platform-readiness.mjs'
+      - '.github/workflows/platform-readiness.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run automated launch-readiness gates
+        run: node tools/platform-readiness.mjs
