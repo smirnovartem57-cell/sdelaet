@@ -139,23 +139,40 @@ function mergeCandidates(candidates){
   return out;
 }
 
+function geoCompatible(candidateGeo,task){
+  const a=lower(candidateGeo),b=lower(task&&task.city),region=lower(task&&task.region),regionId=lower(task&&task.regionId);
+  if(!a||!b)return true;if(a.includes(b)||b.includes(a))return true;
+  const moscowTask=regionId==='ru-mow'||regionId==='ru-mos'||/москва|московск|подмосков/.test(b+' '+region);
+  const moscowCandidate=/москва|московск|подмосков|мытищ|химк|балаших|королев|люберц|красногорск|одинцов|подольск/.test(a);
+  return moscowTask&&moscowCandidate;
+}
+function serviceSignalMatch(hay,signal){
+  const phrase=lower(signal);if(!phrase)return false;if(hay.includes(phrase))return true;
+  const H=tokens(hay),K=tokens(phrase);if(!K.length)return false;
+  const hits=K.filter(k=>H.some(h=>h.slice(0,Math.min(4,h.length,k.length))===k.slice(0,Math.min(4,h.length,k.length))));
+  return hits.length>=Math.ceil(K.length/2);
+}
+function qualificationEvidence(c,config,hay){
+  const policy=config.qualificationPolicy||{},sourceKinds=uniq((c&&c.sources||[]).map(x=>x.kind));
+  const strong=(c&&c.type)==='private'?(policy.strongPrivateSources||['yandex_services']):(policy.strongCompanySources||['official_site','2gis']);
+  return{sourceKinds,strongSourceKinds:sourceKinds.filter(x=>strong.includes(x)),excludedKeywords:(policy.excludeKeywords||[]).filter(x=>hay.includes(lower(x)))};
+}
 export function qualifyCandidateForTask(c,task,configOverride){
   const config=configOverride||CATEGORY_CONFIG[text(task&&task.categoryId)||''];
   if(!config)return {status:'unsupported',qualified:false,reasons:['Категория не поддерживается поиском.']};
-  const hay=lower([c&&c.name,c&&c.description,c&&c.geo].join(' '));
-  const matched=(config.qualifyKeywords||config.keywords||[]).filter(k=>hay.includes(lower(k)));
-  const city=lower(task&&task.city); const geoKnown=lower(c&&c.geo);
-  const geoOk=!city||!geoKnown||geoKnown.includes(city)||city.includes(geoKnown);
-  const reasons=[]; if(matched.length)reasons.push('В данных кандидата подтверждена профильная специализация.');
-  if(geoOk)reasons.push('География не противоречит задаче.');
-  const qualified=matched.length>0&&geoOk;
-  return {status:qualified?'qualified':(matched.length?'geo_check':'needs_verification'),qualified,matchedKeywords:matched,reasons};
+  const hay=lower([c&&c.name,c&&c.description,c&&c.geo,c&&c.query].join(' '));
+  const policy=config.qualificationPolicy||{},matched=uniq((config.qualifyKeywords||config.keywords||[]).filter(k=>serviceSignalMatch(hay,k)));
+  const evidence=qualificationEvidence(c,config,hay),geoOk=geoCompatible(c&&c.geo,task);
+  const enough=matched.length>=(Number(policy.minServiceMatches)||1),excluded=evidence.excludedKeywords.length>0;
+  const reasons=[];if(enough)reasons.push('В данных кандидата найдены сигналы специализации по выбранной категории.');if(evidence.strongSourceKinds.length)reasons.push('Специализация подтверждается профильным источником для этого типа исполнителя.');if(geoOk)reasons.push('География совместима с объектом.');if(excluded)reasons.push('Найдены исключающие сигналы: '+evidence.excludedKeywords.join(', ')+'.');
+  const qualified=enough&&geoOk&&!excluded,confidence=!qualified?'low':evidence.strongSourceKinds.length||matched.length>1?'high':'medium';
+  return {categoryId:policy.categoryId||text(task&&task.categoryId),status:qualified?'qualified':excluded?'excluded':(enough?'geo_check':'needs_verification'),qualified,confidence,verificationRequired:!qualified||confidence!=='high',matchedKeywords:matched,excludedKeywords:evidence.excludedKeywords,sourceKinds:evidence.sourceKinds,strongSourceKinds:evidence.strongSourceKinds,geoCompatible:geoOk,reasons};
 }
 
 function scoreCandidate(c,task,config){
   let s=25; const why=[];
   const qualification=qualifyCandidateForTask(c,task,config); c.qualification=qualification;
-  if(qualification.qualified){s+=15;why.push('Профильность исполнителя подтверждена найденными данными.');}else{s-=12;why.push('Профильность по этой услуге требует дополнительной проверки.');}
+  if(qualification.qualified){s+=qualification.confidence==='high'?22:15;why.push(qualification.confidence==='high'?'Профильность подтверждена категорией и сильным источником.':'Есть профильные сигналы по выбранной категории.');}else{s-=qualification.status==='excluded'?28:12;why.push(qualification.status==='excluded'?'Найдены признаки нерелевантного профиля.':'Профильность по этой услуге требует дополнительной проверки.');}
   const hay=lower([c.name,c.description,c.geo,c.query].join(' '));
   const kw=config.keywords.filter(k=>hay.includes(k));
   if(kw.length){s+=20;why.push('В найденных данных есть профильные слова по нужной услуге.');}
@@ -205,7 +222,7 @@ export async function searchCandidates(env,input){
   }
   const nested=await Promise.all(jobs);
   let merged=mergeCandidates(nested.flat().filter(Boolean));
-  const task={...input,city,executorPreference:pref};
+  const task={...input,city,executorPreference:pref,region:text(input.region),regionId:text(input.regionId)};
   merged=merged.map(c=>scoreCandidate(c,task,config)).sort((a,b)=>b.internalScore-a.internalScore||b.sources.length-a.sources.length);
   const max=Math.max(1,Math.min(Number(input.limit)||10,15));
   merged=merged.slice(0,max).map(publicCandidate);

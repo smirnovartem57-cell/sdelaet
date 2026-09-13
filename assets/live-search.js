@@ -333,6 +333,8 @@
       categoryId: task.categoryId || 'balcony-insulation',
       category: task.category || '',
       city: task.city || '',
+      region: task.region || task.geo?.canonicalRegion || '',
+      regionId: task.regionId || task.geo?.regionId || '',
       description: task.description || '',
       scope: task.scope || '',
       goal: task.goal || '',

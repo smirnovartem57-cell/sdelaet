@@ -20,7 +20,27 @@ export const CATEGORY_CONFIG={
       "обшив",
       "ремонт балкон",
       "ремонт лоджи"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "balcony-finishing",
+      "serviceCode": "BALCONY_FINISHING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "balcony-glazing": {
     "companyQueries": [
@@ -42,7 +62,27 @@ export const CATEGORY_CONFIG={
       "окон",
       "балкон",
       "лоджи"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "balcony-glazing",
+      "serviceCode": "BALCONY_GLAZING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "balcony-insulation": {
     "companyQueries": [
@@ -62,7 +102,27 @@ export const CATEGORY_CONFIG={
     "qualifyKeywords": [
       "утепл",
       "теплоизоляц"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "balcony-insulation",
+      "serviceCode": "BALCONY_INSULATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "balcony-leak-repair": {
     "companyQueries": [
@@ -88,7 +148,27 @@ export const CATEGORY_CONFIG={
       "шв",
       "козыр",
       "фасад"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "balcony-leak-repair",
+      "serviceCode": "BALCONY_LEAK_REPAIR",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "electrical-installation": {
     "companyQueries": [
@@ -115,7 +195,27 @@ export const CATEGORY_CONFIG={
       "розет",
       "автомат",
       "узо"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "electrical-installation",
+      "serviceCode": "ELECTRICAL_INSTALLATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "flooring-installation": {
     "companyQueries": [
@@ -141,7 +241,27 @@ export const CATEGORY_CONFIG={
       "линолеум",
       "паркет",
       "напольн"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "flooring-installation",
+      "serviceCode": "FLOORING_INSTALLATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "interior-doors": {
     "companyQueries": [
@@ -164,7 +284,27 @@ export const CATEGORY_CONFIG={
       "доборы",
       "наличники",
       "дверной монтаж"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "interior-doors",
+      "serviceCode": "INTERIOR_DOORS",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "minor-apartment-repair": {
     "companyQueries": [
@@ -190,7 +330,27 @@ export const CATEGORY_CONFIG={
       "сборка мебели",
       "навес",
       "крепеж"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "minor-apartment-repair",
+      "serviceCode": "MINOR_APARTMENT_REPAIR",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "plumbing-works": {
     "companyQueries": [
@@ -216,7 +376,27 @@ export const CATEGORY_CONFIG={
       "водоснабж",
       "канализац",
       "сантехника"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "plumbing-works",
+      "serviceCode": "PLUMBING_WORKS",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "radiator-heating": {
     "companyQueries": [
@@ -240,7 +420,27 @@ export const CATEGORY_CONFIG={
       "отоплен",
       "стояк",
       "опрессов"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "radiator-heating",
+      "serviceCode": "RADIATOR_HEATING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "stretch-ceiling": {
     "companyQueries": [
@@ -264,7 +464,27 @@ export const CATEGORY_CONFIG={
       "скрытый карниз",
       "световая линия",
       "монтаж потолка"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "stretch-ceiling",
+      "serviceCode": "STRETCH_CEILING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "tile-installation": {
     "companyQueries": [
@@ -288,7 +508,27 @@ export const CATEGORY_CONFIG={
       "плиточник",
       "облицов",
       "затир"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "tile-installation",
+      "serviceCode": "TILE_INSTALLATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "wall-finishing": {
     "companyQueries": [
@@ -312,7 +552,27 @@ export const CATEGORY_CONFIG={
       "шпаклевка",
       "малярные работы",
       "подготовка стен"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "wall-finishing",
+      "serviceCode": "WALL_FINISHING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "window-repair": {
     "companyQueries": [
@@ -336,7 +596,27 @@ export const CATEGORY_CONFIG={
       "фурнитур",
       "стеклопак",
       "уплотн"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "window-repair",
+      "serviceCode": "WINDOW_REPAIR",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "window-replacement": {
     "companyQueries": [
@@ -357,7 +637,27 @@ export const CATEGORY_CONFIG={
       "окн",
       "стеклопак",
       "пвх"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "window-replacement",
+      "serviceCode": "WINDOW_REPLACEMENT",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "wall-plastering": {
     "companyQueries": [
@@ -376,7 +676,27 @@ export const CATEGORY_CONFIG={
       "штукатурка",
       "выравнивание стен",
       "маяки"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "wall-plastering",
+      "serviceCode": "WALL_PLASTERING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "floor-screed": {
     "companyQueries": [
@@ -394,7 +714,27 @@ export const CATEGORY_CONFIG={
     "qualifyKeywords": [
       "стяжка пола",
       "выравнивание пола"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "floor-screed",
+      "serviceCode": "FLOOR_SCREED",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "drywall-partitions": {
     "companyQueries": [
@@ -413,7 +753,27 @@ export const CATEGORY_CONFIG={
       "гипсокартон",
       "гкл",
       "перегородки"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "drywall-partitions",
+      "serviceCode": "DRYWALL_PARTITIONS",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "soundproofing": {
     "companyQueries": [
@@ -432,7 +792,27 @@ export const CATEGORY_CONFIG={
       "шумоизоляция",
       "звукоизоляция",
       "акустика"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "soundproofing",
+      "serviceCode": "SOUNDPROOFING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "bathroom-waterproofing": {
     "companyQueries": [
@@ -451,7 +831,27 @@ export const CATEGORY_CONFIG={
       "гидроизоляция",
       "ванная",
       "санузел"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "bathroom-waterproofing",
+      "serviceCode": "BATHROOM_WATERPROOFING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "underfloor-heating": {
     "companyQueries": [
@@ -470,7 +870,27 @@ export const CATEGORY_CONFIG={
       "теплый пол",
       "нагревательный кабель",
       "терморегулятор"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "underfloor-heating",
+      "serviceCode": "UNDERFLOOR_HEATING",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "entrance-doors": {
     "companyQueries": [
@@ -489,7 +909,27 @@ export const CATEGORY_CONFIG={
       "входные двери",
       "металлические двери",
       "монтаж дверей"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "entrance-doors",
+      "serviceCode": "ENTRANCE_DOORS",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "demolition-works": {
     "companyQueries": [
@@ -507,7 +947,27 @@ export const CATEGORY_CONFIG={
     "qualifyKeywords": [
       "демонтаж",
       "разбор конструкций"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "demolition-works",
+      "serviceCode": "DEMOLITION_WORKS",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "bathroom-renovation": {
     "companyQueries": [
@@ -526,7 +986,27 @@ export const CATEGORY_CONFIG={
       "ремонт ванной",
       "ремонт санузла",
       "под ключ"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "bathroom-renovation",
+      "serviceCode": "BATHROOM_RENOVATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "kitchen-installation": {
     "companyQueries": [
@@ -545,7 +1025,27 @@ export const CATEGORY_CONFIG={
       "установка кухни",
       "сборка кухни",
       "кухонный гарнитур"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "kitchen-installation",
+      "serviceCode": "KITCHEN_INSTALLATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "water-heater-installation": {
     "companyQueries": [
@@ -563,7 +1063,27 @@ export const CATEGORY_CONFIG={
       "водонагреватель",
       "бойлер",
       "подключение"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "water-heater-installation",
+      "serviceCode": "WATER_HEATER_INSTALLATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "ventilation-exhaust": {
     "companyQueries": [
@@ -582,7 +1102,27 @@ export const CATEGORY_CONFIG={
       "вентиляция",
       "вытяжка",
       "воздуховод"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "ventilation-exhaust",
+      "serviceCode": "VENTILATION_EXHAUST",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "roof-repair": {
     "companyQueries": [
@@ -601,7 +1141,27 @@ export const CATEGORY_CONFIG={
       "ремонт кровли",
       "ремонт крыши",
       "кровельные работы"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "roof-repair",
+      "serviceCode": "ROOF_REPAIR",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "facade-insulation": {
     "companyQueries": [
@@ -619,7 +1179,27 @@ export const CATEGORY_CONFIG={
     "qualifyKeywords": [
       "утепление фасада",
       "фасадные работы"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "facade-insulation",
+      "serviceCode": "FACADE_INSULATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   },
   "mold-remediation": {
     "companyQueries": [
@@ -638,6 +1218,26 @@ export const CATEGORY_CONFIG={
       "удаление плесени",
       "устранение сырости",
       "грибок"
-    ]
+    ],
+    "qualificationPolicy": {
+      "categoryId": "mold-remediation",
+      "serviceCode": "MOLD_REMEDIATION",
+      "minServiceMatches": 1,
+      "excludeKeywords": [
+        "вакансия",
+        "резюме",
+        "обучение",
+        "курс мастера",
+        "работа для мастера"
+      ],
+      "strongCompanySources": [
+        "official_site",
+        "2gis"
+      ],
+      "strongPrivateSources": [
+        "yandex_services"
+      ],
+      "requireGeoCompatibility": true
+    }
   }
 };
