@@ -29,6 +29,9 @@ ok('all generated pages exist and are noindex',generatedOk);
 const auto=manifest.categories.filter(c=>c.seo.automation?.status==='AUTO_DRAFT');
 ok('29 categories auto-drafted',auto.length===29);
 ok('all categories require query research before index',manifest.categories.every(c=>c.seo.automation?.needsQueryResearch===true));
+ok('all categories have research state',manifest.categories.every(c=>c.seo.research?.status==='EVIDENCE_REQUIRED'));
+ok('all research states are unresearched initially',manifest.categories.every(c=>c.seo.research?.researched===false));
+ok('all research automation statuses are synced',manifest.categories.every(c=>c.seo.automation?.researchStatus===c.seo.research?.status));
 ok('balcony insulation curated SEO preserved',manifest.categories.find(c=>c.categoryId==='balcony-insulation').seo.automation?.status==='CURATED');
 
 const dry=spawnSync(process.execPath,[path.join(ROOT,'tools/category-agents/create-category.mjs'),'--dry-run','--id','seo-agent-test','--code','SEO_AGENT_TEST','--title','Тестовая категория','--private-queries','тестовая услуга'],{encoding:'utf8'});
@@ -39,5 +42,5 @@ ok('new category starts noindex',payload.entry?.seo?.indexable===false);
 ok('new category gets info blocks',payload.entry?.seo?.infoBlocks?.length>=2);
 ok('new category marked AUTO_DRAFT',payload.entry?.seo?.automation?.status==='AUTO_DRAFT');
 
-console.log(`SEO_MASS_CATEGORY ${18-failures.length} PASS / ${failures.length} FAIL`);
+console.log(`SEO_MASS_CATEGORY ${21-failures.length} PASS / ${failures.length} FAIL`);
 if(failures.length) process.exit(1);

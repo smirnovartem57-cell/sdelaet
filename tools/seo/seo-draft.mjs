@@ -135,9 +135,10 @@ export function buildSeoDraft(root, entry, allCategories=[]){
       {question:'Какие доплаты нужно уточнить заранее?',shortAnswer:'Нужно отдельно проверить всё, что исполнитель исключает из основной цены, а также дополнительные работы, материалы, доставку и организационные расходы.',details:'Список зависит от конкретной категории и исходного состояния объекта.'}
     ],
     relatedCategoryIds:siblings,
+    research:{status:'EVIDENCE_REQUIRED',collectedAt:'',sources:[],queryCount:informationalQueries.length+primaryQueries.length,evidenceQueryCount:0,clusters:[],questions:[],aiAnswerTargets:[],cannibalization:[],recommendations:['Добавить внешний источник поисковых данных: Wordstat/Suggest/SERP/Search Console.'],researched:false,reviewedAt:'',researchVersion:1},
     reviewedAt:'',
     contentVersion:1,
-    automation:{source:'SEO_CATEGORY_AGENT',status:'AUTO_DRAFT',expertModelUsed:Boolean(expert.jtbd||expert.norm),needsQueryResearch:true}
+    automation:{source:'SEO_CATEGORY_AGENT',status:'AUTO_DRAFT',expertModelUsed:Boolean(expert.jtbd||expert.norm),needsQueryResearch:true,researchStatus:'EVIDENCE_REQUIRED'}
   };
 }
 

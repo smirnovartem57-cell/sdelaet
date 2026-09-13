@@ -74,3 +74,28 @@ node tools/seo/qa.mjs
 
 ## Definition of Done
 Категория считается SEO-ready только после query research, category-specific content review, успешного SEO QA и явного ручного переключения `publicationStatus=APPROVED` и `indexable=true`.
+
+## SEO Research Agent
+
+Research Agent работает после AUTO_DRAFT и до ручного SEO approval. Он не придумывает частотность и не снимает research-gate без внешних evidence.
+
+Команда для одной категории без evidence создаёт/обновляет research-state и показывает, чего не хватает:
+```bash
+node tools/seo/research-category.mjs --category balcony-insulation --write
+```
+
+С evidence-файлом:
+```bash
+node tools/seo/research-category.mjs --category balcony-insulation --evidence tmp/balcony-insulation-seo-evidence.json --write
+```
+
+Массово инициализировать research-state:
+```bash
+node tools/seo/research-category.mjs --all --write
+```
+
+Evidence JSON принимает `sources`, `queries`, `questions`, `collectedAt`. Для каждого query можно передать `intent`, `topic`, `demand`, `sourceRefs`. Допустимые внешние типы источников: `yandex_wordstat`, `yandex_suggest`, `yandex_serp`, `google_serp`, `search_console`, `manual_serp`.
+
+Agent автоматически нормализует запросы, определяет intent/topic, группирует кластеры, формирует AI-answer targets и ищет возможную каннибализацию с соседними category pages. Статусы research: `EVIDENCE_REQUIRED` → `REVIEW_REQUIRED` → `READY_FOR_REVIEW`.
+
+Даже `READY_FOR_REVIEW` не публикует страницу: `publicationStatus` остаётся ручным gate, а индексирование требует одновременно `APPROVED`, `needsQueryResearch=false` и `research.status=READY_FOR_REVIEW`.

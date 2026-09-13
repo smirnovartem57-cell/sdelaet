@@ -12,8 +12,10 @@ export function run(ctx){
   if((seo.infoBlocks||[]).length<2) act.push('Добавить минимум два информационных intent-блока.'); else ev.push('infoBlocks>=2');
   if((seo.faq||[]).length<4) act.push('Добавить минимум четыре answer/FAQ блока.'); else ev.push('faq>=4');
   if(seo.indexable===true && seo.publicationStatus!=='APPROVED') act.push('Запретить индексацию до APPROVED.');
-  if(seo.automation?.needsQueryResearch) act.push('Провести SEO query research перед APPROVED/indexable.');
-  const hard=act.filter(x=>!x.startsWith('Провести SEO query research'));
+  const research=seo.research||{};
+  if(seo.automation?.needsQueryResearch || research.status!=='READY_FOR_REVIEW') act.push('Провести SEO query research перед APPROVED/indexable.');
+  if(research.status==='REVIEW_REQUIRED') act.push('Проверить каннибализацию SEO-интентов с соседними категориями.');
+  const hard=act.filter(x=>!x.startsWith('Провести SEO query research')&&!x.startsWith('Проверить каннибализацию'));
   const status=hard.length?'BLOCK':'PASS';
   return result(meta.id,status,status==='PASS'?'SEO draft формально готов; research может оставаться задачей до публикации.':'SEO contract неполный.',ev,act);
 }

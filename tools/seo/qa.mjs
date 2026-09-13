@@ -26,7 +26,8 @@ for (const c of categories) {
   if (!Array.isArray(s.infoBlocks) || s.infoBlocks.length < 2) fail('SEO_INFO_BLOCKS',c,'need >=2');
   if (!Array.isArray(s.faq) || s.faq.length < 3) fail('SEO_FAQ',c,'need >=3');
   if (s.indexable === true && s.publicationStatus !== 'APPROVED') fail('SEO_INDEX_GUARD',c,'indexable requires APPROVED');
-  if (s.indexable === true && s.automation?.needsQueryResearch === true) fail('SEO_RESEARCH_GUARD',c,'indexable blocked until query research is completed');
+  if (s.indexable === true && s.automation?.needsQueryResearch !== false) fail('SEO_RESEARCH_GUARD',c,'indexable requires completed query research');
+  if (s.indexable === true && s.research?.status !== 'READY_FOR_REVIEW') fail('SEO_RESEARCH_STATUS',c,'indexable requires READY_FOR_REVIEW research status');
   if (!Array.isArray(s.breadcrumbs) || s.breadcrumbs.length < 2) fail('SEO_BREADCRUMBS',c,'need >=2');
   const target = path.join(ROOT,s.canonicalPath.replace(/^\//,''),'index.html');
   if (fs.existsSync(target)) {

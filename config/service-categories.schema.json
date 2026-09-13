@@ -157,8 +157,18 @@
             },
             "needsQueryResearch": {
               "type": "boolean"
+            },
+            "researchStatus": {
+              "enum": [
+                "EVIDENCE_REQUIRED",
+                "REVIEW_REQUIRED",
+                "READY_FOR_REVIEW"
+              ]
             }
           }
+        },
+        "research": {
+          "$ref": "#/$defs/seoResearch"
         }
       }
     },
@@ -225,6 +235,87 @@
         },
         "details": {
           "type": "string"
+        }
+      }
+    },
+    "seoResearch": {
+      "type": "object",
+      "required": [
+        "status",
+        "sources",
+        "queryCount",
+        "evidenceQueryCount",
+        "clusters",
+        "questions",
+        "aiAnswerTargets",
+        "cannibalization",
+        "researched",
+        "researchVersion"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "EVIDENCE_REQUIRED",
+            "REVIEW_REQUIRED",
+            "READY_FOR_REVIEW"
+          ]
+        },
+        "collectedAt": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "queryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidenceQueryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clusters": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aiAnswerTargets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cannibalization": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "researched": {
+          "type": "boolean"
+        },
+        "reviewedAt": {
+          "type": "string"
+        },
+        "researchVersion": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     }
