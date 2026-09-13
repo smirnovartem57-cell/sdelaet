@@ -1786,6 +1786,352 @@
           "╤Г╨║╨╗╨░╨┤╨║╨░ ╨▒╤А╤Г╤Б╤З╨░╤В╨║╨╕"
         ]
       }
+    },
+    {
+      "categoryId": "laminate-installation",
+      "serviceCode": "LAMINATE_INSTALLATION",
+      "title": "╨г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/laminate-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/LAMINATE_INSTALLATION.md",
+      "qaTest": "tests/laminate-installation-qa-regression.mjs",
+      "e2eTest": "tests/laminate-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╨╗╨╛╨╢╨╕╤В╤М ╨╗╨░╨╝╨╕╨╜╨░╤В ╨▓ ╨║╨▓╨░╤А╤В╨╕╤А╨╡",
+      "qualificationPhrase": "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░ ╨╕ ╨┐╨╛╨┤╨│╨╛╤В╨╛╨▓╨║╨░ ╨┐╨╛╨╗╨░",
+      "search": {
+        "companyQueries": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╗╨░╨╝╨╕╨╜╨░╤В ╨┐╨╛╨┤ ╨║╨╗╤О╤З ╤Б ╨┐╨╗╨╕╨╜╤В╤Г╤Б╨╛╨╝"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░",
+          "╤Г╨║╨╗╨░╨┤╤З╨╕╨║ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░"
+        ],
+        "keywords": [
+          "╨╗╨░╨╝╨╕╨╜╨░╤В",
+          "╤Г╨║╨╗╨░╨┤╨║╨░",
+          "╨┐╨╛╨┤╨╗╨╛╨╢╨║╨░",
+          "╨┐╨╗╨╕╨╜╤В╤Г╤Б"
+        ],
+        "qualifyKeywords": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░",
+          "╨╜╨░╨┐╨╛╨╗╤М╨╜╤Л╨╡ ╨┐╨╛╨║╤А╤Л╤В╨╕╤П",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨┐╨╗╨╕╨╜╤В╤Г╤Б╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "linoleum-installation",
+      "serviceCode": "LINOLEUM_INSTALLATION",
+      "title": "╨г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░",
+      "status": "RESEARCH",
+      "priority": "P2",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/linoleum-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/LINOLEUM_INSTALLATION.md",
+      "qaTest": "tests/linoleum-installation-qa-regression.mjs",
+      "e2eTest": "tests/linoleum-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╨┐╨╛╤Б╤В╨╡╨╗╨╕╤В╤М ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝ ╨▓ ╨║╨▓╨░╤А╤В╨╕╤А╨╡",
+      "qualificationPhrase": "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░ ╨╕ ╨┐╨╛╨┤╨│╨╛╤В╨╛╨▓╨║╨░ ╨┐╨╛╨╗╨░",
+      "search": {
+        "companyQueries": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╜╨░╤Б╤В╨╕╨╗ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░",
+          "╨╜╨░╤Б╤В╨╕╨╗ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░"
+        ],
+        "keywords": [
+          "╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝",
+          "╨╜╨░╤Б╤В╨╕╨╗",
+          "╤Г╨║╨╗╨░╨┤╨║╨░",
+          "╨┐╨╗╨╕╨╜╤В╤Г╤Б"
+        ],
+        "qualifyKeywords": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░",
+          "╨╜╨░╤Б╤В╨╕╨╗ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░",
+          "╨╜╨░╨┐╨╛╨╗╤М╨╜╤Л╨╡ ╨┐╨╛╨║╤А╤Л╤В╨╕╤П"
+        ]
+      }
+    },
+    {
+      "categoryId": "quartz-vinyl-installation",
+      "serviceCode": "QUARTZ_VINYL_INSTALLATION",
+      "title": "╨г╨║╨╗╨░╨┤╨║╨░ ╨║╨▓╨░╤А╤Ж-╨▓╨╕╨╜╨╕╨╗╨░ ╨╕ SPC",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/quartz-vinyl-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/QUARTZ_VINYL_INSTALLATION.md",
+      "qaTest": "tests/quartz-vinyl-installation-qa-regression.mjs",
+      "e2eTest": "tests/quartz-vinyl-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╨╗╨╛╨╢╨╕╤В╤М ╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗ ╨▓ ╨║╨▓╨░╤А╤В╨╕╤А╨╡",
+      "qualificationPhrase": "╤Г╨║╨╗╨░╨┤╨║╨░ ╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗╨░ ╨╕ SPC ╨┐╨╗╨╕╤В╨║╨╕",
+      "search": {
+        "companyQueries": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗╨░ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╤Г╨║╨╗╨░╨┤╨║╨░ SPC ╨┐╨╗╨╕╤В╨║╨╕"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗",
+          "╤Г╨║╨╗╨░╨┤╤З╨╕╨║ SPC"
+        ],
+        "keywords": [
+          "╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗",
+          "SPC",
+          "╨▓╨╕╨╜╨╕╨╗╨╛╨▓╨░╤П ╨┐╨╗╨╕╤В╨║╨░"
+        ],
+        "qualifyKeywords": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨║╨▓╨░╤А╤Ж ╨▓╨╕╨╜╨╕╨╗╨░",
+          "╤Г╨║╨╗╨░╨┤╨║╨░ SPC",
+          "╨▓╨╕╨╜╨╕╨╗╨╛╨▓╤Л╨╣ ╨┐╨╛╨╗"
+        ]
+      }
+    },
+    {
+      "categoryId": "parquet-installation",
+      "serviceCode": "PARQUET_INSTALLATION",
+      "title": "╨г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨░ ╨╕ ╨┐╨░╤А╨║╨╡╤В╨╜╨╛╨╣ ╨┤╨╛╤Б╨║╨╕",
+      "status": "RESEARCH",
+      "priority": "P2",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/parquet-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/PARQUET_INSTALLATION.md",
+      "qaTest": "tests/parquet-installation-qa-regression.mjs",
+      "e2eTest": "tests/parquet-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╨╗╨╛╨╢╨╕╤В╤М ╨┐╨░╤А╨║╨╡╤В╨╜╤Г╤О ╨┤╨╛╤Б╨║╤Г",
+      "qualificationPhrase": "╤Г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨░ ╨╕ ╨┐╨░╤А╨║╨╡╤В╨╜╨╛╨╣ ╨┤╨╛╤Б╨║╨╕",
+      "search": {
+        "companyQueries": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨░ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨┐╨░╤А╨║╨╡╤В╨╜╨╛╨╣ ╨┤╨╛╤Б╨║╨╕"
+        ],
+        "privateQueries": [
+          "╨┐╨░╤А╨║╨╡╤В╤З╨╕╨║ ╨╝╨░╤Б╤В╨╡╤А",
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨╜╨╛╨╣ ╨┤╨╛╤Б╨║╨╕"
+        ],
+        "keywords": [
+          "╨┐╨░╤А╨║╨╡╤В",
+          "╨┐╨░╤А╨║╨╡╤В╨╜╨░╤П ╨┤╨╛╤Б╨║╨░",
+          "╤Г╨║╨╗╨░╨┤╨║╨░"
+        ],
+        "qualifyKeywords": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨░",
+          "╨┐╨░╤А╨║╨╡╤В╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤В╤Л",
+          "╨┐╨░╤А╨║╨╡╤В╨╜╨░╤П ╨┤╨╛╤Б╨║╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "bathtub-installation",
+      "serviceCode": "BATHTUB_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨▓╨░╨╜╨╜╤Л",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/bathtub-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BATHTUB_INSTALLATION.md",
+      "qaTest": "tests/bathtub-installation-qa-regression.mjs",
+      "e2eTest": "tests/bathtub-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╨╜╨╛╨▓╤Г╤О ╨▓╨░╨╜╨╜╤Г",
+      "qualificationPhrase": "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨░╨║╤А╨╕╨╗╨╛╨▓╨╛╨╣ ╤З╤Г╨│╤Г╨╜╨╜╨╛╨╣ ╤Б╤В╨░╨╗╤М╨╜╨╛╨╣ ╨▓╨░╨╜╨╜╤Л",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨▓╨░╨╜╨╜╤Л ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨░╨║╤А╨╕╨╗╨╛╨▓╨╛╨╣ ╨▓╨░╨╜╨╜╤Л"
+        ],
+        "privateQueries": [
+          "╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨▓╨░╨╜╨╜╤Л",
+          "╨╝╨░╤Б╤В╨╡╤А ╨╝╨╛╨╜╤В╨░╨╢ ╨▓╨░╨╜╨╜╤Л"
+        ],
+        "keywords": [
+          "╨▓╨░╨╜╨╜╨░",
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░",
+          "╨░╨║╤А╨╕╨╗╨╛╨▓╨░╤П",
+          "╤З╤Г╨│╤Г╨╜╨╜╨░╤П"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨▓╨░╨╜╨╜╤Л",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨▓╨░╨╜╨╜╤Л",
+          "╨┐╨╛╨┤╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╨▓╨░╨╜╨╜╤Л"
+        ]
+      }
+    },
+    {
+      "categoryId": "toilet-installation",
+      "serviceCode": "TOILET_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Г╨╜╨╕╤В╨░╨╖╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/toilet-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/TOILET_INSTALLATION.md",
+      "qaTest": "tests/toilet-installation-qa-regression.mjs",
+      "e2eTest": "tests/toilet-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╨╜╨╛╨▓╤Л╨╣ ╤Г╨╜╨╕╤В╨░╨╖",
+      "qualificationPhrase": "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╜╨░╨┐╨╛╨╗╤М╨╜╨╛╨│╨╛ ╨╕ ╨┐╨╛╨┤╨▓╨╡╤Б╨╜╨╛╨│╨╛ ╤Г╨╜╨╕╤В╨░╨╖╨░",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Г╨╜╨╕╤В╨░╨╖╨░ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨╕╨╜╤Б╤В╨░╨╗╨╗╤П╤Ж╨╕╨╕ ╤Г╨╜╨╕╤В╨░╨╖╨░"
+        ],
+        "privateQueries": [
+          "╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Г╨╜╨╕╤В╨░╨╖╨░",
+          "╨╝╨░╤Б╤В╨╡╤А ╨╝╨╛╨╜╤В╨░╨╢ ╨╕╨╜╤Б╤В╨░╨╗╨╗╤П╤Ж╨╕╨╕"
+        ],
+        "keywords": [
+          "╤Г╨╜╨╕╤В╨░╨╖",
+          "╨╕╨╜╤Б╤В╨░╨╗╨╗╤П╤Ж╨╕╤П",
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Г╨╜╨╕╤В╨░╨╖╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨╕╨╜╤Б╤В╨░╨╗╨╗╤П╤Ж╨╕╨╕",
+          "╨┐╨╛╨┤╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Г╨╜╨╕╤В╨░╨╖╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "shower-cabin-installation",
+      "serviceCode": "SHOWER_CABIN_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╨║╨░╨▒╨╕╨╜╤Л",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/shower-cabin-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/SHOWER_CABIN_INSTALLATION.md",
+      "qaTest": "tests/shower-cabin-installation-qa-regression.mjs",
+      "e2eTest": "tests/shower-cabin-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╨┤╤Г╤И╨╡╨▓╤Г╤О ╨║╨░╨▒╨╕╨╜╤Г",
+      "qualificationPhrase": "╤Б╨▒╨╛╤А╨║╨░ ╨╕ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╨║╨░╨▒╨╕╨╜╤Л",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╨║╨░╨▒╨╕╨╜╤Л ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨┤╤Г╤И╨╡╨▓╨╛╨│╨╛ ╤Г╨│╨╛╨╗╨║╨░"
+        ],
+        "privateQueries": [
+          "╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║ ╨┤╤Г╤И╨╡╨▓╨░╤П ╨║╨░╨▒╨╕╨╜╨░",
+          "╨╝╨░╤Б╤В╨╡╤А ╤Б╨▒╨╛╤А╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣"
+        ],
+        "keywords": [
+          "╨┤╤Г╤И╨╡╨▓╨░╤П ╨║╨░╨▒╨╕╨╜╨░",
+          "╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╤Г╨│╨╛╨╗╨╛╨║",
+          "╨╝╨╛╨╜╤В╨░╨╢"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╨║╨░╨▒╨╕╨╜╤Л",
+          "╤Б╨▒╨╛╤А╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨┤╤Г╤И╨╡╨▓╨╛╨│╨╛ ╤Г╨│╨╛╨╗╨║╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "heating-system-installation",
+      "serviceCode": "HEATING_SYSTEM_INSTALLATION",
+      "title": "╨Ь╨╛╨╜╤В╨░╨╢ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "summer_autumn_high",
+      "profile": "assets/category-profiles/heating-system-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/HEATING_SYSTEM_INSTALLATION.md",
+      "qaTest": "tests/heating-system-installation-qa-regression.mjs",
+      "e2eTest": "tests/heating-system-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Б╨┤╨╡╨╗╨░╤В╤М ╤Б╨╕╤Б╤В╨╡╨╝╤Г ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╨▓ ╤З╨░╤Б╤В╨╜╨╛╨╝ ╨┤╨╛╨╝╨╡",
+      "qualificationPhrase": "╨╝╨╛╨╜╤В╨░╨╢ ╤Б╨╕╤Б╤В╨╡╨╝╤Л ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "search": {
+        "companyQueries": [
+          "╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╨╡ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░ ╨┐╨╛╨┤ ╨║╨╗╤О╤З ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╤Б╨╕╤Б╤В╨╡╨╝╤Л ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╨╡ ╨┤╨╛╨╝╨░",
+          "╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║ ╨╝╨╛╨╜╤В╨░╨╢ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П"
+        ],
+        "keywords": [
+          "╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╨╡ ╨┤╨╛╨╝╨░",
+          "╨║╨╛╤В╨╡╨╗╤М╨╜╨░╤П",
+          "╤А╨░╨┤╨╕╨░╤В╨╛╤А╤Л",
+          "╤В╤А╤Г╨▒╤Л"
+        ],
+        "qualifyKeywords": [
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П",
+          "╤Б╨╕╤Б╤В╨╡╨╝╨░ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П",
+          "╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╨╡ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ]
+      }
+    },
+    {
+      "categoryId": "boiler-installation",
+      "serviceCode": "BOILER_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╛╤В╨╛╨┐╨╕╤В╨╡╨╗╤М╨╜╨╛╨│╨╛ ╨║╨╛╤В╨╗╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "summer_autumn_high",
+      "profile": "assets/category-profiles/boiler-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BOILER_INSTALLATION.md",
+      "qaTest": "tests/boiler-installation-qa-regression.mjs",
+      "e2eTest": "tests/boiler-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╨║╨╛╤В╨╡╨╗ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╨▓ ╨┤╨╛╨╝╨╡",
+      "qualificationPhrase": "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╕ ╨╛╨▒╨▓╤П╨╖╨║╨░ ╨╛╤В╨╛╨┐╨╕╤В╨╡╨╗╤М╨╜╨╛╨│╨╛ ╨║╨╛╤В╨╗╨░",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨║╨╛╤В╨╗╨░ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨│╨░╨╖╨╛╨▓╨╛╨│╨╛ ╨║╨╛╤В╨╗╨░"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨║╨╛╤В╨╗╨░",
+          "╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║ ╨╛╨▒╨▓╤П╨╖╨║╨░ ╨║╨╛╤В╨╗╨░"
+        ],
+        "keywords": [
+          "╨║╨╛╤В╨╡╨╗ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П",
+          "╨╛╨▒╨▓╤П╨╖╨║╨░",
+          "╨│╨░╨╖╨╛╨▓╤Л╨╣ ╨║╨╛╤В╨╡╨╗",
+          "╤Н╨╗╨╡╨║╤В╤А╨╕╤З╨╡╤Б╨║╨╕╨╣ ╨║╨╛╤В╨╡╨╗"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨║╨╛╤В╨╗╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨║╨╛╤В╨╗╨░",
+          "╨╛╨▒╨▓╤П╨╖╨║╨░ ╨║╨╛╤В╨╗╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "air-conditioner-service",
+      "serviceCode": "AIR_CONDITIONER_SERVICE",
+      "title": "╨а╨╡╨╝╨╛╨╜╤В ╨╕ ╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/air-conditioner-service.json",
+      "expertModel": "docs/product/EXPERT_MODELS/AIR_CONDITIONER_SERVICE.md",
+      "qaTest": "tests/air-conditioner-service-qa-regression.mjs",
+      "e2eTest": "tests/air-conditioner-service-e2e-regression.mjs",
+      "testPhrase": "╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А ╨┐╨╗╨╛╤Е╨╛ ╨╛╤Е╨╗╨░╨╢╨┤╨░╨╡╤В ╨╜╤Г╨╢╨╡╨╜ ╤А╨╡╨╝╨╛╨╜╤В",
+      "qualificationPhrase": "╤А╨╡╨╝╨╛╨╜╤В ╤З╨╕╤Б╤В╨║╨░ ╨╕ ╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨╛╨▓",
+      "search": {
+        "companyQueries": [
+          "╤А╨╡╨╝╨╛╨╜╤В ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨╛╨▓ ╨Ь╨╛╤Б╨║╨▓╨░",
+          "╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨╕ ╤З╨╕╤Б╤В╨║╨░ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╤А╨╡╨╝╨╛╨╜╤В ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░",
+          "╨╖╨░╨┐╤А╨░╨▓╨║╨░ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░"
+        ],
+        "keywords": [
+          "╤А╨╡╨╝╨╛╨╜╤В ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░",
+          "╤З╨╕╤Б╤В╨║╨░",
+          "╨╖╨░╨┐╤А╨░╨▓╨║╨░",
+          "╨┤╨╕╨░╨│╨╜╨╛╤Б╤В╨╕╨║╨░"
+        ],
+        "qualifyKeywords": [
+          "╤А╨╡╨╝╨╛╨╜╤В ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨╛╨▓",
+          "╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░",
+          "╤З╨╕╤Б╤В╨║╨░ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░"
+        ]
+      }
     }
   ]
 }

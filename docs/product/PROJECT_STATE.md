@@ -13,7 +13,7 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 ## Category state
 - `BALCONY_FINISHING` — `TESTING`, profile v1.1.
 - `BALCONY_GLAZING` — `TESTING`, profile v1.1.
-- `BALCONY_INSULATION` — `READY`, reference category, profile v1.1.
+- `BALCONY_INSULATION` — `READY`, reference category, profile v1.2.
 - `BALCONY_LEAK_REPAIR` — `TESTING`, profile v1.1.
 - `ELECTRICAL_INSTALLATION` — `TESTING`, profile v1.0.
 - `FLOORING_INSTALLATION` — `TESTING`, profile v1.0.
@@ -62,9 +62,19 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `SITE_DRAINAGE` — `RESEARCH`, profile v0.1.
 - `BLIND_AREA_CONSTRUCTION` — `RESEARCH`, profile v0.1.
 - `PAVING_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `LAMINATE_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `LINOLEUM_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `QUARTZ_VINYL_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `PARQUET_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `BATHTUB_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `TOILET_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `SHOWER_CABIN_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `HEATING_SYSTEM_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `BOILER_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `AIR_CONDITIONER_SERVICE` — `RESEARCH`, profile v0.1.
 
 ## Current focus
-Global SEO catalogue is generated from the category manifest for 50 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–2 added 21 high-demand task-specific categories in honest `RESEARCH` state, including private-house and site work. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
+Global SEO catalogue is generated from the category manifest for 60 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–3 added 31 high-demand task-specific categories in honest `RESEARCH` state, including private-house, site, flooring, plumbing, heating and climate work. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
 
 Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
 

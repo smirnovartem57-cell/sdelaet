@@ -56,6 +56,16 @@
 | `SITE_DRAINAGE` | `site-drainage` | ╨Ф╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░ | RESEARCH | P1 |
 | `BLIND_AREA_CONSTRUCTION` | `blind-area-construction` | ╨г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕ ╨┤╨╛╨╝╨░ | RESEARCH | P2 |
 | `PAVING_INSTALLATION` | `paving-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕ | RESEARCH | P2 |
+| `LAMINATE_INSTALLATION` | `laminate-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╨╗╨░╨╝╨╕╨╜╨░╤В╨░ | RESEARCH | P1 |
+| `LINOLEUM_INSTALLATION` | `linoleum-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╨╗╨╕╨╜╨╛╨╗╨╡╤Г╨╝╨░ | RESEARCH | P2 |
+| `QUARTZ_VINYL_INSTALLATION` | `quartz-vinyl-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╨║╨▓╨░╤А╤Ж-╨▓╨╕╨╜╨╕╨╗╨░ ╨╕ SPC | RESEARCH | P1 |
+| `PARQUET_INSTALLATION` | `parquet-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╨┐╨░╤А╨║╨╡╤В╨░ ╨╕ ╨┐╨░╤А╨║╨╡╤В╨╜╨╛╨╣ ╨┤╨╛╤Б╨║╨╕ | RESEARCH | P2 |
+| `BATHTUB_INSTALLATION` | `bathtub-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨▓╨░╨╜╨╜╤Л | RESEARCH | P1 |
+| `TOILET_INSTALLATION` | `toilet-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Г╨╜╨╕╤В╨░╨╖╨░ | RESEARCH | P1 |
+| `SHOWER_CABIN_INSTALLATION` | `shower-cabin-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╤Г╤И╨╡╨▓╨╛╨╣ ╨║╨░╨▒╨╕╨╜╤Л | RESEARCH | P1 |
+| `HEATING_SYSTEM_INSTALLATION` | `heating-system-installation` | ╨Ь╨╛╨╜╤В╨░╨╢ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░ | RESEARCH | P1 |
+| `BOILER_INSTALLATION` | `boiler-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╛╤В╨╛╨┐╨╕╤В╨╡╨╗╤М╨╜╨╛╨│╨╛ ╨║╨╛╤В╨╗╨░ | RESEARCH | P1 |
+| `AIR_CONDITIONER_SERVICE` | `air-conditioner-service` | ╨а╨╡╨╝╨╛╨╜╤В ╨╕ ╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░ | RESEARCH | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
