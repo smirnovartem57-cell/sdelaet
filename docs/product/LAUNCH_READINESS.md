@@ -11,17 +11,26 @@
 - Индексация не является частью автоматического pipeline.
 
 ## 2. Recovery/admin gate
-Перед launch проверить на production:
-- `/admin/` и `/admin-api/` требуют авторизацию;
-- публичный `api.onsdelaet.ru/v1/admin/*` возвращает 404;
+Публичная защита проверена 2026-09-13:
+- `https://onsdelaet.ru/admin/` → 401 без авторизации — PASS;
+- `https://onsdelaet.ru/admin-api/recovery` → 401 без авторизации — PASS;
+- `https://api.onsdelaet.ru/v1/admin/recovery` → 404 — PASS.
+
+Перед launch на production ещё проверить:
 - PII клиента не попадает в публичный HTML/API;
 - статусы recovery: `new/contact_requested → in_progress → resolved/closed`;
 - доступны `assigned_to`, `solution_notes`, `contacted_at`, `resolved_at`, `closed_at`;
 - проблема исполнителя создаёт high-priority recovery case и admin Telegram alert.
 
+Автоматическая публичная проверка:
+```bash
+node tools/launch/security-smoke.mjs
+```
+
 ## 3. Client lifecycle gate
-Прогнать отдельными тестами:
-- positive: completed → rating → price match → recommendation → comment → photo → public consent;
+Положительный review-flow уже пройден: completed → rating → price match → recommendation → comment → photo → public consent.
+
+Осталось прогнать отдельными тестами:
 - price increased significantly;
 - do not recommend contractor;
 - work partially completed;
@@ -47,6 +56,18 @@
 До платного трафика должна восстанавливаться воронка:
 `landing → task_created → tariff_selected → payment_started → paid → candidates_ready → contractor_selected → completed → review_completed`.
 
+Публичная проверка 2026-09-13 показала:
+- `/create-task.html` подключает `/assets/analytics.js` и счётчик 112503660 — PASS;
+- `/` не подключает `/assets/analytics.js` — GAP;
+- `/payment.html` не подключает `/assets/analytics.js` — GAP.
+
+Это означает, что `sdTrack(...)` на страницах без `analytics.js` не гарантирует отправку `reachGoal` в Метрику. До закупки трафика покрытие analytics.js нужно сделать единообразным на всей воронке.
+
+Автоматическая проверка покрытия:
+```bash
+node tools/launch/analytics-audit.mjs
+```
+
 Минимум проверить события:
 - tariff clicks;
 - task submit/create;
@@ -60,6 +81,8 @@
 - review completed.
 
 ## 6. Public smoke
+Проверено 2026-09-13: `/`, `/create-task.html`, `/payment.html`, `/offer.html`, `/privacy.html`, `/requisites.html` возвращают HTTP 200.
+
 Команда:
 ```bash
 node tools/launch/public-smoke.mjs
