@@ -90,6 +90,15 @@
     if(/стеклохолст|паутинк/.test(low)){o.wallFiberglassIncluded=true;o.worksIncluded.push('стеклохолст')}
     if(/поклейк.{0,15}обо|наклейк.{0,15}обо/.test(low)){o.wallpaperInstallationIncluded=true;o.worksIncluded.push('поклейка обоев')}
     if(/покраск.{0,15}стен|окраск.{0,15}стен/.test(low)){o.wallPaintingIncluded=true;o.worksIncluded.push('покраска стен')}
+    var ca=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(ca)o.ceilingArea=Number(ca[1].replace(',','.'));
+    if(/тканев/.test(low))o.ceilingMaterial='fabric';else if(/пвх|pvc|матов|сатин|глянц/.test(low))o.ceilingMaterial='pvc';
+    if(/тенев.{0,15}профил/.test(low))o.ceilingProfile='shadow';else if(/парящ/.test(low))o.ceilingProfile='floating';else if(/светов.{0,10}потол/.test(low))o.ceilingProfile='luminous';else if(/профил|багет/.test(low))o.ceilingProfile='standard';
+    var cl=low.match(/(\d+)\s*(?:светильник|точк.{0,6}свет)/);if(cl)o.ceilingLightPoints=Number(cl[1]);
+    if(/закладн.{0,15}(люстр|светильник)|монтаж.{0,15}(люстр|светильник)/.test(low)){o.ceilingLightMountsIncluded=true;o.worksIncluded.push('закладные / светильники')}
+    if(/скрыт.{0,12}карниз|ниша.{0,12}карниз/.test(low)){o.hiddenCorniceIncluded=true;o.worksIncluded.push('скрытый карниз / ниша')}
+    if(/светов.{0,10}лини|led.{0,10}лини|подсветк/.test(low)){o.ceilingLightLinesIncluded=true;o.worksIncluded.push('световые линии / подсветка')}
+    if(/обход.{0,12}труб|труб.{0,12}обход/.test(low)){o.ceilingPipeBypassIncluded=true;o.worksIncluded.push('обход труб')}
+    if(/демонтаж.{0,18}(натяжн|потол)/.test(low)){o.ceilingDemolitionIncluded=true;o.worksIncluded.push('демонтаж потолка')}
     var dc=low.match(/(\d+)\s*(?:двер|полот)/);if(dc)o.doorCount=Number(dc[1]);
     o.doorType=/раздвиж|купе/.test(low)?'sliding':/скрыт|invisible/.test(low)?'hidden':/двуствор/.test(low)?'double':(/межкомнат|двер/.test(low)?'swing':'');
     if(/демонтаж.{0,20}(двер|полот|короб)/.test(low)){o.doorDemolitionIncluded=true;o.worksIncluded.push('демонтаж двери')}

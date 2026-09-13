@@ -32,6 +32,14 @@
       if(/стар|передел/i.test((task.currentState||'')+' '+(task.scope||''))&&!hasWork(offer,/демонтаж/))items.push('входит ли демонтаж старой отделки');
       if(/пол/i.test((task.scope||'')+' '+(task.surfaces||''))&&offer.floorBaseIncluded!==true)items.push('что входит в подготовку / основание пола');
       if(!offer.warranty)items.push('гарантию на отделочные работы');
+    }else if(task.serviceCode==='STRETCH_CEILING'){
+      var cs=((task.goal||'')+' '+(task.scope||'')+' '+(task.ceilingStyle||'')+' '+(task.cornice||'')+' '+(task.lighting||'')).toLowerCase();
+      if(!offer.ceilingMaterial)items.push('какое полотно входит: ПВХ / ткань, фактура и производитель');
+      if(!offer.ceilingProfile)items.push('какой профиль / система крепления входит');
+      if(/светиль|люстр|lighting/.test(cs)&&offer.ceilingLightMountsIncluded!==true)items.push('входят ли закладные и монтаж светильников / люстр');
+      if(/yes|карниз|ниша/.test(cs)&&offer.hiddenCorniceIncluded!==true)items.push('входит ли скрытый карниз / ниша');
+      if(/floating|luminous|подсвет|светов/.test(cs)&&offer.ceilingLightLinesIncluded!==true)items.push('что входит в подсветку / световые линии и блоки питания');
+      if(!offer.warranty)items.push('гарантию на полотно и монтаж');
     }else if(task.serviceCode==='INTERIOR_DOORS'){
       var ds=((task.goal||'')+' '+(task.scope||'')+' '+(task.doorType||'')+' '+(task.oldDoors||'')+' '+(task.doorKit||'')).toLowerCase();
       if(offer.doorBoxIncluded!==true)items.push('входит ли сборка / монтаж дверной коробки');

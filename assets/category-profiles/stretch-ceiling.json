@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "profileVersion": "1.0",
+  "categoryId": "stretch-ceiling",
+  "serviceCode": "STRETCH_CEILING",
+  "domain": "CONSTRUCTION",
+  "category": "HOME_REPAIR",
+  "subcategory": "CEILING",
+  "status": "TESTING",
+  "launchPriority": "P2",
+  "seasonality": "year_round",
+  "lifecycle": {
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
+    "ready": "PENDING"
+  },
+  "intakePolicy": {
+    "maxPrimaryActions": 5,
+    "maxTriggeredQuestions": 3,
+    "askOnlyIfChangesQuoteOrScope": true,
+    "preferPhotos": true
+  },
+  "truthStates": [
+    "confirmed",
+    "claimed",
+    "observed",
+    "inferred",
+    "unknown",
+    "risk",
+    "requires_site_inspection"
+  ],
+  "siteInspectionOnly": [
+    "точная площадь и периметр",
+    "геометрия и углы помещения",
+    "основание стен под профиль",
+    "расположение скрытых коммуникаций",
+    "фактическое количество обходов труб и закладных"
+  ],
+  "contractorResponseRequired": [
+    "totalPrice",
+    "ceilingArea",
+    "ceilingMaterial",
+    "ceilingProfile",
+    "lightingPoints",
+    "hiddenCornice",
+    "pipeBypasses",
+    "demolition",
+    "exclusions",
+    "extraCosts",
+    "leadTime",
+    "warranty"
+  ],
+  "normalization": {
+    "primaryMetric": "comparableTotalPrice",
+    "fromPriceIsOffer": false,
+    "sameConfigurationRequired": true,
+    "lightingAndProfilesSeparate": true
+  },
+  "qaStatuses": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "NEEDS_DATA",
+    "EXPERT_REVIEW_REQUIRED",
+    "FAIL"
+  ],
+  "research": {
+    "completedAt": "2026-09-13",
+    "marketEvidence": "Moscow/MO stretch-ceiling offers reviewed: base/shadow/luminous profiles, lighting points, hidden cornice, pipe bypasses and demolition are separately priced",
+    "result": "PASS"
+  }
+}

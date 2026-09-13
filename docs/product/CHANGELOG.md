@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-09-13 — STRETCH_CEILING moved to TESTING
+- Added deterministic routing, expert rules, parser, normalizer and follow-up.
+- QA 15/15 PASS; E2E PASS, complete 69 000 ₽ offer selected over headline price per m².
+- Category Production Agent Pipeline + Consistency Agent PASS; manual review remains deferred before READY.
+
 ## 2026-09-13 — WALL_FINISHING moved to TESTING via Category Agent Pipeline
 - Research confirmed separate estimate layers for primer, putty, sanding, fiberglass, wallpaper/paint and demolition.
 - Added routing, Expert Model, parser, normalizer, follow-up, search qualification and production wiring.

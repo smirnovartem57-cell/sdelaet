@@ -18,7 +18,8 @@
 | `TILE_INSTALLATION` | `tile-installation` | Укладка плитки / керамогранита | TESTING | P2 |
 | `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
 | `WALL_FINISHING` | `wall-finishing` | Стены / обои / покраска | TESTING | P1 |
-| `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
+| `INTERIOR_DOORS` | `interior-doors` | Межкомнатные двери | TESTING | P2 |
+| `STRETCH_CEILING` | `stretch-ceiling` | Натяжные потолки | TESTING | P2 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
