@@ -14,20 +14,37 @@ const source = arg('--source');
 const region = arg('--region') || '225';
 const write = args.includes('--write');
 const all = args.includes('--all');
+const pending = args.includes('--pending');
 const saveEvidence = args.includes('--save-evidence');
 const evidenceDir = arg('--evidence-dir') || 'docs/product/seo-research';
 
-if (!categoryId && !all) {
-  console.error('Usage: node tools/seo/research-category.mjs --category <id> [--source wordstat] [--evidence file.json] [--write] [--save-evidence] | --all [--source wordstat] [--write] [--save-evidence]');
+if (!categoryId && !all && !pending) {
+  console.error('Usage: node tools/seo/research-category.mjs --category <id> | --all | --pending [--source wordstat] [--region 213] [--write] [--save-evidence]');
   process.exit(2);
 }
-if (all && evidencePath) {
-  console.error('--evidence can only be used with one --category. Use --source wordstat for --all.');
+if ((all || pending) && evidencePath) {
+  console.error('--evidence can only be used with one --category. Use --source wordstat for --all/--pending.');
   process.exit(2);
 }
 
-const selected = manifest.categories.filter(c => all || c.categoryId === categoryId);
-if (!selected.length) throw new Error(`Unknown category: ${categoryId}`);
+const selected = manifest.categories.filter(c => {
+  if (all) return true;
+  if (pending) {
+    return Boolean(c.seo) && (
+      c.seo?.automation?.needsQueryResearch !== false ||
+      !c.seo?.research ||
+      c.seo?.research?.status === 'EVIDENCE_REQUIRED'
+    );
+  }
+  return c.categoryId === categoryId;
+});
+if (!selected.length) {
+  if (pending) {
+    console.log(JSON.stringify({write,source:source||null,region:String(region),count:0,summary:{},reports:[],message:'NO_PENDING_SEO_RESEARCH'},null,2));
+    process.exit(0);
+  }
+  throw new Error(`Unknown category: ${categoryId}`);
+}
 for (const category of selected) {
   if (!category.seo) throw new Error(`SEO contract missing: ${category.categoryId}`);
 }
@@ -116,6 +133,7 @@ const summary = reports.reduce((acc,row) => {
 },{});
 console.log(JSON.stringify({
   write,
+  mode:all?'all':pending?'pending':'category',
   source:source || null,
   region:String(region),
   count:reports.length,
