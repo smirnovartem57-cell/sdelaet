@@ -18,4 +18,4 @@ For each of `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_F
 - ✅ Implemented shared `GEO_CLASSIFIER`: rawGeo → canonical region/locality/stable IDs, with confirmed Moscow/MO aliases and explicit uncertainty for unresolved localities.
 - ✅ Extended the shared normalized offer schema with delivery, dismantling, contract terms, alternatives, uncertainties and missing items across all categories.
 - ✅ Made contractor qualification category-aware with service/exclusion signals, geographic compatibility, source strength and explicit verification state; the common discover → deduplicate → qualify → enrich → verify → rank → shortlist → outreach pipeline is retained.
-- Keep external LLM optional with deterministic fallback.
+- ✅ External LLM is optional behind Expert Runtime: local expert output is produced first and retained on missing provider, timeout, error or invalid response.
