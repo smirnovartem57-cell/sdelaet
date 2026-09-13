@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "roof-repair",
   "serviceCode": "ROOF_REPAIR",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "ROOF_REPAIR",
+  "status": "EXPERT_MODEL",
   "launchPriority": "P1",
   "seasonality": "autumn_high",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
+    "research": "PASS",
+    "expertModel": "ACTIVE",
     "testing": "PENDING",
     "ready": "PENDING"
   },
@@ -30,9 +30,23 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "точный источник протечки",
+    "тип и состояние кровельного покрытия",
+    "состояние обрешетки / основания / кровельного пирога",
+    "безопасность и способ доступа к зоне ремонта"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "roofType",
+    "diagnosis",
+    "repairArea",
+    "repairMethod",
+    "materials",
+    "flashingAndJunctions",
+    "underlayment",
+    "accessCost",
+    "demolition",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +64,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 17.13330.2017 + московские прайсы 2026: локальный ремонт, примыкания, покрытие, обрешетка и капитальная замена имеют разные составы и единицы цены.",
+    "result": "PASS"
   }
 }

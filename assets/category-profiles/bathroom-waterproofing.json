@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "bathroom-waterproofing",
   "serviceCode": "BATHROOM_WATERPROOFING",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "WET_AREA_WATERPROOFING",
+  "status": "EXPERT_MODEL",
   "launchPriority": "P1",
   "seasonality": "year_round",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
+    "research": "PASS",
+    "expertModel": "ACTIVE",
     "testing": "PENDING",
     "ready": "PENDING"
   },
@@ -30,13 +30,27 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "состояние и трещины основания",
+    "фактическая площадь пола и мокрых стен",
+    "узлы примыкания, углы и проходки труб",
+    "совместимость с последующей плиточной системой"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "area",
+    "waterproofingSystem",
+    "layers",
+    "surfacePreparation",
+    "cornerTape",
+    "pipePenetrations",
+    "wallHeight",
+    "materials",
+    "dryingTime",
     "exclusions",
     "extraCosts",
-    "leadTime",
-    "warranty"
+    "warranty",
+    "leadTime"
   ],
   "normalization": {
     "primaryMetric": "comparableTotalPrice",
@@ -50,8 +64,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 71.13330.2017 + московские предложения 2026: обмазочная/рулонная система, подготовка, число слоев, углы и проходки должны раскрываться отдельно.",
+    "result": "PASS"
   }
 }

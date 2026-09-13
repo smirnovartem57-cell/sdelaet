@@ -73,6 +73,25 @@
       if(/wet_room|ванн|сануз|душ/.test(ts)&&offer.waterproofingIncluded!==true)items.push('входит ли гидроизоляция пола и мокрых зон');
       if(!offer.groutType)items.push('какая затирка входит');
       if(offer.tileCutsIncluded!==true)items.push('входят ли подрезки и отверстия');
+    }else if(task.serviceCode==='WALL_PLASTERING'){
+      if(!offer.plasterSystem)items.push('какая система штукатурки / смесь предлагается');
+      if(!offer.layerThickness)items.push('какая средняя и максимальная толщина слоя заложена');
+      if(offer.basePrimerIncluded!==true)items.push('входит ли подготовка / грунтовка основания');
+      if(offer.beaconsIncluded!==true)items.push('входят ли маяки / контроль плоскости');
+      if(/yes|стар/.test(String(task.oldLayer||'').toLowerCase())&&offer.baseDemolitionIncluded!==true)items.push('входит ли демонтаж слабой старой штукатурки');
+    }else if(task.serviceCode==='FLOOR_SCREED'){
+      if(!offer.screedType)items.push('какой тип стяжки учтён');
+      if(!offer.layerThickness)items.push('какая средняя / максимальная толщина слоя заложена');
+      if(!offer.strengthSpec&&offer.screedType!=='dry')items.push('какая марка / прочность смеси');
+      if(offer.edgeTapeIncluded!==true&&offer.screedType!=='self_leveling')items.push('входит ли демпферная лента / краевой узел');
+      if(/yes|стар/.test(String(task.oldScreed||'').toLowerCase())&&offer.baseDemolitionIncluded!==true)items.push('входит ли демонтаж старой стяжки');
+    }else if(task.serviceCode==='DRYWALL_PARTITIONS'){
+      if(!offer.frameSpec)items.push('какой профиль / каркас используется');
+      if(!offer.studSpacing)items.push('какой шаг стоек каркаса');
+      if(!offer.boardType)items.push('какой тип листов используется');
+      if(!offer.boardLayers)items.push('сколько слоёв обшивки с каждой стороны');
+      if(/yes|звук/.test(String(task.soundRequirement||'').toLowerCase())&&offer.partitionFillIncluded!==true)items.push('какое звукоизоляционное заполнение входит');
+      if(offer.jointFinishIncluded!==true)items.push('входит ли заделка / армирование стыков');
     }else if(task.serviceCode==='MINOR_APARTMENT_REPAIR'){
       var ms=((task.goal||'')+' '+(task.scope||'')+' '+(task.repairJob||'')+' '+(task.workList||'')).toLowerCase();
       if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.fastenersSpecified!==true)items.push('какой крепёж / расходники входят и кто их предоставляет');

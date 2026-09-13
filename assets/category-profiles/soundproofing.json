@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "soundproofing",
   "serviceCode": "SOUNDPROOFING",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "SOUNDPROOFING",
+  "status": "EXPERT_MODEL",
   "launchPriority": "P1",
   "seasonality": "autumn_winter_high",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
+    "research": "PASS",
+    "expertModel": "ACTIVE",
     "testing": "PENDING",
     "ready": "PENDING"
   },
@@ -30,9 +30,23 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "источник и характер шума",
+    "конструкция стены / потолка / пола",
+    "фланговые пути передачи шума",
+    "допустимая потеря площади / высоты"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "area",
+    "surfaceType",
+    "systemType",
+    "systemThickness",
+    "layers",
+    "vibrationIsolation",
+    "junctionTreatment",
+    "materials",
+    "claimedAcousticResult",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +64,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 51.13330.2011 и изменения + московские прайсы 2026: стены, потолок, пол, каркасные/бескаркасные системы и мембраны имеют несопоставимые цены и толщину.",
+    "result": "PASS"
   }
 }

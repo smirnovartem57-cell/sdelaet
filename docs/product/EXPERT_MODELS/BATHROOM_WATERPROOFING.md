@@ -1,19 +1,31 @@
 # Expert Model — BATHROOM_WATERPROOFING
 
-Status: RESEARCH
+Status: RESEARCH COMPLETE
 Category: Гидроизоляция ванной / санузла
 
-## JTBD
-TBD
+## Research gate
+PASS — 2026-09-13. СП 71.13330.2017 + московские предложения 2026: обмазочная/рулонная система, подготовка, число слоев, углы и проходки должны раскрываться отдельно.
 
-## Research evidence
-TBD
+## Site inspection only
+- состояние и трещины основания
+- фактическая площадь пола и мокрых стен
+- узлы примыкания, углы и проходки труб
+- совместимость с последующей плиточной системой
 
-## Quote model
-TBD
+## Contractor response required
+- `totalPrice`
+- `area`
+- `waterproofingSystem`
+- `layers`
+- `surfacePreparation`
+- `cornerTape`
+- `pipePenetrations`
+- `wallHeight`
+- `materials`
+- `dryingTime`
+- `exclusions`
+- `extraCosts`
+- `warranty`
 
-## Site inspection
-TBD
-
-## Red flags
-TBD
+## Next stage
+Domain Expert Agent должен сформировать JTBD, короткий Intake, технические варианты, red flags и правила нормализации.

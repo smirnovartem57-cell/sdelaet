@@ -1,18 +1,18 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "floor-screed",
   "serviceCode": "FLOOR_SCREED",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "FLOOR_BASE",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "year_round",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
-    "testing": "PENDING",
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -30,9 +30,22 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "перепады основания по лазерному замеру",
+    "средняя и максимальная толщина стяжки",
+    "состояние и несущая способность основания",
+    "трассы коммуникаций / теплого пола"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "area",
+    "screedType",
+    "thickness",
+    "strengthClass",
+    "basePreparation",
+    "reinforcement",
+    "edgeTape",
+    "materials",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +63,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 29.13330.2011 ред. 28.11.2025 + московские прайсы 2026: технология, толщина, площадь, армирование, шумо/гидроизоляция и демонтаж меняют цену.",
+    "result": "PASS"
   }
 }

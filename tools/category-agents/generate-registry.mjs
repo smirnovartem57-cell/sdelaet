@@ -1,6 +1,6 @@
 import fs from 'node:fs';import path from 'node:path';
 import {ROOT} from './helpers.mjs';import {assertManifest} from './manifest.mjs';
-const cats=assertManifest(),prod=cats.filter(c=>!['IDEA','RESEARCH'].includes(c.status));
+const cats=assertManifest(),prod=cats.filter(c=>['TESTING','READY','ACTIVE','SEASONAL_PAUSE'].includes(c.status));
 const js='window.sdCategoryManifest='+JSON.stringify(cats.map(c=>({categoryId:c.categoryId,serviceCode:c.serviceCode,title:c.title,status:c.status})))+';\n';
 fs.writeFileSync(path.join(ROOT,'assets/category-manifest.generated.js'),js,'utf8');
 const cfg=Object.fromEntries(prod.map(c=>[c.categoryId,c.search||{}]));

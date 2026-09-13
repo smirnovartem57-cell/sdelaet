@@ -108,6 +108,24 @@
     if(/петел|петл/.test(low)){o.doorHingesIncluded=true;o.worksIncluded.push('петли')}
     if(/руч|замок|замк|защелк/.test(low)){o.doorLockHandleIncluded=true;o.worksIncluded.push('ручки / замки')}
     if(/расшир.{0,15}проем|суж.{0,15}проем|подготов.{0,15}проем|коррект.{0,15}проем/.test(low)){o.doorOpeningPrepIncluded=true;o.worksIncluded.push('подготовка проёма')}
+    var wa2=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(wa2)o.workArea=Number(wa2[1].replace(',','.'));
+    var th=low.match(/(?:слой|толщин)[^\d]{0,12}(\d+(?:[.,]\d+)?)\s*(?:мм|см)/);if(th)o.layerThickness=th[1].replace(',','.')+(th[0].includes('см')?' см':' мм');
+    if(/гипсов.{0,12}штукатур|ротбанд|волма/.test(low))o.plasterSystem='gypsum';else if(/цемент.{0,12}штукатур|цпс/.test(low))o.plasterSystem='cement';else if(/механиз.{0,12}штукатур/.test(low))o.plasterSystem='machine';
+    if(/маяк/.test(low)){o.beaconsIncluded=true;o.worksIncluded.push('маяки')}
+    if(/армир.{0,12}сетк|стеклосет/.test(low)){o.reinforcementIncluded=true;o.worksIncluded.push('армирование')}
+    if(/грунтов/.test(low)){o.basePrimerIncluded=true;o.worksIncluded.push('грунтовка основания')}
+    if(/демонтаж.{0,18}(штукатур|стяжк)/.test(low)){o.baseDemolitionIncluded=true;o.worksIncluded.push('демонтаж основания')}
+    if(/полусух.{0,12}стяж/.test(low))o.screedType='semi_dry';else if(/сух.{0,10}стяж/.test(low))o.screedType='dry';else if(/наливн.{0,8}пол/.test(low))o.screedType='self_leveling';else if(/стяжк|цпс/.test(low))o.screedType='wet';
+    var sm=low.match(/(?:м150|м200|b12[.,]5|b15|прочност[^.;\n]{0,20})/);if(sm)o.strengthSpec=sm[0];
+    if(/демпфер/.test(low)){o.edgeTapeIncluded=true;o.worksIncluded.push('демпферная лента')}
+    if(/профил.{0,15}(50|75|100)|пс\s*\d+/.test(low)){var fp=raw.match(/(?:профиль|ПС)\s*[:\-]?\s*([^.;\n]{2,50})/i);o.frameSpec=fp?fp[1].trim():'указан профиль'}
+    var st=low.match(/шаг.{0,8}(\d{3})\s*мм/);if(st)o.studSpacing=Number(st[1]);
+    if(/гклв|влагостойк/.test(low))o.boardType='moisture_resistant';else if(/гкл|гипсокарт/.test(low))o.boardType='standard';
+    if(/2\s*сло|двухслойн/.test(low))o.boardLayers=2;else if(/1\s*сло|однослойн/.test(low))o.boardLayers=1;
+    if(/минват|звукоизоляц|шуманет|акустик/.test(low)){o.partitionFillIncluded=true;o.worksIncluded.push('звукоизоляционное заполнение')}
+    if(/дверн.{0,10}проем|проем.{0,10}двер/.test(low)){o.partitionDoorOpeningIncluded=true;o.worksIncluded.push('дверной проём')}
+    if(/закладн|усилен.{0,15}каркас/.test(low)){o.partitionReinforcementIncluded=true;o.worksIncluded.push('закладные / усиление')}
+    if(/заделк.{0,12}стык|армирующ.{0,10}лент|шпаклев.{0,12}стык/.test(low)){o.jointFinishIncluded=true;o.worksIncluded.push('заделка стыков')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}
