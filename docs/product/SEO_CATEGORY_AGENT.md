@@ -99,3 +99,28 @@ Evidence JSON принимает `sources`, `queries`, `questions`, `collectedAt
 Agent автоматически нормализует запросы, определяет intent/topic, группирует кластеры, формирует AI-answer targets и ищет возможную каннибализацию с соседними category pages. Статусы research: `EVIDENCE_REQUIRED` → `REVIEW_REQUIRED` → `READY_FOR_REVIEW`.
 
 Даже `READY_FOR_REVIEW` не публикует страницу: `publicationStatus` остаётся ручным gate, а индексирование требует одновременно `APPROVED`, `needsQueryResearch=false` и `research.status=READY_FOR_REVIEW`.
+
+## Wordstat service integration (MVP)
+
+Для быстрого запуска Research Agent использует существующий сервис `https://wordstat-excel.smirart.workers.dev` как frequency provider.
+
+Подтверждённые endpoints:
+- `GET /api/quota` — rolling 60-minute quota; на момент проверки limit=5000;
+- `POST /api/frequency` — `{phrases:[...], regions:[...]}`;
+- максимум 10 фраз за batch;
+- ответ содержит `frequency`, `matchedPhrase`, `matchType`, `frequencySource`, diagnostic/status/error.
+
+Важно: текущий сервис проверяет частотность уже известных фраз, но сам не выполняет полноценный keyword discovery. Поэтому в MVP он подтверждает спрос для seed/query candidates, сформированных SEO Research Agent.
+### Отложенные улучшения Wordstat service
+
+После MVP доработать сервис отдельно, не блокируя запуск «Сделает»:
+1. добавить machine-to-machine авторизацию для `/api/*`, чтобы внешние пользователи не расходовали Wordstat quota;
+2. добавить endpoint keyword discovery/related phrases, а не только frequency lookup;
+3. добавить единый JSON endpoint для SEO research: seed → расширение → frequency → region metadata;
+4. добавить cache/deduplication по phrase+region и TTL;
+5. добавить явный region dictionary и поддержку нескольких регионов/сравнения Москва+МО/Россия;
+6. возвращать quota cost и source metadata для каждого research run;
+7. добавить rate limiting по consumer/project;
+8. подключить сервис к ProjectOS как reusable data source.
+
+До выполнения этих улучшений production-indexing остаётся gated ручным review; текущая интеграция используется только как источник подтверждённой частотности.

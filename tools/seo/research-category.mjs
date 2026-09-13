@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {buildResearch} from './research-core.mjs';
+import {fetchWordstatFrequency,getWordstatQuota} from './sources/wordstat-service.mjs';
 
 const ROOT = path.resolve(process.cwd());
 const manifestPath = path.join(ROOT,'config/service-categories.json');
@@ -9,6 +10,8 @@ const args = process.argv.slice(2);
 const arg = key => { const i=args.indexOf(key); return i>=0 ? args[i+1] : ''; };
 const categoryId = arg('--category');
 const evidencePath = arg('--evidence');
+const source = arg('--source');
+const region = arg('--region') || '225';
 const write = args.includes('--write');
 const all = args.includes('--all');
 
@@ -18,6 +21,14 @@ if (!categoryId && !all) {
 }
 
 let evidence = {};
+if (source === 'wordstat') {
+  const target = manifest.categories.find(c => c.categoryId === categoryId);
+  if (!target) throw new Error(`Unknown category: ${categoryId}`);
+  const phrases=[...(target.seo?.primaryQueries||[]),...(target.seo?.informationalQueries||[])];
+  const quota=await getWordstatQuota();
+  const wordstat=await fetchWordstatFrequency(phrases,{region});
+  evidence={categoryId,sources:[{type:'yandex_wordstat',service:'wordstat-excel',region:String(region),quotaRemaining:quota.remaining}],queries:wordstat.queries,collectedAt:new Date().toISOString()};
+}
 if (evidencePath) {
   const absolute = path.isAbsolute(evidencePath) ? evidencePath : path.join(ROOT,evidencePath);
   if (!fs.existsSync(absolute)) throw new Error(`Evidence file not found: ${absolute}`);
