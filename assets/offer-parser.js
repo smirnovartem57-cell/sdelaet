@@ -151,6 +151,37 @@
     if(/подкладочн|подкровельн|основан.{0,12}кровл/.test(low))o.roofUnderlaymentIncluded=true;
     if(/доступ|высотн|альпинист|леса/.test(low))o.roofAccessIncluded=true;
     if(/демонтаж.{0,15}(кровл|покрыт)/.test(low)){o.roofDemolitionIncluded=true;o.worksIncluded.push('демонтаж кровли')}
+    if(/водян.{0,12}(тепл|тёпл).{0,8}пол/.test(low))o.heatedFloorType='water';else if(/пленочн|плёночн|инфракрас/.test(low))o.heatedFloorType='film';else if(/нагревател.{0,8}мат/.test(low))o.heatedFloorType='mat';else if(/кабел.{0,15}(тепл|тёпл).{0,8}пол|(тепл|тёпл).{0,8}пол.{0,15}кабел/.test(low))o.heatedFloorType='cable';
+    var hp=low.match(/(\d+)\s*(?:вт\/?м2|вт\/?м²)/);if(hp)o.heatedFloorPowerSpec=hp[0];
+    if(/кабель|нагревател.{0,8}мат|пленочн|плёночн/.test(low))o.heatingElementSpec=(raw.match(/(?:кабель|нагревательный мат|пл[её]нка)[^.;\n]{0,50}/i)||['указан'])[0];
+    if(/терморегулятор/.test(low)){o.thermostatIncluded=true;o.worksIncluded.push('терморегулятор')}
+    if(/датчик.{0,10}пол|гофр.{0,12}датчик/.test(low)){o.floorSensorIncluded=true;o.worksIncluded.push('датчик пола')}
+    if(/теплоизоляц|утеплител.{0,12}под.{0,8}пол/.test(low)){o.floorInsulationIncluded=true;o.worksIncluded.push('теплоизоляция основания')}
+    if(/подготов.{0,15}основан|грунтов.{0,15}пол/.test(low))o.heatedFloorBasePreparationIncluded=true;
+    if(/подключен.{0,15}(щит|электр|лини)|отдельн.{0,10}лини/.test(low)){o.heatedFloorElectricalConnectionIncluded=true;o.worksIncluded.push('электроподключение')}
+    if(/узо|дифавтомат|автомат.{0,15}защит/.test(low))o.heatedFloorProtectionIncluded=true;
+    if(/входн.{0,10}двер|стальн.{0,10}двер|металлическ.{0,10}двер/.test(low))o.entranceDoorModel=(raw.match(/(?:модель|дверь)[^.;\n]{0,60}/i)||['указана'])[0];
+    var dd=raw.match(/(?:размер|блок|дверь)[^.;\n]{0,20}(\d{3,4})\s*[xх×]\s*(\d{3,4})/i);if(dd)o.entranceDoorDimensions=dd[1]+'x'+dd[2];
+    if(/сталь.{0,20}(мм|лист)|короб.{0,15}(профил|сталь)|ребр.{0,10}жестк/.test(low))o.entranceDoorConstructionSpecified=true;
+    if(/замок|сувальд|цилиндр/.test(low)){o.entranceDoorLocksSpecified=true;o.worksIncluded.push('замки')}
+    if(/терморазрыв|шумоизоляц|звукоизоляц|утеплен.{0,10}полот/.test(low))o.entranceDoorPerformanceSpecified=true;
+    if(/демонтаж.{0,15}(стар.{0,8})?двер/.test(low)){o.entranceDoorDemolitionIncluded=true;o.worksIncluded.push('демонтаж старой двери')}
+    if(/подготов.{0,15}проем|усилен.{0,12}проем|расшир.{0,12}проем/.test(low)){o.entranceOpeningPrepIncluded=true;o.worksIncluded.push('подготовка проёма')}
+    if(/анкер|креплен.{0,12}(короб|двер)/.test(low))o.entranceAnchoringIncluded=true;
+    if(/монтажн.{0,8}пен|герметизац.{0,12}проем|уплотнен.{0,8}шв/.test(low))o.entranceSealingIncluded=true;
+    if(/откос|добор|наличник/.test(low)){o.entranceFinishingIncluded=true;o.worksIncluded.push('откосы / отделка')}
+    if(/доставк.{0,15}(входит|включ)|подъем|подъём/.test(low)){o.deliveryLiftIncluded=true;o.worksIncluded.push('доставка / подъём')}
+    if(/демонтаж|снос|разбор/.test(low))o.demolitionScope=(raw.match(/(?:демонтаж|снос|разбор)[^.;\n]{0,80}/i)||['указан'])[0];
+    if(/бетон|кирпич|гкл|гипсокарт|плитк|стяжк|штукатур/.test(low))o.demolitionMaterial=(raw.match(/(?:бетон|кирпич|ГКЛ|гипсокартон|плитка|стяжка|штукатурка)[^.;\n]{0,30}/i)||['указан'])[0];
+    if(/не\s+несущ|ненесущ|проект.{0,12}демонтаж|согласован/.test(low))o.structuralStatusConfirmed=true;
+    if(/отключ\w*.{0,15}(электр|вод|газ|коммуникац)|(электр|вод|газ|коммуникац).{0,25}отключ|обесточ/.test(low)){o.utilitiesIsolated=true;o.worksIncluded.push('отключение коммуникаций')}
+    if(/защит.{0,15}(пол|стен|двер|лифт|общ)|укрыв/.test(low)){o.demolitionProtectionIncluded=true;o.worksIncluded.push('защита помещения')}
+    if(/пылеподав|пылесос|пылезащит/.test(low))o.dustControlIncluded=true;
+    if(/упаковк.{0,12}мусор|мешк.{0,12}(входит|включ)/.test(low)){o.debrisPackingIncluded=true;o.worksIncluded.push('упаковка мусора')}
+    if(/погрузк/.test(low)){o.debrisLoadingIncluded=true;o.worksIncluded.push('погрузка')}
+    if(/вывоз|транспорт.{0,12}отход/.test(low)){o.debrisTransportIncluded=true;o.worksIncluded.push('вывоз')}
+    if(/полигон|утилизац|талон.{0,12}(полигон|утилиз)/.test(low))o.legalDisposalIncluded=true;
+    if(/этаж|лифт|спуск/.test(low))o.floorLiftSpecified=true;
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

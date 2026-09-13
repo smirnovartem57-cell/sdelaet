@@ -31,9 +31,9 @@ External LLM is not a required dependency for the core flow.
 - `DRYWALL_PARTITIONS` — `TESTING`, profile v0.2.
 - `SOUNDPROOFING` — `TESTING`, profile v0.2.
 - `BATHROOM_WATERPROOFING` — `TESTING`, profile v0.2.
-- `UNDERFLOOR_HEATING` — `RESEARCH`, profile v0.1.
-- `ENTRANCE_DOORS` — `RESEARCH`, profile v0.1.
-- `DEMOLITION_WORKS` — `RESEARCH`, profile v0.1.
+- `UNDERFLOOR_HEATING` — `TESTING`, profile v0.2.
+- `ENTRANCE_DOORS` — `TESTING`, profile v0.2.
+- `DEMOLITION_WORKS` — `TESTING`, profile v0.2.
 - `BATHROOM_RENOVATION` — `RESEARCH`, profile v0.1.
 - `KITCHEN_INSTALLATION` — `RESEARCH`, profile v0.1.
 - `WATER_HEATER_INSTALLATION` — `RESEARCH`, profile v0.1.

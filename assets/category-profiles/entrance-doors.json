@@ -1,18 +1,18 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "entrance-doors",
   "serviceCode": "ENTRANCE_DOORS",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "ENTRANCE_DOOR_INSTALLATION",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "year_round",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
-    "testing": "PENDING",
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -30,9 +30,27 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "Точные размеры, геометрия и четверти проёма",
+    "Материал и состояние стены, допустимость крепления",
+    "Направление открывания и свободный путь эвакуации",
+    "Условия доставки, подъёма и защиты общей отделки"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "doorModel",
+    "doorDimensions",
+    "openingDimensions",
+    "doorConstruction",
+    "lockSet",
+    "thermalAcousticSpec",
+    "demolition",
+    "openingPreparation",
+    "anchoring",
+    "sealing",
+    "finishing",
+    "deliveryAndLift",
+    "materials",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +68,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "ГОСТ 31173-2016 для стальных дверных блоков и монтажных характеристик + СП 1.13130.2020 для эвакуационных путей + рыночные сметы 2026: отдельно считаются дверь, демонтаж, подготовка/усиление проёма, монтаж, откосы, доставка, подъём и вывоз.",
+    "result": "PASS"
   }
 }

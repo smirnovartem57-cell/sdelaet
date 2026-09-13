@@ -25,9 +25,9 @@
 | `DRYWALL_PARTITIONS` | `drywall-partitions` | Перегородки из гипсокартона | TESTING | P1 |
 | `SOUNDPROOFING` | `soundproofing` | Шумоизоляция квартиры | TESTING | P1 |
 | `BATHROOM_WATERPROOFING` | `bathroom-waterproofing` | Гидроизоляция ванной / санузла | TESTING | P1 |
-| `UNDERFLOOR_HEATING` | `underfloor-heating` | Тёплый пол | RESEARCH | P1 |
-| `ENTRANCE_DOORS` | `entrance-doors` | Входные двери | RESEARCH | P1 |
-| `DEMOLITION_WORKS` | `demolition-works` | Демонтажные работы | RESEARCH | P1 |
+| `UNDERFLOOR_HEATING` | `underfloor-heating` | Тёплый пол | TESTING | P1 |
+| `ENTRANCE_DOORS` | `entrance-doors` | Входные двери | TESTING | P1 |
+| `DEMOLITION_WORKS` | `demolition-works` | Демонтажные работы | TESTING | P1 |
 | `BATHROOM_RENOVATION` | `bathroom-renovation` | Ремонт ванной / санузла под ключ | RESEARCH | P1 |
 | `KITCHEN_INSTALLATION` | `kitchen-installation` | Монтаж кухни | RESEARCH | P1 |
 | `WATER_HEATER_INSTALLATION` | `water-heater-installation` | Установка водонагревателя | RESEARCH | P1 |

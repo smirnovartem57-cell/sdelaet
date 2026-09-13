@@ -117,6 +117,39 @@
       if(offer.roofMaterialsSpecified!==true)items.push('какие материалы и марки входят');
       if(offer.roofFlashingIncluded!==true)items.push('входят ли примыкания и водоотвод');
       if(offer.roofAccessIncluded!==true)items.push('включены ли доступ и высотные работы');
+    }else if(task.serviceCode==='UNDERFLOOR_HEATING'){
+      if(!offer.heatedFloorType)items.push('какой тип тёплого пола предлагается');
+      if(!offer.heatedArea)items.push('какая фактическая площадь обогрева учтена');
+      if(!offer.heatingElementSpec)items.push('какая модель / нагревательный элемент входит');
+      if(!offer.heatedFloorPowerSpec&&offer.heatedFloorType!=='water')items.push('какая удельная мощность системы');
+      if(offer.thermostatIncluded!==true&&offer.heatedFloorType!=='water')items.push('какой терморегулятор входит');
+      if(offer.floorSensorIncluded!==true&&offer.heatedFloorType!=='water')items.push('входит ли датчик пола в гофротрубке');
+      if(offer.heatedFloorBasePreparationIncluded!==true)items.push('входит ли подготовка основания');
+      if(offer.floorInsulationIncluded!==true)items.push('какой теплоизоляционный слой предусмотрен');
+      if(offer.heatedFloorType!=='water'&&offer.heatedFloorElectricalConnectionIncluded!==true)items.push('входит ли электроподключение');
+      if(offer.heatedFloorType!=='water'&&offer.heatedFloorProtectionIncluded!==true)items.push('какая защитная автоматика предусмотрена');
+    }else if(task.serviceCode==='ENTRANCE_DOORS'){
+      if(!offer.entranceDoorModel)items.push('какая точная модель двери предлагается');
+      if(!offer.entranceDoorDimensions)items.push('какой размер дверного блока учтён');
+      if(offer.entranceDoorConstructionSpecified!==true)items.push('какая конструкция полотна и коробки');
+      if(offer.entranceDoorLocksSpecified!==true)items.push('какие замки и фурнитура входят');
+      if(offer.entranceDoorPerformanceSpecified!==true)items.push('какие тепло- и звукоизоляционные характеристики заявлены');
+      if(/yes|замен|стар/.test(String(task.oldDoor||'').toLowerCase())&&offer.entranceDoorDemolitionIncluded!==true)items.push('входит ли демонтаж и вывоз старой двери');
+      if(offer.entranceAnchoringIncluded!==true)items.push('как крепится коробка');
+      if(offer.entranceSealingIncluded!==true)items.push('как герметизируется монтажный шов');
+      if(offer.deliveryLiftIncluded!==true)items.push('входят ли доставка и подъём');
+    }else if(task.serviceCode==='DEMOLITION_WORKS'){
+      if(!offer.demolitionScope)items.push('какой точный перечень демонтажа входит');
+      if(!offer.demolitionMaterial)items.push('какие материалы, толщины и объёмы учтены');
+      if(/стен|перегород|проем/.test(((task.goal||'')+' '+(task.scope||'')).toLowerCase())&&offer.structuralStatusConfirmed!==true)items.push('как подтверждено, что конструкция не несущая');
+      if(/yes|коммуникац|электр|труб|газ/.test(String(task.utilities||'').toLowerCase()+' '+String(task.scope||'').toLowerCase())&&offer.utilitiesIsolated!==true)items.push('кто и как отключает коммуникации');
+      if(offer.demolitionProtectionIncluded!==true)items.push('как защищаются помещение, лифт и общие зоны');
+      if(offer.dustControlIncluded!==true)items.push('какие меры пылезащиты предусмотрены');
+      if(offer.debrisPackingIncluded!==true)items.push('входит ли упаковка мусора');
+      if(offer.debrisLoadingIncluded!==true)items.push('входит ли погрузка');
+      if(offer.debrisTransportIncluded!==true)items.push('входит ли транспорт / вывоз');
+      if(offer.legalDisposalIncluded!==true)items.push('куда вывозятся отходы и чем подтверждается утилизация');
+      if(offer.floorLiftSpecified!==true)items.push('какой этаж, лифт и спуск учтены');
     }else if(task.serviceCode==='MINOR_APARTMENT_REPAIR'){
       var ms=((task.goal||'')+' '+(task.scope||'')+' '+(task.repairJob||'')+' '+(task.workList||'')).toLowerCase();
       if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.fastenersSpecified!==true)items.push('какой крепёж / расходники входят и кто их предоставляет');
