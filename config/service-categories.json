@@ -1441,6 +1441,351 @@
           "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤А╨░╨║╨╛╨▓╨╕╨╜╤Л"
         ]
       }
+    },
+    {
+      "categoryId": "house-construction",
+      "serviceCode": "HOUSE_CONSTRUCTION",
+      "title": "╨б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/house-construction.json",
+      "expertModel": "docs/product/EXPERT_MODELS/HOUSE_CONSTRUCTION.md",
+      "qaTest": "tests/house-construction-qa-regression.mjs",
+      "e2eTest": "tests/house-construction-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╨┐╨╛╤Б╤В╤А╨╛╨╕╤В╤М ╤З╨░╤Б╤В╨╜╤Л╨╣ ╨┤╨╛╨╝ ╨┐╨╛╨┤ ╨║╨╗╤О╤З",
+      "qualificationPhrase": "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤З╨░╤Б╤В╨╜╤Л╤Е ╨┤╨╛╨╝╨╛╨▓ ╨┐╨╛╨┤ ╨║╨╗╤О╤З",
+      "search": {
+        "companyQueries": [
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╨┤╨╛╨╝╨╛╨▓ ╨┐╨╛╨┤ ╨║╨╗╤О╤З ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨┐╨╛╤Б╤В╤А╨╛╨╕╤В╤М ╤З╨░╤Б╤В╨╜╤Л╨╣ ╨┤╨╛╨╝"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╨┤╨╛╨╝╨░",
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╨╕ ╤З╨░╤Б╤В╨╜╤Л╨╣ ╨┤╨╛╨╝"
+        ],
+        "keywords": [
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╨┤╨╛╨╝╨░",
+          "╤З╨░╤Б╤В╨╜╤Л╨╣ ╨┤╨╛╨╝",
+          "╨┤╨╛╨╝ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "qualifyKeywords": [
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╨┤╨╛╨╝╨╛╨▓",
+          "╤З╨░╤Б╤В╨╜╤Л╨╣ ╨┤╨╛╨╝",
+          "╨┤╨╛╨╝ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ]
+      }
+    },
+    {
+      "categoryId": "foundation-construction",
+      "serviceCode": "FOUNDATION_CONSTRUCTION",
+      "title": "╨б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/foundation-construction.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FOUNDATION_CONSTRUCTION.md",
+      "qaTest": "tests/foundation-construction-qa-regression.mjs",
+      "e2eTest": "tests/foundation-construction-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Б╨┤╨╡╨╗╨░╤В╤М ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В ╨┤╨╗╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "qualificationPhrase": "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В╨░ ╨┤╨╗╤П ╨┤╨╛╨╝╨░",
+      "search": {
+        "companyQueries": [
+          "╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В ╨┐╨╛╨┤ ╨║╨╗╤О╤З ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В╨░ ╨┤╨╛╨╝╨░"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В",
+          "╨╝╨░╤Б╤В╨╡╤А ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В ╨┤╨╛╨╝╨░"
+        ],
+        "keywords": [
+          "╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В",
+          "╨╗╨╡╨╜╤В╨╛╤З╨╜╤Л╨╣ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В",
+          "╨┐╨╗╨╕╤В╨░",
+          "╤Б╨▓╨░╨╕"
+        ],
+        "qualifyKeywords": [
+          "╤Б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В╨░",
+          "╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В ╨┐╨╛╨┤ ╨║╨╗╤О╤З",
+          "╨╝╨╛╨╜╨╛╨╗╨╕╤В╨╜╨░╤П ╨┐╨╗╨╕╤В╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "roof-installation",
+      "serviceCode": "ROOF_INSTALLATION",
+      "title": "╨Ь╨╛╨╜╤В╨░╨╢ ╨╜╨╛╨▓╨╛╨╣ ╨║╤А╨╛╨▓╨╗╨╕",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/roof-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/ROOF_INSTALLATION.md",
+      "qaTest": "tests/roof-installation-qa-regression.mjs",
+      "e2eTest": "tests/roof-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Б╨╝╨╛╨╜╤В╨╕╤А╨╛╨▓╨░╤В╤М ╨╜╨╛╨▓╤Г╤О ╨║╤А╨╛╨▓╨╗╤О ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "qualificationPhrase": "╨╝╨╛╨╜╤В╨░╨╢ ╨║╤А╨╛╨▓╨╗╨╕ ╨║╤А╤Л╤И╨╕ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "search": {
+        "companyQueries": [
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨║╤А╨╛╨▓╨╗╨╕ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨║╤А╤Л╤И╨░ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨║╤А╨╛╨▓╨╡╨╗╤М╤Й╨╕╨║ ╨╝╨╛╨╜╤В╨░╨╢ ╨║╤А╤Л╤И╨╕",
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨║╤А╨╛╨▓╨╗╤П ╨┤╨╛╨╝╨░"
+        ],
+        "keywords": [
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨║╤А╨╛╨▓╨╗╨╕",
+          "╨║╤А╤Л╤И╨░",
+          "╤Б╤В╤А╨╛╨┐╨╕╨╗╨░",
+          "╨║╤А╨╛╨▓╨╡╨╗╤М╨╜╤Л╨╣ ╨╝╨░╤В╨╡╤А╨╕╨░╨╗"
+        ],
+        "qualifyKeywords": [
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨║╤А╨╛╨▓╨╗╨╕",
+          "╨║╤А╨╛╨▓╨╡╨╗╤М╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤В╤Л",
+          "╤Б╤В╤А╨╛╨┐╨╕╨╗╤М╨╜╨░╤П ╤Б╨╕╤Б╤В╨╡╨╝╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "facade-finishing",
+      "serviceCode": "FACADE_FINISHING",
+      "title": "╨Ю╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░ ╨┤╨╛╨╝╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/facade-finishing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FACADE_FINISHING.md",
+      "qaTest": "tests/facade-finishing-qa-regression.mjs",
+      "e2eTest": "tests/facade-finishing-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╨╛╤В╨┤╨╡╨╗╨░╤В╤М ╤Д╨░╤Б╨░╨┤ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "qualificationPhrase": "╨╛╤В╨┤╨╡╨╗╨║╨░ ╨╕ ╨╛╨▒╨╗╨╕╤Ж╨╛╨▓╨║╨░ ╤Д╨░╤Б╨░╨┤╨░ ╨┤╨╛╨╝╨░",
+      "search": {
+        "companyQueries": [
+          "╨╛╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░ ╨┤╨╛╨╝╨░ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨╛╨▒╨╗╨╕╤Ж╨╛╨▓╨║╨░ ╤Д╨░╤Б╨░╨┤╨░"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╨╛╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░",
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╤Д╨░╤Б╨░╨┤╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤В╤Л"
+        ],
+        "keywords": [
+          "╨╛╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░",
+          "╨╛╨▒╨╗╨╕╤Ж╨╛╨▓╨║╨░",
+          "╤Б╨░╨╣╨┤╨╕╨╜╨│",
+          "╤И╤В╤Г╨║╨░╤В╤Г╤А╨╜╤Л╨╣ ╤Д╨░╤Б╨░╨┤"
+        ],
+        "qualifyKeywords": [
+          "╤Д╨░╤Б╨░╨┤╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤В╤Л",
+          "╨╛╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░",
+          "╨╛╨▒╨╗╨╕╤Ж╨╛╨▓╨║╨░ ╤Д╨░╤Б╨░╨┤╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "fence-installation",
+      "serviceCode": "FENCE_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/fence-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FENCE_INSTALLATION.md",
+      "qaTest": "tests/fence-installation-qa-regression.mjs",
+      "e2eTest": "tests/fence-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╨╖╨░╨▒╨╛╤А ╨▓╨╛╨║╤А╤Г╨│ ╤Г╤З╨░╤Б╤В╨║╨░",
+      "qualificationPhrase": "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░ ╨╕ ╨▓╨╛╤А╨╛╤В",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨╖╨░╨▒╨╛╤А ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░",
+          "╨╝╨░╤Б╤В╨╡╤А ╨╖╨░╨▒╨╛╤А ╤Г╤З╨░╤Б╤В╨╛╨║"
+        ],
+        "keywords": [
+          "╨╖╨░╨▒╨╛╤А",
+          "╨▓╨╛╤А╨╛╤В╨░",
+          "╨┐╤А╨╛╤Д╨╜╨░╤Б╤В╨╕╨╗",
+          "╤И╤В╨░╨║╨╡╤В╨╜╨╕╨║"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░",
+          "╨╖╨░╨▒╨╛╤А ╨┐╨╛╨┤ ╨║╨╗╤О╤З",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╨▓╨╛╤А╨╛╤В"
+        ]
+      }
+    },
+    {
+      "categoryId": "septic-installation",
+      "serviceCode": "SEPTIC_INSTALLATION",
+      "title": "╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨╡╨┐╤В╨╕╨║╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/septic-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/SEPTIC_INSTALLATION.md",
+      "qaTest": "tests/septic-installation-qa-regression.mjs",
+      "e2eTest": "tests/septic-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╕╤В╤М ╤Б╨╡╨┐╤В╨╕╨║ ╨┤╨╗╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░",
+      "qualificationPhrase": "╨╝╨╛╨╜╤В╨░╨╢ ╤Б╨╡╨┐╤В╨╕╨║╨░ ╨╕ ╨░╨▓╤В╨╛╨╜╨╛╨╝╨╜╨╛╨╣ ╨║╨░╨╜╨░╨╗╨╕╨╖╨░╤Ж╨╕╨╕",
+      "search": {
+        "companyQueries": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨╡╨┐╤В╨╕╨║╨░ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨░╨▓╤В╨╛╨╜╨╛╨╝╨╜╨░╤П ╨║╨░╨╜╨░╨╗╨╕╨╖╨░╤Ж╨╕╤П ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨╡╨┐╤В╨╕╨║╨░",
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨╝╨╛╨╜╤В╨░╨╢ ╨║╨░╨╜╨░╨╗╨╕╨╖╨░╤Ж╨╕╨╕"
+        ],
+        "keywords": [
+          "╤Б╨╡╨┐╤В╨╕╨║",
+          "╨░╨▓╤В╨╛╨╜╨╛╨╝╨╜╨░╤П ╨║╨░╨╜╨░╨╗╨╕╨╖╨░╤Ж╨╕╤П",
+          "╤Б╤В╨░╨╜╤Ж╨╕╤П ╨╛╤З╨╕╤Б╤В╨║╨╕"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨╡╨┐╤В╨╕╨║╨░",
+          "╨╝╨╛╨╜╤В╨░╨╢ ╤Б╨╡╨┐╤В╨╕╨║╨░",
+          "╨░╨▓╤В╨╛╨╜╨╛╨╝╨╜╨░╤П ╨║╨░╨╜╨░╨╗╨╕╨╖╨░╤Ж╨╕╤П"
+        ]
+      }
+    },
+    {
+      "categoryId": "well-drilling",
+      "serviceCode": "WELL_DRILLING",
+      "title": "╨С╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л ╨╜╨░ ╨▓╨╛╨┤╤Г",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/well-drilling.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WELL_DRILLING.md",
+      "qaTest": "tests/well-drilling-qa-regression.mjs",
+      "e2eTest": "tests/well-drilling-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╨┐╤А╨╛╨▒╤Г╤А╨╕╤В╤М ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Г ╨┤╨╗╤П ╨▓╨╛╨┤╤Л ╨╜╨░ ╤Г╤З╨░╤Б╤В╨║╨╡",
+      "qualificationPhrase": "╨▒╤Г╤А╨╡╨╜╨╕╨╡ ╨╕ ╨╛╨▒╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л ╨╜╨░ ╨▓╨╛╨┤╤Г",
+      "search": {
+        "companyQueries": [
+          "╨▒╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╤Б╨║╨▓╨░╨╢╨╕╨╜╨░ ╨╜╨░ ╨▓╨╛╨┤╤Г ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨▒╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л",
+          "╨╝╨░╤Б╤В╨╡╤А ╨╛╨▒╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л"
+        ],
+        "keywords": [
+          "╨▒╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л",
+          "╤Б╨║╨▓╨░╨╢╨╕╨╜╨░ ╨╜╨░ ╨▓╨╛╨┤╤Г",
+          "╨╛╨▒╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛"
+        ],
+        "qualifyKeywords": [
+          "╨▒╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜",
+          "╤Б╨║╨▓╨░╨╢╨╕╨╜╨░ ╨╜╨░ ╨▓╨╛╨┤╤Г",
+          "╨╛╨▒╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л"
+        ]
+      }
+    },
+    {
+      "categoryId": "site-drainage",
+      "serviceCode": "SITE_DRAINAGE",
+      "title": "╨Ф╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "spring_autumn_high",
+      "profile": "assets/category-profiles/site-drainage.json",
+      "expertModel": "docs/product/EXPERT_MODELS/SITE_DRAINAGE.md",
+      "qaTest": "tests/site-drainage-qa-regression.mjs",
+      "e2eTest": "tests/site-drainage-e2e-regression.mjs",
+      "testPhrase": "╨╜╨░ ╤Г╤З╨░╤Б╤В╨║╨╡ ╤Б╤В╨╛╨╕╤В ╨▓╨╛╨┤╨░ ╨╜╤Г╨╢╨╡╨╜ ╨┤╤А╨╡╨╜╨░╨╢",
+      "qualificationPhrase": "╨┤╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░ ╨╕ ╨╛╤В╨▓╨╛╨┤ ╨│╤А╤Г╨╜╤В╨╛╨▓╤Л╤Е ╨▓╨╛╨┤",
+      "search": {
+        "companyQueries": [
+          "╨┤╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨┤╤А╨╡╨╜╨░╨╢╨╜╨░╤П ╤Б╨╕╤Б╤В╨╡╨╝╨░ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨┤╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░",
+          "╨╝╨░╤Б╤В╨╡╤А ╨╛╤В╨▓╨╛╨┤ ╨▓╨╛╨┤╤Л ╤Г╤З╨░╤Б╤В╨╛╨║"
+        ],
+        "keywords": [
+          "╨┤╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░",
+          "╨│╤А╤Г╨╜╤В╨╛╨▓╤Л╨╡ ╨▓╨╛╨┤╤Л",
+          "╨▓╨╛╨┤╨╛╨╛╤В╨▓╨╡╨┤╨╡╨╜╨╕╨╡"
+        ],
+        "qualifyKeywords": [
+          "╨┤╤А╨╡╨╜╨░╨╢╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤В╤Л",
+          "╨┤╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░",
+          "╨▓╨╛╨┤╨╛╨╛╤В╨▓╨╡╨┤╨╡╨╜╨╕╨╡"
+        ]
+      }
+    },
+    {
+      "categoryId": "blind-area-construction",
+      "serviceCode": "BLIND_AREA_CONSTRUCTION",
+      "title": "╨г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕ ╨┤╨╛╨╝╨░",
+      "status": "RESEARCH",
+      "priority": "P2",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/blind-area-construction.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BLIND_AREA_CONSTRUCTION.md",
+      "qaTest": "tests/blind-area-construction-qa-regression.mjs",
+      "e2eTest": "tests/blind-area-construction-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Б╨┤╨╡╨╗╨░╤В╤М ╨╛╤В╨╝╨╛╤Б╤В╨║╤Г ╨▓╨╛╨║╤А╤Г╨│ ╨┤╨╛╨╝╨░",
+      "qualificationPhrase": "╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╕ ╤А╨╡╨╝╨╛╨╜╤В ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕ ╨┤╨╛╨╝╨░",
+      "search": {
+        "companyQueries": [
+          "╨╛╤В╨╝╨╛╤Б╤В╨║╨░ ╨▓╨╛╨║╤А╤Г╨│ ╨┤╨╛╨╝╨░ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕ ╨┐╨╛╨┤ ╨║╨╗╤О╤З"
+        ],
+        "privateQueries": [
+          "╨╝╨░╤Б╤В╨╡╤А ╨╛╤В╨╝╨╛╤Б╤В╨║╨░ ╨┤╨╛╨╝╨░",
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╨▒╨╡╤В╨╛╨╜╨╜╨░╤П ╨╛╤В╨╝╨╛╤Б╤В╨║╨░"
+        ],
+        "keywords": [
+          "╨╛╤В╨╝╨╛╤Б╤В╨║╨░",
+          "╨┤╨╛╨╝",
+          "╨▒╨╡╤В╨╛╨╜",
+          "╤Г╤В╨╡╨┐╨╗╨╡╨╜╨╜╨░╤П ╨╛╤В╨╝╨╛╤Б╤В╨║╨░"
+        ],
+        "qualifyKeywords": [
+          "╤Г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕",
+          "╤А╨╡╨╝╨╛╨╜╤В ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕",
+          "╨▒╨╡╤В╨╛╨╜╨╜╨░╤П ╨╛╤В╨╝╨╛╤Б╤В╨║╨░"
+        ]
+      }
+    },
+    {
+      "categoryId": "paving-installation",
+      "serviceCode": "PAVING_INSTALLATION",
+      "title": "╨г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕",
+      "status": "RESEARCH",
+      "priority": "P2",
+      "seasonality": "spring_summer_high",
+      "profile": "assets/category-profiles/paving-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/PAVING_INSTALLATION.md",
+      "qaTest": "tests/paving-installation-qa-regression.mjs",
+      "e2eTest": "tests/paving-installation-e2e-regression.mjs",
+      "testPhrase": "╨╜╤Г╨╢╨╜╨╛ ╤Г╨╗╨╛╨╢╨╕╤В╤М ╤В╤А╨╛╤В╤Г╨░╤А╨╜╤Г╤О ╨┐╨╗╨╕╤В╨║╤Г ╨╜╨░ ╤Г╤З╨░╤Б╤В╨║╨╡",
+      "qualificationPhrase": "╤Г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕ ╨╕ ╨▒╤А╤Г╤Б╤З╨░╤В╨║╨╕",
+      "search": {
+        "companyQueries": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕ ╨Ь╨╛╤Б╨║╨▓╨░ ╨╛╨▒╨╗╨░╤Б╤В╤М",
+          "╨╝╨╛╤Й╨╡╨╜╨╕╨╡ ╤Г╤З╨░╤Б╤В╨║╨░ ╨▒╤А╤Г╤Б╤З╨░╤В╨║╨╛╨╣"
+        ],
+        "privateQueries": [
+          "╨▒╤А╨╕╨│╨░╨┤╨░ ╤Г╨║╨╗╨░╨┤╨║╨░ ╨┐╨╗╨╕╤В╨║╨╕ ╤Г╤З╨░╤Б╤В╨╛╨║",
+          "╨╝╨░╤Б╤В╨╡╤А ╨▒╤А╤Г╤Б╤З╨░╤В╨║╨░"
+        ],
+        "keywords": [
+          "╤В╤А╨╛╤В╤Г╨░╤А╨╜╨░╤П ╨┐╨╗╨╕╤В╨║╨░",
+          "╨▒╤А╤Г╤Б╤З╨░╤В╨║╨░",
+          "╨╝╨╛╤Й╨╡╨╜╨╕╨╡"
+        ],
+        "qualifyKeywords": [
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕",
+          "╨╝╨╛╤Й╨╡╨╜╨╕╨╡",
+          "╤Г╨║╨╗╨░╨┤╨║╨░ ╨▒╤А╤Г╤Б╤З╨░╤В╨║╨╕"
+        ]
+      }
     }
   ]
 }

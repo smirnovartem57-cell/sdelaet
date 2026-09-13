@@ -52,9 +52,19 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `AIR_CONDITIONER_INSTALLATION` — `RESEARCH`, profile v0.1.
 - `PIPE_REPLACEMENT` — `RESEARCH`, profile v0.1.
 - `PLUMBING_FIXTURE_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `HOUSE_CONSTRUCTION` — `RESEARCH`, profile v0.1.
+- `FOUNDATION_CONSTRUCTION` — `RESEARCH`, profile v0.1.
+- `ROOF_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `FACADE_FINISHING` — `RESEARCH`, profile v0.1.
+- `FENCE_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `SEPTIC_INSTALLATION` — `RESEARCH`, profile v0.1.
+- `WELL_DRILLING` — `RESEARCH`, profile v0.1.
+- `SITE_DRAINAGE` — `RESEARCH`, profile v0.1.
+- `BLIND_AREA_CONSTRUCTION` — `RESEARCH`, profile v0.1.
+- `PAVING_INSTALLATION` — `RESEARCH`, profile v0.1.
 
 ## Current focus
-Global SEO catalogue is generated from the category manifest for 40 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion wave 1 added 11 high-demand task-specific categories in honest `RESEARCH` state. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
+Global SEO catalogue is generated from the category manifest for 50 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–2 added 21 high-demand task-specific categories in honest `RESEARCH` state, including private-house and site work. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
 
 Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
 

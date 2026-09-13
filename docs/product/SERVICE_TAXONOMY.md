@@ -46,6 +46,16 @@
 | `AIR_CONDITIONER_INSTALLATION` | `air-conditioner-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░ | RESEARCH | P1 |
 | `PIPE_REPLACEMENT` | `pipe-replacement` | ╨Ч╨░╨╝╨╡╨╜╨░ ╤В╤А╤Г╨▒ ╨▓╨╛╨┤╨╛╤Б╨╜╨░╨▒╨╢╨╡╨╜╨╕╤П | RESEARCH | P1 |
 | `PLUMBING_FIXTURE_INSTALLATION` | `plumbing-fixture-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║╨╕ | RESEARCH | P1 |
+| `HOUSE_CONSTRUCTION` | `house-construction` | ╨б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░ | RESEARCH | P1 |
+| `FOUNDATION_CONSTRUCTION` | `foundation-construction` | ╨б╤В╤А╨╛╨╕╤В╨╡╨╗╤М╤Б╤В╨▓╨╛ ╤Д╤Г╨╜╨┤╨░╨╝╨╡╨╜╤В╨░ | RESEARCH | P1 |
+| `ROOF_INSTALLATION` | `roof-installation` | ╨Ь╨╛╨╜╤В╨░╨╢ ╨╜╨╛╨▓╨╛╨╣ ╨║╤А╨╛╨▓╨╗╨╕ | RESEARCH | P1 |
+| `FACADE_FINISHING` | `facade-finishing` | ╨Ю╤В╨┤╨╡╨╗╨║╨░ ╤Д╨░╤Б╨░╨┤╨░ ╨┤╨╛╨╝╨░ | RESEARCH | P1 |
+| `FENCE_INSTALLATION` | `fence-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╖╨░╨▒╨╛╤А╨░ | RESEARCH | P1 |
+| `SEPTIC_INSTALLATION` | `septic-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨╡╨┐╤В╨╕╨║╨░ | RESEARCH | P1 |
+| `WELL_DRILLING` | `well-drilling` | ╨С╤Г╤А╨╡╨╜╨╕╨╡ ╤Б╨║╨▓╨░╨╢╨╕╨╜╤Л ╨╜╨░ ╨▓╨╛╨┤╤Г | RESEARCH | P1 |
+| `SITE_DRAINAGE` | `site-drainage` | ╨Ф╤А╨╡╨╜╨░╨╢ ╤Г╤З╨░╤Б╤В╨║╨░ | RESEARCH | P1 |
+| `BLIND_AREA_CONSTRUCTION` | `blind-area-construction` | ╨г╤Б╤В╤А╨╛╨╣╤Б╤В╨▓╨╛ ╨╛╤В╨╝╨╛╤Б╤В╨║╨╕ ╨┤╨╛╨╝╨░ | RESEARCH | P2 |
+| `PAVING_INSTALLATION` | `paving-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╤В╤А╨╛╤В╤Г╨░╤А╨╜╨╛╨╣ ╨┐╨╗╨╕╤В╨║╨╕ | RESEARCH | P2 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'config','service-categories.json'),'utf8'));
 const categories=manifest.categories.filter((item)=>item.serviceCode!=='BALCONY_INSULATION');
-assert.equal(categories.length,40,'SEO generator must cover 40 non-balcony categories after expansion wave 1');
+assert.equal(categories.length,50,'SEO generator must cover 50 non-balcony categories after expansion wave 2');
 const titles=new Set(), descriptions=new Set();
 for(const item of categories){
   const file=path.join(root,'uslugi',item.categoryId,'index.html');
@@ -23,7 +23,7 @@ for(const item of categories){
 assert.equal(titles.size,categories.length,'titles must be unique');
 assert.equal(descriptions.size,categories.length,'descriptions must be unique');
 const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
-assert.equal((sitemap.match(/<url>/g)||[]).length,42,'sitemap must contain root, index and 40 category pages');
+assert.equal((sitemap.match(/<url>/g)||[]).length,52,'sitemap must contain root, index and 50 category pages');
 assert.ok(!sitemap.includes('/uslugi/balcony-insulation/'),'balcony insulation stays reserved');
 assert.match(fs.readFileSync(path.join(root,'robots.txt'),'utf8'),/Sitemap: https:\/\/onsdelaet\.ru\/sitemap\.xml/);
-console.log('SEO category pages regression: 40/40 PASS');
+console.log('SEO category pages regression: 50/50 PASS');
