@@ -40,7 +40,18 @@ node tools/launch/security-smoke.mjs
 - duplicate Telegram callback remains idempotent.
 
 ## 4. Hardening gate
-Проверить:
+Публичная проверка 2026-09-13:
+- `https://api.onsdelaet.ru/health` → 200 — PASS;
+- `https://tg.onsdelaet.ru/health` → 200 — PASS;
+- `https://onsdelaet.ru/` → 200 — PASS;
+- на основном site response отсутствуют `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options` — GAP.
+
+Автоматическая публичная проверка:
+```bash
+node tools/launch/hardening-public-audit.mjs
+```
+
+До launch ещё проверить на сервере:
 - DB backup и фактический restore-test;
 - backup публичного сайта;
 - права `/etc/sdelaet/*.env` и отсутствие секретов в логах;
@@ -48,8 +59,8 @@ node tools/launch/security-smoke.mjs
 - nginx config test;
 - rate limits/size limits публичных write endpoints;
 - admin API недоступен через публичный API hostname;
-- health endpoints;
-- журналирование 4xx/5xx без PII/secrets.
+- журналирование 4xx/5xx без PII/secrets;
+- добавить security headers на HTTPS vhost сайта и повторить публичный audit.
 
 ## 5. Analytics gate
 Счётчик Яндекс Метрики: `112503660`.
