@@ -232,6 +232,15 @@
       if(!offer.warranty)items.push('гарантию на работы');
       if(winter){if(!hasWork(offer,/утепл.{0,12}пол/))items.push('входит ли утепление пола');if(!hasWork(offer,/утепл.{0,12}потол/))items.push('входит ли утепление потолка');if(!hasWork(offer,/утепл.{0,15}(стен|парапет)/))items.push('входит ли утепление стен / парапета');if(!hasWork(offer,/(гермет|примыкан|монтажн.{0,8}шв)/))items.push('учтена ли герметизация примыканий');if(!hasWork(offer,/(провер|осмотр|диагност).{0,18}(остеклен|окон)/))items.push('будет ли проверено существующее остекление на пригодность для зимнего режима');}
     }
+    var commonText=((task.goal||'')+' '+(task.scope||'')+' '+(offer.rawResponse||'')).toLowerCase();
+    if(offer.contractOffered==null)items.push('будет ли заключён договор с зафиксированными составом работ и ценой');
+    if(!offer.paymentTerms)items.push('какой порядок оплаты, предоплата и этапы платежей');
+    if(!offer.priceValidity)items.push('на какой срок фиксируется указанная цена');
+    if(offer.acceptanceDocumentIncluded==null)items.push('как оформляется приёмка выполненных работ');
+    if(/двер|окон|кухн|бойлер|водонагрев|материал|оборудован|достав/.test(commonText)&&offer.deliveryIncluded==null)items.push('входят ли доставка и подъём, и какова их стоимость');
+    if(/замен|стар|демонтаж|разбор|снят/.test(commonText)&&offer.dismantlingIncluded==null)items.push('входит ли демонтаж, и какова его стоимость');
+    if((offer.uncertainties||[]).length)items.push('какие из отмеченных неопределённостей будут подтверждены до начала работ');
+    if((offer.missingItems||[]).length)items.push('стоимость явно отсутствующих в смете позиций');
     if((offer.exclusions||[]).length===0&&offer.materialsIncluded!==false)items.push('что не входит в указанную стоимость');
     items=uniq(items).slice(0,6);
     if(!items.length)return{needed:false,items:[],message:'Спасибо. Предложение достаточно полное для предварительного сравнения.'};
