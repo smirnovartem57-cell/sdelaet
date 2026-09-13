@@ -1,23 +1,10 @@
 import {qualifyCandidateForTask,searchCandidates} from '../search-api/core.mjs';
-const cases=[
-['balcony-insulation','Утепление балконов и лоджий','Москва'],['balcony-glazing','Остекление балконов и лоджий','Москва'],
-['window-replacement','Пластиковые окна и стеклопакеты','Москва'],['window-repair','Ремонт окон, регулировка фурнитуры','Москва'],
-['balcony-finishing','Отделка и обшивка балконов','Москва'],['balcony-leak-repair','Герметизация швов и ремонт протечек','Москва'],
-['electrical-installation','Электромонтаж, замена проводки и сборка электрощита','Москва'],
-['plumbing-works','Сантехнические работы, разводка труб и канализация','Москва'],
-['radiator-heating','Замена радиаторов отопления, батареи и стояки','Москва'],
-['minor-apartment-repair','Мелкий ремонт, муж на час, сборка мебели и навес полок','Москва'],
-['tile-installation','Укладка плитки, керамогранита, затирка и облицовка','Москва'],
-['flooring-installation','Укладка ламината, SPC, линолеума и паркетной доски','Москва'],
-['wall-finishing','Покраска стен, обои, шпаклевка и малярные работы','Москва'],
-['interior-doors','Установка межкомнатных дверей, доборы, наличники и фурнитура','Москва'],
-['stretch-ceiling','Натяжные потолки, теневой профиль, скрытый карниз и световые линии','Москва'],
-];
-let fail=0;
-for(const [categoryId,description,geo] of cases){
- const r=qualifyCandidateForTask({name:'Тест',description,geo},{categoryId,city:'Москва'});const ok=r.qualified===true;console.log(ok?'PASS':'FAIL','qualification',categoryId,r.status);if(!ok)fail++;
- const live=await searchCandidates({},{categoryId,city:'Москва'});const wired=live.error==='SEARCH_NOT_CONFIGURED';console.log(wired?'PASS':'FAIL','backend wiring',categoryId,live.error);if(!wired)fail++;
+import {categories} from '../tools/category-agents/manifest.mjs';
+let fail=0,checks=0;
+for(const c of categories().filter(x=>!['IDEA','RESEARCH'].includes(x.status))){
+ const r=qualifyCandidateForTask({name:'Тест',description:c.qualificationPhrase,geo:'Москва'},{categoryId:c.categoryId,city:'Москва'});checks++;const ok=r.qualified===true;console.log(ok?'PASS':'FAIL','qualification',c.categoryId,r.status);if(!ok)fail++;
+ const live=await searchCandidates({},{categoryId:c.categoryId,city:'Москва'});checks++;const wired=live.error==='SEARCH_NOT_CONFIGURED';console.log(wired?'PASS':'FAIL','backend wiring',c.categoryId,live.error);if(!wired)fail++;
 }
-const bad=qualifyCandidateForTask({name:'Репетитор',description:'английский язык',geo:'Москва'},{categoryId:'window-repair',city:'Москва'});if(bad.qualified){console.log('FAIL unrelated candidate qualified');fail++;}else console.log('PASS unrelated candidate rejected');
-const geo=qualifyCandidateForTask({name:'Окна',description:'ремонт окон регулировка',geo:'Казань'},{categoryId:'window-repair',city:'Москва'});if(geo.qualified){console.log('FAIL wrong geo qualified');fail++;}else console.log('PASS wrong geo rejected');
-if(fail)process.exit(1);console.log('Search qualification regression: 32/32 PASS');
+const bad=qualifyCandidateForTask({name:'Репетитор',description:'английский язык',geo:'Москва'},{categoryId:'window-repair',city:'Москва'});checks++;if(bad.qualified){console.log('FAIL unrelated candidate qualified');fail++;}else console.log('PASS unrelated candidate rejected');
+const geo=qualifyCandidateForTask({name:'Окна',description:'ремонт окон регулировка',geo:'Казань'},{categoryId:'window-repair',city:'Москва'});checks++;if(geo.qualified){console.log('FAIL wrong geo qualified');fail++;}else console.log('PASS wrong geo rejected');
+if(fail)process.exit(1);console.log(`Search qualification regression: ${checks}/${checks} PASS`);

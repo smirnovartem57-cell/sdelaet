@@ -18,40 +18,14 @@ jobs:
           node tests/category-lifecycle-regression.mjs
           node tests/category-system-audit-regression.mjs
           node tests/category-agent-pipeline-regression.mjs
+          node tests/category-create-command-regression.mjs
+          node tests/category-generated-registry-regression.mjs
+          node tests/category-regression-manifest.mjs
           node tools/category-agents/run.mjs --all --ci
           node tests/production-category-wiring-regression.mjs
           node tests/search-qualification-regression.mjs
           node tests/seasonal-category-routing-regression.mjs
           node tests/seasonal-expert-regression.mjs
-          node tests/balcony-glazing-qa-regression.mjs
-          node tests/balcony-glazing-e2e-regression.mjs
-          node tests/window-replacement-qa-regression.mjs
-          node tests/window-replacement-e2e-regression.mjs
-          node tests/window-repair-qa-regression.mjs
-          node tests/window-repair-e2e-regression.mjs
-          node tests/balcony-finishing-qa-regression.mjs
-          node tests/balcony-finishing-e2e-regression.mjs
-          node tests/balcony-leak-repair-qa-regression.mjs
-          node tests/balcony-leak-repair-e2e-regression.mjs
-          node tests/interior-doors-qa-regression.mjs
-          node tests/interior-doors-e2e-regression.mjs
-          node tests/stretch-ceiling-qa-regression.mjs
-          node tests/stretch-ceiling-e2e-regression.mjs
-          node tests/wall-finishing-qa-regression.mjs
-          node tests/wall-finishing-e2e-regression.mjs
-          node tests/flooring-installation-qa-regression.mjs
-          node tests/flooring-installation-e2e-regression.mjs
-          node tests/tile-installation-qa-regression.mjs
-          node tests/tile-installation-e2e-regression.mjs
-          node tests/minor-apartment-repair-qa-regression.mjs
-          node tests/minor-apartment-repair-e2e-regression.mjs
-          node tests/radiator-heating-qa-regression.mjs
-          node tests/radiator-heating-e2e-regression.mjs
-          node tests/electrical-installation-qa-regression.mjs
-          node tests/electrical-installation-e2e-regression.mjs
-          node tests/plumbing-works-qa-regression.mjs
-          node tests/plumbing-works-e2e-regression.mjs
-          node tests/balcony-insulation-regression.mjs
           node tests/offer-parser-regression.mjs
           node tests/offer-followup-regression.mjs
           node tests/offer-merge-regression.mjs
@@ -59,7 +33,6 @@ jobs:
           node tests/recommendation-status-regression.mjs
           node tests/recommendation-actions-regression.mjs
           node tests/comparison-explainer-regression.mjs
-          node tests/balcony-e2e-regression.mjs
       - name: Prepare SSH
         shell: bash
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}", VDS_SSH_KEY: "${{ secrets.VDS_SSH_KEY }}" }
@@ -82,5 +55,5 @@ jobs:
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
         run: |
           set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "test -f /opt/sdelaet/current/assets/category-profiles/balcony-insulation.json && test -f /opt/sdelaet/current/assets/category-profiles/balcony-glazing.json && test -f /opt/sdelaet/current/tests/balcony-glazing-qa-regression.mjs && test -f /opt/sdelaet/current/tests/balcony-glazing-e2e-regression.mjs && test -f /opt/sdelaet/current/tests/electrical-installation-e2e-regression.mjs && test -f /opt/sdelaet/current/tests/plumbing-works-e2e-regression.mjs && test -f /opt/sdelaet/current/docs/product/EXPERT_MODELS/BALCONY_GLAZING.md && grep -q 'sdExpertAgent' /opt/sdelaet/current/assets/launch-v2.js"
+          ssh "$VDS_USER@$VDS_HOST" "cd /opt/sdelaet/current && node tools/category-agents/production-smoke.mjs"
           echo 'FirstVDS deploy smoke check passed'

@@ -5,21 +5,21 @@
 
 | Service code | Category id | Name | Lifecycle | Priority |
 |---|---|---|---|---|
-| `BALCONY_INSULATION` | `balcony-insulation` | Утепление балкона / лоджии | READY | P1 |
-| `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | TESTING | P1 |
-| `WINDOW_REPLACEMENT` | `window-replacement` | Замена / установка окон | TESTING | P1 |
-| `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | TESTING | P1 |
 | `BALCONY_FINISHING` | `balcony-finishing` | Отделка балкона / лоджии | TESTING | P1 |
+| `BALCONY_GLAZING` | `balcony-glazing` | Остекление балкона / лоджии | TESTING | P1 |
+| `BALCONY_INSULATION` | `balcony-insulation` | Утепление балкона / лоджии | READY | P1 |
 | `BALCONY_LEAK_REPAIR` | `balcony-leak-repair` | Протечки / сырость балкона | TESTING | P1 |
 | `ELECTRICAL_INSTALLATION` | `electrical-installation` | Электромонтажные работы | TESTING | P1 |
+| `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
+| `INTERIOR_DOORS` | `interior-doors` | Межкомнатные двери | TESTING | P1 |
+| `MINOR_APARTMENT_REPAIR` | `minor-apartment-repair` | Мелкий ремонт квартиры | TESTING | P1 |
 | `PLUMBING_WORKS` | `plumbing-works` | Сантехнические работы | TESTING | P1 |
 | `RADIATOR_HEATING` | `radiator-heating` | Радиаторы / отопление | TESTING | P1 |
-| `MINOR_APARTMENT_REPAIR` | `minor-apartment-repair` | Мелкий ремонт квартиры | TESTING | P1 |
-| `TILE_INSTALLATION` | `tile-installation` | Укладка плитки / керамогранита | TESTING | P2 |
-| `FLOORING_INSTALLATION` | `flooring-installation` | Укладка напольных покрытий | TESTING | P2 |
-| `WALL_FINISHING` | `wall-finishing` | Стены / обои / покраска | TESTING | P1 |
-| `INTERIOR_DOORS` | `interior-doors` | Межкомнатные двери | TESTING | P2 |
 | `STRETCH_CEILING` | `stretch-ceiling` | Натяжные потолки | TESTING | P2 |
+| `TILE_INSTALLATION` | `tile-installation` | Укладка плитки / керамогранита | TESTING | P2 |
+| `WALL_FINISHING` | `wall-finishing` | Стены / обои / покраска | TESTING | P1 |
+| `WINDOW_REPAIR` | `window-repair` | Ремонт / регулировка окон | TESTING | P1 |
+| `WINDOW_REPLACEMENT` | `window-replacement` | Замена / установка окон | TESTING | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 

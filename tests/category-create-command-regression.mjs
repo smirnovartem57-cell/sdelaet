@@ -1,0 +1,5 @@
+import {spawnSync} from'node:child_process';
+const r=spawnSync(process.execPath,['tools/category-agents/create-category.mjs','--id','test-roof-repair','--code','TEST_ROOF_REPAIR','--title','Ремонт кровли','--dry-run','--test-phrase','течет крыша','--qualification-phrase','ремонт кровли','--company-queries','ремонт кровли,ремонт крыши','--keywords','кровля,крыша','--qualify-keywords','кровля,крыша'],{encoding:'utf8'});
+if(r.status!==0){console.error(r.stderr);process.exit(1)}
+const x=JSON.parse(r.stdout);let fail=0;function ok(n,v){console.log(v?'PASS':'FAIL',n);if(!v)fail++}
+ok('dry run action',x.action==='CREATE_CATEGORY');ok('research lifecycle',x.entry.status==='RESEARCH');ok('profile path',x.entry.profile==='assets/category-profiles/test-roof-repair.json');ok('qa/e2e scaffold',x.generated.includes('qaTest')&&x.generated.includes('e2eTest'));ok('generated registries',x.generated.includes('runtimeRegistry')&&x.generated.includes('searchRegistry'));ok('search inputs',x.entry.search.companyQueries.length===2&&x.entry.search.qualifyKeywords.length===2);if(fail)process.exit(1);console.log('Category create command regression: 6/6 PASS');

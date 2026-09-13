@@ -1,0 +1,575 @@
+{
+  "schemaVersion": "1.0",
+  "categories": [
+    {
+      "categoryId": "balcony-finishing",
+      "serviceCode": "BALCONY_FINISHING",
+      "title": "Отделка балкона / лоджии",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/balcony-finishing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BALCONY_FINISHING.md",
+      "qaTest": "tests/balcony-finishing-qa-regression.mjs",
+      "e2eTest": "tests/balcony-finishing-e2e-regression.mjs",
+      "testPhrase": "нужна отделка балкона стен потолка и пола",
+      "qualificationPhrase": "Отделка и обшивка балконов",
+      "search": {
+        "companyQueries": [
+          "отделка балконов",
+          "ремонт балконов",
+          "внутренняя отделка лоджий"
+        ],
+        "privateQueries": [
+          "отделка балкона",
+          "ремонт балкона"
+        ],
+        "keywords": [
+          "балкон",
+          "лоджи",
+          "отделк",
+          "ремонт"
+        ],
+        "qualifyKeywords": [
+          "отделк",
+          "обшив",
+          "ремонт балкон",
+          "ремонт лоджи"
+        ]
+      }
+    },
+    {
+      "categoryId": "balcony-glazing",
+      "serviceCode": "BALCONY_GLAZING",
+      "title": "Остекление балкона / лоджии",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/balcony-glazing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BALCONY_GLAZING.md",
+      "qaTest": "tests/balcony-glazing-qa-regression.mjs",
+      "e2eTest": "tests/balcony-glazing-e2e-regression.mjs",
+      "testPhrase": "хочу застеклить балкон теплым остеклением",
+      "qualificationPhrase": "Остекление балконов и лоджий",
+      "search": {
+        "companyQueries": [
+          "остекление балконов",
+          "остекление лоджий",
+          "теплое остекление балкона"
+        ],
+        "privateQueries": [
+          "остекление балкона",
+          "остекление лоджии"
+        ],
+        "keywords": [
+          "балкон",
+          "лоджи",
+          "остекл"
+        ],
+        "qualifyKeywords": [
+          "остекл",
+          "окон",
+          "балкон",
+          "лоджи"
+        ]
+      }
+    },
+    {
+      "categoryId": "balcony-insulation",
+      "serviceCode": "BALCONY_INSULATION",
+      "title": "Утепление балкона / лоджии",
+      "status": "READY",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/balcony-insulation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BALCONY_INSULATION.md",
+      "qaTest": "tests/balcony-insulation-regression.mjs",
+      "e2eTest": "tests/balcony-e2e-regression.mjs",
+      "testPhrase": "хочу утеплить лоджию под кабинет зимой",
+      "qualificationPhrase": "Утепление балконов и лоджий",
+      "search": {
+        "companyQueries": [
+          "утепление балконов",
+          "утепление лоджий",
+          "ремонт балконов"
+        ],
+        "privateQueries": [
+          "утепление балкона",
+          "утепление лоджии"
+        ],
+        "keywords": [
+          "балкон",
+          "лоджи",
+          "утепл"
+        ],
+        "qualifyKeywords": [
+          "утепл",
+          "теплоизоляц"
+        ]
+      }
+    },
+    {
+      "categoryId": "balcony-leak-repair",
+      "serviceCode": "BALCONY_LEAK_REPAIR",
+      "title": "Протечки / сырость балкона",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/balcony-leak-repair.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BALCONY_LEAK_REPAIR.md",
+      "qaTest": "tests/balcony-leak-repair-qa-regression.mjs",
+      "e2eTest": "tests/balcony-leak-repair-e2e-regression.mjs",
+      "testPhrase": "на балконе течет после дождя",
+      "qualificationPhrase": "Герметизация швов и ремонт протечек",
+      "search": {
+        "companyQueries": [
+          "герметизация балконов",
+          "ремонт протечек балкона",
+          "герметизация швов балкона"
+        ],
+        "privateQueries": [
+          "герметизация балкона",
+          "ремонт протечки балкона"
+        ],
+        "keywords": [
+          "балкон",
+          "лоджи",
+          "гермет",
+          "протеч",
+          "шв"
+        ],
+        "qualifyKeywords": [
+          "гермет",
+          "протеч",
+          "гидроизоляц",
+          "шв",
+          "козыр",
+          "фасад"
+        ]
+      }
+    },
+    {
+      "categoryId": "electrical-installation",
+      "serviceCode": "ELECTRICAL_INSTALLATION",
+      "title": "Электромонтажные работы",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "year_round_autumn_high",
+      "profile": "assets/category-profiles/electrical-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/ELECTRICAL_INSTALLATION.md",
+      "qaTest": "tests/electrical-installation-qa-regression.mjs",
+      "e2eTest": "tests/electrical-installation-e2e-regression.mjs",
+      "testPhrase": "нужно полностью заменить проводку и собрать щит",
+      "qualificationPhrase": "Электромонтаж, замена проводки и сборка электрощита",
+      "search": {
+        "companyQueries": [
+          "электромонтажные работы квартира",
+          "замена проводки квартира",
+          "электрик электрощит"
+        ],
+        "privateQueries": [
+          "электрик проводка квартира",
+          "электромонтаж розетки щит"
+        ],
+        "keywords": [
+          "электр",
+          "проводк",
+          "электромонтаж",
+          "розет",
+          "щит"
+        ],
+        "qualifyKeywords": [
+          "электромонтаж",
+          "электрик",
+          "проводк",
+          "электрощит",
+          "розет",
+          "автомат",
+          "узо"
+        ]
+      }
+    },
+    {
+      "categoryId": "flooring-installation",
+      "serviceCode": "FLOORING_INSTALLATION",
+      "title": "Укладка напольных покрытий",
+      "status": "TESTING",
+      "priority": "P2",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/flooring-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FLOORING_INSTALLATION.md",
+      "qaTest": "tests/flooring-installation-qa-regression.mjs",
+      "e2eTest": "tests/flooring-installation-e2e-regression.mjs",
+      "testPhrase": "нужно уложить ламинат 35 м2 по прямой",
+      "qualificationPhrase": "Укладка ламината, SPC, линолеума и паркетной доски",
+      "search": {
+        "companyQueries": [
+          "укладка ламината пола",
+          "укладка кварц винила",
+          "укладка паркетной доски"
+        ],
+        "privateQueries": [
+          "мастер укладка ламината",
+          "укладка напольных покрытий"
+        ],
+        "keywords": [
+          "ламинат",
+          "кварц",
+          "spc",
+          "линолеум",
+          "паркет"
+        ],
+        "qualifyKeywords": [
+          "ламинат",
+          "spc",
+          "кварц",
+          "линолеум",
+          "паркет",
+          "напольн"
+        ]
+      }
+    },
+    {
+      "categoryId": "interior-doors",
+      "serviceCode": "INTERIOR_DOORS",
+      "title": "Межкомнатные двери",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/interior-doors.json",
+      "expertModel": "docs/product/EXPERT_MODELS/INTERIOR_DOORS.md",
+      "qaTest": "tests/interior-doors-qa-regression.mjs",
+      "e2eTest": "tests/interior-doors-e2e-regression.mjs",
+      "testPhrase": "нужно заменить 3 межкомнатные двери",
+      "qualificationPhrase": "Установка межкомнатных дверей, доборы, наличники и фурнитура",
+      "search": {
+        "companyQueries": [
+          "установка межкомнатных дверей Москва",
+          "монтаж дверей доборы наличники Москва"
+        ],
+        "privateQueries": [
+          "мастер установка межкомнатных дверей",
+          "установщик дверей"
+        ],
+        "keywords": [
+          "межкомнатн",
+          "двер",
+          "наличник",
+          "добор"
+        ],
+        "qualifyKeywords": [
+          "межкомнатные двери",
+          "установка дверей",
+          "доборы",
+          "наличники",
+          "дверной монтаж"
+        ]
+      }
+    },
+    {
+      "categoryId": "minor-apartment-repair",
+      "serviceCode": "MINOR_APARTMENT_REPAIR",
+      "title": "Мелкий ремонт квартиры",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/minor-apartment-repair.json",
+      "expertModel": "docs/product/EXPERT_MODELS/MINOR_APARTMENT_REPAIR.md",
+      "qaTest": "tests/minor-apartment-repair-qa-regression.mjs",
+      "e2eTest": "tests/minor-apartment-repair-e2e-regression.mjs",
+      "testPhrase": "нужно повесить три полки и карниз",
+      "qualificationPhrase": "Мелкий ремонт, муж на час, сборка мебели и навес полок",
+      "search": {
+        "companyQueries": [
+          "мелкий ремонт квартиры мастер",
+          "муж на час мелкий ремонт",
+          "мастер бытовой ремонт"
+        ],
+        "privateQueries": [
+          "муж на час мастер",
+          "мелкий ремонт мастер"
+        ],
+        "keywords": [
+          "ремонт",
+          "мастер",
+          "муж на час",
+          "сборк",
+          "креп"
+        ],
+        "qualifyKeywords": [
+          "мелкий ремонт",
+          "муж на час",
+          "мастер",
+          "сборка мебели",
+          "навес",
+          "крепеж"
+        ]
+      }
+    },
+    {
+      "categoryId": "plumbing-works",
+      "serviceCode": "PLUMBING_WORKS",
+      "title": "Сантехнические работы",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/plumbing-works.json",
+      "expertModel": "docs/product/EXPERT_MODELS/PLUMBING_WORKS.md",
+      "qaTest": "tests/plumbing-works-qa-regression.mjs",
+      "e2eTest": "tests/plumbing-works-e2e-regression.mjs",
+      "testPhrase": "нужно сделать разводку труб и канализацию",
+      "qualificationPhrase": "Сантехнические работы, разводка труб и канализация",
+      "search": {
+        "companyQueries": [
+          "сантехнические работы квартира",
+          "разводка труб водоснабжения",
+          "сантехник ремонт санузла"
+        ],
+        "privateQueries": [
+          "сантехник разводка труб",
+          "сантехник установка сантехники"
+        ],
+        "keywords": [
+          "сантех",
+          "труб",
+          "водоснабж",
+          "канализац",
+          "смесител"
+        ],
+        "qualifyKeywords": [
+          "сантехник",
+          "сантехническ",
+          "разводка труб",
+          "водоснабж",
+          "канализац",
+          "сантехника"
+        ]
+      }
+    },
+    {
+      "categoryId": "radiator-heating",
+      "serviceCode": "RADIATOR_HEATING",
+      "title": "Радиаторы / отопление",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/radiator-heating.json",
+      "expertModel": "docs/product/EXPERT_MODELS/RADIATOR_HEATING.md",
+      "qaTest": "tests/radiator-heating-qa-regression.mjs",
+      "e2eTest": "tests/radiator-heating-e2e-regression.mjs",
+      "testPhrase": "нужно заменить два радиатора центрального отопления",
+      "qualificationPhrase": "Замена радиаторов отопления, батареи и стояки",
+      "search": {
+        "companyQueries": [
+          "замена радиаторов отопления",
+          "установка радиаторов отопления",
+          "замена батарей отопления"
+        ],
+        "privateQueries": [
+          "сантехник замена радиатора",
+          "мастер установка батареи"
+        ],
+        "keywords": [
+          "радиатор",
+          "батаре",
+          "отоплен",
+          "стояк"
+        ],
+        "qualifyKeywords": [
+          "радиатор",
+          "батаре",
+          "отоплен",
+          "стояк",
+          "опрессов"
+        ]
+      }
+    },
+    {
+      "categoryId": "stretch-ceiling",
+      "serviceCode": "STRETCH_CEILING",
+      "title": "Натяжные потолки",
+      "status": "TESTING",
+      "priority": "P2",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/stretch-ceiling.json",
+      "expertModel": "docs/product/EXPERT_MODELS/STRETCH_CEILING.md",
+      "qaTest": "tests/stretch-ceiling-qa-regression.mjs",
+      "e2eTest": "tests/stretch-ceiling-e2e-regression.mjs",
+      "testPhrase": "нужен натяжной потолок 45 м2 с теневым профилем и 8 светильниками",
+      "qualificationPhrase": "Натяжные потолки, теневой профиль, светильники и скрытый карниз",
+      "search": {
+        "companyQueries": [
+          "натяжные потолки Москва",
+          "теневые натяжные потолки Москва",
+          "натяжной потолок скрытый карниз"
+        ],
+        "privateQueries": [
+          "мастер натяжные потолки",
+          "монтаж натяжного потолка"
+        ],
+        "keywords": [
+          "натяжн",
+          "потол",
+          "тенев",
+          "карниз"
+        ],
+        "qualifyKeywords": [
+          "натяжные потолки",
+          "теневой потолок",
+          "скрытый карниз",
+          "световая линия",
+          "монтаж потолка"
+        ]
+      }
+    },
+    {
+      "categoryId": "tile-installation",
+      "serviceCode": "TILE_INSTALLATION",
+      "title": "Укладка плитки / керамогранита",
+      "status": "TESTING",
+      "priority": "P2",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/tile-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/TILE_INSTALLATION.md",
+      "qaTest": "tests/tile-installation-qa-regression.mjs",
+      "e2eTest": "tests/tile-installation-e2e-regression.mjs",
+      "testPhrase": "нужно уложить керамогранит 60x120 в ванной",
+      "qualificationPhrase": "Укладка плитки, керамогранита, затирка и облицовка",
+      "search": {
+        "companyQueries": [
+          "укладка плитки керамогранита",
+          "плиточник ванная",
+          "укладка керамогранита"
+        ],
+        "privateQueries": [
+          "плиточник укладка плитки",
+          "мастер по плитке"
+        ],
+        "keywords": [
+          "плитк",
+          "керамогранит",
+          "плиточник",
+          "облицов"
+        ],
+        "qualifyKeywords": [
+          "плитк",
+          "керамогранит",
+          "плиточник",
+          "облицов",
+          "затир"
+        ]
+      }
+    },
+    {
+      "categoryId": "wall-finishing",
+      "serviceCode": "WALL_FINISHING",
+      "title": "Стены / обои / покраска",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/wall-finishing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WALL_FINISHING.md",
+      "qaTest": "tests/wall-finishing-qa-regression.mjs",
+      "e2eTest": "tests/wall-finishing-e2e-regression.mjs",
+      "testPhrase": "нужно подготовить и покрасить стены 55 м2",
+      "qualificationPhrase": "Покраска стен, обои, шпаклевка и малярные работы",
+      "search": {
+        "companyQueries": [
+          "покраска стен ремонт Москва",
+          "поклейка обоев Москва",
+          "шпаклевка стен под покраску"
+        ],
+        "privateQueries": [
+          "маляр покраска стен",
+          "мастер поклейка обоев"
+        ],
+        "keywords": [
+          "покраск",
+          "обо",
+          "шпаклев",
+          "маляр"
+        ],
+        "qualifyKeywords": [
+          "покраска стен",
+          "обои",
+          "шпаклевка",
+          "малярные работы",
+          "подготовка стен"
+        ]
+      }
+    },
+    {
+      "categoryId": "window-repair",
+      "serviceCode": "WINDOW_REPAIR",
+      "title": "Ремонт / регулировка окон",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/window-repair.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WINDOW_REPAIR.md",
+      "qaTest": "tests/window-repair-qa-regression.mjs",
+      "e2eTest": "tests/window-repair-e2e-regression.mjs",
+      "testPhrase": "из окна дует нужна регулировка",
+      "qualificationPhrase": "Ремонт окон, регулировка фурнитуры",
+      "search": {
+        "companyQueries": [
+          "ремонт пластиковых окон",
+          "регулировка окон",
+          "ремонт фурнитуры окон"
+        ],
+        "privateQueries": [
+          "ремонт окон",
+          "регулировка окон"
+        ],
+        "keywords": [
+          "ремонт",
+          "окн",
+          "регулиров",
+          "фурнитур"
+        ],
+        "qualifyKeywords": [
+          "ремонт окон",
+          "регулиров",
+          "фурнитур",
+          "стеклопак",
+          "уплотн"
+        ]
+      }
+    },
+    {
+      "categoryId": "window-replacement",
+      "serviceCode": "WINDOW_REPLACEMENT",
+      "title": "Замена / установка окон",
+      "status": "TESTING",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/window-replacement.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WINDOW_REPLACEMENT.md",
+      "qaTest": "tests/window-replacement-qa-regression.mjs",
+      "e2eTest": "tests/window-replacement-e2e-regression.mjs",
+      "testPhrase": "нужно заменить три окна в квартире",
+      "qualificationPhrase": "Пластиковые окна и стеклопакеты",
+      "search": {
+        "companyQueries": [
+          "замена окон",
+          "установка пластиковых окон",
+          "окна пвх монтаж"
+        ],
+        "privateQueries": [
+          "установка окон",
+          "замена окон"
+        ],
+        "keywords": [
+          "окн",
+          "пвх",
+          "стеклопак"
+        ],
+        "qualifyKeywords": [
+          "окн",
+          "стеклопак",
+          "пвх"
+        ]
+      }
+    }
+  ]
+}
