@@ -10,3 +10,9 @@ Thumbs.db
 *.log
 coverage/
 .vercel/
+
+# Local payment secrets / temp deployment helpers
+.tochka_*.sec
+payment-api/*.env
+payment-api/install_payment_api_remote.py
+payment-api/deploy_payment_api*.py
