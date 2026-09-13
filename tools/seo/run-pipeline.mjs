@@ -6,10 +6,11 @@ const args = process.argv.slice(2);
 const arg = key => { const i=args.indexOf(key); return i>=0 ? args[i+1] : ''; };
 const categoryId = arg('--category');
 const all = args.includes('--all');
+const pending = args.includes('--pending');
 const region = arg('--region') || '213';
 
-if (!categoryId && !all) {
-  console.error('Usage: node tools/seo/run-pipeline.mjs --category <id> [--region 213] | --all [--region 213]');
+if (!categoryId && !all && !pending) {
+  console.error('Usage: node tools/seo/run-pipeline.mjs --category <id> | --all | --pending [--region 213]');
   process.exit(2);
 }
 
@@ -22,12 +23,10 @@ function run(label,script,scriptArgs=[]) {
   });
   if (result.stdout) process.stdout.write(result.stdout);
   if (result.stderr) process.stderr.write(result.stderr);
-  if (result.status !== 0) {
-    throw new Error(`${label}_FAILED exit=${result.status}`);
-  }
+  if (result.status !== 0) throw new Error(`${label}_FAILED exit=${result.status}`);
 }
 
-const selector = all ? ['--all'] : ['--category',categoryId];
+const selector = all ? ['--all'] : pending ? ['--pending'] : ['--category',categoryId];
 
 run(
   'SEO WORDSTAT RESEARCH',
@@ -38,13 +37,11 @@ run(
 run(
   'SEO PAGE GENERATION',
   'tools/seo/generate-pages.mjs',
-  all ? [] : ['--category',categoryId]
+  all || pending ? [] : ['--category',categoryId]
 );
 
-run(
-  'SEO QA',
-  'tools/seo/qa.mjs'
-);
+run('SEO QA','tools/seo/qa.mjs');
 
+const mode = all ? 'all' : pending ? 'pending' : 'category';
 console.log('\nSEO_PIPELINE_OK');
-console.log(JSON.stringify({mode:all?'all':'category',categoryId:all?null:categoryId,region,indexation:'unchanged'},null,2));
+console.log(JSON.stringify({mode,categoryId:mode==='category'?categoryId:null,region,indexation:'unchanged'},null,2));
