@@ -11,18 +11,18 @@ export function tokens(value) {
 
 export function inferIntent(query) {
   const q = normalizeQuery(query);
-  if (/^(как|почему|зачем|что|какой|какая|какие|можно ли|нужно ли)|ошиб|проблем|инструк|своими руками/.test(q)) return 'informational';
-  if (/цена|стоимость|заказать|мастер|исполнитель|под ключ|услуга|монтаж|ремонт|установка/.test(q)) return 'commercial';
+  if (/^(как|чем|почему|зачем|что|какой|какая|какие|можно ли|нужно ли)|ошиб|проблем|инструк|своими руками/.test(q)) return 'informational';
+  if (/цена|стоимость|сколько стоит|заказать|мастер|исполнитель|под ключ|услуга|монтаж|ремонт|установка/.test(q)) return 'commercial';
   return 'mixed';
 }
 
 export function inferTopic(query) {
   const q = normalizeQuery(query);
   if (/цен|стоим|смет|доплат|сколько/.test(q)) return 'cost';
-  if (/ошиб|почему|проблем|риск|плес|теч|конденсат|не работает/.test(q)) return 'problems';
+  if (/ошиб|почему|проблем|риск|плес|теч|конденсат|промерз|дует|холод|не работает/.test(q)) return 'problems';
   if (/сравн|выбрать|исполнител|подрядчик/.test(q)) return 'comparison';
   if (/что входит|состав|этап|работ/.test(q)) return 'scope';
-  if (/материал|технолог|чем |какой |какая |какие /.test(q)) return 'materials';
+  if (/материал|технолог|утеплител|пеноплекс|минват|пароизоляц|чем |какой |какая |какие /.test(q)) return 'materials';
   if (/как |своими руками|инструк|правильно/.test(q)) return 'how_to';
   return 'other';
 }
@@ -40,7 +40,8 @@ export function buildResearch(entry, allCategories, evidence = {}) {
   const seeds = uniq([...(seo.informationalQueries || []), ...(seo.primaryQueries || []), ...evidenceQueries.map(x => x.query)]);
   const enriched = seeds.map(query => {
     const e = evidenceQueries.find(x => normalizeQuery(x.query) === normalizeQuery(query)) || {};
-    return {query, intent:e.intent || inferIntent(query), topic:e.topic || inferTopic(query), demand:e.demand || 'unknown', sourceRefs:e.sourceRefs || []};
+    const demand = Number.isFinite(Number(e.demand)) ? Number(e.demand) : 'unknown';
+    return {query, intent:e.intent || inferIntent(query), topic:e.topic || inferTopic(query), demand, sourceRefs:e.sourceRefs || []};
   });
   const clusters = {};
   for (const row of enriched) (clusters[row.topic] ||= []).push(row.query);
@@ -59,12 +60,26 @@ export function buildResearch(entry, allCategories, evidence = {}) {
     if (best) cannibalization.push(best);
   }
 
+  const reviewDecisions = evidence.cannibalizationReviews || [];
+  const reviewedCannibalization = cannibalization.map(item => {
+    const review = reviewDecisions.find(x =>
+      normalizeQuery(x.query) === normalizeQuery(item.query) &&
+      x.otherCategoryId === item.otherCategoryId
+    ) || null;
+    return review ? {...item, review} : item;
+  });
+  const unresolvedCannibalization = reviewedCannibalization.filter(item => !item.review);
+
   const sources = evidence.sources || [];
   const externalSources = sources.filter(x => ['yandex_wordstat','yandex_suggest','yandex_serp','google_serp','search_console','manual_serp'].includes(x.type));
+  const byDemand = rows => [...rows].sort((a,b) => (typeof b.demand === 'number' ? b.demand : -1) - (typeof a.demand === 'number' ? a.demand : -1));
+  const rankedQueries = byDemand(enriched);
   const informational = enriched.filter(x => x.intent === 'informational' || x.intent === 'mixed');
-  const questions = uniq([...(evidence.questions || []), ...informational.map(x => x.query).filter(x => /^(как|почему|что|какой|какая|какие|можно ли|нужно ли)/i.test(x))]);
+  const informationalOpportunities = byDemand(informational);
+  const questionLike = informationalOpportunities.filter(x => /^(как|чем|почему|что|какой|какая|какие|можно ли|нужно ли)/i.test(x.query));
+  const questions = uniq([...(evidence.questions || []), ...questionLike.map(x => x.query)]);
   const enoughEvidence = externalSources.length >= 1 && evidenceQueries.length >= 5 && informational.length >= 4;
-  const status = !enoughEvidence ? 'EVIDENCE_REQUIRED' : cannibalization.length ? 'REVIEW_REQUIRED' : 'READY_FOR_REVIEW';
+  const status = !enoughEvidence ? 'EVIDENCE_REQUIRED' : unresolvedCannibalization.length ? 'REVIEW_REQUIRED' : 'READY_FOR_REVIEW';
 
   return {
     status,
@@ -73,17 +88,21 @@ export function buildResearch(entry, allCategories, evidence = {}) {
     queryCount:enriched.length,
     evidenceQueryCount:evidenceQueries.length,
     clusters:Object.entries(clusters).map(([id,queries]) => ({id,queries:uniq(queries)})),
+    rankedQueries:rankedQueries.slice(0,30),
+    informationalOpportunities:informationalOpportunities.slice(0,20),
     questions:questions.slice(0,20),
-    aiAnswerTargets:questions.slice(0,8),
-    cannibalization,
+    aiAnswerTargets:questionLike.slice(0,8).map(x => x.query),
+    cannibalization:reviewedCannibalization,
+    unresolvedCannibalization,
+    cannibalizationReviews:reviewDecisions,
     recommendations:[
       ...(externalSources.length ? [] : ['Добавить внешний источник поисковых данных: Wordstat/Suggest/SERP/Search Console.']),
       ...(evidenceQueries.length >= 5 ? [] : ['Добавить минимум 5 подтверждённых поисковых запросов из внешних источников.']),
       ...(informational.length >= 4 ? [] : ['Закрыть минимум 4 информационных интента.']),
-      ...(cannibalization.length ? ['Проверить найденные пересечения интентов с соседними страницами.'] : [])
+      ...(unresolvedCannibalization.length ? ['Проверить найденные пересечения интентов с соседними страницами.'] : [])
     ],
     researched:Boolean(enoughEvidence),
-    reviewedAt:'',
-    researchVersion:1
+    reviewedAt:evidence.reviewedAt || '',
+    researchVersion:2
   };
 }

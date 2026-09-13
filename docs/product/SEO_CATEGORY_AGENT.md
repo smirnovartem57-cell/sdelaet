@@ -96,7 +96,11 @@ node tools/seo/research-category.mjs --all --write
 
 Evidence JSON принимает `sources`, `queries`, `questions`, `collectedAt`. Для каждого query можно передать `intent`, `topic`, `demand`, `sourceRefs`. Допустимые внешние типы источников: `yandex_wordstat`, `yandex_suggest`, `yandex_serp`, `google_serp`, `search_console`, `manual_serp`.
 
-Agent автоматически нормализует запросы, определяет intent/topic, группирует кластеры, формирует AI-answer targets и ищет возможную каннибализацию с соседними category pages. Статусы research: `EVIDENCE_REQUIRED` → `REVIEW_REQUIRED` → `READY_FOR_REVIEW`.
+Если Agent находит возможную каннибализацию, решение фиксируется в evidence через `cannibalizationReviews`: `query`, `otherCategoryId`, `disposition`, `ownerCategoryId`, `reason`. Пока хотя бы один конфликт не разобран, research остаётся `REVIEW_REQUIRED`. После явного разбора всех конфликтов он может перейти в `READY_FOR_REVIEW`; это не означает публикацию или индексацию.
+
+Реальные research evidence храним в `docs/product/seo-research/`, чтобы частотности, регион, дата сбора и решения по конфликтам были воспроизводимыми и не зависели от временных файлов.
+
+Agent автоматически нормализует запросы, определяет intent/topic, группирует кластеры, ранжирует подтверждённые запросы по спросу, формирует `informationalOpportunities` и AI-answer targets и ищет возможную каннибализацию с соседними category pages. Статусы research: `EVIDENCE_REQUIRED` → `REVIEW_REQUIRED` → `READY_FOR_REVIEW`.
 
 Даже `READY_FOR_REVIEW` не публикует страницу: `publicationStatus` остаётся ручным gate, а индексирование требует одновременно `APPROVED`, `needsQueryResearch=false` и `research.status=READY_FOR_REVIEW`.
 

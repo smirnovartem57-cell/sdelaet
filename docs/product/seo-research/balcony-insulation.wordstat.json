@@ -1,0 +1,401 @@
+{
+  "categoryId": "balcony-insulation",
+  "collectedAt": "2026-09-13T14:03:17.688Z",
+  "sources": [
+    {
+      "type": "yandex_wordstat",
+      "region": "213",
+      "provider": "wordstat-excel.smirart.workers.dev"
+    }
+  ],
+  "queries": [
+    {
+      "query": "утепление балкона",
+      "demand": 3455,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как утеплить балкон",
+      "demand": 1641,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление лоджии",
+      "demand": 1107,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "чем утеплить балкон",
+      "demand": 350,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как утеплить лоджию",
+      "demand": 338,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление балкона под ключ",
+      "demand": 328,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как правильно утеплить балкон",
+      "demand": 257,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "цена утепления балкона",
+      "demand": 255,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "сколько стоит утеплить балкон",
+      "demand": 198,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "пеноплекс для балкона",
+      "demand": 190,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление пола на балконе",
+      "demand": 151,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление лоджии под ключ",
+      "demand": 109,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как сделать балкон теплым",
+      "demand": 97,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "какой утеплитель для балкона",
+      "demand": 94,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "отделка и утепление балкона",
+      "demand": 86,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "чем утеплить лоджию",
+      "demand": 82,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "стоимость утепления балкона",
+      "demand": 61,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление балкона изнутри",
+      "demand": 60,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление стен балкона",
+      "demand": 51,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "этапы утепления балкона",
+      "demand": 34,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "пароизоляция балкона",
+      "demand": 31,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление потолка на балконе",
+      "demand": 27,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "теплый балкон зимой",
+      "demand": 22,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "ремонт и утепление балкона",
+      "demand": 20,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "ошибки утепления балкона",
+      "demand": 14,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление парапета балкона",
+      "demand": 12,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "толщина утеплителя для балкона",
+      "demand": 10,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как сделать теплую лоджию",
+      "demand": 8,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление балкона с холодным остеклением",
+      "demand": 8,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "нужна ли пароизоляция на балконе",
+      "demand": 7,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "минвата для балкона",
+      "demand": 6,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление лоджии изнутри",
+      "demand": 5,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление лоджии с холодным остеклением",
+      "demand": 5,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "пеноплекс или минвата для балкона",
+      "demand": 3,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "нужно ли утеплять пол на балконе",
+      "demand": 3,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "конденсат после утепления балкона",
+      "demand": 2,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "промерзает балкон что делать",
+      "demand": 2,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "нужно ли утеплять потолок на балконе",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "дует с балкона что делать",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "почему холодно на утепленном балконе",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "точка росы утепление балкона",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "вентиляция утепленного балкона",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "что входит в утепление балкона",
+      "demand": 1,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "можно ли утеплить балкон без замены окон",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "можно ли утеплить лоджию без замены окон",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление балкона для кабинета",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "утепление лоджии для кабинета",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "балкон для кабинета зимой",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "плесень после утепления балкона",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "почему промерзает балкон",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "смета на утепление балкона",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    },
+    {
+      "query": "как сравнить сметы на утепление балкона",
+      "demand": 0,
+      "sourceRefs": [
+        "wordstat_frequency"
+      ]
+    }
+  ],
+  "reviewedAt": "2026-09-13",
+  "cannibalizationReviews": [
+    {
+      "query": "как сравнить сметы на утепление балкона",
+      "otherCategoryId": "facade-insulation",
+      "disposition": "false_positive",
+      "ownerCategoryId": "balcony-insulation",
+      "reason": "Разные объекты работ: балкон и фасад. Совпадает общий шаблон запроса, но поисковые интенты не конкурируют."
+    },
+    {
+      "query": "отделка и утепление балкона",
+      "otherCategoryId": "balcony-finishing",
+      "disposition": "current_page_owner",
+      "ownerCategoryId": "balcony-insulation",
+      "reason": "Запрос явно содержит утепление. Страница утепления раскрывает тёплый контур и может ссылаться на смежную отделку."
+    },
+    {
+      "query": "ремонт и утепление балкона",
+      "otherCategoryId": "balcony-finishing",
+      "disposition": "current_page_owner",
+      "ownerCategoryId": "balcony-insulation",
+      "reason": "Основной уточняющий интент — утепление; общий ремонт балкона остаётся на странице отделки/хабе без дублирования этого mixed-запроса."
+    }
+  ]
+}

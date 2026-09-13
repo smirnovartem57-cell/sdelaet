@@ -42,7 +42,7 @@ for (const category of selected) {
   if (!category.seo) throw new Error(`SEO contract missing: ${category.categoryId}`);
   const categoryEvidence = evidence.categoryId && evidence.categoryId !== category.categoryId ? {} : evidence;
   const research = buildResearch(category, manifest.categories, categoryEvidence);
-  reports.push({categoryId:category.categoryId,status:research.status,queryCount:research.queryCount,evidenceQueryCount:research.evidenceQueryCount,cannibalization:research.cannibalization.length,recommendations:research.recommendations});
+  reports.push({categoryId:category.categoryId,status:research.status,queryCount:research.queryCount,evidenceQueryCount:research.evidenceQueryCount,cannibalization:research.cannibalization.length,unresolvedCannibalization:research.unresolvedCannibalization?.length || 0,recommendations:research.recommendations});
   if (write) {
     category.seo.research = research;
     category.seo.automation ||= {};
