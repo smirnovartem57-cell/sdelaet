@@ -150,6 +150,36 @@
       if(offer.debrisTransportIncluded!==true)items.push('входит ли транспорт / вывоз');
       if(offer.legalDisposalIncluded!==true)items.push('куда вывозятся отходы и чем подтверждается утилизация');
       if(offer.floorLiftSpecified!==true)items.push('какой этаж, лифт и спуск учтены');
+    }else if(task.serviceCode==='BATHROOM_RENOVATION'){
+      if(!offer.bathroomRenovationScope)items.push('какой полный состав ремонта входит');
+      if(offer.bathroomSubstratePreparationIncluded!==true)items.push('какая подготовка оснований входит');
+      if(offer.bathroomWaterproofingIncluded!==true)items.push('какая гидроизоляция пола и мокрых зон входит');
+      if(offer.bathroomPlumbingIncluded!==true)items.push('какой состав сантехнических работ входит');
+      if(offer.bathroomElectricalIncluded!==true)items.push('какой состав электромонтажа и проверки входит');
+      if(offer.bathroomTileIncluded!==true)items.push('какие плиточные работы, подрезки и затирка входят');
+      if(offer.bathroomFixturesIncluded!==true)items.push('входит ли монтаж всех сантехнических приборов');
+      if(offer.bathroomWasteRemovalIncluded!==true)items.push('входит ли упаковка и вывоз мусора');
+    }else if(task.serviceCode==='KITCHEN_INSTALLATION'){
+      if(!offer.kitchenLayout)items.push('какая планировка кухни учтена');
+      if(!offer.kitchenModuleCount)items.push('сколько модулей входит в цену');
+      if(offer.kitchenAssemblyIncluded!==true)items.push('входит ли сборка всех модулей');
+      if(offer.kitchenAnchoringIncluded!==true)items.push('как выполняются выравнивание и крепление');
+      if(offer.kitchenCountertopIncluded!==true)items.push('входит ли монтаж и стыковка столешницы');
+      if(offer.kitchenCutsIncluded!==true)items.push('входят ли вырезы под мойку и варочную панель');
+      if(offer.kitchenAppliancesIncluded!==true)items.push('какая техника устанавливается');
+      if(/gas|газ/.test(String(task.connections||'').toLowerCase())&&offer.kitchenGasIncluded!==true)items.push('кто выполняет допустимое газовое подключение');
+    }else if(task.serviceCode==='WATER_HEATER_INSTALLATION'){
+      if(!offer.waterHeaterType)items.push('какой тип водонагревателя');
+      if(!offer.waterHeaterModel)items.push('какая точная модель устанавливается');
+      if(offer.waterHeaterType==='storage'&&!offer.waterHeaterVolume)items.push('какой объём бака');
+      if(offer.waterHeaterAnchorsIncluded!==true)items.push('какое крепление и анкеры предусмотрены');
+      if(offer.waterHeaterPlumbingIncluded!==true)items.push('что входит в подключение воды');
+      if(offer.waterHeaterValvesIncluded!==true)items.push('какие краны и арматура входят');
+      if(offer.waterHeaterSafetyGroupIncluded!==true)items.push('какая группа безопасности входит');
+      if(offer.waterHeaterDrainIncluded!==true)items.push('куда организован безопасный слив');
+      if(offer.waterHeaterElectricalIncluded!==true)items.push('как выполняется электроподключение');
+      if(offer.waterHeaterProtectionIncluded!==true)items.push('какие защита и заземление предусмотрены');
+      if(offer.waterHeaterCommissioningIncluded!==true)items.push('входят ли пуск и проверка герметичности');
     }else if(task.serviceCode==='MINOR_APARTMENT_REPAIR'){
       var ms=((task.goal||'')+' '+(task.scope||'')+' '+(task.repairJob||'')+' '+(task.workList||'')).toLowerCase();
       if(/mounting|креп|полк|карниз|зеркал|телевиз/.test(ms)&&offer.fastenersSpecified!==true)items.push('какой крепёж / расходники входят и кто их предоставляет');

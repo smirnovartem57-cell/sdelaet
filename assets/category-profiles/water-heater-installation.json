@@ -1,18 +1,18 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "water-heater-installation",
   "serviceCode": "WATER_HEATER_INSTALLATION",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "WATER_HEATER_INSTALLATION",
+  "status": "TESTING",
   "launchPriority": "P1",
-  "seasonality": "autumn_winter_high",
+  "seasonality": "year_round",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
-    "testing": "PENDING",
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -30,9 +30,29 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "Материал и несущая способность стены",
+    "Доступные выводы воды, канализации и запорная арматура",
+    "Электрическая линия, заземление и защитная автоматика",
+    "Габариты, зона обслуживания и возможность безопасного слива"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "heaterType",
+    "heaterModel",
+    "tankVolume",
+    "mountingBase",
+    "anchors",
+    "plumbingConnection",
+    "shutoffValves",
+    "safetyGroup",
+    "drainage",
+    "electricalConnection",
+    "protectionAndGrounding",
+    "commissioning",
+    "leakTest",
+    "demolition",
+    "materials",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +70,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 30.13330.2020 по внутреннему водопроводу и канализации + ПУЭ и инструкция производителя для электроподключения; рынок считает крепление, обвязку, группу безопасности, слив, электролинию/защиту, демонтаж, пуск и расходники отдельно.",
+    "result": "PASS"
   }
 }

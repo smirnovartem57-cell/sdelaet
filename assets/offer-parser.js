@@ -182,6 +182,40 @@
     if(/вывоз|транспорт.{0,12}отход/.test(low)){o.debrisTransportIncluded=true;o.worksIncluded.push('вывоз')}
     if(/полигон|утилизац|талон.{0,12}(полигон|утилиз)/.test(low))o.legalDisposalIncluded=true;
     if(/этаж|лифт|спуск/.test(low))o.floorLiftSpecified=true;
+    if(/ремонт.{0,25}(ванн|сануз|душ)|ремонт.{0,10}под ключ/.test(low))o.bathroomRenovationScope=(raw.match(/ремонт[^.;\n]{0,80}/i)||['указан'])[0];
+    if(/демонтаж.{0,18}(плит|сантех|ванн|сануз|отдел)/.test(low)){o.bathroomDemolitionIncluded=true;o.worksIncluded.push('демонтаж ванной')}
+    if(/подготов.{0,18}(стен|пол|основан)|выравнив.{0,18}(стен|пол)/.test(low))o.bathroomSubstratePreparationIncluded=true;
+    if(/гидроизоляц/.test(low))o.bathroomWaterproofingIncluded=true;
+    if(/разводк.{0,15}(вод|труб)|сантехнич.{0,10}работ|монтаж.{0,15}сантех/.test(low))o.bathroomPlumbingIncluded=true;
+    if(/электромонтаж|электрик.{0,10}(входит|включ)|розетк.{0,15}(монтаж|установ)/.test(low))o.bathroomElectricalIncluded=true;
+    if(/укладк.{0,15}плит|плиточн.{0,10}работ/.test(low))o.bathroomTileIncluded=true;
+    if(/потолок.{0,15}(входит|монтаж|установ)|монтаж.{0,15}потол/.test(low))o.bathroomCeilingIncluded=true;
+    if(/монтаж.{0,20}(ванн|унитаз|раковин|душ|смесител)/.test(low))o.bathroomFixturesIncluded=true;
+    if(/вентиляц|вытяжн.{0,10}вентилятор/.test(low))o.bathroomVentilationIncluded=true;
+    if(/вывоз.{0,12}(мусор|отход)/.test(low))o.bathroomWasteRemovalIncluded=true;
+    var km=low.match(/(\d+)\s*(?:модул|шкаф)/);if(km)o.kitchenModuleCount=Number(km[1]);
+    if(/углов.{0,10}кухн/.test(low))o.kitchenLayout='corner';else if(/п-образн/.test(low))o.kitchenLayout='u_shape';else if(/прям.{0,10}кухн|линейн.{0,10}кухн/.test(low))o.kitchenLayout='linear';
+    if(/сборк.{0,15}(модул|шкаф|кухн)/.test(low)){o.kitchenAssemblyIncluded=true;o.worksIncluded.push('сборка кухни')}
+    if(/выравнив.{0,12}(модул|шкаф)|навеск.{0,12}шкаф|креплен.{0,12}(шкаф|кухн)/.test(low))o.kitchenAnchoringIncluded=true;
+    if(/столешниц/.test(low))o.kitchenCountertopIncluded=true;
+    if(/вырез.{0,15}(мойк|вароч|панел)|отверсти.{0,15}(мойк|вароч)/.test(low))o.kitchenCutsIncluded=true;
+    if(/монтаж.{0,15}(мойк|варочн|духов|посудомо|вытяж)/.test(low))o.kitchenAppliancesIncluded=true;
+    if(/подключ.{0,15}(мойк|вод|канализац)/.test(low))o.kitchenPlumbingIncluded=true;
+    if(/подключ.{0,15}(духов|вароч|посудомо|электр)/.test(low))o.kitchenElectricalIncluded=true;
+    if(/подключ.{0,15}газ/.test(low))o.kitchenGasIncluded=true;
+    if(/цокол|плинтус|стенов.{0,8}панел/.test(low))o.kitchenFinishPartsIncluded=true;
+    if(/вывоз.{0,15}упаков|уборк.{0,15}упаков/.test(low))o.kitchenPackagingRemovalIncluded=true;
+    if(/накопительн.{0,15}(бойлер|водонагревател)/.test(low))o.waterHeaterType='storage';else if(/проточн.{0,15}(бойлер|водонагревател)/.test(low))o.waterHeaterType='instant';
+    var hv=low.match(/(\d+)\s*(?:л|литр)/);if(hv)o.waterHeaterVolume=Number(hv[1]);
+    if(/модель.{0,30}(бойлер|водонагревател)|(бойлер|водонагревател).{0,30}модел/.test(low))o.waterHeaterModel=(raw.match(/(?:модель|бойлер|водонагреватель)[^.;\n]{0,60}/i)||['указана'])[0];
+    if(/анкер|креплен.{0,15}(бойлер|водонагревател)/.test(low))o.waterHeaterAnchorsIncluded=true;
+    if(/подключ.{0,15}(вод|труб)|обвязк.{0,15}(бойлер|водонагревател)/.test(low))o.waterHeaterPlumbingIncluded=true;
+    if(/запорн.{0,8}кран|кран.{0,15}(входит|включ)|запорн.{0,10}арматур/.test(low))o.waterHeaterValvesIncluded=true;
+    if(/групп.{0,8}безопасност|предохранительн.{0,8}клапан/.test(low))o.waterHeaterSafetyGroupIncluded=true;
+    if(/слив.{0,15}(канализац|входит|предусмотр)|дренаж/.test(low))o.waterHeaterDrainIncluded=true;
+    if(/подключ.{0,15}(электр|лини|щит)/.test(low))o.waterHeaterElectricalIncluded=true;
+    if(/узо|дифавтомат|заземлен/.test(low))o.waterHeaterProtectionIncluded=true;
+    if(/пуск|провер.{0,15}гермет|опрессов/.test(low))o.waterHeaterCommissioningIncluded=true;
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

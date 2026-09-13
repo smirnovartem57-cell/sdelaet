@@ -28,9 +28,9 @@
 | `UNDERFLOOR_HEATING` | `underfloor-heating` | Тёплый пол | TESTING | P1 |
 | `ENTRANCE_DOORS` | `entrance-doors` | Входные двери | TESTING | P1 |
 | `DEMOLITION_WORKS` | `demolition-works` | Демонтажные работы | TESTING | P1 |
-| `BATHROOM_RENOVATION` | `bathroom-renovation` | Ремонт ванной / санузла под ключ | RESEARCH | P1 |
-| `KITCHEN_INSTALLATION` | `kitchen-installation` | Монтаж кухни | RESEARCH | P1 |
-| `WATER_HEATER_INSTALLATION` | `water-heater-installation` | Установка водонагревателя | RESEARCH | P1 |
+| `BATHROOM_RENOVATION` | `bathroom-renovation` | Ремонт ванной / санузла под ключ | TESTING | P1 |
+| `KITCHEN_INSTALLATION` | `kitchen-installation` | Монтаж кухни | TESTING | P1 |
+| `WATER_HEATER_INSTALLATION` | `water-heater-installation` | Установка водонагревателя | TESTING | P1 |
 | `VENTILATION_EXHAUST` | `ventilation-exhaust` | Вентиляция / вытяжка | RESEARCH | P1 |
 | `ROOF_REPAIR` | `roof-repair` | Ремонт кровли | TESTING | P1 |
 | `FACADE_INSULATION` | `facade-insulation` | Утепление фасада | RESEARCH | P1 |
