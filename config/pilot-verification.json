@@ -1,15 +1,15 @@
 {
-  "version": 1,
+  "version": 2,
   "requirements": {
     "minimumTasksPerCategory": 3,
     "minimumOffersPerTask": 3
   },
   "categories": [
-    {"serviceCode":"BALCONY_INSULATION","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]},
-    {"serviceCode":"BALCONY_GLAZING","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]},
-    {"serviceCode":"WINDOW_REPLACEMENT","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]},
-    {"serviceCode":"WINDOW_REPAIR","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]},
-    {"serviceCode":"BALCONY_FINISHING","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]},
-    {"serviceCode":"BALCONY_LEAK_REPAIR","realTasks":0,"realOffers":0,"reviewedAt":null,"evidenceRefs":[]}
+    {"serviceCode":"BALCONY_INSULATION","cases":[]},
+    {"serviceCode":"BALCONY_GLAZING","cases":[]},
+    {"serviceCode":"WINDOW_REPLACEMENT","cases":[]},
+    {"serviceCode":"WINDOW_REPAIR","cases":[]},
+    {"serviceCode":"BALCONY_FINISHING","cases":[]},
+    {"serviceCode":"BALCONY_LEAK_REPAIR","cases":[]}
   ]
 }

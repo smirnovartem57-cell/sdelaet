@@ -11,6 +11,7 @@ const commands = [
   ['syntax: offer normalizer', ['--check', 'assets/offer-normalizer.js']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
+  ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
   ['category lifecycle', ['tests/category-lifecycle-regression.mjs']],
   ['generated registries', ['tests/category-generated-registry-regression.mjs']],
   ['category manifest', ['tests/category-regression-manifest.mjs']],
