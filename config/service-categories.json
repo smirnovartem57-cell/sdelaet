@@ -570,6 +570,497 @@
           "пвх"
         ]
       }
+    },
+    {
+      "categoryId": "wall-plastering",
+      "serviceCode": "WALL_PLASTERING",
+      "title": "Штукатурка / выравнивание стен",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/wall-plastering.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WALL_PLASTERING.md",
+      "qaTest": "tests/wall-plastering-qa-regression.mjs",
+      "e2eTest": "tests/wall-plastering-e2e-regression.mjs",
+      "testPhrase": "нужно выровнять стены штукатуркой",
+      "qualificationPhrase": "штукатурка стен выравнивание стен",
+      "search": {
+        "companyQueries": [
+          "штукатурка стен Москва",
+          "выравнивание стен по маякам"
+        ],
+        "privateQueries": [
+          "штукатур стен мастер"
+        ],
+        "keywords": [
+          "штукатурка",
+          "стены",
+          "маяки"
+        ],
+        "qualifyKeywords": [
+          "штукатурка",
+          "выравнивание стен",
+          "маяки"
+        ]
+      }
+    },
+    {
+      "categoryId": "floor-screed",
+      "serviceCode": "FLOOR_SCREED",
+      "title": "Стяжка / выравнивание пола",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/floor-screed.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FLOOR_SCREED.md",
+      "qaTest": "tests/floor-screed-qa-regression.mjs",
+      "e2eTest": "tests/floor-screed-e2e-regression.mjs",
+      "testPhrase": "нужно сделать стяжку пола",
+      "qualificationPhrase": "стяжка пола выравнивание пола",
+      "search": {
+        "companyQueries": [
+          "стяжка пола Москва",
+          "выравнивание пола"
+        ],
+        "privateQueries": [
+          "мастер стяжка пола"
+        ],
+        "keywords": [
+          "стяжка",
+          "пол",
+          "выравнивание"
+        ],
+        "qualifyKeywords": [
+          "стяжка пола",
+          "выравнивание пола"
+        ]
+      }
+    },
+    {
+      "categoryId": "drywall-partitions",
+      "serviceCode": "DRYWALL_PARTITIONS",
+      "title": "Перегородки из гипсокартона",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/drywall-partitions.json",
+      "expertModel": "docs/product/EXPERT_MODELS/DRYWALL_PARTITIONS.md",
+      "qaTest": "tests/drywall-partitions-qa-regression.mjs",
+      "e2eTest": "tests/drywall-partitions-e2e-regression.mjs",
+      "testPhrase": "нужно сделать перегородку из гипсокартона",
+      "qualificationPhrase": "гипсокартон перегородки монтаж",
+      "search": {
+        "companyQueries": [
+          "перегородки из гипсокартона Москва",
+          "монтаж ГКЛ перегородок"
+        ],
+        "privateQueries": [
+          "мастер гипсокартон перегородки"
+        ],
+        "keywords": [
+          "гипсокартон",
+          "гкл",
+          "перегородк"
+        ],
+        "qualifyKeywords": [
+          "гипсокартон",
+          "гкл",
+          "перегородки"
+        ]
+      }
+    },
+    {
+      "categoryId": "soundproofing",
+      "serviceCode": "SOUNDPROOFING",
+      "title": "Шумоизоляция квартиры",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/soundproofing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/SOUNDPROOFING.md",
+      "qaTest": "tests/soundproofing-qa-regression.mjs",
+      "e2eTest": "tests/soundproofing-e2e-regression.mjs",
+      "testPhrase": "нужно сделать шумоизоляцию стены от соседей",
+      "qualificationPhrase": "шумоизоляция квартиры стены потолок пол",
+      "search": {
+        "companyQueries": [
+          "шумоизоляция квартиры Москва",
+          "звукоизоляция стен"
+        ],
+        "privateQueries": [
+          "мастер шумоизоляция квартиры"
+        ],
+        "keywords": [
+          "шумоизоляц",
+          "звукоизоляц",
+          "акустик"
+        ],
+        "qualifyKeywords": [
+          "шумоизоляция",
+          "звукоизоляция",
+          "акустика"
+        ]
+      }
+    },
+    {
+      "categoryId": "bathroom-waterproofing",
+      "serviceCode": "BATHROOM_WATERPROOFING",
+      "title": "Гидроизоляция ванной / санузла",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/bathroom-waterproofing.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BATHROOM_WATERPROOFING.md",
+      "qaTest": "tests/bathroom-waterproofing-qa-regression.mjs",
+      "e2eTest": "tests/bathroom-waterproofing-e2e-regression.mjs",
+      "testPhrase": "нужна гидроизоляция ванной перед плиткой",
+      "qualificationPhrase": "гидроизоляция ванной санузла",
+      "search": {
+        "companyQueries": [
+          "гидроизоляция ванной Москва",
+          "гидроизоляция санузла"
+        ],
+        "privateQueries": [
+          "мастер гидроизоляция ванной"
+        ],
+        "keywords": [
+          "гидроизоляц",
+          "санузел",
+          "ванн"
+        ],
+        "qualifyKeywords": [
+          "гидроизоляция",
+          "ванная",
+          "санузел"
+        ]
+      }
+    },
+    {
+      "categoryId": "underfloor-heating",
+      "serviceCode": "UNDERFLOOR_HEATING",
+      "title": "Тёплый пол",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/underfloor-heating.json",
+      "expertModel": "docs/product/EXPERT_MODELS/UNDERFLOOR_HEATING.md",
+      "qaTest": "tests/underfloor-heating-qa-regression.mjs",
+      "e2eTest": "tests/underfloor-heating-e2e-regression.mjs",
+      "testPhrase": "нужно установить теплый пол в ванной",
+      "qualificationPhrase": "монтаж теплого пола электрического водяного",
+      "search": {
+        "companyQueries": [
+          "монтаж теплого пола Москва",
+          "теплый пол установка"
+        ],
+        "privateQueries": [
+          "мастер теплый пол"
+        ],
+        "keywords": [
+          "теплый пол",
+          "нагревательный кабель",
+          "мат"
+        ],
+        "qualifyKeywords": [
+          "теплый пол",
+          "нагревательный кабель",
+          "терморегулятор"
+        ]
+      }
+    },
+    {
+      "categoryId": "entrance-doors",
+      "serviceCode": "ENTRANCE_DOORS",
+      "title": "Входные двери",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/entrance-doors.json",
+      "expertModel": "docs/product/EXPERT_MODELS/ENTRANCE_DOORS.md",
+      "qaTest": "tests/entrance-doors-qa-regression.mjs",
+      "e2eTest": "tests/entrance-doors-e2e-regression.mjs",
+      "testPhrase": "нужно заменить входную дверь в квартиру",
+      "qualificationPhrase": "установка входной двери",
+      "search": {
+        "companyQueries": [
+          "установка входной двери Москва",
+          "замена входной двери"
+        ],
+        "privateQueries": [
+          "мастер установка входной двери"
+        ],
+        "keywords": [
+          "входная дверь",
+          "металлическая дверь",
+          "дверь"
+        ],
+        "qualifyKeywords": [
+          "входные двери",
+          "металлические двери",
+          "монтаж дверей"
+        ]
+      }
+    },
+    {
+      "categoryId": "demolition-works",
+      "serviceCode": "DEMOLITION_WORKS",
+      "title": "Демонтажные работы",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/demolition-works.json",
+      "expertModel": "docs/product/EXPERT_MODELS/DEMOLITION_WORKS.md",
+      "qaTest": "tests/demolition-works-qa-regression.mjs",
+      "e2eTest": "tests/demolition-works-e2e-regression.mjs",
+      "testPhrase": "нужно демонтировать перегородку и старую отделку",
+      "qualificationPhrase": "демонтажные работы квартира",
+      "search": {
+        "companyQueries": [
+          "демонтажные работы Москва",
+          "демонтаж в квартире"
+        ],
+        "privateQueries": [
+          "мастер демонтаж"
+        ],
+        "keywords": [
+          "демонтаж",
+          "разбор",
+          "снос"
+        ],
+        "qualifyKeywords": [
+          "демонтаж",
+          "разбор конструкций"
+        ]
+      }
+    },
+    {
+      "categoryId": "bathroom-renovation",
+      "serviceCode": "BATHROOM_RENOVATION",
+      "title": "Ремонт ванной / санузла под ключ",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/bathroom-renovation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/BATHROOM_RENOVATION.md",
+      "qaTest": "tests/bathroom-renovation-qa-regression.mjs",
+      "e2eTest": "tests/bathroom-renovation-e2e-regression.mjs",
+      "testPhrase": "нужно полностью отремонтировать ванную",
+      "qualificationPhrase": "ремонт ванной под ключ санузла",
+      "search": {
+        "companyQueries": [
+          "ремонт ванной под ключ Москва",
+          "ремонт санузла"
+        ],
+        "privateQueries": [
+          "бригада ремонт ванной"
+        ],
+        "keywords": [
+          "ремонт ванной",
+          "санузел",
+          "ванная под ключ"
+        ],
+        "qualifyKeywords": [
+          "ремонт ванной",
+          "ремонт санузла",
+          "под ключ"
+        ]
+      }
+    },
+    {
+      "categoryId": "kitchen-installation",
+      "serviceCode": "KITCHEN_INSTALLATION",
+      "title": "Монтаж кухни",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/kitchen-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/KITCHEN_INSTALLATION.md",
+      "qaTest": "tests/kitchen-installation-qa-regression.mjs",
+      "e2eTest": "tests/kitchen-installation-e2e-regression.mjs",
+      "testPhrase": "нужно установить кухонный гарнитур и столешницу",
+      "qualificationPhrase": "сборка установка кухни",
+      "search": {
+        "companyQueries": [
+          "установка кухни Москва",
+          "сборка кухонного гарнитура"
+        ],
+        "privateQueries": [
+          "сборщик кухни мастер"
+        ],
+        "keywords": [
+          "кухня",
+          "гарнитур",
+          "столешниц"
+        ],
+        "qualifyKeywords": [
+          "установка кухни",
+          "сборка кухни",
+          "кухонный гарнитур"
+        ]
+      }
+    },
+    {
+      "categoryId": "water-heater-installation",
+      "serviceCode": "WATER_HEATER_INSTALLATION",
+      "title": "Установка водонагревателя",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/water-heater-installation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/WATER_HEATER_INSTALLATION.md",
+      "qaTest": "tests/water-heater-installation-qa-regression.mjs",
+      "e2eTest": "tests/water-heater-installation-e2e-regression.mjs",
+      "testPhrase": "нужно установить накопительный водонагреватель",
+      "qualificationPhrase": "установка водонагревателя бойлера",
+      "search": {
+        "companyQueries": [
+          "установка водонагревателя Москва",
+          "установка бойлера"
+        ],
+        "privateQueries": [
+          "мастер установка водонагревателя"
+        ],
+        "keywords": [
+          "водонагреватель",
+          "бойлер"
+        ],
+        "qualifyKeywords": [
+          "водонагреватель",
+          "бойлер",
+          "подключение"
+        ]
+      }
+    },
+    {
+      "categoryId": "ventilation-exhaust",
+      "serviceCode": "VENTILATION_EXHAUST",
+      "title": "Вентиляция / вытяжка",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "year_round",
+      "profile": "assets/category-profiles/ventilation-exhaust.json",
+      "expertModel": "docs/product/EXPERT_MODELS/VENTILATION_EXHAUST.md",
+      "qaTest": "tests/ventilation-exhaust-qa-regression.mjs",
+      "e2eTest": "tests/ventilation-exhaust-e2e-regression.mjs",
+      "testPhrase": "плохо работает вытяжка нужна вентиляция",
+      "qualificationPhrase": "монтаж вентиляции вытяжки квартира",
+      "search": {
+        "companyQueries": [
+          "вентиляция квартиры Москва",
+          "монтаж вытяжки"
+        ],
+        "privateQueries": [
+          "мастер вентиляция вытяжка"
+        ],
+        "keywords": [
+          "вентиляц",
+          "вытяжк",
+          "воздуховод"
+        ],
+        "qualifyKeywords": [
+          "вентиляция",
+          "вытяжка",
+          "воздуховод"
+        ]
+      }
+    },
+    {
+      "categoryId": "roof-repair",
+      "serviceCode": "ROOF_REPAIR",
+      "title": "Ремонт кровли",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_high",
+      "profile": "assets/category-profiles/roof-repair.json",
+      "expertModel": "docs/product/EXPERT_MODELS/ROOF_REPAIR.md",
+      "qaTest": "tests/roof-repair-qa-regression.mjs",
+      "e2eTest": "tests/roof-repair-e2e-regression.mjs",
+      "testPhrase": "течет крыша нужно отремонтировать кровлю",
+      "qualificationPhrase": "ремонт кровли крыши",
+      "search": {
+        "companyQueries": [
+          "ремонт кровли Москва область",
+          "ремонт крыши частного дома"
+        ],
+        "privateQueries": [
+          "кровельщик ремонт крыши"
+        ],
+        "keywords": [
+          "кровл",
+          "крыша",
+          "протеч"
+        ],
+        "qualifyKeywords": [
+          "ремонт кровли",
+          "ремонт крыши",
+          "кровельные работы"
+        ]
+      }
+    },
+    {
+      "categoryId": "facade-insulation",
+      "serviceCode": "FACADE_INSULATION",
+      "title": "Утепление фасада",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_high",
+      "profile": "assets/category-profiles/facade-insulation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/FACADE_INSULATION.md",
+      "qaTest": "tests/facade-insulation-qa-regression.mjs",
+      "e2eTest": "tests/facade-insulation-e2e-regression.mjs",
+      "testPhrase": "нужно утеплить фасад частного дома",
+      "qualificationPhrase": "утепление фасада дома",
+      "search": {
+        "companyQueries": [
+          "утепление фасада Москва область",
+          "утепление стен дома снаружи"
+        ],
+        "privateQueries": [
+          "мастер утепление фасада"
+        ],
+        "keywords": [
+          "фасад",
+          "утеплен",
+          "стены дома"
+        ],
+        "qualifyKeywords": [
+          "утепление фасада",
+          "фасадные работы"
+        ]
+      }
+    },
+    {
+      "categoryId": "mold-remediation",
+      "serviceCode": "MOLD_REMEDIATION",
+      "title": "Плесень / сырость в квартире",
+      "status": "RESEARCH",
+      "priority": "P1",
+      "seasonality": "autumn_winter_high",
+      "profile": "assets/category-profiles/mold-remediation.json",
+      "expertModel": "docs/product/EXPERT_MODELS/MOLD_REMEDIATION.md",
+      "qaTest": "tests/mold-remediation-qa-regression.mjs",
+      "e2eTest": "tests/mold-remediation-e2e-regression.mjs",
+      "testPhrase": "появилась плесень и сырость на стене",
+      "qualificationPhrase": "устранение плесени сырости",
+      "search": {
+        "companyQueries": [
+          "удаление плесени Москва",
+          "устранение сырости стен"
+        ],
+        "privateQueries": [
+          "специалист по плесени"
+        ],
+        "keywords": [
+          "плесень",
+          "сырость",
+          "грибок"
+        ],
+        "qualifyKeywords": [
+          "удаление плесени",
+          "устранение сырости",
+          "грибок"
+        ]
+      }
     }
   ]
 }
