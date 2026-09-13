@@ -32,6 +32,8 @@ const commands = [
   ['recommendation status', ['tests/recommendation-status-regression.mjs']],
   ['recommendation actions', ['tests/recommendation-actions-regression.mjs']],
   ['comparison explainer', ['tests/comparison-explainer-regression.mjs']],
+  ['pilot gate contract', ['tests/pilot-verification-regression.mjs']],
+  ['pilot evidence status', ['tools/pilot-verification.mjs']],
   ['category QA and E2E', ['tools/category-agents/run.mjs', '--all', '--ci']],
 ];
 

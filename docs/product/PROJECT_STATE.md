@@ -43,7 +43,7 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `MOLD_REMEDIATION` — `TESTING`, profile v0.2.
 
 ## Current focus
-Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
+Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
 
 ## Category Production Agents
 Dev-time pipeline uses 9 independent roles: research, domain expert, intake, contractor brief, comparison, consistency, technical QA, regression and release controller. New categories are created with `tools/category-agents/create-category.mjs`; lifecycle promotion to `EXPERT_MODEL`/`TESTING` uses `promote-category.mjs`. External LLM is not a required dependency.
