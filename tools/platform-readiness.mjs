@@ -12,6 +12,8 @@ const commands = [
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
+  ['syntax: SEO generator', ['--check', 'tools/generate-seo-pages.mjs']],
+  ['SEO category pages', ['tests/seo-category-pages-regression.mjs']],
   ['category lifecycle', ['tests/category-lifecycle-regression.mjs']],
   ['generated registries', ['tests/category-generated-registry-regression.mjs']],
   ['category manifest', ['tests/category-regression-manifest.mjs']],

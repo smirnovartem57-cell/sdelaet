@@ -14,6 +14,12 @@ For each of `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_F
 9. manually review user-facing Intake, warnings, Contractor Brief and recommendation text;
 10. move status explicitly `RESEARCH → EXPERT_MODEL → TESTING → READY` only when gates pass.
 
+## SEO category expansion
+- ✅ Generated indexable landing pages for all 29 existing non-balcony-insulation categories from the canonical manifest.
+- ✅ Added canonical URLs, structured data, internal linking, sitemap and robots directives.
+- Next: add new high-demand global service categories in researched waves, then regenerate the catalogue.
+- `BALCONY_INSULATION` remains reserved for its parallel workstream.
+
 ## Shared platform backlog
 - ✅ Implemented shared `GEO_CLASSIFIER`: rawGeo → canonical region/locality/stable IDs, with confirmed Moscow/MO aliases and explicit uncertainty for unresolved localities.
 - ✅ Extended the shared normalized offer schema with delivery, dismantling, contract terms, alternatives, uncertainties and missing items across all categories.

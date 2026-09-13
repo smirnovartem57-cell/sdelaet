@@ -43,6 +43,8 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `MOLD_REMEDIATION` — `TESTING`, profile v0.2.
 
 ## Current focus
+Global SEO catalogue is generated from the category manifest for 29 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
+
 Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
 
 ## Category Production Agents
