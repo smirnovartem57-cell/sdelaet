@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onsdelaet.ru/schemas/service-categories.schema.json",
+  "title": "Сделает Service Category Registry",
+  "type": "object",
+  "required": ["schemaVersion", "categories"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "categories": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/category" }
+    }
+  },
+  "$defs": {
+    "category": {
+      "type": "object",
+      "required": ["categoryId", "serviceCode", "title", "status", "search"],
+      "properties": {
+        "categoryId": { "type": "string", "minLength": 2 },
+        "serviceCode": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "title": { "type": "string", "minLength": 2 },
+        "seo": { "$ref": "#/$defs/seo" }
+      }
+    },
+    "seo": {
+      "type": "object",
+      "required": ["indexable", "publicationStatus", "slug", "canonicalPath", "contentVersion"],
+      "properties": {
+        "indexable": { "type": "boolean" },
+        "publicationStatus": { "enum": ["DRAFT", "REVIEW", "APPROVED"] },
+        "slug": { "type": "string" },
+        "canonicalPath": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "h1": { "type": "string" },
+        "primaryIntent": { "type": "string" },
+        "primaryQueries": { "type": "array", "items": { "type": "string" } },
+        "informationalQueries": { "type": "array", "items": { "type": "string" } },
+        "breadcrumbs": { "type": "array", "items": { "$ref": "#/$defs/breadcrumb" } },
+        "infoBlocks": { "type": "array", "items": { "$ref": "#/$defs/infoBlock" } },
+        "quoteChecklist": { "type": "array", "items": { "type": "string" } },
+        "costFactors": { "type": "array", "items": { "type": "string" } },
+        "faq": { "type": "array", "items": { "$ref": "#/$defs/faq" } },
+        "relatedCategoryIds": { "type": "array", "items": { "type": "string" } },
+        "reviewedAt": { "type": "string" },
+        "contentVersion": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "breadcrumb": {
+      "type": "object",
+      "required": ["name", "path"],
+      "properties": {
+        "name": { "type": "string" },
+        "path": { "type": "string" }
+      }
+    },
+    "infoBlock": {
+      "type": "object",
+      "required": ["id", "title", "shortAnswer", "queryCluster", "sections"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "shortAnswer": { "type": "string" },
+        "queryCluster": { "type": "array", "items": { "type": "string" } },
+        "sections": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "faq": {
+      "type": "object",
+      "required": ["question", "shortAnswer"],
+      "properties": {
+        "question": { "type": "string" },
+        "shortAnswer": { "type": "string" },
+        "details": { "type": "string" }
+      }
+    }
+  }
+}
