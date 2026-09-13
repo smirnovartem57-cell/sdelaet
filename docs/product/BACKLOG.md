@@ -15,9 +15,10 @@ For each of `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_F
 10. move status explicitly `RESEARCH → EXPERT_MODEL → TESTING → READY` only when gates pass.
 
 ## SEO category expansion
-- ✅ Generated indexable landing pages for all 29 existing non-balcony-insulation categories from the canonical manifest.
+- ✅ Generated indexable landing pages for 40 non-balcony-insulation categories from the canonical manifest.
 - ✅ Added canonical URLs, structured data, internal linking, sitemap and robots directives.
-- Next: add new high-demand global service categories in researched waves, then regenerate the catalogue.
+- ✅ Expansion wave 1 added 11 task-specific categories for renovation, electrical, finishing, climate and plumbing demand.
+- Next: research and promote wave 1 categories through `EXPERT_MODEL` and `TESTING`; continue SEO expansion in separate waves.
 - `BALCONY_INSULATION` remains reserved for its parallel workstream.
 
 ## Shared platform backlog

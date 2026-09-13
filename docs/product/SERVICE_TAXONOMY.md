@@ -35,6 +35,17 @@
 | `ROOF_REPAIR` | `roof-repair` | Ремонт кровли | TESTING | P1 |
 | `FACADE_INSULATION` | `facade-insulation` | Утепление фасада | TESTING | P1 |
 | `MOLD_REMEDIATION` | `mold-remediation` | Плесень / сырость в квартире | TESTING | P1 |
+| `APARTMENT_RENOVATION` | `apartment-renovation` | ╨а╨╡╨╝╨╛╨╜╤В ╨║╨▓╨░╤А╤В╨╕╤А╤Л ╨┐╨╛╨┤ ╨║╨╗╤О╤З | RESEARCH | P1 |
+| `ROOM_RENOVATION` | `room-renovation` | ╨а╨╡╨╝╨╛╨╜╤В ╨║╨╛╨╝╨╜╨░╤В╤Л ╨┐╨╛╨┤ ╨║╨╗╤О╤З | RESEARCH | P1 |
+| `KITCHEN_RENOVATION` | `kitchen-renovation` | ╨а╨╡╨╝╨╛╨╜╤В ╨║╤Г╤Е╨╜╨╕ ╨┐╨╛╨┤ ╨║╨╗╤О╤З | RESEARCH | P1 |
+| `WIRING_REPLACEMENT` | `wiring-replacement` | ╨Ч╨░╨╝╨╡╨╜╨░ ╤Н╨╗╨╡╨║╤В╤А╨╛╨┐╤А╨╛╨▓╨╛╨┤╨║╨╕ | RESEARCH | P1 |
+| `ELECTRICAL_PANEL_INSTALLATION` | `electrical-panel-installation` | ╨б╨▒╨╛╤А╨║╨░ ╨╕ ╨╖╨░╨╝╨╡╨╜╨░ ╤Н╨╗╨╡╨║╤В╤А╨╛╤Й╨╕╤В╨░ | RESEARCH | P1 |
+| `WALLPAPER_INSTALLATION` | `wallpaper-installation` | ╨Я╨╛╨║╨╗╨╡╨╣╨║╨░ ╨╛╨▒╨╛╨╡╨▓ | RESEARCH | P1 |
+| `WALL_PAINTING` | `wall-painting` | ╨Я╨╛╨║╤А╨░╤Б╨║╨░ ╤Б╤В╨╡╨╜ | RESEARCH | P1 |
+| `CEILING_FINISHING` | `ceiling-finishing` | ╨Ю╤В╨┤╨╡╨╗╨║╨░ ╨╕ ╨┐╨╛╨║╤А╨░╤Б╨║╨░ ╨┐╨╛╤В╨╛╨╗╨║╨░ | RESEARCH | P2 |
+| `AIR_CONDITIONER_INSTALLATION` | `air-conditioner-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░ | RESEARCH | P1 |
+| `PIPE_REPLACEMENT` | `pipe-replacement` | ╨Ч╨░╨╝╨╡╨╜╨░ ╤В╤А╤Г╨▒ ╨▓╨╛╨┤╨╛╤Б╨╜╨░╨▒╨╢╨╡╨╜╨╕╤П | RESEARCH | P1 |
+| `PLUMBING_FIXTURE_INSTALLATION` | `plumbing-fixture-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╤Б╨░╨╜╤В╨╡╤Е╨╜╨╕╨║╨╕ | RESEARCH | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
