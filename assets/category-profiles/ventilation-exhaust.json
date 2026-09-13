@@ -1,18 +1,18 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "0.1",
+  "profileVersion": "0.2",
   "categoryId": "ventilation-exhaust",
   "serviceCode": "VENTILATION_EXHAUST",
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
-  "subcategory": "TBD",
-  "status": "RESEARCH",
+  "subcategory": "RESIDENTIAL_VENTILATION",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "year_round",
   "lifecycle": {
-    "research": "IN_PROGRESS",
-    "expertModel": "PENDING",
-    "testing": "PENDING",
+    "research": "PASS",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -30,9 +30,27 @@
     "risk",
     "requires_site_inspection"
   ],
-  "siteInspectionOnly": [],
+  "siteInspectionOnly": [
+    "Состояние существующей шахты, канала и фактическая тяга",
+    "Объём помещения и наличие притока/перетока воздуха",
+    "Маршрут, диаметр воздуховода и необходимость сверления",
+    "Точка питания и доступ к электромонтажу"
+  ],
   "contractorResponseRequired": [
     "totalPrice",
+    "roomType",
+    "ventilationProblem",
+    "airflowTarget",
+    "ductRoute",
+    "ductDiameter",
+    "fanModel",
+    "backdraftValve",
+    "airTransfer",
+    "coreDrilling",
+    "electricalConnection",
+    "commissioning",
+    "noiseSpec",
+    "materials",
     "exclusions",
     "extraCosts",
     "leadTime",
@@ -50,8 +68,8 @@
     "FAIL"
   ],
   "research": {
-    "completedAt": "",
-    "marketEvidence": "",
-    "result": "IN_PROGRESS"
+    "completedAt": "2026-09-13",
+    "marketEvidence": "СП 60.13330.2020 по вентиляции; рынок считает диагностику тяги, воздуховоды, клапан, сверление, электроподключение, пуск и материалы отдельно.",
+    "result": "PASS"
   }
 }

@@ -37,10 +37,10 @@ External LLM is not a required dependency for the core flow.
 - `BATHROOM_RENOVATION` — `TESTING`, profile v0.2.
 - `KITCHEN_INSTALLATION` — `TESTING`, profile v0.2.
 - `WATER_HEATER_INSTALLATION` — `TESTING`, profile v0.2.
-- `VENTILATION_EXHAUST` — `RESEARCH`, profile v0.1.
+- `VENTILATION_EXHAUST` — `TESTING`, profile v0.2.
 - `ROOF_REPAIR` — `TESTING`, profile v0.2.
-- `FACADE_INSULATION` — `RESEARCH`, profile v0.1.
-- `MOLD_REMEDIATION` — `RESEARCH`, profile v0.1.
+- `FACADE_INSULATION` — `TESTING`, profile v0.2.
+- `MOLD_REMEDIATION` — `TESTING`, profile v0.2.
 
 ## Current focus
 Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. Manual review for TESTING categories remains deferred. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.

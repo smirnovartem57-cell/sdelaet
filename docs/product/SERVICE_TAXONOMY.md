@@ -31,10 +31,10 @@
 | `BATHROOM_RENOVATION` | `bathroom-renovation` | Ремонт ванной / санузла под ключ | TESTING | P1 |
 | `KITCHEN_INSTALLATION` | `kitchen-installation` | Монтаж кухни | TESTING | P1 |
 | `WATER_HEATER_INSTALLATION` | `water-heater-installation` | Установка водонагревателя | TESTING | P1 |
-| `VENTILATION_EXHAUST` | `ventilation-exhaust` | Вентиляция / вытяжка | RESEARCH | P1 |
+| `VENTILATION_EXHAUST` | `ventilation-exhaust` | Вентиляция / вытяжка | TESTING | P1 |
 | `ROOF_REPAIR` | `roof-repair` | Ремонт кровли | TESTING | P1 |
-| `FACADE_INSULATION` | `facade-insulation` | Утепление фасада | RESEARCH | P1 |
-| `MOLD_REMEDIATION` | `mold-remediation` | Плесень / сырость в квартире | RESEARCH | P1 |
+| `FACADE_INSULATION` | `facade-insulation` | Утепление фасада | TESTING | P1 |
+| `MOLD_REMEDIATION` | `mold-remediation` | Плесень / сырость в квартире | TESTING | P1 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
