@@ -54,7 +54,7 @@ async function sdRenderFiles(target,bucket='job'){
   });
 }
 
-function sdSaveJob(data){localStorage.setItem(SDELAET_JOB_KEY,JSON.stringify(data))}
+function sdSaveJob(data){if(window.sdGeoClassifier&&data)data=window.sdGeoClassifier.enrichTask(data);localStorage.setItem(SDELAET_JOB_KEY,JSON.stringify(data))}
 function sdLoadJob(){try{return JSON.parse(localStorage.getItem(SDELAET_JOB_KEY)||'{}')}catch(e){return{}}}
 function sdSaveReply(candidate,data){localStorage.setItem('sdelaet.reply.'+candidate,JSON.stringify(data))}
 function sdLoadReply(candidate){try{return JSON.parse(localStorage.getItem('sdelaet.reply.'+candidate)||'{}')}catch(e){return{}}}
