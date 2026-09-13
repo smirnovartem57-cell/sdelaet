@@ -66,6 +66,16 @@
 | `HEATING_SYSTEM_INSTALLATION` | `heating-system-installation` | ╨Ь╨╛╨╜╤В╨░╨╢ ╨╛╤В╨╛╨┐╨╗╨╡╨╜╨╕╤П ╤З╨░╤Б╤В╨╜╨╛╨│╨╛ ╨┤╨╛╨╝╨░ | RESEARCH | P1 |
 | `BOILER_INSTALLATION` | `boiler-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨╛╤В╨╛╨┐╨╕╤В╨╡╨╗╤М╨╜╨╛╨│╨╛ ╨║╨╛╤В╨╗╨░ | RESEARCH | P1 |
 | `AIR_CONDITIONER_SERVICE` | `air-conditioner-service` | ╨а╨╡╨╝╨╛╨╜╤В ╨╕ ╨╛╨▒╤Б╨╗╤Г╨╢╨╕╨▓╨░╨╜╨╕╨╡ ╨║╨╛╨╜╨┤╨╕╤Ж╨╕╨╛╨╜╨╡╤А╨░ | RESEARCH | P1 |
+| `WINDOW_SLOPE_FINISHING` | `window-slope-finishing` | ╨Ю╤В╨┤╨╡╨╗╨║╨░ ╨╛╨║╨╛╨╜╨╜╤Л╤Е ╨╛╤В╨║╨╛╤Б╨╛╨▓ | RESEARCH | P1 |
+| `WINDOW_SILL_INSTALLATION` | `window-sill-installation` | ╨г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┐╨╛╨┤╨╛╨║╨╛╨╜╨╜╨╕╨║╨░ | RESEARCH | P2 |
+| `MOSQUITO_NET_INSTALLATION` | `mosquito-net-installation` | ╨Ь╨╛╤Б╨║╨╕╤В╨╜╤Л╨╡ ╤Б╨╡╤В╨║╨╕ ╨╜╨░ ╨╛╨║╨╜╨░ | RESEARCH | P2 |
+| `INSULATED_GLASS_REPLACEMENT` | `insulated-glass-replacement` | ╨Ч╨░╨╝╨╡╨╜╨░ ╤Б╤В╨╡╨║╨╗╨╛╨┐╨░╨║╨╡╤В╨░ | RESEARCH | P1 |
+| `DOOR_REPAIR` | `door-repair` | ╨а╨╡╨╝╨╛╨╜╤В ╨╕ ╤А╨╡╨│╤Г╨╗╨╕╤А╨╛╨▓╨║╨░ ╨┤╨▓╨╡╤А╨╡╨╣ | RESEARCH | P1 |
+| `LOCK_REPLACEMENT` | `lock-replacement` | ╨Ч╨░╨╝╨╡╨╜╨░ ╨╕ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨░ ╨┤╨▓╨╡╤А╨╜╤Л╤Е ╨╖╨░╨╝╨║╨╛╨▓ | RESEARCH | P1 |
+| `DRYWALL_CEILING` | `drywall-ceiling` | ╨Я╨╛╤В╨╛╨╗╨╛╨║ ╨╕╨╖ ╨│╨╕╨┐╤Б╨╛╨║╨░╤А╤В╨╛╨╜╨░ | RESEARCH | P2 |
+| `WALL_PUTTY` | `wall-putty` | ╨и╨┐╨░╨║╨╗╤С╨▓╨║╨░ ╤Б╤В╨╡╨╜ | RESEARCH | P1 |
+| `DECORATIVE_PLASTER` | `decorative-plaster` | ╨Ф╨╡╨║╨╛╤А╨░╤В╨╕╨▓╨╜╨░╤П ╤И╤В╤Г╨║╨░╤В╤Г╤А╨║╨░ | RESEARCH | P2 |
+| `KITCHEN_BACKSPLASH_INSTALLATION` | `kitchen-backsplash-installation` | ╨г╨║╨╗╨░╨┤╨║╨░ ╨║╤Г╤Е╨╛╨╜╨╜╨╛╨│╨╛ ╤Д╨░╤А╤В╤Г╨║╨░ | RESEARCH | P2 |
 
 Lifecycle is mandatory: `IDEA → RESEARCH → EXPERT_MODEL → TESTING → READY → ACTIVE → SEASONAL_PAUSE`.
 
