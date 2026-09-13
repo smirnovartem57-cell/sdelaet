@@ -29,8 +29,8 @@ External LLM is not a required dependency for the core flow.
 - `WALL_PLASTERING` — `TESTING`, profile v0.2.
 - `FLOOR_SCREED` — `TESTING`, profile v0.2.
 - `DRYWALL_PARTITIONS` — `TESTING`, profile v0.2.
-- `SOUNDPROOFING` — `EXPERT_MODEL`, profile v0.2.
-- `BATHROOM_WATERPROOFING` — `EXPERT_MODEL`, profile v0.2.
+- `SOUNDPROOFING` — `TESTING`, profile v0.2.
+- `BATHROOM_WATERPROOFING` — `TESTING`, profile v0.2.
 - `UNDERFLOOR_HEATING` — `RESEARCH`, profile v0.1.
 - `ENTRANCE_DOORS` — `RESEARCH`, profile v0.1.
 - `DEMOLITION_WORKS` — `RESEARCH`, profile v0.1.
@@ -38,7 +38,7 @@ External LLM is not a required dependency for the core flow.
 - `KITCHEN_INSTALLATION` — `RESEARCH`, profile v0.1.
 - `WATER_HEATER_INSTALLATION` — `RESEARCH`, profile v0.1.
 - `VENTILATION_EXHAUST` — `RESEARCH`, profile v0.1.
-- `ROOF_REPAIR` — `EXPERT_MODEL`, profile v0.2.
+- `ROOF_REPAIR` — `TESTING`, profile v0.2.
 - `FACADE_INSULATION` — `RESEARCH`, profile v0.1.
 - `MOLD_REMEDIATION` — `RESEARCH`, profile v0.1.
 

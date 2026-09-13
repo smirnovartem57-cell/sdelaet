@@ -6,13 +6,13 @@
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
   "subcategory": "ROOF_REPAIR",
-  "status": "EXPERT_MODEL",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "autumn_high",
   "lifecycle": {
     "research": "PASS",
-    "expertModel": "ACTIVE",
-    "testing": "PENDING",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {

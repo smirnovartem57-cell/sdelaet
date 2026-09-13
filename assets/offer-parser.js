@@ -126,6 +126,31 @@
     if(/дверн.{0,10}проем|проем.{0,10}двер/.test(low)){o.partitionDoorOpeningIncluded=true;o.worksIncluded.push('дверной проём')}
     if(/закладн|усилен.{0,15}каркас/.test(low)){o.partitionReinforcementIncluded=true;o.worksIncluded.push('закладные / усиление')}
     if(/заделк.{0,12}стык|армирующ.{0,10}лент|шпаклев.{0,12}стык/.test(low)){o.jointFinishIncluded=true;o.worksIncluded.push('заделка стыков')}
+    var aa=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(aa)o.acousticArea=Number(aa[1].replace(',','.'));
+    if(/каркасн.{0,20}(шумо|звуко)|зипс|бескаркасн/.test(low))o.acousticSystemType=/зипс/.test(low)?'zips':(/бескаркасн/.test(low)?'frameless':'frame');
+    var ath=low.match(/(?:систем.{0,12}толщин|толщин.{0,12}систем)[^\d]{0,8}(\d+)\s*мм/);if(ath)o.acousticThickness=ath[1]+' мм';
+    var al=low.match(/(\d+)\s*сло/);if(al)o.acousticLayers=Number(al[1]);
+    if(/виброподвес|вибролент|виброразвяз/.test(low)){o.vibrationIsolationIncluded=true;o.worksIncluded.push('виброразвязка')}
+    if(/примыкан|акустическ.{0,10}гермет|герметизац.{0,12}шв/.test(low)){o.junctionTreatmentIncluded=true;o.worksIncluded.push('обработка примыканий')}
+    if(/шуманет|акустик.{0,12}(ват|плит)|минеральн.{0,10}ват|звукоизоляц.{0,12}материал/.test(low))o.acousticMaterialsSpecified=true;
+    var ar=raw.match(/(?:rw|r?w|дб|децибел)[^.;\n]{0,30}/i);if(ar)o.claimedAcousticResult=ar[0].trim();
+    if(/обмазочн.{0,15}гидроизоляц/.test(low))o.waterproofingSystem='coating';else if(/рулонн.{0,15}гидроизоляц/.test(low))o.waterproofingSystem='roll';else if(/цементн.{0,15}гидроизоляц/.test(low))o.waterproofingSystem='cement';
+    var wl=low.match(/(\d+)\s*сло.{0,15}гидроизоляц|гидроизоляц.{0,15}(\d+)\s*сло/);if(wl)o.waterproofingLayers=Number(wl[1]||wl[2]);
+    if(/подготов.{0,18}основан|грунтов/.test(low))o.waterproofingSurfacePreparationIncluded=true;
+    if(/лент.{0,15}(угл|примыкан)|угл.{0,15}лент/.test(low)){o.cornerTapeIncluded=true;o.worksIncluded.push('лента углов и примыканий')}
+    if(/проходк.{0,12}труб|манжет.{0,12}труб|трап.{0,15}(гермет|гидро)/.test(low)){o.pipePenetrationsIncluded=true;o.worksIncluded.push('герметизация проходок')}
+    var wh=raw.match(/(?:заход|высота)[^.;\n]{0,15}(\d+(?:[.,]\d+)?)\s*(?:см|мм|м)/i);if(wh)o.waterproofingWallHeight=wh[0].trim();
+    if(/гидроизоляц.{0,30}(материал|мастик)|мастик.{0,20}(входит|включ)/.test(low))o.waterproofingMaterialsSpecified=true;
+    var dry=raw.match(/(?:сушк|высыхан)[^.;\n]{0,30}/i);if(dry)o.dryingTime=dry[0].trim();
+    if(/мягк.{0,10}кровл|рулонн.{0,10}кровл/.test(low))o.roofType='soft';else if(/металлочереп|профнаст|фальц/.test(low))o.roofType='metal';else if(/черепиц/.test(low))o.roofType='tile';
+    var ra=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(ra)o.roofRepairArea=Number(ra[1].replace(',','.'));
+    if(/диагност|осмотр.{0,15}кровл|поиск.{0,15}протеч/.test(low))o.roofDiagnosis=true;
+    if(/локальн.{0,12}ремонт|заплат/.test(low))o.roofRepairMethod='local';else if(/замен.{0,15}покрыт|капитальн.{0,12}ремонт/.test(low))o.roofRepairMethod='replacement';
+    if(/материал.{0,12}(входит|включ)|мембран|мастик|профнаст|черепиц/.test(low))o.roofMaterialsSpecified=true;
+    if(/примыкан|воронк|желоб|водоотвод|фартук/.test(low)){o.roofFlashingIncluded=true;o.worksIncluded.push('примыкания / водоотвод')}
+    if(/подкладочн|подкровельн|основан.{0,12}кровл/.test(low))o.roofUnderlaymentIncluded=true;
+    if(/доступ|высотн|альпинист|леса/.test(low))o.roofAccessIncluded=true;
+    if(/демонтаж.{0,15}(кровл|покрыт)/.test(low)){o.roofDemolitionIncluded=true;o.worksIncluded.push('демонтаж кровли')}
     if(/подоконник/.test(low)){o.sill=true;o.worksIncluded.push('подоконник')}
     if(/откос/.test(low)){o.reveals=true;o.worksIncluded.push('откосы')}
     if(/отлив/.test(low)){o.flashing=true;o.worksIncluded.push('отлив')}

@@ -6,13 +6,13 @@
   "domain": "CONSTRUCTION",
   "category": "HOME_REPAIR",
   "subcategory": "WET_AREA_WATERPROOFING",
-  "status": "EXPERT_MODEL",
+  "status": "TESTING",
   "launchPriority": "P1",
   "seasonality": "year_round",
   "lifecycle": {
     "research": "PASS",
-    "expertModel": "ACTIVE",
-    "testing": "PENDING",
+    "expertModel": "PASS",
+    "testing": "ACTIVE",
     "ready": "PENDING"
   },
   "intakePolicy": {

@@ -23,8 +23,8 @@
 | `WALL_PLASTERING` | `wall-plastering` | Штукатурка / выравнивание стен | TESTING | P1 |
 | `FLOOR_SCREED` | `floor-screed` | Стяжка / выравнивание пола | TESTING | P1 |
 | `DRYWALL_PARTITIONS` | `drywall-partitions` | Перегородки из гипсокартона | TESTING | P1 |
-| `SOUNDPROOFING` | `soundproofing` | Шумоизоляция квартиры | EXPERT_MODEL | P1 |
-| `BATHROOM_WATERPROOFING` | `bathroom-waterproofing` | Гидроизоляция ванной / санузла | EXPERT_MODEL | P1 |
+| `SOUNDPROOFING` | `soundproofing` | Шумоизоляция квартиры | TESTING | P1 |
+| `BATHROOM_WATERPROOFING` | `bathroom-waterproofing` | Гидроизоляция ванной / санузла | TESTING | P1 |
 | `UNDERFLOOR_HEATING` | `underfloor-heating` | Тёплый пол | RESEARCH | P1 |
 | `ENTRANCE_DOORS` | `entrance-doors` | Входные двери | RESEARCH | P1 |
 | `DEMOLITION_WORKS` | `demolition-works` | Демонтажные работы | RESEARCH | P1 |
@@ -32,7 +32,7 @@
 | `KITCHEN_INSTALLATION` | `kitchen-installation` | Монтаж кухни | RESEARCH | P1 |
 | `WATER_HEATER_INSTALLATION` | `water-heater-installation` | Установка водонагревателя | RESEARCH | P1 |
 | `VENTILATION_EXHAUST` | `ventilation-exhaust` | Вентиляция / вытяжка | RESEARCH | P1 |
-| `ROOF_REPAIR` | `roof-repair` | Ремонт кровли | EXPERT_MODEL | P1 |
+| `ROOF_REPAIR` | `roof-repair` | Ремонт кровли | TESTING | P1 |
 | `FACADE_INSULATION` | `facade-insulation` | Утепление фасада | RESEARCH | P1 |
 | `MOLD_REMEDIATION` | `mold-remediation` | Плесень / сырость в квартире | RESEARCH | P1 |
 
