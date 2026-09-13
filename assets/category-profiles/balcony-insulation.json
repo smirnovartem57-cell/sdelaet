@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "profileVersion": "1.1",
+  "profileVersion": "1.2",
   "categoryId": "balcony-insulation",
   "serviceCode": "BALCONY_INSULATION",
   "domain": "CONSTRUCTION",
@@ -22,26 +22,11 @@
       "required": "QUOTE_REQUIRED",
       "label": "Для чего нужен балкон или лоджия?",
       "options": [
-        [
-          "Кабинет / пользоваться зимой",
-          "winter_workspace"
-        ],
-        [
-          "Круглый год",
-          "year_round_use"
-        ],
-        [
-          "Просто сделать теплее",
-          "make_warmer"
-        ],
-        [
-          "Утеплить и отделать под ключ",
-          "turnkey_finish"
-        ],
-        [
-          "Исправить холод / промерзание",
-          "fix_cold_issue"
-        ]
+        ["Кабинет / пользоваться зимой", "winter_workspace"],
+        ["Круглый год", "year_round_use"],
+        ["Просто сделать теплее", "make_warmer"],
+        ["Утеплить и отделать под ключ", "turnkey_finish"],
+        ["Исправить холод / промерзание", "fix_cold_issue"]
       ]
     },
     {
@@ -50,22 +35,10 @@
       "required": "QUOTE_REQUIRED",
       "label": "Остекление уже есть?",
       "options": [
-        [
-          "Есть, оставить",
-          "exists_keep"
-        ],
-        [
-          "Есть, но не знаю подходит ли",
-          "exists_assess"
-        ],
-        [
-          "Нужно заменить / сделать новое",
-          "replace_or_new"
-        ],
-        [
-          "Не знаю",
-          "unknown"
-        ]
+        ["Есть, оставить", "exists_keep"],
+        ["Есть, но не знаю подходит ли", "exists_assess"],
+        ["Нужно заменить / сделать новое", "replace_or_new"],
+        ["Не знаю", "unknown"]
       ]
     },
     {
@@ -74,26 +47,11 @@
       "required": "QUOTE_REQUIRED",
       "label": "Что сейчас на балконе?",
       "options": [
-        [
-          "Без отделки / бетон",
-          "bare"
-        ],
-        [
-          "Есть отделка",
-          "finished"
-        ],
-        [
-          "Уже утеплён, нужна переделка",
-          "old_insulation"
-        ],
-        [
-          "Есть сырость / конденсат / промерзание",
-          "moisture_or_freezing"
-        ],
-        [
-          "Не знаю",
-          "unknown"
-        ]
+        ["Без отделки / бетон", "bare"],
+        ["Есть отделка", "finished"],
+        ["Уже утеплён, нужна переделка", "old_insulation"],
+        ["Есть сырость / конденсат / промерзание", "moisture_or_freezing"],
+        ["Не знаю", "unknown"]
       ]
     },
     {
@@ -138,11 +96,71 @@
     "warranty",
     "extraCosts"
   ],
+  "outreachContract": {
+    "requestVersion": "BALCONY_INSULATION_V1",
+    "sameRequestForAllCandidates": true,
+    "allowAlternativeScope": true,
+    "alternativeScopeMustBeSeparate": true,
+    "requiredPrompts": [
+      "итоговая стоимость",
+      "стоимость работ отдельно",
+      "стоимость материалов отдельно",
+      "предлагаемая система утепления",
+      "материал, толщина и количество слоёв",
+      "подготовка основания",
+      "решение стыков, углов и примыканий",
+      "пароизоляция / контроль влаги",
+      "устранение мостиков холода",
+      "доставка, подъём и вывоз мусора",
+      "срок выполнения и возможная дата старта",
+      "замер и его стоимость",
+      "гарантия",
+      "договор",
+      "дополнительные работы",
+      "что не входит в стоимость"
+    ]
+  },
+  "comparisonSchema": [
+    {"id":"totalPrice","label":"Итоговая цена","type":"money","importance":"critical","group":"price"},
+    {"id":"workPrice","label":"Работа","type":"money","importance":"important","group":"price"},
+    {"id":"materialsPrice","label":"Материалы","type":"money","importance":"important","group":"price"},
+    {"id":"materialsIncluded","label":"Материалы включены","type":"boolean","importance":"critical","group":"price"},
+    {"id":"materialsSystem","label":"Система утепления","type":"text","importance":"critical","group":"solution"},
+    {"id":"insulationMaterial","label":"Материал утепления","type":"text","importance":"critical","group":"solution"},
+    {"id":"insulationThickness","label":"Толщина утепления","type":"text","importance":"critical","group":"solution"},
+    {"id":"insulationLayers","label":"Количество слоёв","type":"text","importance":"important","group":"solution"},
+    {"id":"basePreparationIncluded","label":"Подготовка основания","type":"boolean_or_text","importance":"important","group":"works"},
+    {"id":"junctionSealingIncluded","label":"Герметизация примыканий","type":"boolean_or_text","importance":"critical","group":"works"},
+    {"id":"vaporBarrierIncluded","label":"Пароизоляция / контроль влаги","type":"boolean_or_text","importance":"critical","group":"works"},
+    {"id":"thermalBridgeTreatmentIncluded","label":"Устранение мостиков холода","type":"boolean_or_text","importance":"critical","group":"works"},
+    {"id":"finishIncluded","label":"Отделка","type":"boolean_or_text","importance":"optional","group":"works"},
+    {"id":"deliveryIncluded","label":"Доставка","type":"boolean_or_text","importance":"important","group":"extras"},
+    {"id":"liftIncluded","label":"Подъём","type":"boolean_or_text","importance":"important","group":"extras"},
+    {"id":"debrisRemovalIncluded","label":"Вывоз мусора","type":"boolean_or_text","importance":"important","group":"extras"},
+    {"id":"measurement","label":"Замер","type":"text","importance":"important","group":"terms"},
+    {"id":"leadTime","label":"Срок работ","type":"text","importance":"important","group":"terms"},
+    {"id":"warranty","label":"Гарантия","type":"text","importance":"important","group":"terms"},
+    {"id":"contractProvided","label":"Договор","type":"boolean_or_text","importance":"important","group":"terms"},
+    {"id":"exclusions","label":"Что не входит","type":"list","importance":"critical","group":"exceptions"},
+    {"id":"extraCosts","label":"Возможные доплаты","type":"list","importance":"critical","group":"exceptions"},
+    {"id":"alternativeScope","label":"Альтернативный объём","type":"text","importance":"optional","group":"exceptions"}
+  ],
+  "clarificationPolicy": {
+    "maxQuestionsPerRound": 5,
+    "askCriticalFirst": true,
+    "askWhenPriceIsFrom": true,
+    "askWhenMaterialsUnknown": true,
+    "askWhenCriticalFieldUnknown": true,
+    "askWhenScopeDiffers": true,
+    "doNotAskSiteInspectionOnly": true
+  },
   "normalization": {
     "primaryMetric": "comparableTotalPrice",
     "fromPriceIsOffer": false,
     "materialsExcludedPenalty": "mark_non_comparable",
-    "missingCriticalWorks": "request_clarification"
+    "missingCriticalWorks": "request_clarification",
+    "unknownIsNegative": false,
+    "preserveRawReply": true
   },
   "qaStatuses": [
     "PASS",
