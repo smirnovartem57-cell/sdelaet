@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "electrical-installation",
+  "fieldPolicies": {
+    "cableSpec": {
+      "requiredWhen": {"field":"electricalJob","in":["new_line","partial_rewire","full_rewire"]},
+      "requirementLevel": "comparison",
+      "clarification": "какой кабель и сечение будут использованы"
+    },
+    "routeSpec": {
+      "requiredWhen": {"field":"electricalJob","in":["new_line","partial_rewire","full_rewire"]},
+      "requirementLevel": "comparison",
+      "clarification": "как будет проложен кабель"
+    },
+    "cableLayingIncluded": {
+      "requiredWhen": {"field":"electricalJob","in":["new_line","partial_rewire","full_rewire"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли прокладка кабеля"
+    },
+    "panelIncluded": {
+      "requiredWhen": {"any":[{"field":"electricalJob","in":["panel","full_rewire"]},{"field":"panelScope","in":["replace","extend"]}]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли работа с электрощитом"
+    },
+    "protectionSpec": {
+      "requiredWhen": {"any":[{"field":"electricalJob","in":["panel","partial_rewire","full_rewire"]},{"field":"panelScope","in":["replace","extend"]}]},
+      "requirementLevel": "comparison",
+      "clarification": "какие автоматы, УЗО или дифзащита предусмотрены"
+    },
+    "testingIncluded": {
+      "requiredWhen": {"field":"electricalJob","in":["panel","partial_rewire","full_rewire"]},
+      "requirementLevel": "comparison",
+      "clarification": "входят ли проверка линий и электрические измерения"
+    },
+    "chasingIncluded": {
+      "requiredWhen": {"all":[{"field":"objectState","equals":"finished"},{"field":"electricalJob","in":["new_line","partial_rewire","full_rewire"]}]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли штробление и восстановление отделки"
+    },
+    "pointsCount": {"requirementLevel":"completeness"},
+    "lineCount": {"requirementLevel":"completeness"}
+  }
+}

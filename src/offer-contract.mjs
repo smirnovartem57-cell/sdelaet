@@ -87,7 +87,21 @@ function resolveCriticalWorks(rules, task, context) {
   return [];
 }
 
-function categoryFields(profile, rules, commonIds, context) {
+function taskConditionMatches(condition, task) {
+  if (!condition) return false;
+  if (Array.isArray(condition.any)) return condition.any.some(item => taskConditionMatches(item, task));
+  if (Array.isArray(condition.all)) return condition.all.every(item => taskConditionMatches(item, task));
+  const value = task?.[condition.field];
+  if (Array.isArray(condition.in)) return condition.in.includes(value);
+  if (Object.prototype.hasOwnProperty.call(condition, 'equals')) return value === condition.equals;
+  if (Array.isArray(condition.containsAny)) {
+    const haystack = text(value);
+    return condition.containsAny.some(item => haystack.includes(text(item)));
+  }
+  return false;
+}
+
+function categoryFields(profile, rules, commonIds, context, task) {
   const policies = rules?.fieldPolicies || {};
   const schemaById = new Map((profile.comparisonSchema || []).map(field => [field.id, field]));
   const ids = new Set([
@@ -99,6 +113,9 @@ function categoryFields(profile, rules, commonIds, context) {
     if (commonIds.has(id)) continue;
     const field = schemaById.get(id) || { id, type: 'unknown', group: 'scenario' };
     const policy = policies[id] || {};
+    const required = policy.requiredWhen
+      ? taskConditionMatches(policy.requiredWhen, task)
+      : resolveRequirement(policy.requiredRule ?? false, context);
     out.push({
       ...field,
       ...policy,
@@ -106,7 +123,7 @@ function categoryFields(profile, rules, commonIds, context) {
       applicable: true,
       requirementRule: policy.requiredRule ?? false,
       requirementLevel: policy.requirementLevel || 'optional',
-      required: resolveRequirement(policy.requiredRule ?? false, context)
+      required
     });
   }
   return out;
@@ -127,7 +144,7 @@ export function resolveOfferContract(task) {
     required: resolveRequirement(field.requiredRule ?? false, context)
   }));
   const commonIds = new Set(commonFields.map(field => field.id));
-  const fields = [...commonFields, ...categoryFields(profile, rules, commonIds, context)];
+  const fields = [...commonFields, ...categoryFields(profile, rules, commonIds, context, task || {})];
 
   const criticalWorks = resolveCriticalWorks(rules, task || {}, context);
   const definitions = rules.workDefinitions || [];
