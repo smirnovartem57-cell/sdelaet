@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "tile-installation",
+  "commonFieldPolicies": {
+    "materialsIncluded": {
+      "requiredRule": false,
+      "requirementLevel": "optional"
+    }
+  },
+  "comparisonRuleOverrides": {
+    "unknownMaterialsInclusionIsDirectlyComparable": true
+  },
+  "fieldPolicies": {
+    "tileFormat": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "формат плитки / керамогранита"
+    },
+    "tileLayout": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "схему раскладки"
+    },
+    "substratePreparationIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли подготовка / выравнивание основания"
+    },
+    "waterproofingIncluded": {
+      "requiredWhen": {"field":"tileZone","in":["wet_room","bathroom","shower"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли гидроизоляция мокрой зоны"
+    },
+    "tileDemolitionIncluded": {
+      "requiredWhen": {"field":"baseState","equals":"old_covering"},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли демонтаж старой плитки"
+    },
+    "tileArea": {"requiredRule": false,"requirementLevel":"completeness","clarification":"площадь облицовки"},
+    "groutType": {"requiredRule": false,"requirementLevel":"completeness","clarification":"какая затирка используется"},
+    "tileCutsIncluded": {"requiredRule": false,"requirementLevel":"completeness","clarification":"входят ли подрезки и отверстия"},
+    "miter45Included": {"requiredRule": false,"requirementLevel":"completeness","clarification":"нужна ли и входит ли запиловка углов под 45°"}
+  }
+}
