@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "soundproofing",
+  "fieldPolicies": {
+    "acousticSystemType": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой тип шумоизоляционной системы предлагается"
+    },
+    "acousticThickness": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая итоговая толщина системы"
+    },
+    "acousticLayers": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "сколько слоёв в системе"
+    },
+    "vibrationIsolationIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли виброразвязка системы"
+    },
+    "junctionTreatmentIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "как выполнены примыкания и акустическая герметизация"
+    },
+    "acousticMaterialsSpecified": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какие материалы входят в шумоизоляционную систему"
+    },
+    "claimedAcousticResult": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "какой акустический результат заявляется"
+    }
+  }
+}

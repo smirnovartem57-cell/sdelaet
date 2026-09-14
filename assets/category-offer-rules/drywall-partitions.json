@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "drywall-partitions",
+  "fieldPolicies": {
+    "frameSpec": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая система и профиль каркаса"
+    },
+    "studSpacing": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой шаг стоек каркаса"
+    },
+    "boardType": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой тип листов ГКЛ используется"
+    },
+    "boardLayers": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "сколько слоёв ГКЛ с каждой стороны"
+    },
+    "partitionFillIncluded": {
+      "requiredWhen": {"field": "soundRequirement", "equals": "yes"},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли звукоизоляционное заполнение перегородки"
+    },
+    "jointFinishIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли заделка и армирование стыков ГКЛ"
+    },
+    "partitionDoorOpeningIncluded": {
+      "requiredWhen": {"field": "scope", "containsAny": ["двер", "проём", "проем"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли устройство дверного проёма"
+    },
+    "partitionReinforcementIncluded": {
+      "requiredWhen": {"field": "scope", "containsAny": ["заклад", "телевиз", "шкаф", "тяжел"]},
+      "requirementLevel": "comparison",
+      "clarification": "входят ли необходимые закладные / усиления"
+    }
+  }
+}
