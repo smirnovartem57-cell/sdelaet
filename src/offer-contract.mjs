@@ -11,13 +11,8 @@ let commonCache = null;
 const profileCache = new Map();
 const rulesCache = new Map();
 
-function readJson(file) {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
-}
-
-function clone(value) {
-  return structuredClone(value);
-}
+function readJson(file) { return JSON.parse(fs.readFileSync(file, 'utf8')); }
+function clone(value) { return structuredClone(value); }
 
 export function loadCommonOfferContract() {
   if (!commonCache) commonCache = readJson(COMMON_PATH);
@@ -44,22 +39,11 @@ export function loadCategoryOfferRules(categoryId) {
   return clone(rulesCache.get(id));
 }
 
-function text(value) {
-  return String(value || '').toLowerCase().replace(/ё/g, 'е');
-}
-
-function taskCategoryId(task) {
-  return task?.categoryId || task?.service_id || task?.serviceId || '';
-}
+function text(value) { return String(value || '').toLowerCase().replace(/ё/g, 'е'); }
+function taskCategoryId(task) { return task?.categoryId || task?.service_id || task?.serviceId || ''; }
 
 function requested(task, pattern) {
-  return pattern.test(text([
-    task?.description,
-    task?.scope,
-    task?.finish,
-    task?.finishScope,
-    ...(task?.extraWorks || [])
-  ].join(' ')));
+  return pattern.test(text([task?.description, task?.scope, task?.finish, task?.finishScope, ...(task?.extraWorks || [])].join(' ')));
 }
 
 function scenarioContext(task) {
@@ -105,20 +89,27 @@ function resolveCriticalWorks(rules, task, context) {
 
 function categoryFields(profile, rules, commonIds, context) {
   const policies = rules?.fieldPolicies || {};
-  return (profile.comparisonSchema || [])
-    .filter(field => !commonIds.has(field.id))
-    .map(field => {
-      const policy = policies[field.id] || {};
-      return {
-        ...field,
-        ...policy,
-        source: 'category',
-        applicable: true,
-        requirementRule: policy.requiredRule ?? false,
-        requirementLevel: policy.requirementLevel || 'optional',
-        required: resolveRequirement(policy.requiredRule ?? false, context)
-      };
+  const schemaById = new Map((profile.comparisonSchema || []).map(field => [field.id, field]));
+  const ids = new Set([
+    ...(profile.comparisonSchema || []).map(field => field.id),
+    ...Object.keys(policies)
+  ]);
+  const out = [];
+  for (const id of ids) {
+    if (commonIds.has(id)) continue;
+    const field = schemaById.get(id) || { id, type: 'unknown', group: 'scenario' };
+    const policy = policies[id] || {};
+    out.push({
+      ...field,
+      ...policy,
+      source: 'category',
+      applicable: true,
+      requirementRule: policy.requiredRule ?? false,
+      requirementLevel: policy.requirementLevel || 'optional',
+      required: resolveRequirement(policy.requiredRule ?? false, context)
     });
+  }
+  return out;
 }
 
 export function resolveOfferContract(task) {
@@ -140,9 +131,7 @@ export function resolveOfferContract(task) {
 
   const criticalWorks = resolveCriticalWorks(rules, task || {}, context);
   const definitions = rules.workDefinitions || [];
-  const criticalWorkDefinitions = criticalWorks
-    .map(id => definitions.find(item => item.id === id))
-    .filter(Boolean);
+  const criticalWorkDefinitions = criticalWorks.map(id => definitions.find(item => item.id === id)).filter(Boolean);
 
   return {
     schemaVersion: '2.0',
