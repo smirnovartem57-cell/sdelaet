@@ -43,6 +43,7 @@ const commands = [
   ['offer pipeline authority', ['tests/offer-pipeline-authority-regression.mjs']],
   ['offer legacy isolation', ['tests/offer-pipeline-legacy-isolation-regression.mjs']],
   ['offer contract coverage', ['tools/offer-contract-coverage.mjs']],
+  ['window contract rules', ['tests/window-contract-rules-regression.mjs']],
   ['recommendation status', ['tests/recommendation-status-regression.mjs']],
   ['recommendation actions', ['tests/recommendation-actions-regression.mjs']],
   ['comparison explainer', ['tests/comparison-explainer-regression.mjs']],
