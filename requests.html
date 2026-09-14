@@ -12,6 +12,12 @@
   <script src="assets/prod-ui.js"></script>
   <style>
     .candidate-context{margin:12px 0 0;padding:12px 14px;border:1px solid #dce5f5;border-radius:15px;background:#f9fbff;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.candidate-context .type{display:inline-flex;padding:4px 8px;border-radius:999px;background:#f1f3f8;color:#596681;font:800 10px Montserrat}.candidate-context .type.private{background:#edf5ff;color:#2f67c7}.candidate-context .type.unverified{background:#fff6e2;color:#9a6512}.candidate-context .source{font-size:11px;color:#6c7894}.channel-note{font-size:11px;color:#6e7894;margin-top:7px}.channel-note.warn{padding:9px 11px;border-radius:12px;background:#fff8ea;border:1px solid #ecd7a3;color:#745d32}.request-error{padding:18px;border:1px solid #ecd7a3;border-radius:16px;background:#fff8ea}.request-error b,.request-error span{display:block}.request-error span{font-size:12px;margin-top:4px;color:#6c6046}
+
+    .outreach-box{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--bg)}
+    .outreach-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.outreach-head h3{margin:3px 0 0;font-size:18px}.outreach-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+    .channel-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.channel-choice-btn{border:1px solid var(--line);border-radius:15px;background:#fff;padding:13px 14px;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;color:var(--text);transition:.18s ease}.channel-choice-btn:hover{transform:translateY(-1px);border-color:var(--indigo)}.channel-choice-btn.active{border-color:var(--indigo);box-shadow:0 0 0 2px rgba(91,85,245,.08)}.channel-choice-btn .channel-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#f3f5ff;color:var(--indigo);font-weight:900}.channel-choice-btn b{display:block;font:800 13px Montserrat,Roboto,sans-serif}.channel-choice-btn small{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+    .outreach-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.contact-field{display:grid;gap:5px}.contact-field span{font-size:10px;color:var(--muted);font-weight:700}.contact-field input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--text);font:500 13px Roboto,sans-serif}.contact-field input:focus{outline:0;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(91,85,245,.08)}.contact-field.inactive{opacity:.5}.outreach-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.outreach-help{font-size:10px;color:var(--muted)}.channel-ready{white-space:nowrap}
+    @media(max-width:720px){.channel-choice,.outreach-fields{grid-template-columns:1fr}.outreach-head{display:grid}}
   </style>
 </head>
 <body>
@@ -59,8 +65,21 @@
                 <div class="request-body" id="requestText"></div>
               </div>
 
+              <div class="outreach-box" id="outreachBox">
+                <div class="outreach-head"><div><div class="label">Куда отправить запрос</div><h3>Email и Telegram</h3><p>Выберите один или оба канала. Найденные контакты подставим автоматически.</p></div><span class="status-pill channel-ready" id="channelReadyCount">0 каналов</span></div>
+                <div class="channel-choice">
+                  <button class="channel-choice-btn" data-outreach="email" id="chooseEmail" type="button"><span class="channel-icon">@</span><span><b>Email</b><small id="emailStatus">адрес можно указать вручную</small></span></button>
+                  <button class="channel-choice-btn" data-outreach="telegram" id="chooseTelegram" type="button"><span class="channel-icon">↗</span><span><b>Telegram</b><small id="telegramStatus">укажите @username или t.me/…</small></span></button>
+                </div>
+                <div class="outreach-fields">
+                  <label class="contact-field" id="emailFieldWrap"><span>Email исполнителя</span><input id="contactEmail" type="email" autocomplete="off" placeholder="name@example.ru"></label>
+                  <label class="contact-field" id="telegramFieldWrap"><span>Telegram исполнителя</span><input id="contactTelegram" autocomplete="off" placeholder="@username или https://t.me/username"></label>
+                </div>
+                <div class="outreach-actions"><button class="btn secondary" id="saveOutreach" type="button">Сохранить контакты</button><span class="outreach-help">Контакты сохраняются только для этого исполнителя.</span></div>
+              </div>
+
               <div class="actions" id="mainActions">
-                <button class="btn primary large" id="sendBtn">Отправить запрос</button>
+                <button class="btn primary large" id="sendBtn">Продолжить к отправке</button>
                 <a class="btn secondary large" href="candidates.html">← К кандидатам</a>
               </div>
 
@@ -156,6 +175,7 @@
         document.getElementById('candidateName').textContent = 'Кандидат не найден';
         document.getElementById('candidateContext').innerHTML = '<div class="request-error"><b>Нужно выбрать исполнителя из текущей подборки.</b><span>Резервные или вымышленные данные не подставляются.</span></div>';
         document.getElementById('requestBox').classList.add('hidden');
+        document.getElementById('outreachBox').classList.add('hidden');
         document.getElementById('channelsWrap').classList.add('hidden');
         document.getElementById('mainActions').innerHTML = '<a class="btn primary large" href="candidates.html">Вернуться к кандидатам</a>';
         return;
@@ -211,6 +231,18 @@
       var states = sdGetRequests();
       var state = states[id] || 'not_sent';
       var stateEl = document.getElementById('requestState');
+      var contactsAll = readJson('sdelaet.outreach.contacts.v1') || {};
+      var savedContact = contactsAll[id] || {};
+      var emailInput = document.getElementById('contactEmail');
+      var telegramInput = document.getElementById('contactTelegram');
+      var selectedChannels = Array.isArray(savedContact.channels) ? savedContact.channels.slice() : [];
+      emailInput.value = savedContact.email || candidate.email || '';
+      telegramInput.value = savedContact.telegram || candidate.telegram || candidate.messenger || '';
+      if (!selectedChannels.length) {
+        if (emailInput.value) selectedChannels.push('email');
+        if (telegramInput.value) selectedChannels.push('telegram');
+      }
+      if (!selectedChannels.length) selectedChannels = ['email','telegram'];
 
       function renderState() {
         stateEl.className = 'request-state ' + (state === 'prepared' ? 'prepared' : state === 'sent' ? 'sent' : '');
@@ -232,12 +264,68 @@
         });
       }
 
+      function saveOutreachContacts() {
+        contactsAll[id] = {
+          email: emailInput.value.trim(),
+          telegram: telegramInput.value.trim(),
+          channels: selectedChannels.slice()
+        };
+        localStorage.setItem('sdelaet.outreach.contacts.v1', JSON.stringify(contactsAll));
+      }
+
+      function telegramHref(value) {
+        var v = String(value || '').trim();
+        if (!v) return '';
+        if (v.charAt(0) === '@') return 'https://t.me/' + v.slice(1);
+        if (/^t\.me\//i.test(v)) return 'https://' + v;
+        if (/^https?:\/\//i.test(v)) return v;
+        if (/^[a-z0-9_]{5,}$/i.test(v)) return 'https://t.me/' + v;
+        return '';
+      }
+
+      function channelWord(n) {
+        return n === 1 ? '1 канал' : n >= 2 && n <= 4 ? n + ' канала' : n + ' каналов';
+      }
+
+      function updateOutreachUi() {
+        document.querySelectorAll('[data-outreach]').forEach(function (btn) {
+          var active = selectedChannels.indexOf(btn.dataset.outreach) !== -1;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        document.getElementById('emailFieldWrap').classList.toggle('inactive', selectedChannels.indexOf('email') === -1);
+        document.getElementById('telegramFieldWrap').classList.toggle('inactive', selectedChannels.indexOf('telegram') === -1);
+        document.getElementById('emailStatus').textContent = emailInput.value.trim() ? 'адрес указан' : 'адрес можно указать вручную';
+        document.getElementById('telegramStatus').textContent = telegramInput.value.trim() ? 'контакт указан' : 'укажите @username или t.me/…';
+        document.getElementById('channelReadyCount').textContent = channelWord(selectedChannels.length);
+      }
+
+      document.querySelectorAll('[data-outreach]').forEach(function (btn) {
+        btn.onclick = function () {
+          var key = btn.dataset.outreach;
+          var pos = selectedChannels.indexOf(key);
+          if (pos === -1) selectedChannels.push(key); else selectedChannels.splice(pos, 1);
+          updateOutreachUi();
+          sdTrack('request_channel_toggle', { candidate_id: id, channel: key, selected: pos === -1 });
+        };
+      });
+      emailInput.oninput = updateOutreachUi;
+      telegramInput.oninput = updateOutreachUi;
+      document.getElementById('saveOutreach').onclick = function () {
+        saveOutreachContacts();
+        updateOutreachUi();
+        this.textContent = 'Сохранено ✓';
+        var self = this;
+        setTimeout(function () { self.textContent = 'Сохранить контакты'; }, 1200);
+        sdTrack('request_contacts_saved', { candidate_id: id, channels: selectedChannels.join(',') });
+      };
+
       renderState();
+      updateOutreachUi();
       document.getElementById('copyTop').onclick = copyRequest;
 
       var channels = document.getElementById('channels');
       var channelNote = document.getElementById('channelNote');
-      var channelCount = 0;
 
       function addButton(label, href, eventName) {
         if (!href) return;
@@ -245,59 +333,47 @@
         a.className = 'btn secondary channel';
         a.textContent = label;
         a.href = href;
-        if (href.indexOf('http') === 0) {
-          a.target = '_blank';
-          a.rel = 'noopener';
-        }
+        if (href.indexOf('http') === 0) { a.target = '_blank'; a.rel = 'noopener'; }
         a.onclick = function () {
           if (state !== 'sent') setState('prepared');
           sdTrack(eventName, { candidate_id: id, candidate_type: candidate.type, category: task.category, city: task.city });
         };
         channels.appendChild(a);
-        channelCount++;
       }
 
-      if (candidate.phone) {
-        addButton('Позвонить', 'tel:' + String(candidate.phone).replace(/[^+\d]/g, ''), 'request_phone');
-      }
-
-      if (candidate.email) {
-        addButton(
-          'Почта',
-          'mailto:' + candidate.email + '?subject=' + encodeURIComponent('Запрос на расчёт — ' + (task.category || 'задача')) + '&body=' + encodeURIComponent(message),
-          'request_email'
-        );
-      }
-
-      if (candidate.website) {
-        addButton('Открыть сайт исполнителя', outbound(candidate.website, id), 'request_site');
-      } else if (source && source.kind === 'yandex_services') {
-        addButton('Открыть профиль исполнителя', source.url, 'request_profile');
-      } else if (source && source.kind === 'avito') {
-        addButton('Открыть объявление Avito', source.url, 'request_avito');
-      } else if (source && source.url) {
-        addButton('Открыть источник', source.url, 'request_source');
-      }
-
-      var copy = document.createElement('button');
-      copy.className = 'btn secondary channel';
-      copy.textContent = 'Скопировать запрос';
-      copy.onclick = copyRequest;
-      channels.appendChild(copy);
-
-      if (candidate.type === 'unverified') {
-        channelNote.className = 'channel-note warn';
-        channelNote.textContent = 'Для этого кандидата тип исполнителя пока не подтверждён. Перед договорённостью уточните, кто оказывает услугу и на каких реквизитах будет договор.';
-      } else if (!candidate.phone && !candidate.email) {
-        channelNote.textContent = 'Прямые контакты в открытых данных не найдены. Откройте профиль или источник и отправьте подготовленный текст через доступный там канал.';
-      } else {
-        channelNote.textContent = 'Отправка происходит только после вашего действия. «Сделает» не отмечает запрос отправленным автоматически.';
+      function buildChannels() {
+        channels.innerHTML = '';
+        var email = emailInput.value.trim();
+        var telegram = telegramInput.value.trim();
+        var missing = [];
+        if (selectedChannels.indexOf('email') !== -1) {
+          if (email) addButton('Написать на Email', 'mailto:' + email + '?subject=' + encodeURIComponent('Запрос на расчёт — ' + (task.category || 'задача')) + '&body=' + encodeURIComponent(message), 'request_email');
+          else missing.push('Email');
+        }
+        if (selectedChannels.indexOf('telegram') !== -1) {
+          var tgHref = telegramHref(telegram);
+          if (tgHref) addButton('Открыть Telegram', tgHref, 'request_telegram');
+          else missing.push('Telegram');
+        }
+        if (candidate.phone) addButton('Позвонить', 'tel:' + String(candidate.phone).replace(/[^+\d]/g, ''), 'request_phone');
+        if (candidate.website) addButton('Открыть сайт исполнителя', outbound(candidate.website, id), 'request_site');
+        else if (source && source.url) addButton('Открыть источник', source.url, 'request_source');
+        var copy = document.createElement('button');
+        copy.className = 'btn secondary channel';
+        copy.textContent = 'Скопировать запрос';
+        copy.onclick = copyRequest;
+        channels.appendChild(copy);
+        if (!selectedChannels.length) channelNote.textContent = 'Выберите хотя бы один канал: Email или Telegram.';
+        else if (missing.length) channelNote.textContent = 'Для выбранных каналов нужно добавить контакт: ' + missing.join(', ') + '.';
+        else channelNote.textContent = 'Текст запроса одинаковый для обоих каналов. Отправка происходит только после вашего действия.';
       }
 
       document.getElementById('sendBtn').onclick = function () {
+        saveOutreachContacts();
+        buildChannels();
         document.getElementById('channelsWrap').classList.remove('hidden');
         if (state !== 'sent') setState('prepared');
-        sdTrack('request_channels_open', { candidate_id: id, candidate_type: candidate.type });
+        sdTrack('request_channels_open', { candidate_id: id, candidate_type: candidate.type, channels: selectedChannels.join(',') });
       };
 
       document.getElementById('markSent').onclick = function () {
