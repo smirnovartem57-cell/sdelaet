@@ -12,10 +12,12 @@
   <style>
     .progress3 .stage.link{cursor:pointer}.progress3 .stage.link:hover{border-color:#bcc7e9;box-shadow:0 8px 20px rgba(30,40,90,.07)}
     .search-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end}.search-intro .actions{margin:0}
-    .preference{margin-top:14px;padding:20px;border:1px solid #d7e2fb;border-radius:20px;background:linear-gradient(135deg,#f8f7ff,#f3fbff)}
-    .preference h3{margin:0 0 5px;font:850 19px Montserrat,Roboto,sans-serif}.preference>p{margin:0 0 16px;color:var(--muted);font-size:13px}
-    .pref-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pref-group{background:#fff;border:1px solid #e0e7f5;border-radius:17px;padding:14px}.pref-group h4{margin:0 0 3px;font:800 13px Montserrat}.pref-group>p{margin:0 0 10px;font-size:11px;color:#77829b;line-height:1.4}
-    .check-list{display:grid;gap:8px}.check-card{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border:1px solid #e2e8f3;border-radius:13px;background:#fbfcff;cursor:pointer;transition:.15s ease}.check-card:hover{border-color:#c7d3ef;background:#fff}.check-card input{margin-top:2px;width:17px;height:17px;accent-color:#5b55f5;flex:0 0 auto}.check-card b,.check-card span{display:block}.check-card b{font-size:12px;color:#26324f}.check-card span{font-size:10px;color:#7a849c;margin-top:2px;line-height:1.35}.pref-actions{display:flex;align-items:center;gap:12px;margin-top:14px}.pref-error{font-size:11px;color:#b04944;font-weight:700}
+    .preference{margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--bg)}
+    .preference h3{margin:0 0 4px;font:850 19px Montserrat,Roboto,sans-serif}.preference>p{margin:0 0 16px;color:var(--muted);font-size:13px}
+    .pref-stack{display:grid;gap:16px}.pref-group{display:grid;gap:8px}.pref-group h4{margin:0;font:800 13px Montserrat}.pref-group>p{margin:0;font-size:11px;color:var(--muted);line-height:1.4}
+    .segment-row{display:flex;gap:8px;flex-wrap:wrap}.segment{position:relative;display:inline-flex;align-items:center;min-height:40px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#56627f;font:800 12px Montserrat,Roboto,sans-serif;cursor:pointer;transition:.15s ease}.segment:hover{border-color:#bcc7e9;transform:translateY(-1px)}.segment input{position:absolute;opacity:0;pointer-events:none}.segment span{display:block;padding:10px 13px}.segment:has(input:checked){border-color:var(--indigo);background:#f0f1ff;color:var(--indigo)}
+    .segment-button{border:1px solid var(--line);border-radius:12px;background:#fff;color:#56627f;font:800 12px Montserrat,Roboto,sans-serif;cursor:pointer;min-height:40px;padding:10px 13px}.segment-button:hover{border-color:#bcc7e9}.segment-button.active{border-color:var(--indigo);background:#f0f1ff;color:var(--indigo)}
+    .pref-actions{display:flex;align-items:center;gap:12px;margin-top:16px}.pref-error{font-size:11px;color:#b04944;font-weight:700}.pref-hint{font-size:11px;color:var(--muted)}
     .search-status{margin:14px 0;padding:13px 15px;border-radius:16px;border:1px solid #d9e3f6;background:#f8faff;display:flex;gap:11px;align-items:center}
     .search-status b,.search-status span{display:block}.search-status span{font-size:12px;color:var(--muted);margin-top:2px}.search-status.ok{background:#effbf5;border-color:#cfeadf}.search-status.warn{background:#fff8ea;border-color:#ecd7a3}
     .status-dot,.spinner{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.status-dot{background:#fff}.spinner{border:3px solid #dce4f7;border-top-color:#5b55f5;border-radius:50%;animation:spin .7s linear infinite;background:#fff}@keyframes spin{to{transform:rotate(360deg)}}
@@ -79,24 +81,26 @@
               <form id="searchPreferencesForm">
                 <h3>Параметры поиска</h3>
                 <p>Все доступные варианты включены по умолчанию. Снимите галочку с того, что не хотите использовать.</p>
-                <div class="pref-grid">
+                <div class="pref-stack">
                   <section class="pref-group">
                     <h4>Где искать</h4>
-                    <p>Источники, которые сервис будет использовать для этой подборки.</p>
-                    <div class="check-list">
-                      <label class="check-card"><input id="sourceSites" type="checkbox" checked><span><b>Сайты компаний</b><span>Веб-поиск + проверка собственных сайтов и контактов.</span></span></label>
-                      <label class="check-card"><input id="sourceYandexServices" type="checkbox" checked><span><b>Яндекс Исполнители</b><span>Конкретные профили специалистов из Яндекс Исполнителей.</span></span></label>
-                      <label class="check-card"><input id="sourceAvito" type="checkbox" checked><span><b>Avito</b><span>Конкретные объявления услуг, найденные через веб-поиск.</span></span></label>
+                    <p>Выберите источники. По умолчанию используем все доступные.</p>
+                    <div class="segment-row">
+                      <button class="segment-button" id="allSources" type="button">Все источники</button>
+                      <label class="segment"><input id="sourceSites" type="checkbox" checked><span>Сайты компаний</span></label>
+                      <label class="segment"><input id="sourceYandexServices" type="checkbox" checked><span>Яндекс Исполнители</span></label>
+                      <label class="segment"><input id="sourceAvito" type="checkbox" checked><span>Avito</span></label>
                     </div>
                   </section>
                   <section class="pref-group">
                     <h4>Кого искать</h4>
-                    <p>Можно оставить оба типа или ограничить подборку одним.</p>
-                    <div class="check-list">
-                      <label class="check-card"><input id="typeCompany" type="checkbox" checked><span><b>Компании</b><span>Организации и сервисы с подтверждаемым сайтом или профилем.</span></span></label>
-                      <label class="check-card"><input id="typePrivate" type="checkbox" checked><span><b>Частные мастера</b><span>Персональные профили конкретных исполнителей.</span></span></label>
+                    <p>Оставьте всех исполнителей или сузьте подбор.</p>
+                    <div class="segment-row">
+                      <button class="segment-button" id="allTypes" type="button">Все исполнители</button>
+                      <label class="segment"><input id="typeCompany" type="checkbox" checked><span>Компании</span></label>
+                      <label class="segment"><input id="typePrivate" type="checkbox" checked><span>Частные мастера</span></label>
                     </div>
-                    <p style="margin:10px 0 0">Если выбран только один тип, кандидаты Avito с неподтверждённым типом не показываются.</p>
+                    <div class="pref-hint">При выборе одного типа кандидаты с неподтверждённым типом в подборку не попадут.</div>
                   </section>
                 </div>
                 <div class="pref-actions">

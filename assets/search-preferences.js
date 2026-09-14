@@ -127,6 +127,24 @@
       if (el) el.checked = checked;
     }
 
+    const sourceIds = ['sourceSites', 'sourceYandexServices', 'sourceAvito'];
+    const typeIds = ['typeCompany', 'typePrivate'];
+    const allSources = document.getElementById('allSources');
+    const allTypes = document.getElementById('allTypes');
+    function allChecked(ids) { return ids.every(id => !!document.getElementById(id)?.checked); }
+    function syncMasters() {
+      if (allSources) allSources.classList.toggle('active', allChecked(sourceIds));
+      if (allTypes) allTypes.classList.toggle('active', allChecked(typeIds));
+    }
+    function selectAll(ids) {
+      ids.forEach(id => { const el = document.getElementById(id); if (el) el.checked = true; });
+      syncMasters();
+    }
+    if (allSources) allSources.addEventListener('click', () => selectAll(sourceIds));
+    if (allTypes) allTypes.addEventListener('click', () => selectAll(typeIds));
+    [...sourceIds, ...typeIds].forEach(id => document.getElementById(id)?.addEventListener('change', syncMasters));
+    syncMasters();
+
     const error = document.getElementById('searchPreferencesError');
     form.addEventListener('submit', function (event) {
       event.preventDefault();
