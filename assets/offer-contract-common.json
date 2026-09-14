@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "2.0",
+  "contractId": "COMMON_OFFER_V2",
+  "responseFields": [
+    {"id":"totalPrice","group":"price","type":"money","requiredRule":true,"requirementLevel":"comparison","clarification":"итоговую стоимость по нашему ТЗ"},
+    {"id":"priceType","group":"price","type":"enum","values":["fixed","estimate","from","unknown"],"requiredRule":true,"requirementLevel":"comparison","clarification":"подтвердите, цена фиксированная или ориентировочная"},
+    {"id":"workPrice","group":"price","type":"money","requiredRule":false,"requirementLevel":"completeness","clarification":"стоимость работ отдельной суммой"},
+    {"id":"materialsPrice","group":"price","type":"money","requiredRule":"when_materials_separate","requirementLevel":"comparison","clarification":"стоимость материалов отдельной суммой"},
+    {"id":"materialsIncluded","group":"price","type":"boolean","requiredRule":true,"requirementLevel":"comparison","clarification":"входят ли материалы в указанную стоимость"},
+    {"id":"worksIncluded","group":"scope","type":"array","requiredRule":true,"requirementLevel":"comparison","clarification":"какие работы входят в указанную стоимость"},
+    {"id":"exclusions","group":"scope","type":"array","requiredRule":false,"requirementLevel":"completeness","clarification":"что не входит в указанную стоимость"},
+    {"id":"leadTime","group":"terms","type":"duration","requiredRule":true,"requirementLevel":"comparison","clarification":"срок выполнения работ"},
+    {"id":"warranty","group":"terms","type":"duration_or_text","requiredRule":true,"requirementLevel":"completeness","clarification":"гарантию на работы"},
+    {"id":"measurement","group":"terms","type":"text","requiredRule":false,"requirementLevel":"optional","clarification":"условия замера"},
+    {"id":"contractProvided","group":"terms","type":"boolean_or_text","aliases":["contract"],"requiredRule":false,"requirementLevel":"completeness","clarification":"работаете ли вы по договору"},
+    {"id":"extraCosts","group":"extras","type":"array","requiredRule":false,"requirementLevel":"completeness","clarification":"возможные дополнительные расходы отдельным списком"},
+    {"id":"notes","group":"extras","type":"array","requiredRule":false,"requirementLevel":"optional"}
+  ],
+  "comparisonRules": {
+    "fromPriceIsDirectlyComparable": false,
+    "unknownMaterialsInclusionIsDirectlyComparable": false,
+    "materialsSeparateWithoutPriceIsDirectlyComparable": false,
+    "missingCriticalWorksIsDirectlyComparable": false
+  }
+}
