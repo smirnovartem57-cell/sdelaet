@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['*.html','assets/**','tests/**','docs/product/**','.github/workflows/deploy-site-vds.yml']
+    paths: ['*.html','assets/**','src/**','tests/**','docs/product/**','tools/**','.github/workflows/deploy-site-vds.yml']
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -27,8 +27,27 @@ jobs:
         run: |
           set -euo pipefail
           TARGET=/opt/sdelaet/current
-          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/docs/product/EXPERT_MODELS' '$TARGET/tests'"
+          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/assets/category-offer-rules' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/docs/product/EXPERT_MODELS' '$TARGET/src' '$TARGET/tests'"
           rsync -az --checksum --exclude '.git/' --exclude '.github/' --exclude 'search-api/' ./ "$VDS_USER@$VDS_HOST:$TARGET/"
+      - name: Validate and restart API runtime
+        shell: bash
+        env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
+        run: |
+          set -euo pipefail
+          ssh "$VDS_USER@$VDS_HOST" '
+            set -e
+            TARGET=/opt/sdelaet/current
+            NODE=/opt/sdelaet/runtime/node24/bin/node
+            "$NODE" --check "$TARGET/src/offer-contract.mjs"
+            "$NODE" --check "$TARGET/src/offer-contract-gap-engine.mjs"
+            "$NODE" --check "$TARGET/src/offer-pipeline.mjs"
+            if systemctl list-unit-files | grep -q "^sdelaet-api.service"; then
+              systemctl restart sdelaet-api.service
+              sleep 1
+              systemctl is-active --quiet sdelaet-api.service
+              curl -fsS http://127.0.0.1:3210/health >/dev/null
+            fi
+          '
       - name: Production smoke check
         shell: bash
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
