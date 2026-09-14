@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "balcony-insulation",
+  "fieldPolicies": {
+    "materialsSystem": {"requiredRule": true, "requirementLevel": "completeness", "clarification": "какую систему утепления и состав слоёв предлагаете", "aliases": ["systemDescription"]},
+    "insulationMaterial": {"requiredRule": true, "requirementLevel": "completeness", "clarification": "какой основной утеплитель предлагаете"},
+    "insulationThickness": {"requiredRule": false, "requirementLevel": "completeness", "aliases": ["insulationThickness"]},
+    "insulationLayers": {"requiredRule": false, "requirementLevel": "completeness", "aliases": ["layerCount"]},
+    "basePreparationIncluded": {"requiredRule": true, "requirementLevel": "completeness", "clarification": "входит ли подготовка основания и устранение дефектов", "aliases": ["substratePreparation"]},
+    "junctionSealingIncluded": {"requiredRule": true, "requirementLevel": "comparison", "clarification": "как учитываются щели, швы и примыкания", "aliases": ["junctionSealing"], "satisfiedByWorks": ["junctionSealing"]},
+    "vaporBarrierIncluded": {"requiredRule": "winter_or_year_round", "requirementLevel": "completeness", "clarification": "предусмотрена ли защита от влаги и паропереноса для предлагаемой системы", "aliases": ["vaporMoistureControl"]},
+    "thermalBridgeTreatmentIncluded": {"requiredRule": "winter_or_year_round", "requirementLevel": "completeness", "clarification": "как учитываются мостики холода", "aliases": ["thermalBridgeTreatment"]},
+    "finishIncluded": {"requiredRule": "when_finish_requested", "requirementLevel": "comparison"},
+    "deliveryIncluded": {"requiredRule": false, "requirementLevel": "completeness"},
+    "debrisRemovalIncluded": {"requiredRule": false, "requirementLevel": "completeness", "aliases": ["wasteRemovalIncluded"]},
+    "glazingWorkRequired": {"requiredRule": "winter_or_year_round", "requirementLevel": "completeness"},
+    "warmFloorIncluded": {"requiredRule": "when_warm_floor_requested", "requirementLevel": "comparison"}
+  },
+  "scenarioRules": {
+    "winter_workspace": {"criticalWorks": ["floorInsulation","ceilingInsulation","wallsParapetInsulation","junctionSealing","glazingAssessment"]},
+    "year_round_use": {"criticalWorks": ["floorInsulation","ceilingInsulation","wallsParapetInsulation","junctionSealing","glazingAssessment"]},
+    "partial_scope": {"criticalWorksFromTaskOnly": true}
+  },
+  "workDefinitions": [
+    {"id":"floorInsulation","requirementLevel":"comparison","match":["утепление пола","пол"],"clarification":"входит ли утепление пола"},
+    {"id":"ceilingInsulation","requirementLevel":"comparison","match":["утепление потолка","потолок"],"clarification":"входит ли утепление потолка"},
+    {"id":"wallsParapetInsulation","requirementLevel":"comparison","match":["утепление стен / парапета","утепление стен","парапет"],"clarification":"входит ли утепление стен и парапета"},
+    {"id":"junctionSealing","requirementLevel":"comparison","match":["герметизация / примыкания","герметизация","примыкания"],"clarification":"учтена ли герметизация швов и примыканий"},
+    {"id":"glazingAssessment","requirementLevel":"comparison","match":["проверка остекления","оценка остекления"],"clarification":"будет ли проверено существующее остекление на пригодность для требуемого режима"}
+  ]
+}
