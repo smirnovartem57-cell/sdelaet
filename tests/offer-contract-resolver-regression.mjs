@@ -20,7 +20,11 @@ ok('common total price', field(winter, 'totalPrice')?.source === 'common');
 ok('category system derived from profile', field(winter, 'materialsSystem')?.source === 'category');
 ok('winter vapor control required', field(winter, 'vaporBarrierIncluded')?.required === true);
 ok('winter thermal bridge required', field(winter, 'thermalBridgeTreatmentIncluded')?.required === true);
+ok('policy-only glazing field included', field(winter, 'glazingWorkRequired')?.source === 'category');
+ok('policy-only glazing field completeness required', field(winter, 'glazingWorkRequired')?.required === true);
+ok('policy-only warm floor field included', field(winter, 'warmFloorIncluded')?.source === 'category');
 ok('winter does not imply warm floor', winter.context.warmFloorRequested === false);
+ok('winter warm floor not required', field(winter, 'warmFloorIncluded')?.required === false);
 ok('profile clarification limit preserved', winter.clarificationPolicy.maxQuestionsPerRound === 5);
 for (const id of ['floorInsulation','ceilingInsulation','wallsParapetInsulation','junctionSealing','glazingAssessment']) {
   ok('winter critical ' + id, winter.criticalWorks.includes(id));
@@ -40,5 +44,6 @@ const warmFloor = resolveOfferContract({
   description: 'Нужен электрический тёплый пол'
 });
 ok('explicit warm floor detected', warmFloor.context.warmFloorRequested === true);
+ok('explicit warm floor required', field(warmFloor, 'warmFloorIncluded')?.required === true);
 
 console.log('OFFER CONTRACT RESOLVER REGRESSION: PASS');
