@@ -34,4 +34,11 @@ if (report.categories.some(item => item.duplicateFields.length)) {
   process.exit(1);
 }
 
-console.log('OFFER CONTRACT COVERAGE AUDIT: PASS');
+console.log([
+  'OFFER CONTRACT COVERAGE AUDIT: PASS',
+  'profiles=' + report.profileCount,
+  'explicit=' + report.counts.EXPLICIT_RULES,
+  'schema_candidate=' + report.counts.SCHEMA_CANDIDATE,
+  'schema_weak=' + report.counts.SCHEMA_WEAK,
+  'common_only=' + report.counts.COMMON_ONLY
+].join(' '));
