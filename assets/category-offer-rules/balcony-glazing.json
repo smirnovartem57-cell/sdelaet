@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "balcony-glazing",
+  "fieldPolicies": {
+    "profileSystem": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая профильная система предлагается"
+    },
+    "glassUnit": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой стеклопакет входит в предложение"
+    },
+    "openingScheme": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "схему открывания створок"
+    },
+    "flashing": {
+      "group": "works",
+      "type": "boolean",
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "входят ли отливы и наружные примыкания"
+    }
+  },
+  "scenarioRules": {},
+  "workDefinitions": []
+}
