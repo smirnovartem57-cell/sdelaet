@@ -40,6 +40,7 @@ const commands = [
   ['offer contract resolver', ['tests/offer-contract-resolver-regression.mjs']],
   ['offer contract comparison', ['tests/offer-contract-comparison-regression.mjs']],
   ['trade contract rules', ['tests/trade-contract-rules-regression.mjs']],
+  ['repair contract rules', ['tests/repair-contract-rules-regression.mjs']],
   ['offer comparison decision', ['tests/offer-comparison-decision-regression.mjs']],
   ['offer pipeline authority', ['tests/offer-pipeline-authority-regression.mjs']],
   ['offer legacy isolation', ['tests/offer-pipeline-legacy-isolation-regression.mjs']],

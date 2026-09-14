@@ -136,13 +136,22 @@ export function resolveOfferContract(task) {
   const rules = loadCategoryOfferRules(categoryId);
   const context = scenarioContext(task || {});
 
-  const commonFields = common.responseFields.map(field => ({
-    ...field,
-    source: 'common',
-    applicable: true,
-    requirementRule: field.requiredRule ?? false,
-    required: resolveRequirement(field.requiredRule ?? false, context)
-  }));
+  const commonOverrides = rules?.commonFieldPolicies || {};
+  const commonFields = common.responseFields.map(field => {
+    const policy = commonOverrides[field.id] || {};
+    const rule = policy.requiredRule ?? field.requiredRule ?? false;
+    const required = policy.requiredWhen
+      ? taskConditionMatches(policy.requiredWhen, task || {})
+      : resolveRequirement(rule, context);
+    return {
+      ...field,
+      ...policy,
+      source: 'common',
+      applicable: true,
+      requirementRule: rule,
+      required
+    };
+  });
   const commonIds = new Set(commonFields.map(field => field.id));
   const fields = [...commonFields, ...categoryFields(profile, rules, commonIds, context, task || {})];
 
@@ -161,7 +170,10 @@ export function resolveOfferContract(task) {
     criticalWorkDefinitions,
     clarificationPolicy: profile.clarificationPolicy || { maxQuestionsPerRound: 5 },
     outreachContract: profile.outreachContract || null,
-    comparisonRules: common.comparisonRules || {}
+    comparisonRules: {
+      ...(common.comparisonRules || {}),
+      ...(rules.comparisonRuleOverrides || {})
+    }
   };
 }
 

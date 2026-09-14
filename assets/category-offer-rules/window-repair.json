@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "window-repair",
+  "commonFieldPolicies": {
+    "materialsIncluded": {
+      "requiredRule": false,
+      "requirementLevel": "completeness"
+    }
+  },
+  "fieldPolicies": {
+    "diagnosticsIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли диагностика"
+    },
+    "visitCost": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "стоимость выезда / диагностики"
+    },
+    "diagnosis": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая причина неисправности установлена"
+    },
+    "repairType": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой ремонт предлагается"
+    },
+    "partsIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "нужны ли детали и входят ли они в стоимость"
+    }
+  },
+  "comparisonRuleOverrides": {
+    "unknownMaterialsInclusionIsDirectlyComparable": true
+  }
+}
