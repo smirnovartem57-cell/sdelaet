@@ -43,6 +43,7 @@ const commands = [
   ['repair contract rules', ['tests/repair-contract-rules-regression.mjs']],
   ['surface contract rules', ['tests/surface-contract-rules-regression.mjs']],
   ['base prep contract rules', ['tests/base-prep-contract-rules-regression.mjs']],
+  ['frame acoustic contract rules', ['tests/frame-acoustic-contract-rules-regression.mjs']],
   ['offer comparison decision', ['tests/offer-comparison-decision-regression.mjs']],
   ['offer pipeline authority', ['tests/offer-pipeline-authority-regression.mjs']],
   ['offer legacy isolation', ['tests/offer-pipeline-legacy-isolation-regression.mjs']],
