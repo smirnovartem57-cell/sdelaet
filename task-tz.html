@@ -14,15 +14,861 @@
  .executor-brief{margin-top:8px!important;padding:11px!important;border-radius:12px!important;break-inside:avoid!important}.executor-brief-head{margin-bottom:7px!important}.executor-brief h3{font-size:15px!important}.executor-brief .brief-note{font-size:9px!important}.status-pill{font-size:8px!important;padding:4px 7px!important}.executor-message{border-radius:10px!important}.executor-message-top{padding:7px 9px!important}.executor-avatar{width:26px!important;height:26px!important;font-size:11px!important}.executor-message-top b{font-size:10px!important}.executor-message-top span{font-size:8px!important}.executor-brief-text{padding:9px 11px!important;font-size:10.5px!important;line-height:1.35!important}.brief-row{grid-template-columns:80px minmax(0,1fr)!important;gap:6px!important;padding:2px 0!important}.brief-request{margin-top:4px!important;padding-top:5px!important}.executor-message-bottom{padding:6px 9px!important}.executor-message-proof{font-size:8px!important}.executor-message-bottom .btn{display:none!important}.ready-box{margin-top:8px!important;padding:9px 11px!important;border-radius:10px!important;break-inside:avoid!important}.ready-box b{font-size:11px!important}.ready-box p{font-size:9px!important;line-height:1.3!important}
  .assignment-details{display:block!important;break-before:page!important;border:0!important;margin:0!important;padding:0!important}.assignment-details>summary{display:none!important}.details-body{display:block!important;padding:0!important}.tz-grid{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:10px!important;margin:0!important}.tz-section{padding:8px 0!important}.tz-section h3{font-size:13px!important;margin-bottom:5px!important}.tz-section p{font-size:10px!important;line-height:1.35!important}.measure-item,.request-field{font-size:9px!important;line-height:1.28!important;padding:5px 0 5px 16px!important}.scheme-card{padding:8px!important;border-radius:11px!important}.scheme-card svg{max-height:125mm!important}.scheme-card>.actions{display:none!important}
 }
-.paywall-card{max-width:720px}.paywall-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}.paywall-price{font:900 42px/1 Montserrat,Roboto,sans-serif;margin-top:4px}.paywall-list{display:grid;gap:10px;margin:18px 0}.paywall-point{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}.paywall-point:first-child{border-top:0}.paywall-point:before{content:'✓';width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--bg);color:var(--green);font-weight:900}.paywall-point b{display:block;font:800 13px Montserrat,Roboto,sans-serif;margin-bottom:2px}.paywall-point span{display:block;font-size:12px;line-height:1.45;color:var(--muted)}.paywall-note{padding:12px 14px;border-radius:14px;background:var(--bg);font-size:12px;line-height:1.45;color:#59647f}.payment-error{margin-top:8px;font-size:12px;font-weight:700;color:#b04944}.paywall-actions{margin-top:16px}.paywall-actions .btn[disabled]{opacity:.65;cursor:wait}@media(max-width:620px){.paywall-price{font-size:36px}.paywall-actions{display:grid}.paywall-actions .btn{width:100%}}</style></head><body><div class="app-shell"><aside class="sidebar"><a class="brand" href="/"><img alt="" src="assets/logo-icon.svg"/><div>Сдела<span>ет</span></div></a><nav class="app-nav"><a href="my-tasks.html">▤ Мои задачи</a><a href="create-task.html">＋ Новая задача</a><a href="profile.html">◉ Профиль</a></nav><div class="sidebar-spacer"></div><a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a></aside><main class="app-main"><div class="progress-wrap"><div class="progress3"><div class="stage done"><span class="n">✓</span>Задача</div><div class="progress-line"></div><div class="stage"><span class="n">2</span>Подбор</div><div class="progress-line"></div><div class="stage"><span class="n">3</span>Выбор</div></div></div><div class="app-content"><div class="page"><section class="card"><div class="eyebrow">Готовое задание</div><h1 class="hero-title" id="taskTitle">Задание для исполнителя</h1><p class="lead">Мы учли важные нюансы категории и собрали требования для сопоставимых предложений.</p><div class="tz-version"><div><b id="versionLabel">Версия 1</b><span id="versionDate"></span></div><button class="btn ghost version-history-btn" id="historyBtn" type="button">История версий</button></div><div class="executor-brief"><div class="executor-brief-head"><div><div class="eyebrow">Готово к отправке</div><h3>Что получит исполнитель</h3><p class="brief-note">Показываем сообщение целиком — именно его получат выбранные исполнители.</p></div><span class="status-pill good">одно задание для всех</span></div><div class="executor-message"><div class="executor-message-top"><div class="executor-avatar">С</div><div><b>Задание от «Сделает»</b><span>Запрос на расчёт работ</span></div></div><div class="executor-brief-text" id="executorBrief"></div><div class="executor-message-bottom"><div class="executor-message-proof">всем исполнителям отправится одинаковый текст</div><button class="btn ghost" id="copyBrief" type="button">Скопировать задание</button></div></div></div><details class="assignment-details" id="assignmentDetails"><summary>Посмотреть детали задания<span class="details-hint">Схема, замер и требования к предложению</span></summary><div class="tz-grid"><div><div class="tz-section"><h3>Что нужно сделать</h3><p id="taskNarrative"></p></div><div class="tz-section"><h3>Что уточнить на замере</h3><div class="measure-list" id="measureList"></div></div><div class="tz-section"><h3>Что исполнитель должен указать в предложении</h3><div class="request-fields" id="requestFields"></div></div><div class="hidden" id="attachmentsWrap" style="margin-top:14px"><div class="label">Вложения</div><div class="attachments" id="attachments"></div></div></div><div class="scheme-card" id="schemeCard"><div class="eyebrow">Что показать исполнителю</div><svg aria-label="Схема объекта" id="planSvg" viewbox="0 0 700 520" xmlns="http://www.w3.org/2000/svg"><defs><lineargradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#fff"></stop><stop offset="100%" stop-color="#eef4ff"></stop></lineargradient><lineargradient id="wg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#dceaff"></stop><stop offset="100%" stop-color="#f8fbff"></stop></lineargradient><marker id="arr" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="4"><path d="M0,0 L8,4 L0,8 z" fill="#5b66d6"></path></marker></defs><rect fill="url(#bg)" height="518" rx="22" width="698" x="1" y="1"></rect><text fill="#5b66d6" font-family="Montserrat,Roboto,sans-serif" font-size="15" font-weight="800" x="36" y="42">Схема для отправки исполнителю</text><rect fill="#fff" height="340" rx="4" stroke="#7686b5" stroke-width="4" width="310" x="200" y="90"></rect><rect fill="url(#wg)" height="260" rx="2" stroke="#4f72de" stroke-width="6" width="180" x="275" y="130"></rect><line stroke="#9fb5ea" stroke-width="3" x1="365" x2="365" y1="130" y2="390"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#5b66d6" stroke-width="2.5" x1="200" x2="510" y1="62" y2="62"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#5b66d6" stroke-width="2.5" x1="170" x2="170" y1="90" y2="430"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#2f7df8" stroke-width="2.5" x1="275" x2="455" y1="410" y2="410"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#2f7df8" stroke-width="2.5" x1="474" x2="474" y1="130" y2="390"></line><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" width="126" x="292" y="43"></rect><text fill="#44507b" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="wallWidth" text-anchor="middle" x="355" y="63">размер стены</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" transform="rotate(-90 170 239)" width="104" x="118" y="224"></rect><text fill="#44507b" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="wallHeight" text-anchor="middle" transform="rotate(-90 170 241)" x="170" y="241">высота</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" width="132" x="299" y="420"></rect><text fill="#2f67d4" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="openingWidth" text-anchor="middle" x="365" y="440">проём</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" transform="rotate(-90 544 260)" width="124" x="482" y="245"></rect><text fill="#2f67d4" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="openingHeight" text-anchor="middle" transform="rotate(-90 544 262)" x="544" y="262">высота</text><rect fill="#fff" height="52" rx="12" stroke="#d9e1f5" width="330" x="190" y="456"></rect><text fill="#5060ce" font-family="Montserrat,Roboto,sans-serif" font-size="12.5" font-weight="800" id="schemeCaption" text-anchor="middle" x="355" y="477"><tspan id="schemeCaptionLine1" x="355" dy="0">Существующий проём</tspan><tspan id="schemeCaptionLine2" x="355" dy="17"></tspan></text></svg><div class="actions"><button class="btn secondary" id="pdfBtn" onclick="printTz()">PDF</button><button class="btn secondary" id="jpegBtn" onclick="downloadPlanJpeg()">JPEG</button><button class="btn secondary" onclick="shareTz()">Поделиться</button></div></div></div></details><div class="ready-box"><b>Следующий шаг — найти исполнителей</b><p>Отправим одинаковое задание подходящим исполнителям из нескольких источников и соберём ответы для сравнения.</p></div><div class="actions"><button class="btn primary large" id="openPaywall">Найти исполнителей →</button><a class="btn secondary large" href="create-task.html?edit=1" id="editTz">Изменить задание</a></div></section></div></div></main></div><div class="modal" id="paywall"><div class="modal-card paywall-card"><div class="paywall-head"><div><div class="eyebrow">Подбор исполнителей</div><h2>Найти исполнителей под это задание</h2><p class="lead">Соберём подходящих кандидатов из доступных источников и проверим информацию, которая поможет выбрать исполнителя.</p></div><div><div class="label">Тариф «Найти»</div><div class="paywall-price">990 ₽</div></div></div><div class="paywall-list"><div class="paywall-point"><div><b>Подберём кандидатов</b><span>По вашей задаче, специализации и географии.</span></div></div><div class="paywall-point"><div><b>Проверим доступные данные</b><span>Отзывы, контакты, источники информации и заметные риски.</span></div></div><div class="paywall-point"><div><b>Покажем готовую подборку</b><span>Можно выбрать исполнителей и отправить им одинаковое задание.</span></div></div></div><div class="paywall-note">990 ₽ — стоимость услуги «Сделает» по подбору исполнителей. Ремонтные и монтажные работы оплачиваются выбранному исполнителю напрямую.</div><div class="actions paywall-actions"><button class="btn primary large" id="buySearch" type="button">Перейти к оплате — 990 ₽</button><button class="btn secondary large" id="closePaywall" type="button">Вернуться к заданию</button></div><div class="payment-error hidden" id="paymentError"></div></div></div><div class="modal" id="historyModal"><div class="modal-card"><div class="eyebrow">История задания</div><h2 id="historyTitle">Версии задачи</h2><p class="lead">Предыдущие версии сохраняются на этом устройстве. Текущая версия всегда используется для PDF, JPEG и подбора.</p><div class="version-list" id="versionList"></div><div class="actions"><button class="btn secondary" id="closeHistory">Закрыть</button></div></div></div><script>
+.paywall-card{max-width:720px}.paywall-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}.paywall-price{font:900 42px/1 Montserrat,Roboto,sans-serif;margin-top:4px}.paywall-list{display:grid;gap:10px;margin:18px 0}.paywall-point{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}.paywall-point:first-child{border-top:0}.paywall-point:before{content:'✓';width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--bg);color:var(--green);font-weight:900}.paywall-point b{display:block;font:800 13px Montserrat,Roboto,sans-serif;margin-bottom:2px}.paywall-point span{display:block;font-size:12px;line-height:1.45;color:var(--muted)}.paywall-note{padding:12px 14px;border-radius:14px;background:var(--bg);font-size:12px;line-height:1.45;color:#59647f}.payment-error{margin-top:8px;font-size:12px;font-weight:700;color:#b04944}.paywall-actions{margin-top:16px}.paywall-actions .btn[disabled]{opacity:.65;cursor:wait}@media(max-width:620px){.paywall-price{font-size:36px}.paywall-actions{display:grid}.paywall-actions .btn{width:100%}}
+
+/* restored checkout 2026-09-12 19:57 */
+#paywall .modal-card{width:min(920px,calc(100vw - 32px));max-width:920px;max-height:92vh;overflow-y:auto;padding:24px;border-radius:24px}
+#paywall .tariff-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+#paywall .tariff-card{position:relative;display:block;padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;transition:.18s ease}
+#paywall .tariff-card:hover{border-color:#bfc8e6;transform:translateY(-1px)}
+#paywall .tariff-card.selected{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(91,85,245,.08);background:#fbfaff}
+#paywall .tariff-card input{position:absolute;opacity:0;pointer-events:none}
+#paywall .tariff-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#paywall .tariff-card-head b{display:block;font-size:15px;color:var(--text)}
+#paywall .tariff-card-head span{display:block;margin-top:4px;font-size:10px;line-height:1.4;color:var(--muted)}
+#paywall .tariff-card-head strong{white-space:nowrap;font-size:18px;color:var(--text)}
+#paywall .tariff-card ul{margin:14px 0 0;padding-left:17px;display:grid;gap:6px;font-size:10px;line-height:1.45;color:#515d76}
+#paywall .tariff-limit{margin-top:12px;padding:7px 9px;border-radius:9px;background:var(--bg);font-size:9px;line-height:1.4;color:#7c8496}
+#paywall .checkout-contact-box{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--bg)}
+#paywall .checkout-contact-box h3{margin:4px 0;font:800 16px Montserrat,Roboto,sans-serif}
+#paywall .checkout-contact-note{margin:0 0 12px;font-size:11px;line-height:1.5;color:var(--muted)}
+#paywall .checkout-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#paywall .checkout-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+#paywall .checkout-field>span{font-size:11px;font-weight:700;color:#43506a}
+#paywall .checkout-field input,#paywall .checkout-field select{width:100%;min-height:46px;box-sizing:border-box;padding:0 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font:500 12px Roboto,sans-serif;color:var(--text);outline:none}
+#paywall .checkout-field input:focus,#paywall .checkout-field select:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(91,85,245,.08)}
+#paywall .checkout-field:has(#checkoutEmail),#paywall .notification-channel-field{grid-column:1/-1}
+#paywall .checkout-field-note{display:block;margin:0;color:#7c879d;font-size:10px;line-height:1.5;font-weight:400}
+#paywall .notification-channel-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#paywall .notification-choice{position:relative;display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+#paywall .notification-choice:has(input:checked){border-color:var(--indigo);background:#f5f4ff;box-shadow:0 0 0 2px rgba(91,85,245,.06)}
+#paywall .notification-choice input{position:absolute;opacity:0;pointer-events:none}
+#paywall .notification-choice span{font-size:11px;font-weight:700;color:#35415b;text-align:center}
+#paywall .telegram-notification-settings{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;padding:16px;border:1px solid var(--line);border-radius:15px;background:#f7f8fc}
+#paywall .telegram-notification-settings.hidden{display:none}
+#paywall .telegram-notification-title,#paywall .telegram-connect-note{grid-column:1/-1}
+#paywall .telegram-notification-title{font:800 12px Montserrat,Roboto,sans-serif}
+#paywall .telegram-notification-settings label{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:9px;cursor:pointer}
+#paywall .telegram-notification-settings label input{width:16px;height:16px;margin:1px 0 0;accent-color:var(--indigo)}
+#paywall .telegram-notification-settings label span{font-size:10px;line-height:1.45;color:#46526a}
+#paywall .telegram-connect-note{margin-top:4px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;line-height:1.5;color:var(--muted)}
+#paywall .checkout-field:has(#checkoutPreferredContact){grid-column:1/-1;max-width:300px}
+#paywall .checkout-consent{display:flex;align-items:flex-start;gap:9px;margin-top:16px;font-size:10px;line-height:1.5;color:#69758d}
+#paywall .checkout-consent input{width:16px;height:16px;margin:1px 0 0;accent-color:var(--indigo)}
+#paywall .checkout-error{margin-top:10px;padding:9px 10px;border-radius:10px;background:#fff0f0;color:#a33b3b;font-size:10px}
+#paywall .telegram-connect-step{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px 16px;margin-top:18px;padding:18px;border:1px solid rgba(91,85,245,.18);border-radius:18px;background:linear-gradient(135deg,rgba(91,85,245,.07),rgba(39,201,237,.045))}
+#paywall .telegram-connect-step.hidden{display:none}
+#paywall .telegram-connect-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:15px;background:var(--indigo);color:#fff;font-size:22px;font-weight:800}
+#paywall .telegram-connect-copy h3{margin:3px 0 5px;font-size:17px}.telegram-connect-copy p{margin:0;color:var(--muted);font-size:10px;line-height:1.55}
+#paywall .telegram-connect-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:9px}.telegram-connect-error{grid-column:1/-1;color:#b42318;font-size:10px}
+@media(max-width:700px){#paywall .modal-card{width:calc(100vw - 20px);padding:18px}#paywall .tariff-selector,#paywall .checkout-fields,#paywall .notification-channel-options,#paywall .telegram-notification-settings{grid-template-columns:1fr}#paywall .checkout-field:has(#checkoutEmail),#paywall .notification-channel-field,#paywall .telegram-notification-settings,#paywall .checkout-field:has(#checkoutPreferredContact){grid-column:1;max-width:none}#paywall .telegram-notification-title,#paywall .telegram-connect-note{grid-column:1}}
+
+</style></head><body><div class="app-shell"><aside class="sidebar"><a class="brand" href="/"><img alt="" src="assets/logo-icon.svg"/><div>Сдела<span>ет</span></div></a><nav class="app-nav"><a href="my-tasks.html">▤ Мои задачи</a><a href="create-task.html">＋ Новая задача</a><a href="profile.html">◉ Профиль</a></nav><div class="sidebar-spacer"></div><a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a></aside><main class="app-main"><div class="progress-wrap"><div class="progress3"><div class="stage done"><span class="n">✓</span>Задача</div><div class="progress-line"></div><div class="stage"><span class="n">2</span>Подбор</div><div class="progress-line"></div><div class="stage"><span class="n">3</span>Выбор</div></div></div><div class="app-content"><div class="page"><section class="card"><div class="eyebrow">Готовое задание</div><h1 class="hero-title" id="taskTitle">Задание для исполнителя</h1><p class="lead">Мы учли важные нюансы категории и собрали требования для сопоставимых предложений.</p><div class="tz-version"><div><b id="versionLabel">Версия 1</b><span id="versionDate"></span></div><button class="btn ghost version-history-btn" id="historyBtn" type="button">История версий</button></div><div class="executor-brief"><div class="executor-brief-head"><div><div class="eyebrow">Готово к отправке</div><h3>Что получит исполнитель</h3><p class="brief-note">Показываем сообщение целиком — именно его получат выбранные исполнители.</p></div><span class="status-pill good">одно задание для всех</span></div><div class="executor-message"><div class="executor-message-top"><div class="executor-avatar">С</div><div><b>Задание от «Сделает»</b><span>Запрос на расчёт работ</span></div></div><div class="executor-brief-text" id="executorBrief"></div><div class="executor-message-bottom"><div class="executor-message-proof">всем исполнителям отправится одинаковый текст</div><button class="btn ghost" id="copyBrief" type="button">Скопировать задание</button></div></div></div><details class="assignment-details" id="assignmentDetails"><summary>Посмотреть детали задания<span class="details-hint">Схема, замер и требования к предложению</span></summary><div class="tz-grid"><div><div class="tz-section"><h3>Что нужно сделать</h3><p id="taskNarrative"></p></div><div class="tz-section"><h3>Что уточнить на замере</h3><div class="measure-list" id="measureList"></div></div><div class="tz-section"><h3>Что исполнитель должен указать в предложении</h3><div class="request-fields" id="requestFields"></div></div><div class="hidden" id="attachmentsWrap" style="margin-top:14px"><div class="label">Вложения</div><div class="attachments" id="attachments"></div></div></div><div class="scheme-card" id="schemeCard"><div class="eyebrow">Что показать исполнителю</div><svg aria-label="Схема объекта" id="planSvg" viewbox="0 0 700 520" xmlns="http://www.w3.org/2000/svg"><defs><lineargradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#fff"></stop><stop offset="100%" stop-color="#eef4ff"></stop></lineargradient><lineargradient id="wg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#dceaff"></stop><stop offset="100%" stop-color="#f8fbff"></stop></lineargradient><marker id="arr" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="4"><path d="M0,0 L8,4 L0,8 z" fill="#5b66d6"></path></marker></defs><rect fill="url(#bg)" height="518" rx="22" width="698" x="1" y="1"></rect><text fill="#5b66d6" font-family="Montserrat,Roboto,sans-serif" font-size="15" font-weight="800" x="36" y="42">Схема для отправки исполнителю</text><rect fill="#fff" height="340" rx="4" stroke="#7686b5" stroke-width="4" width="310" x="200" y="90"></rect><rect fill="url(#wg)" height="260" rx="2" stroke="#4f72de" stroke-width="6" width="180" x="275" y="130"></rect><line stroke="#9fb5ea" stroke-width="3" x1="365" x2="365" y1="130" y2="390"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#5b66d6" stroke-width="2.5" x1="200" x2="510" y1="62" y2="62"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#5b66d6" stroke-width="2.5" x1="170" x2="170" y1="90" y2="430"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#2f7df8" stroke-width="2.5" x1="275" x2="455" y1="410" y2="410"></line><line marker-end="url(#arr)" marker-start="url(#arr)" stroke="#2f7df8" stroke-width="2.5" x1="474" x2="474" y1="130" y2="390"></line><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" width="126" x="292" y="43"></rect><text fill="#44507b" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="wallWidth" text-anchor="middle" x="355" y="63">размер стены</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" transform="rotate(-90 170 239)" width="104" x="118" y="224"></rect><text fill="#44507b" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="wallHeight" text-anchor="middle" transform="rotate(-90 170 241)" x="170" y="241">высота</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" width="132" x="299" y="420"></rect><text fill="#2f67d4" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="openingWidth" text-anchor="middle" x="365" y="440">проём</text><rect fill="#fff" height="30" rx="10" stroke="#d9e1f5" transform="rotate(-90 544 260)" width="124" x="482" y="245"></rect><text fill="#2f67d4" font-family="Montserrat,Roboto,sans-serif" font-size="13" font-weight="800" id="openingHeight" text-anchor="middle" transform="rotate(-90 544 262)" x="544" y="262">высота</text><rect fill="#fff" height="52" rx="12" stroke="#d9e1f5" width="330" x="190" y="456"></rect><text fill="#5060ce" font-family="Montserrat,Roboto,sans-serif" font-size="12.5" font-weight="800" id="schemeCaption" text-anchor="middle" x="355" y="477"><tspan id="schemeCaptionLine1" x="355" dy="0">Существующий проём</tspan><tspan id="schemeCaptionLine2" x="355" dy="17"></tspan></text></svg><div class="actions"><button class="btn secondary" id="pdfBtn" onclick="printTz()">PDF</button><button class="btn secondary" id="jpegBtn" onclick="downloadPlanJpeg()">JPEG</button><button class="btn secondary" onclick="shareTz()">Поделиться</button></div></div></div></details><div class="ready-box"><b>Следующий шаг — найти исполнителей</b><p>Отправим одинаковое задание подходящим исполнителям из нескольких источников и соберём ответы для сравнения.</p></div><div class="actions"><button class="btn primary large" id="openPaywall">Найти исполнителей →</button><a class="btn secondary large" href="create-task.html?edit=1" id="editTz">Изменить задание</a></div></section></div></div></main></div><div class="modal" id="paywall">
+<div class="modal-card">
+<div class="eyebrow">
+      Задание готово
+    </div>
+<h2>
+      Теперь можем найти исполнителей именно под эту задачу
+    </h2>
+<p class="lead">
+      Найдём подходящих кандидатов и проверим доступные данные о них по нескольким источникам.
+    </p>
+<div class="tariff-selector">
+<label class="tariff-card selected" data-tariff-card="find">
+<input checked="" name="checkoutTariff" type="radio" value="find"/>
+<div class="tariff-card-head">
+<div>
+<b>Найти</b>
+<span>Быстро получить подборку</span>
+</div>
+<strong>990 ₽</strong>
+</div>
+<ul>
+<li>Один поиск подходящих исполнителей</li>
+<li>Проверка открытых данных и репутации</li>
+<li>Объяснение, почему кандидат вошёл в подборку</li>
+</ul>
+<div class="tariff-limit">
+          Один поиск без повторного уточнения
+        </div>
+</label>
+<label class="tariff-card" data-tariff-card="compare">
+<input name="checkoutTariff" type="radio" value="compare"/>
+<div class="tariff-card-head">
+<div>
+<b>Сравнить</b>
+<span>Когда нужно сравнить варианты</span>
+</div>
+<strong>1 990 ₽</strong>
+</div>
+<ul>
+<li>Всё из тарифа «Найти»</li>
+<li>Повторный поиск с уточнением условий</li>
+<li>Одинаковый запрос выбранным исполнителям</li>
+<li>Сбор и сравнение полученных предложений</li>
+</ul>
+</label>
+<label class="tariff-card" data-tariff-card="choice">
+<input name="checkoutTariff" type="radio" value="choice"/>
+<div class="tariff-card-head">
+<div>
+<b>До выбора</b>
+<span>Когда предложения нужно довести до ясного сравнения</span>
+</div>
+<strong>2 990 ₽</strong>
+</div>
+<ul>
+<li>Всё из тарифа «Сравнить»</li>
+<li>Повторные запросы по недостающим данным</li>
+<li>Уточнение цены, материалов, сроков и гарантий</li>
+<li>Доводим предложения до сопоставимого состояния</li>
+</ul>
+</label>
+</div>
+<div class="value-list">
+<div class="value-row">
+        Поиск подходящих исполнителей по нескольким доступным источникам.
+      </div>
+<div class="value-row">
+        Проверка специализации и географии.
+      </div>
+<div class="value-row">
+        Анализ доступных отзывов и репутационных сигналов.
+      </div>
+<div class="value-row">
+        Проверка доступной информации о компании или специалисте.
+      </div>
+<div class="value-row">
+        Источники каждого значимого сигнала и найденные риски.
+      </div>
+<div class="value-row">
+        Одинаковый запрос для выбранных исполнителей.
+      </div>
+</div>
+<div class="checkout-contact-box">
+<div class="eyebrow">
+        Контактные данные
+      </div>
+<h3>
+        Как с вами связаться
+      </h3>
+<p class="checkout-contact-note">
+        Нужны для связи по задаче и для сохранения заказа.
+      </p>
+<div class="checkout-fields">
+<label class="checkout-field">
+<span>
+            Имя *
+          </span>
+<input autocomplete="name" id="checkoutName" placeholder="Артём" type="text"/>
+</label>
+<label class="checkout-field">
+<span>
+            Телефон *
+          </span>
+<input autocomplete="tel" id="checkoutPhone" placeholder="+7 999 000-00-00" type="tel"/>
+</label>
+<label class="checkout-field">
+<span>
+            Email *
+          </span>
+<input autocomplete="email" id="checkoutEmail" placeholder="name@example.com" required="" type="email"/>
+<small class="checkout-field-note">
+            На эту почту будем присылать только основные статусы по задаче: когда подбор готов, появились предложения и итог по задаче.
+          </small>
+</label>
+<div class="checkout-field notification-channel-field">
+<span>
+            Куда присылать уведомления по задаче?
+          </span>
+<div class="notification-channel-options">
+<label class="notification-choice">
+<input checked="" name="notificationChannel" type="radio" value="email"/>
+<span>Email</span>
+</label>
+<label class="notification-choice">
+<input name="notificationChannel" type="radio" value="telegram"/>
+<span>Telegram</span>
+</label>
+<label class="notification-choice">
+<input name="notificationChannel" type="radio" value="both"/>
+<span>Email + Telegram</span>
+</label>
+</div>
+<small class="checkout-field-note">
+            Email остаётся резервным каналом для основных итогов по задаче.
+          </small>
+</div>
+<div class="telegram-notification-settings hidden" id="telegramNotificationSettings">
+<div class="telegram-notification-title">
+            Что сообщать в Telegram
+          </div>
+<label>
+<input checked="" id="tgSelectionReady" type="checkbox"/>
+<span>Подбор исполнителей готов</span>
+</label>
+<label>
+<input checked="" id="tgOutreachSent" type="checkbox"/>
+<span>Запросы отправлены исполнителям</span>
+</label>
+<label>
+<input checked="" id="tgReplyReceived" type="checkbox"/>
+<span>Получен новый ответ</span>
+</label>
+<label>
+<input id="tgWaitingReplies" type="checkbox"/>
+<span>Промежуточно сообщать, кого ещё ждём</span>
+</label>
+<label>
+<input checked="" id="tgComparisonReady" type="checkbox"/>
+<span>Сравнение предложений готово</span>
+</label>
+<label>
+<input checked="" id="tgActionRequired" type="checkbox"/>
+<span>Требуется ваше действие</span>
+</label>
+<label>
+<input checked="" id="tgTaskSummary" type="checkbox"/>
+<span>Итог по задаче</span>
+</label>
+<div class="telegram-connect-note">
+            После оформления задачи предложим подключить Telegram одним нажатием.
+          </div>
+</div>
+<label class="checkout-field">
+<span>
+            Как удобнее связаться
+          </span>
+<select id="checkoutPreferredContact">
+<option value="phone">
+              Телефон
+            </option>
+<option value="email">
+              Email
+            </option>
+</select>
+</label>
+</div>
+<label class="checkout-consent">
+<input id="checkoutConsent" type="checkbox"/>
+<span>
+          Согласен на обработку персональных данных для выполнения задачи.
+        </span>
+</label>
+<div class="checkout-error hidden" id="checkoutError"></div>
+</div>
+<section class="telegram-connect-step hidden" id="telegramConnectStep">
+<div class="telegram-connect-icon">
+        ↗
+      </div>
+<div class="telegram-connect-copy">
+<div class="eyebrow">
+          Уведомления в Telegram
+        </div>
+<h3>
+          Подключите Telegram к задаче
+        </h3>
+<p>
+          Будем присылать только выбранные вами статусы.
+          В Telegram останется нажать Start.
+        </p>
+</div>
+<div class="telegram-connect-actions">
+<button class="btn primary" id="connectTelegram" type="button">
+          Подключить Telegram
+        </button>
+<button class="btn secondary" id="skipTelegramConnect" type="button">
+          Продолжить без Telegram
+        </button>
+</div>
+<div class="telegram-connect-error hidden" id="telegramConnectError"></div>
+</section>
+<div class="notice">
+      Работы по ремонту или монтажу в эту сумму не входят.
+      За работу вы рассчитываетесь напрямую с выбранным исполнителем.
+    </div>
+<div class="actions">
+<button class="btn primary large" id="buySearch" type="button">
+        Продолжить — 990 ₽
+      </button>
+<button class="btn secondary large" id="closePaywall" type="button">
+        Вернуться к заданию
+      </button>
+</div>
+</div>
+</div><div class="modal" id="historyModal"><div class="modal-card"><div class="eyebrow">История задания</div><h2 id="historyTitle">Версии задачи</h2><p class="lead">Предыдущие версии сохраняются на этом устройстве. Текущая версия всегда используется для PDF, JPEG и подбора.</p><div class="version-list" id="versionList"></div><div class="actions"><button class="btn secondary" id="closeHistory">Закрыть</button></div></div></div><script>
 var task=sdNormalizeCurrentTaskVersion();if(!task){location.replace('create-task.html')}
 var version=task.version||1,versions=sdGetTaskVersions(task.id);document.getElementById('taskTitle').textContent=task.categoryId==='balcony-insulation'?'Готовое задание для утепления балкона':'Готовое задание: '+(task.category||'задача');document.getElementById('versionLabel').textContent='Версия '+version;document.getElementById('versionDate').textContent='Обновлено '+sdFormatVersionDate(task.updatedAt||task.createdAt);
 var narrative=[];narrative.push(task.scope||task.description||'Выполнить работы по задаче.');if(task.city)narrative.push('Объект: '+task.city+'.');if(task.window)narrative.push('Остекление: '+task.window+'.');if(task.finish)narrative.push('Результат: '+task.finish+'.');if(task.exclusions)narrative.push(task.exclusions+'.');document.getElementById('taskNarrative').textContent=narrative.join(' ');function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}var briefRows=[];function addBrief(label,value){if(value)briefRows.push([label,value])}addBrief('Задача',task.scope||task.description||'Выполнить работы по задаче.');addBrief('Объект',task.city);addBrief('Цель',task.goal);addBrief('Остекление',task.window);addBrief('Результат',task.finish);addBrief('Размеры',task.wallSize&&!/уточнить/i.test(task.wallSize)?task.wallSize:'уточнить на замере');if(task.exclusions)addBrief('Не включать',task.exclusions);var briefHtml=briefRows.map(function(r){return '<div class="brief-row"><div class="brief-label">'+esc(r[0])+':</div><div class="brief-value">'+esc(r[1])+'</div></div>'}).join('');briefHtml+='<div class="brief-request"><span class="brief-label">В предложении укажите:</span> стоимость работ и материалов отдельно, состав работ и материалов, сроки, дополнительные расходы и гарантию.</div>';document.getElementById('executorBrief').innerHTML=briefHtml;var measures=[];if(!task.wallSize||/уточнить/i.test(task.wallSize))measures.push('размер утепляемой поверхности');if(!task.openingSize||/уточнить/i.test(task.openingSize))measures.push('размеры проёма и примыканий');if(!task.area||/уточнить/i.test(task.area))measures.push('площадь и фактический объём работ');measures.push('состояние основания и необходимость дополнительных работ');var mb=document.getElementById('measureList');measures.forEach(function(v){var d=document.createElement('div');d.className='measure-item';d.textContent=v;mb.appendChild(d)});
 var rf=(task.requestFields&&task.requestFields.length)?task.requestFields:((sdCategoryEngine.getCategory(task.categoryId)||{}).requestFields||[]);var rbox=document.getElementById('requestFields');rf.forEach(function(v){var d=document.createElement('div');d.className='request-field';d.textContent=v;rbox.appendChild(d)});if(!rf.length)rbox.innerHTML='<div class="muted">Требования к расчёту уточняются для этой категории.</div>';
 if(task.attachments&&task.attachments.length){document.getElementById('attachmentsWrap').classList.remove('hidden');var ab=document.getElementById('attachments');task.attachments.forEach(function(f){var el=document.createElement('div');el.className='attachment';if(f.data&&f.type&&f.type.indexOf('image/')===0){var img=document.createElement('img');img.src=f.data;img.alt='';el.appendChild(img)}var n=document.createElement('div');n.textContent=f.name;el.appendChild(n);ab.appendChild(el)})}
 if(task.categoryId!=='balcony-insulation')document.getElementById('schemeCard').classList.add('hidden');function parts(v){var m=(v||'').match(/(\d{2,4})\s*[×xх]\s*(\d{2,4})/);return m?[m[1]+' мм',m[2]+' мм']:['уточнить','уточнить']}var w=parts(task.wallSize),o=parts(task.openingSize);document.getElementById('wallWidth').textContent=w[0];document.getElementById('wallHeight').textContent=w[1];document.getElementById('openingWidth').textContent=o[0];document.getElementById('openingHeight').textContent=o[1];function setSchemeCaption(value){var text=(value||'Существующий проём').replace(/\s+/g,' ').trim(),a=text,b='';if(text.length>31){var cut=text.lastIndexOf(' ',31);if(cut<15)cut=31;a=text.slice(0,cut);b=text.slice(cut).trim();if(b.length>31)b=b.slice(0,30)+'…'}document.getElementById('schemeCaptionLine1').textContent=a;document.getElementById('schemeCaptionLine2').textContent=b}setSchemeCaption(task.window);
-var pay=document.getElementById('paywall');document.getElementById('openPaywall').onclick=function(){sdTrack('tz_confirmed',{category:task.category,city:task.city,version:version});sdTrack('search_paywall_view',{category:task.category,city:task.city});pay.classList.add('open')};document.getElementById('closePaywall').onclick=function(){pay.classList.remove('open')};pay.addEventListener('click',function(e){if(e.target===pay)pay.classList.remove('open')});document.getElementById('buySearch').onclick=async function(){var btn=this,err=document.getElementById('paymentError');err.classList.add('hidden');btn.disabled=true;var prev=btn.textContent;btn.textContent='Создаём оплату…';sdTrack('search_purchase_click',{category:task.category,city:task.city,version:version,plan:'find'});try{var taskId=String(task.id||task.taskId||'').slice(0,80);var r=await fetch('/api/payments/v1/payments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({plan:'find',taskId:taskId})});var data=await r.json().catch(function(){return {}});if(!r.ok||!data.paymentUrl)throw new Error(data.error||'PAYMENT_CREATE_FAILED');localStorage.setItem('sdelaet.payment.find',JSON.stringify({orderId:data.orderId||'',taskId:taskId,createdAt:new Date().toISOString()}));sdTrack('search_payment_created',{category:task.category,city:task.city,version:version,plan:'find'});location.href=data.paymentUrl}catch(e){err.textContent='Не удалось открыть оплату. Попробуйте ещё раз.';err.classList.remove('hidden');btn.disabled=false;btn.textContent=prev}};
-document.getElementById('copyBrief').onclick=function(){var text=document.getElementById('executorBrief').textContent;if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){sdToast('Задание скопировано','ok')})}};document.getElementById('editTz').onclick=function(){sdBeginTaskEdit(task)};
+function selectedCheckoutTariff(){
+  var input=document.querySelector('input[name="checkoutTariff"]:checked');
+  var id=input?input.value:'find';
+  var map={
+    find:{id:'find',name:'Найти',price:990},
+    compare:{id:'compare',name:'Сравнить',price:1990},
+    choice:{id:'choice',name:'До выбора',price:2990}
+  };
+  return map[id]||map.find;
+}
+
+function renderSelectedTariff(){
+  var tariff=
+    selectedCheckoutTariff();
+
+  document
+    .querySelectorAll(
+      '[data-tariff-card]'
+    )
+    .forEach(function(card){
+      card.classList.toggle(
+        'selected',
+        card.dataset.tariffCard===
+          tariff.id
+      );
+    });
+
+  var button=
+    document.getElementById(
+      'buySearch'
+    );
+
+  if(button){
+    button.textContent=
+      'Продолжить — '+
+      Number(tariff.price || 0)
+        .toLocaleString('ru-RU')+
+      ' ₽';
+  }
+}
+
+document
+  .querySelectorAll(
+    'input[name="checkoutTariff"]'
+  )
+  .forEach(function(input){
+    input.addEventListener(
+      'change',
+      renderSelectedTariff
+    );
+  });
+
+renderSelectedTariff();
+
+
+function currentNotificationChannel(){
+  return (
+    document.querySelector(
+      'input[name="notificationChannel"]:checked'
+    )?.value ||
+    'email'
+  );
+}
+
+function renderNotificationChannel(){
+  var channel=
+    currentNotificationChannel();
+
+  var telegramBox=
+    document.getElementById(
+      'telegramNotificationSettings'
+    );
+
+  if(!telegramBox){
+    return;
+  }
+
+  telegramBox.classList.toggle(
+    'hidden',
+    channel==='email'
+  );
+}
+
+document
+  .querySelectorAll(
+    'input[name="notificationChannel"]'
+  )
+  .forEach(function(input){
+    input.addEventListener(
+      'change',
+      renderNotificationChannel
+    );
+  });
+
+renderNotificationChannel();
+
+
+async function openTelegramForOrder(order){
+  var errorBox=
+    document.getElementById(
+      'telegramConnectError'
+    );
+
+  var button=
+    document.getElementById(
+      'connectTelegram'
+    );
+
+  if(errorBox){
+    errorBox.classList.add('hidden');
+    errorBox.textContent='';
+  }
+
+  if(
+    !order?.task_id ||
+    !order?.order_id
+  ){
+    if(errorBox){
+      errorBox.textContent=
+        'Не удалось определить заказ. Обновите страницу и попробуйте ещё раз.';
+
+      errorBox.classList.remove(
+        'hidden'
+      );
+    }
+
+    return;
+  }
+
+  if(button){
+    button.disabled=true;
+    button.textContent=
+      'Открываем Telegram…';
+  }
+
+  try{
+    var response=
+      await fetch(
+        'https://api.onsdelaet.ru/v1/telegram/link',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:JSON.stringify({
+            task_id:
+              order.task_id,
+
+            order_id:
+              order.order_id
+          })
+        }
+      );
+
+    var data=
+      await response
+        .json()
+        .catch(function(){
+          return {};
+        });
+
+    if(
+      !response.ok ||
+      !data.ok ||
+      !data.telegram_url
+    ){
+      throw new Error(
+        data.error ||
+        'TELEGRAM_LINK_FAILED'
+      );
+    }
+
+    sdTrack(
+      'telegram_connect_click',
+      {
+        task_id:
+          order.task_id,
+
+        order_id:
+          order.order_id
+      }
+    );
+
+    var popup=window.open(data.telegram_url,'_blank','noopener');
+    if(!popup)window.location.href=data.telegram_url;
+
+  }catch(error){
+    console.error(
+      '[telegram.link]',
+      error
+    );
+
+    if(errorBox){
+      errorBox.textContent=
+        'Не удалось открыть Telegram. Можно продолжить без него и подключить позже.';
+
+      errorBox.classList.remove(
+        'hidden'
+      );
+    }
+
+    if(button){
+      button.disabled=false;
+      button.textContent=
+        'Подключить Telegram';
+    }
+  }
+}
+
+
+
+async function beginCheckoutPayment(order,tariff){
+  var plan=tariff.id==='choice'?'decision':tariff.id;
+  var response=await fetch('/api/payments/v1/payments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,taskId:order.task_id||''})});
+  var data=await response.json().catch(function(){return {}});
+  if(!response.ok||!data.paymentUrl)throw new Error(data.error||'PAYMENT_CREATE_FAILED');
+  localStorage.setItem('sdelaet.payment.current',JSON.stringify({orderId:data.orderId||'',preparedOrderId:order.order_id||'',taskId:order.task_id||'',tariffId:tariff.id,createdAt:new Date().toISOString()}));
+  location.href=data.paymentUrl;
+}
+document.getElementById('buySearch').onclick=async function(){
+  var button=this;
+  var errorBox=document.getElementById('checkoutError');
+
+  var name=document.getElementById('checkoutName').value.trim();
+  var phone=document.getElementById('checkoutPhone').value.trim();
+  var email=document.getElementById('checkoutEmail').value.trim();
+  var preferred=document.getElementById('checkoutPreferredContact').value;
+  var consent=document.getElementById('checkoutConsent').checked;
+
+
+  var notificationChannel=
+    currentNotificationChannel();
+
+  var notificationPreferences={
+    email_enabled:
+      true,
+
+    telegram_enabled:
+      notificationChannel==='telegram' ||
+      notificationChannel==='both',
+
+    telegram_selection_ready:
+      !!document.getElementById(
+        'tgSelectionReady'
+      )?.checked,
+
+    telegram_outreach_sent:
+      !!document.getElementById(
+        'tgOutreachSent'
+      )?.checked,
+
+    telegram_reply_received:
+      !!document.getElementById(
+        'tgReplyReceived'
+      )?.checked,
+
+    telegram_waiting_replies:
+      !!document.getElementById(
+        'tgWaitingReplies'
+      )?.checked,
+
+    telegram_comparison_ready:
+      !!document.getElementById(
+        'tgComparisonReady'
+      )?.checked,
+
+    telegram_action_required:
+      !!document.getElementById(
+        'tgActionRequired'
+      )?.checked,
+
+    telegram_task_summary:
+      !!document.getElementById(
+        'tgTaskSummary'
+      )?.checked
+  };
+
+  errorBox.classList.add('hidden');
+  errorBox.textContent='';
+
+  if(name.length<2){
+    errorBox.textContent='Укажите имя.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if(phone.replace(/\D/g,'').length<10){
+    errorBox.textContent='Укажите корректный телефон.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if(
+    !email ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ){
+    errorBox.textContent='Укажите корректный email — на него будут приходить основные статусы по задаче.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if(!consent){
+    errorBox.textContent='Нужно согласие на обработку персональных данных.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent='Сохраняем заказ…';
+
+  try{
+    var tariff=
+      selectedCheckoutTariff();
+
+    var ymClientId='';
+
+    if(typeof ym==='function'){
+      try{
+        ymClientId=await new Promise(function(resolve){
+          var settled=false;
+
+          var timer=setTimeout(function(){
+            if(settled)return;
+            settled=true;
+            resolve('');
+          },1500);
+
+          ym(
+            112503660,
+            'getClientID',
+            function(id){
+              if(settled)return;
+
+              settled=true;
+              clearTimeout(timer);
+
+              resolve(
+                String(id||'')
+              );
+            }
+          );
+        });
+      }catch(e){
+        ymClientId='';
+      }
+    }
+
+    var commercial=typeof sdSetCommercialContext==='function'?sdSetCommercialContext(tariff.id,{version:version}):{tariff_id:tariff.id,version:version};
+
+    sdTrack(
+      'find_executors_click',
+      commercial
+    );
+
+    var response=await fetch(
+      'https://api.onsdelaet.ru/v1/orders/prepare',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          tariff_id:tariff.id,
+          notifications:notificationPreferences,
+
+          client:{
+            name:name,
+            phone:phone,
+            email:email,
+            preferred_contact:preferred,
+            consent_personal_data:consent,
+            ym_client_id:ymClientId
+          },
+
+          task:task,
+
+          attribution:{
+            utm_source:localStorage.getItem('sdelaet.utm_source')||'',
+            utm_medium:localStorage.getItem('sdelaet.utm_medium')||'',
+            utm_campaign:localStorage.getItem('sdelaet.utm_campaign')||'',
+            utm_content:localStorage.getItem('sdelaet.utm_content')||'',
+            utm_term:localStorage.getItem('sdelaet.utm_term')||'',
+            yclid:localStorage.getItem('sdelaet.yclid')||'',
+            ysclid:localStorage.getItem('sdelaet.ysclid')||'',
+            gclid:localStorage.getItem('sdelaet.gclid')||'',
+            referrer:document.referrer||'',
+            landing_page:location.href
+          }
+        })
+      }
+    );
+
+    var data=await response.json().catch(function(){
+      return {};
+    });
+
+    if(!response.ok||!data.ok){
+      throw new Error(
+        data.error||
+        'ORDER_PREPARE_FAILED'
+      );
+    }
+
+    localStorage.setItem(
+      'sdelaet.order.current',
+      JSON.stringify(data)
+    );
+
+    localStorage.setItem(
+      'sdelaet.client.contact',
+      JSON.stringify({
+        client_id_crm:data.client_id_crm,
+        name:name,
+        phone:phone,
+        email:email,
+        preferred_contact:preferred
+      })
+    );
+
+    sdTrack(
+      'order_prepared',
+      Object.assign(
+        {},
+        commercial,
+        {
+          client_id_crm:
+            data.client_id_crm,
+
+          order_id:
+            data.order_id,
+
+          task_id:
+            data.task_id,
+
+          amount:
+            data.amount,
+
+          currency:
+            data.currency
+        }
+      )
+    );
+
+    if(
+      data.telegram_required===true
+    ){
+      var telegramStep=
+        document.getElementById(
+          'telegramConnectStep'
+        );
+
+      var checkoutContact=
+        document.querySelector(
+          '#paywall .checkout-contact'
+        );
+
+      var notice=
+        document.querySelector(
+          '#paywall .notice'
+        );
+
+      var actions=
+        document.querySelector(
+          '#paywall .actions'
+        );
+
+      if(checkoutContact){
+        checkoutContact.classList.add(
+          'hidden'
+        );
+      }
+
+      if(notice){
+        notice.classList.add(
+          'hidden'
+        );
+      }
+
+      if(actions){
+        actions.classList.add(
+          'hidden'
+        );
+      }
+
+      if(telegramStep){
+        telegramStep.classList.remove(
+          'hidden'
+        );
+      }
+
+      var connectButton=
+        document.getElementById(
+          'connectTelegram'
+        );
+
+      var skipButton=
+        document.getElementById(
+          'skipTelegramConnect'
+        );
+
+      if(connectButton){
+        connectButton.onclick=function(){
+          openTelegramForOrder(data);
+        };
+      }
+
+      if(skipButton){
+        skipButton.textContent='Перейти к оплате';
+        skipButton.onclick=function(){
+          sdTrack(
+            'telegram_connect_skip',
+            {
+              task_id:
+                data.task_id,
+
+              order_id:
+                data.order_id
+            }
+          );
+
+          this.disabled=true;
+          this.textContent='Открываем оплату…';
+          beginCheckoutPayment(data,tariff).catch(function(){this.disabled=false;this.textContent='Перейти к оплате';}.bind(this));
+        };
+      }
+
+      button.disabled=false;
+      renderSelectedTariff();
+
+      return;
+    }
+
+    await beginCheckoutPayment(data,tariff);
+
+  }catch(error){
+    console.error(
+      '[order.prepare]',
+      error
+    );
+
+    errorBox.textContent=
+      'Не удалось сохранить заказ. Попробуйте ещё раз.';
+
+    errorBox.classList.remove(
+      'hidden'
+    );
+
+    button.disabled=false;
+    renderSelectedTariff();
+  }
+};
+
+(function prefillCheckout(){
+  var saved={};try{saved=JSON.parse(localStorage.getItem('sdelaet.client.contact')||'{}')}catch(e){}
+  var profile=typeof sdProfile==='function'?(sdProfile()||{}):{};
+  var n=document.getElementById('checkoutName'),p=document.getElementById('checkoutPhone'),e=document.getElementById('checkoutEmail');
+  if(n&&!n.value)n.value=saved.name||profile.name||'';
+  if(p&&!p.value)p.value=saved.phone||profile.phone||'';
+  if(e&&!e.value)e.value=saved.email||profile.email||'';
+})();
+
+  document.getElementById('copyBrief').onclick=function(){var text=document.getElementById('executorBrief').textContent;if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){sdToast('Задание скопировано','ok')})}};document.getElementById('editTz').onclick=function(){sdBeginTaskEdit(task)};
 var hm=document.getElementById('historyModal');document.getElementById('historyBtn').onclick=function(){var box=document.getElementById('versionList');box.innerHTML='';if(!versions.length){box.innerHTML='<div class="notice">Это первая версия задания. История появится после изменений.</div>'}else{versions.forEach(function(v){var el=document.createElement('div');el.className='version-item';el.innerHTML='<b>Версия '+(v.version||1)+'</b><span>'+sdFormatVersionDate(v.updatedAt||v.createdAt)+'</span><p>'+(v.scope||v.description||'Задача')+' · '+(v.city||'')+'</p>';box.appendChild(el)})}hm.classList.add('open')};document.getElementById('closeHistory').onclick=function(){hm.classList.remove('open')};hm.addEventListener('click',function(e){if(e.target===hm)hm.classList.remove('open')});
 function printTz(){var old=document.title;document.title='Задание '+(task.category||'Сделает')+' — версия '+version;window.print();setTimeout(function(){document.title=old},700)}
 function downloadPlanJpeg(){var svg=document.getElementById('planSvg'),data=new XMLSerializer().serializeToString(svg),blob=new Blob([data],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=1600;c.height=Math.round(1600*520/700);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);var a=document.createElement('a');a.href=c.toDataURL('image/jpeg',.95);a.download='zadanie-sdelaet-v'+version+'.jpg';a.click()};img.src=url}
