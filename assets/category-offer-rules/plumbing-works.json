@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "plumbing-works",
+  "fieldPolicies": {
+    "pipeSystem": {
+      "requiredWhen": {"field":"plumbingJob","in":["water_distribution","relocation"]},
+      "requirementLevel": "comparison",
+      "clarification": "какая система труб и фитингов предлагается"
+    },
+    "distributionScheme": {
+      "requiredWhen": {"field":"plumbingJob","in":["water_distribution","relocation"]},
+      "requirementLevel": "comparison",
+      "clarification": "какая схема разводки воды предлагается"
+    },
+    "waterDistributionIncluded": {
+      "requiredWhen": {"field":"plumbingJob","in":["water_distribution","relocation"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли разводка водоснабжения"
+    },
+    "pressureTestIncluded": {
+      "requiredWhen": {"field":"plumbingJob","in":["water_distribution","relocation"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли опрессовка и проверка герметичности"
+    },
+    "drainageIncluded": {
+      "requiredWhen": {"any":[{"field":"plumbingJob","equals":"drainage"},{"field":"scope","containsAny":["канализац","слив"]}]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли канализация / слив"
+    },
+    "plumbingChasingIncluded": {
+      "requiredWhen": {"all":[{"field":"objectState","equals":"finished"},{"field":"plumbingJob","in":["water_distribution","drainage","relocation"]}]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли штробление и восстановление отделки"
+    },
+    "fixtureType": {
+      "requiredWhen": {"field":"plumbingJob","equals":"fixture"},
+      "requirementLevel": "comparison",
+      "clarification": "какой сантехнический прибор устанавливается"
+    },
+    "plumbingDemolitionIncluded": {
+      "requiredWhen": {"field":"scope","containsAny":["замен","демонтаж","стар"]},
+      "requirementLevel": "completeness",
+      "clarification": "входит ли демонтаж существующих труб / сантехники"
+    },
+    "plumbingPoints": {"requirementLevel":"completeness"},
+    "pipeMeters": {"requirementLevel":"completeness"}
+  }
+}
