@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "balcony-leak-repair",
+  "fieldPolicies": {
+    "diagnosis": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая причина протечки / сырости установлена"
+    },
+    "leakSource": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой конкретно источник протечки выявлен"
+    },
+    "diagnosticsIncluded": {
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "description",
+            "containsAny": [
+              "конденсат",
+              "плесень",
+              "влажн"
+            ]
+          },
+          {
+            "field": "goal",
+            "containsAny": [
+              "конденсат",
+              "плесень",
+              "влажн"
+            ]
+          }
+        ]
+      },
+      "requirementLevel": "comparison",
+      "clarification": "выполнена ли диагностика причины конденсата / влажности"
+    },
+    "diagnosticsCost": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "стоимость диагностики отдельной суммой"
+    }
+  }
+}
