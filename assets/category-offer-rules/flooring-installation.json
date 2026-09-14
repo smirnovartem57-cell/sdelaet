@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "flooring-installation",
+  "commonFieldPolicies": {
+    "materialsIncluded": {
+      "requiredRule": false,
+      "requirementLevel": "optional"
+    }
+  },
+  "comparisonRuleOverrides": {
+    "unknownMaterialsInclusionIsDirectlyComparable": true
+  },
+  "fieldPolicies": {
+    "flooringType": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какое напольное покрытие укладывается"
+    },
+    "flooringLayout": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая схема / раскладка укладки"
+    },
+    "floorBasePreparationIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли подготовка / выравнивание основания"
+    },
+    "underlayIncluded": {
+      "requiredWhen": {"field":"flooringType","in":["laminate","linoleum","quartz_vinyl"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли подложка / необходимый нижний слой"
+    },
+    "floorGlueIncluded": {
+      "requiredWhen": {"field":"flooringType","in":["parquet","engineered_board"]},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли клей при клеевой укладке"
+    },
+    "floorDemolitionIncluded": {
+      "requiredWhen": {"field":"baseState","equals":"old_covering"},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли демонтаж старого покрытия"
+    },
+    "floorArea": {"requiredRule": false,"requirementLevel":"completeness","clarification":"площадь работ"},
+    "skirtingIncluded": {"requiredRule": false,"requirementLevel":"completeness","clarification":"входит ли монтаж плинтуса"},
+    "thresholdsIncluded": {"requiredRule": false,"requirementLevel":"completeness","clarification":"входят ли порожки / примыкания"}
+  }
+}
