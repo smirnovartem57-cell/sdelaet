@@ -3,6 +3,10 @@ import vm from 'node:vm';
 import crypto from 'node:crypto';
 import { resolveOfferContract } from './offer-contract.mjs';
 import { evaluateOfferContract } from './offer-contract-gap-engine.mjs';
+import {
+  captureLegacyComparison,
+  applyOfferComparisonDecision
+} from './offer-comparison-decision.mjs';
 
 const ENGINE_FILES = [
   '../assets/offer-parser.js',
@@ -57,27 +61,6 @@ function latestOffer(db, requestId) {
   return db.prepare(`SELECT * FROM contractor_offers WHERE request_id = ? ORDER BY version DESC LIMIT 1`).get(requestId);
 }
 
-function applyContractDecision(normalized, state, contractEvaluation) {
-  const legacyComparable = Boolean(normalized.comparable);
-  const legacyComparableTotalPrice = normalized.comparableTotalPrice ?? null;
-  normalized.priceType = state.priceType || normalized.priceType || (normalized.isFromPrice ? 'from' : 'fixed');
-  normalized.contractEvaluation = contractEvaluation;
-  normalized.comparisonDecision = {
-    source: 'contract_v2',
-    comparable: Boolean(contractEvaluation.comparisonReady),
-    comparisonStatus: contractEvaluation.comparisonReady ? 'comparable' : 'needs_data',
-    comparableTotalPrice: contractEvaluation.comparableTotalPrice,
-    legacyComparable,
-    legacyComparableTotalPrice,
-    legacyMismatch: legacyComparable !== Boolean(contractEvaluation.comparisonReady)
-  };
-  normalized.legacyComparable = legacyComparable;
-  normalized.legacyComparableTotalPrice = legacyComparableTotalPrice;
-  normalized.comparable = Boolean(contractEvaluation.comparisonReady);
-  normalized.comparableTotalPrice = contractEvaluation.comparableTotalPrice;
-  return normalized;
-}
-
 export function processContractorReply(db, {
   requestId,
   rawText,
@@ -116,10 +99,16 @@ export function processContractorReply(db, {
   }
 
   const normalized = engines.normalizer.normalize(state, task);
+  const legacyComparison = captureLegacyComparison(normalized);
   normalized.priceType = state.priceType || normalized.priceType || (normalized.isFromPrice ? 'from' : 'fixed');
+
   const resolvedContract = resolveOfferContract(task);
   const contractEvaluation = evaluateOfferContract(resolvedContract, normalized);
-  applyContractDecision(normalized, state, contractEvaluation);
+  const comparisonDecision = applyOfferComparisonDecision(
+    normalized,
+    contractEvaluation,
+    legacyComparison
+  );
 
   const contractItems = contractEvaluation.clarificationItems || [];
   const followup = contractItems.length
@@ -133,7 +122,6 @@ export function processContractorReply(db, {
   const received = receivedAt || now;
   const replyType = previous ? 'clarification' : 'initial';
   const parentReplyId = previous?.source_reply_id || null;
-  const comparisonStatus = normalized.comparable ? 'comparable' : 'needs_data';
 
   db.exec('BEGIN IMMEDIATE');
   try {
@@ -170,7 +158,9 @@ export function processContractorReply(db, {
       offerId, outreach.task_id || '', outreach.candidate_id || '', requestId, replyId, version,
       'offer-parser-v1', 'offer-normalizer-v1+contract-v2', state.rawResponse || text,
       JSON.stringify(normalized), JSON.stringify(normalized.gaps || []), JSON.stringify(normalized.flags || []),
-      normalized.comparable ? 1 : 0, comparisonStatus, now, now
+      comparisonDecision.comparable ? 1 : 0,
+      comparisonDecision.comparisonStatus,
+      now, now
     );
 
     if (followup.needed) {
