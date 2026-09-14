@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "window-replacement",
+  "fieldPolicies": {
+    "profileSystem": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая профильная система предлагается"
+    },
+    "glassUnit": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой стеклопакет входит в предложение"
+    },
+    "hardware": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая фурнитура входит в предложение"
+    },
+    "openingScheme": {
+      "group": "solution",
+      "type": "text",
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "схему открывания створок"
+    },
+    "sill": {
+      "group": "finish",
+      "type": "boolean",
+      "requiredRule": false,
+      "requirementLevel": "completeness"
+    },
+    "reveals": {
+      "group": "finish",
+      "type": "boolean",
+      "requiredRule": false,
+      "requirementLevel": "completeness"
+    },
+    "flashing": {
+      "group": "finish",
+      "type": "boolean",
+      "requiredRule": false,
+      "requirementLevel": "completeness"
+    }
+  },
+  "scenarioRules": {},
+  "workDefinitions": []
+}
