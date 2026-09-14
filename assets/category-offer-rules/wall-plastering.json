@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "wall-plastering",
+  "fieldPolicies": {
+    "plasterSystem": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какая штукатурная система предлагается"
+    },
+    "layerThickness": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "толщину штукатурного слоя"
+    },
+    "basePrimerIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли грунтовка основания"
+    },
+    "beaconsIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли штукатурка по маякам"
+    },
+    "reinforcementIncluded": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "нужно ли и входит ли армирование / сетка"
+    },
+    "baseDemolitionIncluded": {
+      "requiredWhen": {"field":"oldLayer","equals":"yes"},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли демонтаж старого слоя штукатурки"
+    },
+    "workArea": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "площадь стен"
+    }
+  }
+}

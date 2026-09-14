@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "categoryId": "floor-screed",
+  "fieldPolicies": {
+    "screedType": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "какой тип стяжки предлагается"
+    },
+    "layerThickness": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "толщину слоя стяжки"
+    },
+    "strengthSpec": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "марку / прочность стяжки"
+    },
+    "basePrimerIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли подготовка / грунтовка основания"
+    },
+    "edgeTapeIncluded": {
+      "requiredRule": true,
+      "requirementLevel": "comparison",
+      "clarification": "входит ли демпферная лента"
+    },
+    "reinforcementIncluded": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "нужно ли и входит ли армирование"
+    },
+    "baseDemolitionIncluded": {
+      "requiredWhen": {"field":"oldScreed","equals":"yes"},
+      "requirementLevel": "comparison",
+      "clarification": "входит ли демонтаж старой стяжки"
+    },
+    "workArea": {
+      "requiredRule": false,
+      "requirementLevel": "completeness",
+      "clarification": "площадь работ"
+    }
+  }
+}
