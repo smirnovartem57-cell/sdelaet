@@ -384,10 +384,17 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (!task || !task.city) {
-      location.href = 'create-task.html';
-      return;
+    if (!task || !task.city) { location.href = 'create-task.html'; return; }
+    let prepared = null;
+    try { prepared = JSON.parse(localStorage.getItem('sdelaet.search.results.v1') || 'null'); } catch {}
+    if (!prepared || prepared.taskId !== (task.id || '') || !Array.isArray(prepared.candidates) || !prepared.candidates.length) {
+      location.href = 'task-tz.html'; return;
     }
-    setupPreference();
+    state.all = prepared.candidates; state.live = true; state.runId = prepared.runId || ''; state.generatedAt = prepared.generatedAt || '';
+    document.getElementById('preference')?.classList.add('hidden');
+    document.getElementById('filters')?.classList.remove('hidden');
+    const status = document.getElementById('searchStatus');
+    status.className = 'search-status ok'; status.innerHTML = `<div class="status-dot">✓</div><div><b>Подбор подготовлен</b><span>${state.all.length} кандидатов уже найдены и квалифицированы до оплаты</span></div>`;
+    setupFilters(); render(); track('prepared_shortlist_view',{count:state.all.length,run_id:state.runId});
   });
 })();
