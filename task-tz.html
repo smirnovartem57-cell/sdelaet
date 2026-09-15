@@ -407,6 +407,29 @@ document
 renderNotificationChannel();
 
 
+async function telegramConnectionStatus(order){
+  var response=await fetch('https://api.onsdelaet.ru/v1/telegram/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:order.task_id,order_id:order.order_id})});
+  var data=await response.json().catch(function(){return {}});
+  if(!response.ok||!data.ok)throw new Error(data.error||'TELEGRAM_STATUS_FAILED');
+  return data;
+}
+
+async function finishTelegramConnection(order){
+  var status=await telegramConnectionStatus(order);
+  if(!status.connected)return false;
+  localStorage.removeItem('sdelaet.telegram.pending');
+  var box=document.getElementById('telegramConnectError'); if(box){box.textContent='Telegram подключён. Переходим к оплате…';box.classList.remove('hidden');}
+  var button=document.getElementById('connectTelegram'); if(button){button.disabled=true;button.textContent='Telegram подключён ✓';}
+  await beginCheckoutPayment(order,selectedCheckoutTariff()); return true;
+}
+
+function startTelegramConnectionWatch(order){
+  var tries=0; var timer=setInterval(async function(){tries++; try{if(await finishTelegramConnection(order)){clearInterval(timer);}}catch(e){} if(tries>=120)clearInterval(timer);},1500);
+}
+
+window.addEventListener('focus',function(){try{var p=JSON.parse(localStorage.getItem('sdelaet.telegram.pending')||'null');if(p&&p.taskId&&p.orderId)finishTelegramConnection({task_id:p.taskId,order_id:p.orderId}).catch(function(){});}catch(e){}});
+
+
 async function openTelegramForOrder(order){
   var errorBox=
     document.getElementById(
@@ -496,8 +519,10 @@ async function openTelegramForOrder(order){
       }
     );
 
+    localStorage.setItem('sdelaet.telegram.pending',JSON.stringify({taskId:order.task_id,orderId:order.order_id,tariffId:selectedCheckoutTariff().id,startedAt:new Date().toISOString()}));
     var popup=window.open(data.telegram_url,'_blank','noopener');
     if(!popup)window.location.href=data.telegram_url;
+    startTelegramConnectionWatch(order);
 
   }catch(error){
     console.error(
