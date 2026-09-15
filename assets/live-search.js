@@ -383,18 +383,14 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     if (!task || !task.city) { location.href = 'create-task.html'; return; }
     let prepared = null;
-    try { prepared = JSON.parse(localStorage.getItem('sdelaet.search.results.v1') || 'null'); } catch {}
-    if (!prepared || prepared.taskId !== (task.id || '') || !Array.isArray(prepared.candidates) || !prepared.candidates.length) {
-      location.href = 'task-tz.html'; return;
-    }
-    state.all = prepared.candidates; state.live = true; state.runId = prepared.runId || ''; state.generatedAt = prepared.generatedAt || '';
-    document.getElementById('preference')?.classList.add('hidden');
-    document.getElementById('filters')?.classList.remove('hidden');
-    const status = document.getElementById('searchStatus');
-    status.className = 'search-status ok'; status.innerHTML = `<div class="status-dot">✓</div><div><b>Подбор подготовлен</b><span>${state.all.length} кандидатов уже найдены и квалифицированы до оплаты</span></div>`;
-    setupFilters(); render(); track('prepared_shortlist_view',{count:state.all.length,run_id:state.runId});
+    try { const r = await fetch('https://api.onsdelaet.ru/v1/shortlists/prepared',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task_id:task.id||''})}); const d=await r.json(); if(r.ok&&d.ok&&d.prepared) prepared=d; } catch {}
+    if (!prepared || !Array.isArray(prepared.candidates) || !prepared.candidates.length) { location.href = 'task-tz.html'; return; }
+    state.all=prepared.candidates; state.live=true; state.runId=prepared.runId||''; state.generatedAt=prepared.generatedAt||'';
+    document.getElementById('preference')?.classList.add('hidden'); document.getElementById('filters')?.classList.remove('hidden');
+    const status=document.getElementById('searchStatus'); status.className='search-status ok'; status.innerHTML=`<div class="status-dot">✓</div><div><b>Подбор подготовлен</b><span>${state.all.length} кандидатов найдены и сохранены сервисом</span></div>`;
+    setupFilters(); render(); track('prepared_shortlist_view',{count:state.all.length,run_id:state.runId,source:'server'});
   });
 })();
