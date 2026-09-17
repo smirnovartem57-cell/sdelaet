@@ -18,7 +18,7 @@
     .channel-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.channel-choice-btn{border:1px solid var(--line);border-radius:15px;background:#fff;padding:13px 14px;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;color:var(--text);transition:.18s ease}.channel-choice-btn:hover{transform:translateY(-1px);border-color:var(--indigo)}.channel-choice-btn.active{border-color:var(--indigo);box-shadow:0 0 0 2px rgba(91,85,245,.08)}.channel-choice-btn .channel-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#f3f5ff;color:var(--indigo);font-weight:900}.channel-choice-btn b{display:block;font:800 13px Montserrat,Roboto,sans-serif}.channel-choice-btn small{display:block;margin-top:2px;color:var(--muted);font-size:10px}
     .outreach-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.contact-field{display:grid;gap:5px}.contact-field span{font-size:10px;color:var(--muted);font-weight:700}.contact-field input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--text);font:500 13px Roboto,sans-serif}.contact-field input:focus{outline:0;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(91,85,245,.08)}.contact-field.inactive{opacity:.5}.outreach-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.outreach-help{font-size:10px;color:var(--muted)}.channel-ready{white-space:nowrap}
     @media(max-width:720px){.channel-choice,.outreach-fields{grid-template-columns:1fr}.outreach-head{display:grid}}
-  </style>
+  .recipient-list{display:grid;gap:9px;margin:14px 0}.recipient-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}.recipient-remove{border:0;background:transparent;color:var(--muted);cursor:pointer}.review-note{padding:12px 14px;border-radius:14px;background:#f6f8ff;font-size:11px;color:#596681}</style>
 </head>
 <body>
   <div class="app-shell">
@@ -52,7 +52,7 @@
               <h1 class="hero-title" id="candidateName">Подготовка запроса</h1>
               <p class="lead">Для сравнения предложений каждому исполнителю отправляем одинаковое задание и одинаковый набор вопросов.</p>
 
-              <div class="candidate-context" id="candidateContext"></div>
+              <div class="candidate-context" id="candidateContext"></div><div class="recipient-list" id="recipientList"></div>
 
               <div class="request-box" id="requestBox">
                 <div class="request-head">
@@ -113,6 +113,7 @@
   <script>
     (function () {
       var task = sdGetTask() || sdDefaultTask();
+      var selectedGroup = readJson('sdelaet.candidates.selected.v1') || [];
       var id = new URLSearchParams(location.search).get('candidate') || '';
 
       function readJson(key) {
@@ -152,15 +153,7 @@
         return { label: 'Компания', cls: 'company' };
       }
 
-      function resolveCandidate() {
-        var selected = readJson('sdelaet.candidate.selected.v1');
-        var search = readJson('sdelaet.search.results.v1');
-        var list = search && Array.isArray(search.candidates) ? search.candidates : [];
-        var found = id ? list.find(function (x) { return x.id === id; }) : null;
-        if (found) return found;
-        if (selected && (!id || selected.id === id)) return selected;
-        return null;
-      }
+      function resolveCandidate() { if(selectedGroup.length)return selectedGroup[0]; return readJson('sdelaet.candidate.selected.v1'); }
 
       function primarySource(candidate) {
         var sources = candidate.sources || [];
@@ -185,7 +178,7 @@
       var type = typeInfo(candidate.type);
       var source = primarySource(candidate);
 
-      document.getElementById('candidateName').textContent = 'Запрос для «' + candidate.name + '»';
+      if(selectedGroup.length){document.getElementById('candidateName').textContent='Запрос для выбранных исполнителей';document.getElementById('recipientList').innerHTML=selectedGroup.map(c=>'<div class="recipient-row"><div><b>'+c.name+'</b></div><button class="recipient-remove" data-remove="'+c.id+'">Исключить</button></div>').join('')+'<div class="review-note">Ничего не отправляется автоматически. Перед отправкой вы ещё раз проверите получателей, каналы и текст.</div>';document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{selectedGroup=selectedGroup.filter(c=>c.id!==b.dataset.remove);localStorage.setItem('sdelaet.candidates.selected.v1',JSON.stringify(selectedGroup));b.closest('.recipient-row').remove();if(!selectedGroup.length)location.href='candidates.html'})}else{document.getElementById('candidateName').textContent='Запрос для «'+candidate.name+'»'}
       document.getElementById('candidateContext').innerHTML =
         '<span class="type ' + type.cls + '">' + type.label + '</span>' +
         '<span class="source">Источник: ' + (source ? (source.label || source.host || hostOf(source.url)) : 'открытые источники') + '</span>';
@@ -368,13 +361,7 @@
         else channelNote.textContent = 'Текст запроса одинаковый для обоих каналов. Отправка происходит только после вашего действия.';
       }
 
-      document.getElementById('sendBtn').onclick = function () {
-        saveOutreachContacts();
-        buildChannels();
-        document.getElementById('channelsWrap').classList.remove('hidden');
-        if (state !== 'sent') setState('prepared');
-        sdTrack('request_channels_open', { candidate_id: id, candidate_type: candidate.type, channels: selectedChannels.join(',') });
-      };
+      document.getElementById('sendBtn').onclick = function () {saveOutreachContacts();if(state!=='sent')setState('prepared');localStorage.setItem('sdelaet.outreach.review.v1',JSON.stringify({candidateIds:(selectedGroup.length?selectedGroup:[candidate]).map(c=>c.id),message:message,reviewedAt:new Date().toISOString()}));sdTrack('outreach_review_ready',{recipient_count:selectedGroup.length||1});location.href='review.html?outreach=1';};
 
       document.getElementById('markSent').onclick = function () {
         setState('sent');
