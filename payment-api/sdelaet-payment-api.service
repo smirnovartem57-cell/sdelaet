@@ -1,0 +1,15 @@
+[Unit]
+Description=Sdelaet Payment API
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sdelaet/payment-api.env
+ExecStart=/usr/bin/node /opt/sdelaet/payment-api/server.mjs
+Restart=always
+RestartSec=3
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+mkdir -p /opt/sdelaet/payment-api /etc/sdelaet /var/lib/sdelaet-payments
+cp /tmp/sdelaet-payment-api.service /etc/systemd/system/sdelaet-payment-api.service
+chmod 600 /etc/sdelaet/payment-api.env
+chown -R www-data:www-data /var/lib/sdelaet-payments
+systemctl daemon-reload
+systemctl enable sdelaet-payment-api
