@@ -37,7 +37,8 @@
     .toast-wrap{position:fixed;right:18px;top:18px;z-index:1000;width:min(390px,calc(100vw - 36px));display:grid;gap:8px}.toast{background:#fff8ea;border:1px solid #ecd7a3;border-radius:15px;padding:12px 14px;box-shadow:0 18px 50px rgba(23,31,63,.16)}.toast.ok{background:#effbf5;border-color:#cfeadf}.toast b,.toast span{display:block}.toast span{font-size:12px;margin-top:2px}.hidden{display:none!important}
     @media(max-width:850px){.pref-grid,.candidate-grid{grid-template-columns:1fr}.candidate-head{grid-template-columns:54px 1fr}.match-badge{grid-column:1/-1;text-align:left;width:max-content}.search-intro{grid-template-columns:1fr}.filter-row{align-items:flex-start;flex-direction:column}}
     @media(max-width:620px){.search-filter,.candidate .actions{display:grid;width:100%}.search-filter .chip,.candidate .btn{width:100%}.candidate{padding:15px}.contact-list{display:grid}.contact-pill{width:100%}.change-pref{padding-left:0}.pref-actions{align-items:stretch;flex-direction:column}.pref-actions .btn{width:100%}}
-  </style>
+  .selection-bar{position:sticky;bottom:14px;z-index:20;margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 12px 36px rgba(34,43,69,.14);display:flex;align-items:center;justify-content:space-between;gap:14px}.selection-bar.hidden{display:none}.selection-copy b{display:block;font:800 14px Montserrat}.selection-copy span{display:block;margin-top:3px;color:var(--muted);font-size:11px}@media(max-width:650px){.selection-bar{display:grid}.selection-bar .btn{width:100%}}
+</style>
 </head>
 <body>
   <div class="app-shell">
@@ -128,7 +129,7 @@
             <button class="change-pref" id="changePreference">Изменить параметры поиска</button>
           </div>
 
-          <div id="candidateList" class="candidate-list"></div>
+          <div id="candidateList" class="candidate-list"></div><div class="selection-bar hidden" id="selectionBar"><div class="selection-copy"><b id="selectionCount">0 исполнителей выбрано</b><span>Дальше проверите получателей и подготовленный запрос перед отправкой.</span></div><button class="btn primary" id="continueSelected" type="button">Продолжить с выбранными →</button></div>
         </div>
       </div>
     </main>
