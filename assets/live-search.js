@@ -192,7 +192,7 @@
       <div class="source-caption">Все использованные источники</div>
       <div class="source-list">${sources}</div>
       <div class="actions">
-        <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="requests.html?candidate=${encodeURIComponent(candidate.id)}">Подготовить запрос</a>
+        <button class="btn primary select-candidate" data-candidate="${esc(candidate.id)}" type="button">${state.selected.has(candidate.id)?'✓ Выбран':'Выбрать'}</button>
         ${actionHtml}
       </div>
     </article>`;
@@ -242,15 +242,13 @@
       track('candidate_source_click', { url: a.href });
     }));
 
-    list.querySelectorAll('.prepare-request').forEach(a => a.addEventListener('click', () => {
-      const candidate = state.all.find(c => c.id === a.dataset.candidate);
-      if (!candidate) return;
-      try {
-        localStorage.setItem('sdelaet.candidate.selected.v1', JSON.stringify(candidate));
-      } catch {}
-      track('candidate_request_prepare', { candidate_id: candidate.id, candidate_type: candidate.type });
+    list.querySelectorAll('.select-candidate').forEach(button => button.addEventListener('click', () => {
+      const id=button.dataset.candidate;if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);updateSelectionBar();render();
     }));
   }
+
+  function updateSelectionBar(){const bar=document.getElementById('selectionBar'),count=document.getElementById('selectionCount');if(!bar||!count)return;const n=state.selected.size;bar.classList.toggle('hidden',n===0);count.textContent=n+' '+(n===1?'исполнитель выбран':'исполнителей выбрано')}
+  document.getElementById('continueSelected')?.addEventListener('click',()=>{const selected=state.all.filter(c=>state.selected.has(c.id));if(!selected.length)return;localStorage.setItem('sdelaet.candidates.selected.v1',JSON.stringify(selected));track('candidate_selection_continue',{count:selected.length});location.href='requests.html?selected=1'});
 
   function setupFilters() {
     document.querySelectorAll('[data-filter]').forEach(button => {
