@@ -361,7 +361,7 @@
         else channelNote.textContent = 'Текст запроса одинаковый для обоих каналов. Отправка происходит только после вашего действия.';
       }
 
-      document.getElementById('sendBtn').onclick = function () {saveOutreachContacts();if(state!=='sent')setState('prepared');localStorage.setItem('sdelaet.outreach.review.v1',JSON.stringify({candidateIds:(selectedGroup.length?selectedGroup:[candidate]).map(c=>c.id),message:message,reviewedAt:new Date().toISOString()}));sdTrack('outreach_review_ready',{recipient_count:selectedGroup.length||1});location.href='review.html?outreach=1';};
+      document.getElementById('sendBtn').onclick = function () {saveOutreachContacts();if(state!=='sent')setState('prepared');var group=(selectedGroup.length?selectedGroup:[candidate]);var pending={};try{pending=JSON.parse(localStorage.getItem('sdelaet.payment.pending')||'{}')}catch{}localStorage.setItem('sdelaet.outreach.review.v1',JSON.stringify({version:1,taskId:task.id||'',orderId:pending.orderId||'',recipients:group.map(c=>({id:c.id,name:c.name||'Исполнитель'})),candidateIds:group.map(c=>c.id),message:message,preparedAt:new Date().toISOString()}));sdTrack('outreach_review_ready',{recipient_count:selectedGroup.length||1});location.href='review.html?outreach=1';};
 
       document.getElementById('markSent').onclick = function () {
         setState('sent');
