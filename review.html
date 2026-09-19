@@ -1,1 +1,127 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Проверка перед отправкой — Сделает</title><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script><style>body{background:var(--bg)}.review{max-width:900px;margin:0 auto;padding:34px 18px 70px}.review-card{padding:24px}.recipients{display:grid;gap:8px;margin:16px 0}.recipient{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}.recipient b,.recipient span{display:block}.recipient span{margin-top:3px;color:var(--muted);font-size:12px}.message{white-space:pre-wrap;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;line-height:1.55}.confirm{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:14px;border:1px solid #eadcae;border-radius:14px;background:#fff9e8}.confirm input{margin-top:3px}.actions{display:flex;gap:10px;flex-wrap:wrap}</style></head><body><main class="review"><section class="card review-card"><div class="eyebrow">Финальная проверка</div><h1 class="hero-title">Проверьте перед отправкой</h1><p class="lead">До вашего подтверждения ничего исполнителям не отправляется.</p><div class="label">Получатели</div><div class="recipients" id="recipients"></div><div class="label">Текст запроса</div><div class="message" id="message"></div><label class="confirm"><input type="checkbox" id="confirm"><span><b>Я проверил получателей и текст запроса</b><br>После следующего подтверждения запрос можно будет отправить выбранным исполнителям.</span></label><div class="actions"><button class="btn primary large" id="send" disabled>Подтвердить отправку →</button><a class="btn secondary large" href="requests.html?selected=1">← Изменить</a></div><div id="status" class="hidden" style="margin-top:14px"></div></section></main><script>(function(){let r=null;try{r=JSON.parse(localStorage.getItem('sdelaet.outreach.review.v1')||'null')}catch{}if(!r||!r.taskId||!r.orderId||!Array.isArray(r.recipients)||!r.recipients.length||!r.message){location.replace('requests.html?selected=1');return}document.getElementById('recipients').innerHTML=r.recipients.map(x=>'<div class="recipient"><b>'+String(x.name||'Исполнитель').replace(/[<>&]/g,'')+'</b><span>Будет включён только после серверного разрешения</span></div>').join('');document.getElementById('message').textContent=r.message;const c=document.getElementById('confirm'),b=document.getElementById('send'),st=document.getElementById('status');c.onchange=()=>b.disabled=!c.checked;b.onclick=async()=>{if(!c.checked)return;b.disabled=true;b.textContent='Проверяем разрешение…';st.className='hidden';let key='oa-'+r.taskId+'-'+r.candidateIds.slice().sort().join('-')+'-'+r.preparedAt;try{let resp=await fetch('/api/v1/outreach/authorize',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({taskId:r.taskId,orderId:r.orderId,candidateIds:r.candidateIds,message:r.message,explicitConfirm:true,idempotencyKey:key})});let d=await resp.json().catch(()=>({}));if(!resp.ok||!d.ok||!d.authorized)throw new Error(d.error||'AUTH_FAILED');localStorage.setItem('sdelaet.outreach.authorization.v1',JSON.stringify({authorizationId:d.authorizationId,taskId:r.taskId,orderId:r.orderId,candidateIds:r.candidateIds,messageSha256:d.messageSha256,authorizedAt:new Date().toISOString()}));let sent=0,skipped=0;for(const x of r.recipients){let email=String(x.email||'').trim();if(!email){skipped++;continue}let prep=await fetch('/api/v1/outreach/prepare',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({authorizationId:d.authorizationId,taskId:r.taskId,candidateId:x.id,candidate:{id:x.id,name:x.name||'Исполнитель',email:email},channel:'email',recipient:email,subject:'Запрос по задаче в сервисе «Сделает»',message:r.message})});let pd=await prep.json().catch(()=>({}));if(!prep.ok||!pd.ok||!pd.outreach?.requestId)throw new Error(pd.error||'PREPARE_FAILED');let send=await fetch('/api/v1/outreach/email/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({authorizationId:d.authorizationId,requestId:pd.outreach.requestId})});let sd=await send.json().catch(()=>({}));if(!send.ok||!sd.ok)throw new Error(sd.error||'SEND_FAILED');sent++}st.className='';st.textContent=sent?'Отправлено: '+sent+(skipped?' · без email: '+skipped:''):'Разрешение получено, но у выбранных исполнителей нет доступного email.';b.textContent=sent?'Отправлено ✓':'Разрешение получено ✓';if(window.sdTrack)sdTrack('outreach_authorized',{count:r.candidateIds.length,sent_email:sent,plan:d.plan})}catch(e){st.className='';st.textContent='Не удалось подтвердить отправку: '+(e.message||'ошибка');b.disabled=false;b.textContent='Подтвердить отправку →'}}})();</script></body></html>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Проверка перед отправкой — Сделает</title><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script><style>body{background:var(--bg)}.review{max-width:900px;margin:0 auto;padding:34px 18px 70px}.review-card{padding:24px}.recipients{display:grid;gap:8px;margin:16px 0}.recipient{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}.recipient b,.recipient span{display:block}.recipient span{margin-top:3px;color:var(--muted);font-size:12px}.message{white-space:pre-wrap;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;line-height:1.55}.confirm{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:14px;border:1px solid #eadcae;border-radius:14px;background:#fff9e8}.confirm input{margin-top:3px}.actions{display:flex;gap:10px;flex-wrap:wrap}</style></head><body><main class="review"><section class="card review-card"><div class="eyebrow">Финальная проверка</div><h1 class="hero-title">Проверьте перед отправкой</h1><p class="lead">До вашего подтверждения ничего исполнителям не отправляется.</p><div class="label">Получатели</div><div class="recipients" id="recipients"></div><div class="label">Текст запроса</div><div class="message" id="message"></div><label class="confirm"><input type="checkbox" id="confirm"><span><b>Я проверил получателей и текст запроса</b><br>После следующего подтверждения запрос можно будет отправить выбранным исполнителям.</span></label><div class="actions"><button class="btn primary large" id="send" disabled>Подтвердить отправку →</button><a class="btn secondary large" href="requests.html?selected=1">← Изменить</a></div><div id="status" class="hidden" style="margin-top:14px"></div></section></main><script>
+(function(){
+  const REVIEW_KEY='sdelaet.outreach.review.v1';
+  let r=null;
+  try{r=JSON.parse(localStorage.getItem(REVIEW_KEY)||'null')}catch{}
+  if(!r||!r.taskId||!r.orderId||!Array.isArray(r.recipients)||!r.recipients.length||!r.message){location.replace('requests.html?selected=1');return;}
+  const recipientsEl=document.getElementById('recipients');
+  const c=document.getElementById('confirm');
+  const b=document.getElementById('send');
+  const st=document.getElementById('status');
+  function channelsFor(x){
+    if(Array.isArray(x.channels)&&x.channels.length)return x.channels;
+    const out=[];
+    if(x.email)out.push('email');
+    if(x.telegram)out.push('telegram');
+    return out;
+  }
+  function telegramHref(v){
+    v=String(v||'').trim();
+    if(!v)return '';
+    if(v.charAt(0)==='@')return 'https://t.me/'+v.slice(1);
+    if(/^t\.me\//i.test(v))return 'https://'+v;
+    if(/^https:\/\/t\.me\//i.test(v))return v;
+    if(/^[a-z0-9_]{5,}$/i.test(v))return 'https://t.me/'+v;
+    return '';
+  }
+  function renderRecipients(){
+    recipientsEl.innerHTML='';
+    r.recipients.forEach(x=>{
+      const row=document.createElement('div');row.className='recipient';
+      const name=document.createElement('b');name.textContent=x.name||'Исполнитель';
+      const info=document.createElement('span');
+      const labels=channelsFor(x).map(v=>v==='email'?'Email':v==='telegram'?'Telegram':v);
+      info.textContent=labels.length?'Каналы после подтверждения: '+labels.join(' · '):'Нет выбранного канала';
+      row.append(name,info);recipientsEl.appendChild(row);
+    });
+  }
+  async function post(path,body){
+    const resp=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    const data=await resp.json().catch(()=>({}));
+    if(!resp.ok||!data.ok)throw new Error(data.error||'REQUEST_FAILED');
+    return data;
+  }
+  async function prepare(x,channel,authorizationId){
+    const recipient=channel==='email'?String(x.email||'').trim():'';
+    const d=await post('/api/v1/outreach/prepare',{
+      authorizationId,taskId:r.taskId,candidateId:x.id,
+      candidate:{id:x.id,name:x.name||'Исполнитель',email:recipient},
+      channel,recipient,
+      subject:'Запрос по задаче в сервисе «Сделает»',
+      message:r.message,
+      metadata:{uiChannel:channel==='messenger'?'telegram':channel,telegram:String(x.telegram||'').trim()}
+    });
+    if(!d.outreach||!d.outreach.requestId)throw new Error('PREPARE_FAILED');
+    return d.outreach;
+  }
+  function addTelegramAction(item,authorizationId){
+    const href=telegramHref(item.telegram);
+    if(!href)return;
+    const wrap=document.createElement('div');wrap.className='actions';wrap.style.marginTop='10px';
+    const link=document.createElement('a');link.className='btn secondary';
+    link.href=href;link.target='_blank';link.rel='noopener';
+    link.textContent='Открыть Telegram — '+item.name;
+    const done=document.createElement('button');done.className='btn secondary';done.type='button';
+    done.textContent='Отметить Telegram отправленным';
+    done.onclick=async()=>{
+      done.disabled=true;done.textContent='Фиксируем…';
+      try{
+        await post('/api/v1/outreach/manual-sent',{authorizationId,requestId:item.requestId});
+        done.textContent='Отправлено ✓';
+      }catch(e){
+        done.disabled=false;done.textContent='Повторить отметку';
+        alert('Не удалось зафиксировать отправку: '+(e.message||'ошибка'));
+      }
+    };
+    wrap.append(link,done);st.appendChild(wrap);
+  }
+  renderRecipients();
+  document.getElementById('message').textContent=r.message;
+  c.onchange=()=>b.disabled=!c.checked;
+  b.onclick=async()=>{
+    if(!c.checked)return;
+    b.disabled=true;b.textContent='Проверяем разрешение…';st.className='hidden';st.innerHTML='';
+    const key='oa-'+r.taskId+'-'+r.candidateIds.slice().sort().join('-')+'-'+r.preparedAt;
+    try{
+      const d=await post('/api/v1/outreach/authorize',{
+        taskId:r.taskId,orderId:r.orderId,candidateIds:r.candidateIds,
+        message:r.message,explicitConfirm:true,idempotencyKey:key
+      });
+      if(!d.authorized)throw new Error('AUTH_FAILED');
+      localStorage.setItem('sdelaet.outreach.authorization.v1',JSON.stringify({
+        authorizationId:d.authorizationId,taskId:r.taskId,orderId:r.orderId,
+        candidateIds:r.candidateIds,messageSha256:d.messageSha256,authorizedAt:new Date().toISOString()
+      }));
+      let sentEmail=0,skipped=0;const tg=[];
+      for(const x of r.recipients){
+        const channels=channelsFor(x);
+        if(channels.includes('email')){
+          const email=String(x.email||'').trim();
+          if(email){
+            const req=await prepare(x,'email',d.authorizationId);
+            await post('/api/v1/outreach/email/send',{authorizationId:d.authorizationId,requestId:req.requestId});
+            sentEmail++;
+          }else skipped++;
+        }
+        if(channels.includes('telegram')){
+          const href=telegramHref(x.telegram);
+          if(href){
+            const req=await prepare(x,'messenger',d.authorizationId);
+            tg.push({requestId:req.requestId,name:x.name||'Исполнитель',telegram:x.telegram});
+          }else skipped++;
+        }
+      }
+      st.className='';
+      const summary=document.createElement('div');
+      summary.textContent='Разрешение получено'+(sentEmail?' · Email отправлено: '+sentEmail:'')+(tg.length?' · Telegram подготовлено: '+tg.length:'')+(skipped?' · без контакта: '+skipped:'');
+      st.appendChild(summary);
+      tg.forEach(x=>addTelegramAction(x,d.authorizationId));
+      b.textContent=tg.length?'Разрешение получено ✓':'Отправлено ✓';
+      if(window.sdTrack)sdTrack('outreach_authorized',{count:r.candidateIds.length,sent_email:sentEmail,telegram_prepared:tg.length,plan:d.plan});
+    }catch(e){
+      st.className='';st.textContent='Не удалось подтвердить отправку: '+(e.message||'ошибка');
+      b.disabled=false;b.textContent='Подтвердить отправку →';
+    }
+  };
+})();
+</script></body></html>
