@@ -30,8 +30,10 @@
       const row=document.createElement('div');row.className='recipient';
       const name=document.createElement('b');name.textContent=x.name||'Исполнитель';
       const info=document.createElement('span');
-      const labels=channelsFor(x).map(v=>v==='email'?'Email':v==='telegram'?'Telegram':v);
-      info.textContent=labels.length?'Каналы после подтверждения: '+labels.join(' · '):'Нет выбранного канала';
+      const channels=channelsFor(x),details=[];
+      if(channels.includes('email'))details.push('Email: '+String(x.email||'не указан'));
+      if(channels.includes('telegram'))details.push('Telegram: '+String(x.telegram||'не указан'));
+      info.textContent=details.length?details.join(' · '):'Нет выбранного канала';
       row.append(name,info);recipientsEl.appendChild(row);
     });
   }
@@ -85,6 +87,7 @@
     try{
       const d=await post('/api/v1/outreach/authorize',{
         taskId:r.taskId,orderId:r.orderId,candidateIds:r.candidateIds,
+        targets:r.recipients.map(x=>({candidateId:x.id,email:String(x.email||'').trim(),telegram:String(x.telegram||'').trim(),channels:channelsFor(x)})),
         message:r.message,explicitConfirm:true,idempotencyKey:key
       });
       if(!d.authorized)throw new Error('AUTH_FAILED');
