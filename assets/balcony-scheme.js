@@ -89,8 +89,10 @@ function render(svg,task){
     s+=line(dx,dy-24,dx+dw,dy-24);s+=text(dx+dw/2,dy-31,fmt(m.ww),'sub');
     s+=line(dx-24,dy,dx-24,dy+dh);s+=text(dx-31,dy+dh/2,fmt(m.wh),'sub','end');
     if(m.ow&&m.oh){
-      s+=line(ox,oy+oh+20,ox+ow,oy+oh+20);s+=text(ox+ow/2,oy+oh+37,fmt(m.ow),'sub');
-      s+=line(ox+ow+20,oy,ox+ow+20,oy+oh);s+=text(ox+ow+30,oy+oh/2,fmt(m.oh),'sub','start');
+      var insetX=Math.min(20,Math.max(13,ow*.10)),insetY=Math.min(20,Math.max(13,oh*.08));
+      var openingWidthY=oy+oh-insetY,openingHeightX=ox+ow-insetX;
+      s+=line(ox+10,openingWidthY,ox+ow-10,openingWidthY);s+=text(ox+ow/2,openingWidthY-7,fmt(m.ow),'sub');
+      s+=line(openingHeightX,oy+10,openingHeightX,oy+oh-10);s+=text(openingHeightX-7,oy+oh/2,fmt(m.oh),'sub','end');
       if(m.left!=null)s+=text(dx+(ox-dx)/2,oy+oh/2,fmt(m.left),'small');
       if(m.right!=null)s+=text(ox+ow+(dx+dw-ox-ow)/2,oy+oh/2,fmt(m.right),'small');
       if(m.top!=null)s+=text(ox+ow/2,dy+(oy-dy)/2,fmt(m.top),'small');
@@ -110,5 +112,5 @@ function render(svg,task){
   s+=text(45,517,'Неизвестная геометрия не подставляется автоматически','small','start');
   svg.innerHTML=s;
 }
-window.sdBalconyScheme={render:render,model:model,pairCm:pairCm,version:'1.0'};
+window.sdBalconyScheme={render:render,model:model,pairCm:pairCm,version:'1.1'};
 })();
