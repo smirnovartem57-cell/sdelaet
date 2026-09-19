@@ -2,6 +2,8 @@ import { spawnSync } from 'node:child_process';
 
 const commands = [
   ['syntax: category engine', ['--check', 'assets/category-engine.js']],
+  ['syntax: attachment analyzer', ['--check', 'assets/attachment-analyzer.js']],
+  ['syntax: balcony scheme', ['--check', 'assets/balcony-scheme.js']],
   ['syntax: expert agent', ['--check', 'assets/expert-agent.js']],
   ['syntax: expert runtime', ['--check', 'assets/expert-runtime.js']],
   ['syntax: geo classifier', ['--check', 'assets/geo-classifier.js']],
@@ -27,6 +29,8 @@ const commands = [
   ['geo classifier', ['tests/geo-classifier-regression.mjs']],
   ['offer commercial schema', ['tests/shared-offer-schema-regression.mjs']],
   ['category qualification', ['tests/category-aware-qualification-regression.mjs']],
+  ['attachment geometry', ['tests/attachment-geometry-regression.mjs']],
+  ['balcony scheme', ['tests/balcony-scheme-regression.mjs']],
   ['search qualification', ['tests/search-qualification-regression.mjs']],
   ['expert runtime fallback', ['tests/expert-runtime-fallback-regression.mjs']],
   ['agent pipeline', ['tests/category-agent-pipeline-regression.mjs']],
