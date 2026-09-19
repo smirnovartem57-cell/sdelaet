@@ -149,8 +149,11 @@ function offsetOrder(parts,axis){
 function bestBy(items,score){var best=null,bestScore=-1e9;items.forEach(function(x){var sc=score(x);if(sc>bestScore){bestScore=sc;best=x}});return best}
 function layoutGeometry(dims){
  if(!dims||dims.length<5)return null;
- var totalW=bestBy(dims,function(x){return (x.value>=100?2:0)+(x.yn<.30?2:0)+(x.xn>.25&&x.xn<.75?1:0)-Math.abs(x.xn-.5)});
- var totalH=bestBy(dims.filter(function(x){return x!==totalW}),function(x){return (x.value>=100?2:0)+(x.xn<.25?2:0)+(x.yn>.2&&x.yn<.85?1:0)-Math.abs(x.yn-.5)});
+ var totalWCandidates=dims.filter(function(x){return x.value>=100&&x.yn<.32});
+ var totalHCandidates=dims.filter(function(x){return x.value>=100&&(x.xn<.28||x.xn>.78)&&x.yn>.15&&x.yn<.90});
+ if(!totalWCandidates.length||!totalHCandidates.length)return null;
+ var totalW=bestBy(totalWCandidates,function(x){return (x.xn>.2&&x.xn<.8?2:0)-Math.abs(x.xn-.5)+x.value/1000});
+ var totalH=bestBy(totalHCandidates.filter(function(x){return x!==totalW}),function(x){return (1-Math.abs(x.yn-.5))*2+x.value/1000});
  if(!totalW||!totalH)return null;
  var openingW=bestBy(dims.filter(function(x){return x!==totalW&&x!==totalH&&x.value<totalW.value}),function(x){return (x.yn>.55?2:0)+(x.xn>.25&&x.xn<.75?1.5:0)+x.value/Math.max(totalW.value,1)});
  var openingH=bestBy(dims.filter(function(x){return x!==totalW&&x!==totalH&&x!==openingW&&x.value<totalH.value}),function(x){return (x.xn>.50&&x.xn<.75?2:0)+(x.yn>.25&&x.yn<.75?1.5:0)+x.value/Math.max(totalH.value,1)});

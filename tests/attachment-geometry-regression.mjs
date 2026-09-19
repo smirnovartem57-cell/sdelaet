@@ -70,6 +70,17 @@ const realOcrLike=w.sdAttachmentAnalyzer.analyzeTokens({
 ok(realOcrLike.status==='recognized','real OCR-like partial token set must be recognized');
 ok(realOcrLike.geometry.openings[0].offsetsCm.left===58,'missing left offset must derive as 314-180-76');
 ok(realOcrLike.geometryValidation.horizontal.status==='confirmed','derived horizontal chain must validate');
+
+const missingOuterHeight=w.sdAttachmentAnalyzer.analyzeTokens({
+  width:1448,height:1086,
+  text:'314 см 26,5 см 220 см 76 см 180 см 40,5 см Окно',
+  tokens:[
+    {text:'314',x:711,y:147,confidence:97},{text:'26,5',x:765,y:252,confidence:96},
+    {text:'220',x:899,y:570,confidence:96},{text:'76',x:1120,y:571,confidence:92},
+    {text:'180',x:700,y:788,confidence:97},{text:'40,5',x:765,y:905,confidence:97}
+  ]
+});
+ok(missingOuterHeight.status!=='recognized'||missingOuterHeight.confidence!=='high','missing outer wall height must never become false high-confidence geometry');
 console.log('ATTACHMENT GEOMETRY REGRESSION: PASS',{
   wall:wall.widthCm+'x'+wall.heightCm,
   opening:opening.widthCm+'x'+opening.heightCm,
