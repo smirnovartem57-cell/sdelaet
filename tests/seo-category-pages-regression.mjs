@@ -60,5 +60,14 @@ for(const url of regional) assert.ok(sitemap.includes(url),`regional URL must al
 const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 assert.match(robots,/Sitemap: https:\/\/onsdelaet\.ru\/sitemap\.xml/);
 assert.match(robots,/Sitemap: https:\/\/onsdelaet\.ru\/sitemap-regions\.xml/);
+assert.doesNotMatch(robots,/comparison\.html/,'obsolete comparison.html robots rule must not return');
+for(const privatePage of ['compare.html','payment-success.html','payment-failed.html','review.html','requests.html','replies.html']){
+  const html=fs.readFileSync(path.join(root,privatePage),'utf8');
+  assert.match(html,/<meta name="robots" content="noindex,nofollow">/,privatePage+' must remain noindex,nofollow');
+}
+const generator=fs.readFileSync(path.join(root,'tools','generate-seo-pages.mjs'),'utf8');
+assert.match(generator,/expectedRegional=manifest\.categories\.length\*29/,'SEO generator must preserve the regional matrix');
+assert.match(generator,/urls\.length!==2132/,'SEO generator must fail closed if the main sitemap loses URLs');
+assert.match(generator,/sitemap-regions\.xml/,'SEO generator must preserve the regional sitemap declaration');
 
 console.log('SEO category pages regression: 71 services / 29 geos / 2132 URLs PASS');
