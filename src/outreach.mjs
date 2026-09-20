@@ -1040,9 +1040,77 @@ export async function handleOutreach(
     if (
       req.method === 'POST' &&
       url.pathname ===
+        '/v1/outreach/email/preview'
+    ) {
+      const body =
+        await readJsonBody(
+          req,
+          128 * 1024
+        );
+
+      const message =
+        String(
+          body.message || ''
+        ).trim();
+
+      if (!message) {
+        const error =
+          new Error(
+            'MESSAGE_REQUIRED'
+          );
+
+        error.status = 400;
+        throw error;
+      }
+
+      const attachmentCount =
+        Math.max(
+          0,
+          Math.min(
+            6,
+            Number(
+              body.attachmentCount ||
+              0
+            ) || 0
+          )
+        );
+
+      sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          html:
+            buildEmailHtml(
+              message,
+              attachmentCount
+            ),
+          plainText: message,
+          attachmentCount,
+          from:
+            process.env.EMAIL_FROM ||
+            'Сделает <requests@onsdelaet.ru>',
+          replyTo:
+            process.env.EMAIL_REPLY_TO ||
+            'requests@onsdelaet.ru',
+          subject:
+            String(
+              body.subject ||
+              'Запрос по задаче в сервисе «Сделает»'
+            ).trim()
+        },
+        origin
+      );
+
+      return true;
+    }
+
+    if (
+      req.method === 'POST' &&
+      url.pathname ===
         '/v1/outreach/prepare'
     ) {
-      const body = await readJsonBody(req);
+      const body = await readJsonBody(req, 6 * 1024 * 1024);
       const row = await prepare(body);
 
       sendJson(
