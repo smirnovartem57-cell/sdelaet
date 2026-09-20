@@ -49,7 +49,7 @@ function requested(task, pattern) {
 function scenarioContext(task) {
   const all = text([task?.goal, task?.scope, task?.description].join(' '));
   return {
-    winter: /кабинет|зим|круглогод/.test(all) || ['winter_workspace', 'year_round_use'].includes(task?.goal),
+    winter: /кабинет|зим|круглогод|кругл(?:ый|ого)\s+год/.test(all) || ['winter_workspace', 'year_round_use'].includes(task?.goal),
     partial: /одн[ауо]\s+(?:стен|зон|поверх)|только\s+(?:пол|потол|стен|парапет)|частич/.test(all),
     finishRequested: requested(task, /отделк|под\s+ключ/),
     demolitionExpected: requested(task, /демонтаж|передел|стар.*(?:утеп|отдел)/),
@@ -83,12 +83,17 @@ function resolveCriticalWorks(rules, task, context) {
     if (/примыкан|гермет/.test(value)) out.push('junctionSealing');
     return out;
   }
-  if (context.winter) return [...(scenarios.winter_workspace?.criticalWorks || [])];
-  return [];
+  const out = [...(scenarios.default?.criticalWorks || [])];
+  if (context.winter) out.push(...(scenarios.winter_workspace?.criticalWorks || []));
+  for (const item of (rules?.conditionalCriticalWorks || [])) {
+    if (item?.id && taskConditionMatches(item.requiredWhen, task)) out.push(item.id);
+  }
+  return [...new Set(out)];
 }
 
 function taskConditionMatches(condition, task) {
   if (!condition) return false;
+  if (condition.not) return !taskConditionMatches(condition.not, task);
   if (Array.isArray(condition.any)) return condition.any.some(item => taskConditionMatches(item, task));
   if (Array.isArray(condition.all)) return condition.all.every(item => taskConditionMatches(item, task));
   const value = task?.[condition.field];
@@ -157,7 +162,9 @@ export function resolveOfferContract(task) {
 
   const criticalWorks = resolveCriticalWorks(rules, task || {}, context);
   const definitions = rules.workDefinitions || [];
-  const criticalWorkDefinitions = criticalWorks.map(id => definitions.find(item => item.id === id)).filter(Boolean);
+  const selectedDefinitions = criticalWorks.map(id => definitions.find(item => item.id === id)).filter(Boolean);
+  const dynamicDefinitions = definitions.filter(item => item.requiredWhenOffer);
+  const criticalWorkDefinitions = [...new Map([...selectedDefinitions, ...dynamicDefinitions].map(item => [item.id, item])).values()];
 
   return {
     schemaVersion: '2.0',

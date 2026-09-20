@@ -61,9 +61,20 @@ done
 "$NODE" --check "$CURRENT/src/offer-pipeline.mjs"
 if systemctl list-unit-files | grep -q '^sdelaet-api.service'; then
   systemctl restart sdelaet-api.service
-  sleep 1
-  systemctl is-active --quiet sdelaet-api.service
-  curl -fsS http://127.0.0.1:3210/health >/dev/null
+  api_ready=0
+  for attempt in $(seq 1 20); do
+    if systemctl is-active --quiet sdelaet-api.service && curl -fsS --max-time 2 http://127.0.0.1:3210/health >/dev/null 2>&1; then
+      api_ready=1
+      break
+    fi
+    sleep 1
+  done
+  if [ "$api_ready" -ne 1 ]; then
+    systemctl status sdelaet-api.service --no-pager -l || true
+    journalctl -u sdelaet-api.service -n 60 --no-pager || true
+    echo 'DEPLOY_API_HEALTH_TIMEOUT'
+    exit 1
+  fi
 fi
 
 grep -q '112503660' "$WEBROOT/assets/prod-ui.js"

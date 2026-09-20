@@ -76,6 +76,11 @@ export function processContractorReply(db, {
   const outreach = db.prepare(`SELECT * FROM outreach_attempts WHERE request_id = ? LIMIT 1`).get(requestId);
   if (!outreach) throw Object.assign(new Error('OUTREACH_NOT_FOUND'), { statusCode: 404 });
 
+  if (externalMessageId) {
+    const duplicate = db.prepare(`SELECT reply_id, request_id, received_at FROM contractor_replies WHERE request_id = ? AND external_message_id = ? ORDER BY created_at ASC LIMIT 1`).get(requestId, externalMessageId);
+    if (duplicate) return { duplicate: true, reply: { reply_id: duplicate.reply_id, request_id: duplicate.request_id, type: 'duplicate', received_at: duplicate.received_at }, offer: null, clarification: null };
+  }
+
   const engines = loadEngines();
   const task = taskForPipeline(db, outreach.task_id);
   const previous = latestOffer(db, requestId);
@@ -111,7 +116,11 @@ export function processContractorReply(db, {
   );
 
   const contractItems = contractEvaluation.clarificationItems || [];
-  const followup = contractItems.length
+  const clarificationRounds = Number(db.prepare(`SELECT COUNT(*) AS n FROM contractor_clarifications WHERE request_id = ?`).get(requestId)?.n || 0);
+  const maxClarificationRounds = Number(resolvedContract.clarificationPolicy?.maxRounds || 3);
+  const clarificationLimitReached = contractItems.length > 0 && clarificationRounds >= maxClarificationRounds;
+  const finalComparisonStatus = clarificationLimitReached && !comparisonDecision.comparable ? 'expert_review' : comparisonDecision.comparisonStatus;
+  const followup = contractItems.length && !clarificationLimitReached
     ? { needed: true, items: contractItems, message: 'Спасибо. Уточните, пожалуйста: ' + contractItems.join('; ') + '.' }
     : { needed: false, items: [], message: 'Спасибо. Предложение достаточно полное для предварительного сравнения.' };
 
@@ -159,7 +168,7 @@ export function processContractorReply(db, {
       'offer-parser-v1', 'offer-normalizer-v1+contract-v2', state.rawResponse || text,
       JSON.stringify(normalized), JSON.stringify(normalized.gaps || []), JSON.stringify(normalized.flags || []),
       comparisonDecision.comparable ? 1 : 0,
-      comparisonDecision.comparisonStatus,
+      finalComparisonStatus,
       now, now
     );
 
@@ -191,6 +200,15 @@ export function processContractorReply(db, {
   };
 }
 
+export function getOfferDialogueHistory(db, requestId) {
+  const replies=db.prepare(`SELECT reply_id,parent_reply_id,reply_type,raw_text,received_at,created_at FROM contractor_replies WHERE request_id=? ORDER BY created_at ASC`).all(requestId);
+  const clarifications=db.prepare(`SELECT clarification_id,offer_id,question_text,gaps_json,status,reply_id,answered_at,created_at FROM contractor_clarifications WHERE request_id=? ORDER BY created_at ASC`).all(requestId);
+  const offers=db.prepare(`SELECT offer_id,version,source_reply_id,comparison_status,comparable,normalized_json,gaps_json,created_at FROM contractor_offers WHERE request_id=? ORDER BY version ASC`).all(requestId);
+  const versions=offers.map(x=>({...x,comparable:Boolean(x.comparable),normalized:parseJson(x.normalized_json,{}),gaps:parseJson(x.gaps_json,[])}));
+  const changes=versions.map((cur,i)=>{const prev=i?versions[i-1]:null;const reply=replies.find(r=>r.reply_id===cur.source_reply_id)||null;const answeredClarification=reply?clarifications.find(c=>c.reply_id===reply.reply_id)||null:null;const pg=new Set(prev?.gaps||[]),cg=new Set(cur.gaps||[]);const before=prev?.normalized||{},after=cur.normalized||{};const keys=[...new Set([...Object.keys(before),...Object.keys(after)])];const field_changes=keys.filter(k=>JSON.stringify(before[k]??null)!==JSON.stringify(after[k]??null)).map(k=>({field:k,before:before[k]??null,after:after[k]??null}));const labels={totalPrice:'Итоговая стоимость',workPrice:'Стоимость работ',materialsPrice:'Стоимость материалов',materialsIncluded:'Материалы включены',worksIncluded:'Состав работ',leadTime:'Срок выполнения',warranty:'Гарантия',measurement:'Замер',contract:'Договор',insulationMaterial:'Утеплитель',insulationThickness:'Толщина утеплителя',layerCount:'Количество слоёв',systemDescription:'Система работ',extraCosts:'Дополнительные расходы',exclusions:'Не входит в стоимость'};const isEmpty=v=>v==null||v===''||(Array.isArray(v)&&v.length===0);const presentation_changes=field_changes.filter(x=>labels[x.field]&&!(isEmpty(x.before)&&isEmpty(x.after))).map(x=>({...x,label:labels[x.field]}));const compactText=v=>{const t=String(v??'').replace(/\s+/g,' ').trim();return t.length>180?t.slice(0,177)+'…':t};const formatValue=(field,v)=>{if(v==null||v==='')return null;if(['totalPrice','workPrice','materialsPrice'].includes(field)&&Number.isFinite(Number(v)))return new Intl.NumberFormat('ru-RU').format(Number(v))+' ₽';if(typeof v==='boolean')return v?'Да':'Нет';if(Array.isArray(v))return compactText(v.join(', '));return compactText(v)};const presentation_events=presentation_changes.map(x=>{const action=isEmpty(x.before)?'added':isEmpty(x.after)?'removed':'updated';const display_value=formatValue(x.field,x.after);const kind=['totalPrice','workPrice','materialsPrice','materialsIncluded'].includes(x.field)?'price':['leadTime','warranty','measurement','contract'].includes(x.field)?'terms':['worksIncluded','exclusions','extraCosts'].includes(x.field)?'scope':'technical';const verb=action==='added'?'уточнил':action==='updated'?'изменил':'убрал';return {field:x.field,label:x.label,kind,action,value:x.after,previous_value:x.before,display_value,message:`Исполнитель ${verb}: ${x.label}${display_value?': '+display_value:''}`};});const n=cur.normalized||{};const facts=[];if(n.insulationMaterial)facts.push(`Утеплитель: ${compactText(n.insulationMaterial)}`);if(n.insulationThickness)facts.push(`Толщина: ${compactText(n.insulationThickness)}`);if(n.layerCount)facts.push(`Слои: ${compactText(n.layerCount)}`);if(Array.isArray(n.worksIncluded)&&n.worksIncluded.length)facts.push(`Работы: ${compactText(n.worksIncluded.join(', '))}`);if(n.junctionSealing===true)facts.push('Герметизация примыканий: входит');if(n.vaporMoistureControl===true)facts.push('Паро-/влагоконтроль: предусмотрен');if(n.thermalBridgeTreatment===true)facts.push('Мостики холода: обработка предусмотрена');const semantic_summary={facts,headline:facts.slice(0,3).join(' · ')||null};const presentation_summary={event_count:presentation_events.length,has_changes:presentation_events.length>0,messages:presentation_events.map(e=>e.message),closed_gaps:[...pg].filter(x=>!cg.has(x)),remaining_gaps:[...cg],semantic_summary};return {version:cur.version,offer_id:cur.offer_id,source_reply_id:cur.source_reply_id||null,parent_reply_id:reply?.parent_reply_id||null,answered_clarification_id:answeredClarification?.clarification_id||null,answered_items:answeredClarification?parseJson(answeredClarification.gaps_json,[]):[],status_before:prev?.comparison_status||null,status_after:cur.comparison_status,gaps_closed:[...pg].filter(x=>!cg.has(x)),gaps_added:[...cg].filter(x=>!pg.has(x)),field_changes,presentation_changes,presentation_events,presentation_summary,became_comparable:!Boolean(prev?.comparable)&&Boolean(cur.comparable)};});
+  const latest=versions.at(-1)||null;const pending=clarifications.filter(x=>x.status==='pending');const latestSummary=changes.at(-1)?.presentation_summary||null;const current_state=latest?{offer_id:latest.offer_id,version:latest.version,status:latest.comparison_status,comparable:Boolean(latest.comparable),ready_for_comparison:Boolean(latest.comparable),normalized:latest.normalized,semantic_summary:latestSummary?.semantic_summary||null,remaining_gaps:latest.gaps||[],pending_clarifications:pending.map(x=>({clarification_id:x.clarification_id,items:parseJson(x.gaps_json,[])})),blocking_reason:latest.comparable?null:(latest.comparison_status==='expert_review'?'Требуется экспертная проверка':(latest.gaps||[]).length?'Не хватает данных для сопоставимого предложения':'Предложение пока не готово к сравнению'),next_action:latest.comparable?'compare':latest.comparison_status==='expert_review'?'expert_review':pending.length?'await_clarification':'request_clarification'}:null;return {request_id:requestId,replies,clarifications:clarifications.map(x=>({...x,items:parseJson(x.gaps_json,[])})),offers:versions,changes,current_state};
+}
+
 export function listTaskOffers(db, taskId) {
   const rows = db.prepare(`
     SELECT o.* FROM contractor_offers o
@@ -201,7 +219,12 @@ export function listTaskOffers(db, taskId) {
     WHERE o.task_id = ? ORDER BY o.created_at ASC
   `).all(taskId, taskId);
 
-  return rows.map(row => ({
+  return rows.map(row => {
+    const pending = db.prepare(`SELECT gaps_json FROM contractor_clarifications WHERE request_id = ? AND status = 'pending' ORDER BY created_at DESC LIMIT 1`).get(row.request_id);
+    const pendingItems = parseJson(pending?.gaps_json, []);
+    const status = row.comparison_status;
+    const nextAction = status === 'comparable' ? 'service_compare' : status === 'expert_review' ? 'service_review' : 'contractor_reply';
+    return ({
     offer_id: row.offer_id,
     request_id: row.request_id,
     task_id: row.task_id,
@@ -213,6 +236,8 @@ export function listTaskOffers(db, taskId) {
     gaps: parseJson(row.gaps_json, []),
     risks: parseJson(row.risks_json, []),
     created_at: row.created_at,
-    updated_at: row.updated_at
-  }));
+    updated_at: row.updated_at,
+    dialogue: { status, pending_items: pendingItems, needs_contractor_reply: status === 'needs_data' && pendingItems.length > 0, needs_service_action: status === 'expert_review', next_action: nextAction }
+  });
+  });
 }

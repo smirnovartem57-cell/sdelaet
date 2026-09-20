@@ -30,6 +30,20 @@ function workMatched(offer, definition) {
   });
 }
 
+function offerConditionMatches(condition, offer) {
+  if (!condition) return true;
+  if (Array.isArray(condition.any)) return condition.any.some(item => offerConditionMatches(item, offer));
+  if (Array.isArray(condition.all)) return condition.all.every(item => offerConditionMatches(item, offer));
+  const value = offer?.[condition.field];
+  if (Array.isArray(condition.in)) return condition.in.includes(value);
+  if (Object.prototype.hasOwnProperty.call(condition, 'equals')) return value === condition.equals;
+  if (Array.isArray(condition.containsAny)) {
+    const haystack = text(value);
+    return condition.containsAny.some(item => haystack.includes(text(item)));
+  }
+  return false;
+}
+
 function uniq(values) {
   return [...new Set(values.filter(Boolean))];
 }
@@ -46,7 +60,10 @@ function deriveComparableTotalPrice(offer, comparisonReady) {
   if (total === null) return null;
   if (offer.materialsIncluded === false) {
     const materials = numeric(offer.materialsPrice);
-    return materials === null ? null : total + materials;
+    const work = numeric(offer.workPrice);
+    if (materials === null) return null;
+    if (work !== null && total === work + materials) return total;
+    return total + materials;
   }
   return total;
 }
@@ -70,6 +87,7 @@ export function evaluateOfferContract(contract, offer = {}) {
   const matchedWorkIds = new Set();
   const missingCriticalWorks = [];
   for (const definition of contract.criticalWorkDefinitions || []) {
+    if (definition.requiredWhenOffer && !offerConditionMatches(definition.requiredWhenOffer, offer)) continue;
     if (workMatched(offer, definition)) matchedWorkIds.add(definition.id);
     else missingCriticalWorks.push({ id: definition.id, clarification: definition.clarification || definition.id });
   }

@@ -20,6 +20,8 @@ assert.match(deploy, /tools\/platform-readiness\.mjs/);
 assert.match(deploy, /tests\/metrika-goals-regression\.mjs/);
 assert.match(deploy, /DEPLOY_BACKUP=/);
 assert.match(deploy, /DEPLOY_PASS sha=/);
+assert.match(deploy, /DEPLOY_API_HEALTH_TIMEOUT/);
+assert.match(deploy, /seq 1 20/);
 assert.match(deploy, /assets\/deploy-version\.txt/);
 
 assert.match(service, /ExecStart=\/usr\/local\/sbin\/sdelaet-deploy-main/);
