@@ -67,7 +67,7 @@
       done.disabled=true;done.textContent='Фиксируем…';
       try{
         await post('/api/v1/outreach/manual-sent',{authorizationId,requestId:item.requestId});
-        done.textContent='Отправлено ✓';
+        if(window.sdTrack)sdTrack('request_mark_sent',{channel:'telegram'});done.textContent='Отправлено ✓';
       }catch(e){
         done.disabled=false;done.textContent='Повторить отметку';
         alert('Не удалось зафиксировать отправку: '+(e.message||'ошибка'));

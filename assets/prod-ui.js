@@ -5,6 +5,63 @@ if(h==='onsdelaet.ru'||h==='www.onsdelaet.ru'){
   if(location.protocol!=='https:'||h==='www.onsdelaet.ru'||p!==location.pathname){location.replace('https://onsdelaet.ru'+p+location.search+location.hash);return}
 }
 window.sdTrack=function(name,extra){window.dataLayer=window.dataLayer||[];window.dataLayer.push(Object.assign({event:name},extra||{}))};
+var SD_METRIKA_COUNTER_ID=112503660;
+var SD_METRIKA_GOALS={tariff_tz_click:1,tariff_find_click:1,tariff_compare_click:1,tariff_choice_click:1,find_executors_click:1,payment_start:1,payment_redirect:1,payment_return:1,payment_success:1,payment_fail:1,search_start:1,search_complete:1,request_prepare:1,request_send:1};
+if(!window.__sdMetrikaInitialized){
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+  window.ym(SD_METRIKA_COUNTER_ID,'init',{id:SD_METRIKA_COUNTER_ID,clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+  window.__sdMetrikaInitialized=true;
+}
+window.sdGoal=function(name,extra){if(!SD_METRIKA_GOALS[name])return false;window.sdTrack(name,extra);try{window.ym(SD_METRIKA_COUNTER_ID,'reachGoal',name,extra||{})}catch(e){}return true};
+var SD_METRIKA_ONCE={};
+function sdGoalOnce(name,extra){var key=name+':'+String(extra&&extra.order_id||'');try{if(sessionStorage.getItem('sdelaet.metrika.'+key))return false;sessionStorage.setItem('sdelaet.metrika.'+key,'1')}catch(e){if(SD_METRIKA_ONCE[key])return false;SD_METRIKA_ONCE[key]=1}return window.sdGoal(name,extra)}
+window.sdAnalytics=Object.freeze({
+  tariff:function(id,extra){var goal={tz:'tariff_tz_click',find:'tariff_find_click',compare:'tariff_compare_click',choice:'tariff_choice_click'}[id];return goal?window.sdGoal(goal,extra):false},
+  findExecutors:function(extra){return window.sdGoal('find_executors_click',extra)},
+  searchStart:function(extra){return window.sdGoal('search_start',extra)},
+  searchComplete:function(extra){return window.sdGoal('search_complete',extra)},
+  paymentStart:function(extra){return window.sdGoal('payment_start',extra)},
+  paymentRedirect:function(extra){return window.sdGoal('payment_redirect',extra)},
+  paymentReturn:function(extra){return sdGoalOnce('payment_return',extra)},
+  paymentSuccess:function(extra){return sdGoalOnce('payment_success',extra)},
+  paymentFail:function(extra){return sdGoalOnce('payment_fail',extra)},
+  paymentResultPage:function(kind,extra){this.paymentReturn(extra);if(kind==='failed')this.paymentFail(extra);return true},
+  paymentStatus:function(status,extra){return status==='paid'?this.paymentSuccess(extra):false},
+  requestPrepare:function(extra){return window.sdGoal('request_prepare',extra)},
+  requestSend:function(extra){return window.sdGoal('request_send',extra)}
+});
+var SD_INTERNAL_TRACK=window.sdTrack;
+window.sdTrack=function(name,extra){
+  SD_INTERNAL_TRACK(name,extra);
+  if(SD_METRIKA_GOALS[name])return;
+  if(name==='tz_confirmed'){window.sdAnalytics.findExecutors(extra);window.sdAnalytics.searchStart(extra)}
+  else if(name==='shortlist_prepared')window.sdAnalytics.searchComplete(extra);
+  else if(name==='payment_link_created')window.sdAnalytics.paymentRedirect(extra);
+  else if(name==='outreach_review_ready')window.sdAnalytics.requestPrepare(extra);
+  else if(name==='request_mark_sent')window.sdAnalytics.requestSend(extra);
+  else if(name==='outreach_authorized'&&Number(extra&&extra.sent_email)>0)window.sdAnalytics.requestSend({channel:'email',count:Number(extra.sent_email)});
+};
+function sdTariffId(card){
+  var id=String(card&&card.getAttribute&&card.getAttribute('data-tariff-card')||'').trim();
+  if(id)return id;
+  var name=String(card&&card.querySelector&&card.querySelector('.price-name')?.textContent||'').trim().toLowerCase();
+  if(name==='тз')return 'tz';
+  if(name==='найти'||name==='подбор')return 'find';
+  if(name==='сравнить')return 'compare';
+  if(name==='до выбора'||name==='выбор')return 'choice';
+  return '';
+}
+document.addEventListener('click',function(event){
+  var target=event.target&&event.target.closest?event.target:null;if(!target)return;
+  var card=target.closest('[data-tariff-card],.price-card');
+  if(card&&(target.closest('[data-tariff-card]')||target.closest('.price-action'))){
+    var id=sdTariffId(card);if(id)window.sdAnalytics.tariff(id,{tariff_id:id});
+  }
+  if(target.closest('#buySearch')){
+    var selected=document.querySelector('input[name="checkoutTariff"]:checked');
+    window.sdAnalytics.paymentStart({tariff_id:selected?selected.value:null});
+  }
+},true);
 window.sdGetTask=function(){try{return JSON.parse(localStorage.getItem('sdelaet.task.v2')||'null')}catch(e){return null}};
 window.sdSetTask=function(task){localStorage.setItem('sdelaet.task.v2',JSON.stringify(task));return task};
 window.sdGetRequests=function(){try{return JSON.parse(localStorage.getItem('sdelaet.requests.v1')||'{}')}catch(e){return {}}};
