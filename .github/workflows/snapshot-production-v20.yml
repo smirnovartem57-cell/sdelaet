@@ -1,0 +1,37 @@
+name: Snapshot production for v20 branch
+on:
+  push:
+    branches: [fix/v20-flow-regressions]
+permissions:
+  contents: write
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/v20-flow-regressions
+      - name: Fetch current public production files
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://onsdelaet.ru'
+          for file in create-task.html task-tz.html payment-success.html requests.html candidates.html review.html; do
+            curl -fsSL --retry 3 --max-time 30 "$base/$file?snapshot=v20" -o "$file"
+            test -s "$file"
+          done
+          curl -fsSL --retry 3 --max-time 30 "$base/assets/live-search.js?snapshot=v20" -o assets/live-search.js
+          test -s assets/live-search.js
+      - name: Commit production snapshot to feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add create-task.html task-tz.html payment-success.html requests.html candidates.html review.html assets/live-search.js
+          if git diff --cached --quiet; then
+            echo 'snapshot already current'
+            exit 0
+          fi
+          git commit -m 'Snapshot current production before v20 fixes'
+          git push origin HEAD:fix/v20-flow-regressions
