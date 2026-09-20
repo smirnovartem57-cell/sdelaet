@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Исполнители — Сделает</title>
+<meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,8 +36,7 @@
     .toast-wrap{position:fixed;right:18px;top:18px;z-index:1000;width:min(390px,calc(100vw - 36px));display:grid;gap:8px}.toast{background:#fff8ea;border:1px solid #ecd7a3;border-radius:15px;padding:12px 14px;box-shadow:0 18px 50px rgba(23,31,63,.16)}.toast.ok{background:#effbf5;border-color:#cfeadf}.toast b,.toast span{display:block}.toast span{font-size:12px;margin-top:2px}.hidden{display:none!important}
     @media(max-width:850px){.pref-grid,.candidate-grid{grid-template-columns:1fr}.candidate-head{grid-template-columns:54px 1fr}.match-badge{grid-column:1/-1;text-align:left;width:max-content}.search-intro{grid-template-columns:1fr}.filter-row{align-items:flex-start;flex-direction:column}}
     @media(max-width:620px){.search-filter,.candidate .actions{display:grid;width:100%}.search-filter .chip,.candidate .btn{width:100%}.candidate{padding:15px}.contact-list{display:grid}.contact-pill{width:100%}.change-pref{padding-left:0}.pref-actions{align-items:stretch;flex-direction:column}.pref-actions .btn{width:100%}}
-
-    /* structured candidate evidence */
+      /* structured candidate evidence */
     .candidate-grid.structured{grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr);align-items:start}
     .candidate-grid.structured>.why-panel{background:#fbfcff}.why-panel ul{font-size:12px;line-height:1.45}.why-panel li+li{margin-top:6px}
     .key-signals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.key-signal{padding:10px 11px;border:1px solid #dfe6f4;border-radius:13px;background:#fbfcff;min-width:0}.key-signal span,.key-signal b,.key-signal small{display:block}.key-signal span{font:800 9px Montserrat;text-transform:uppercase;letter-spacing:.06em;color:#7a849c}.key-signal b{margin-top:4px;font:850 15px Montserrat;color:#24304c}.key-signal small{margin-top:2px;font-size:9px;color:#7a849c;overflow-wrap:anywhere}
@@ -50,6 +50,18 @@
     .reviews-section{margin-top:14px}.reviews-section h3{display:flex;align-items:center;gap:8px;font:800 13px Montserrat;margin:0 0 8px}.reviews-section h3 span{display:grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#edf1fa;font-size:9px;color:#6c7690}.review-list{display:grid;gap:8px}.review-item{padding:12px 13px;border:1px solid #e2e7f1;border-radius:14px;background:#fbfcff}.review-item.negative{border-color:#f0d8d5;background:#fffafa}.review-head{display:flex;justify-content:space-between;gap:12px}.review-head b,.review-head span{display:block}.review-head b{font-size:11px}.review-head span{margin-top:2px;font-size:9px;color:#8590a5}.review-head strong{font:800 11px Montserrat;color:#8c6c1c}.review-item p{margin:8px 0 0;font-size:11px;line-height:1.5;color:#4f5b74}.review-source{display:inline-block;margin-top:8px;font-size:9px;color:#4f66b8}.business-reply{margin-top:8px;padding:8px 9px;border-radius:10px;background:#f1f4f9}.business-reply summary{cursor:pointer;font:700 9px Montserrat;color:#57657f}.business-reply div{margin-top:6px;font-size:10px;line-height:1.45;color:#606b83}.reviews-footer{margin-top:16px}
     @media(max-width:900px){.key-signals{grid-template-columns:repeat(2,1fr)}.candidate-grid.structured{grid-template-columns:1fr}.fact-panels{grid-template-columns:1fr}}
     @media(max-width:620px){.key-signals{grid-template-columns:1fr 1fr}.reputation-strip{align-items:flex-start;flex-direction:column}.reviews-modal{padding:8px}.reviews-dialog{padding:18px 14px;max-height:94vh;border-radius:18px}.review-summary,.review-topics{grid-template-columns:1fr}.source-list{grid-template-columns:1fr}}
+
+    /* compact decision-first candidate cards */
+    .key-signals.compact{grid-template-columns:repeat(2,minmax(0,170px));justify-content:start;margin-top:10px}
+    .candidate-grid.structured{grid-template-columns:minmax(230px,.62fr) minmax(0,1.38fr);gap:10px;margin-top:12px}
+    .why-panel{padding:12px!important}.why-panel h3{margin-bottom:8px!important}.why-panel ul{margin:0;padding-left:17px;font-size:10.5px;line-height:1.42}.why-panel li+li{margin-top:5px}.why-more{margin-top:8px}.why-more summary{cursor:pointer;font:700 9px Montserrat;color:#5c6a86}.why-more[open] ul{margin-top:8px}
+    .fact-panels{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.fact-panel{padding:10px!important}.fact-panel h3{margin-bottom:7px!important}.fact-panel-list{gap:5px}.fact-compact{padding:6px 7px}.fact-compact p{font-size:9.5px;line-height:1.35}.fact-compact b{font-size:9.5px}.fact-source{font-size:8.5px;margin-top:3px}
+    .fact-panel.unknown{grid-column:auto;background:#fff9ee!important;border-color:#f1dfb8!important}.fact-panel.unknown h3{color:#925f0c!important}.fact-panel.unknown .fact-compact{background:#fffdf8;border-color:#f1e6cd}.fact-panel.unknown .fact-dot{background:#fff1cd;color:#9a650d}
+    .verification-summary{background:#f7fbf9!important;border-color:#dbece3!important}.verification-statuses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.verification-statuses>div{display:flex;align-items:flex-start;gap:7px;padding:7px 8px;border-radius:10px;background:#fff;border:1px solid #e0ece5}.verify-check{display:grid;place-items:center;width:18px;height:18px;flex:0 0 18px;border-radius:6px;background:#e9f8f0;color:#148159;font-weight:900;font-size:10px}.verification-statuses p{margin:0;min-width:0}.verification-statuses b,.verification-statuses small{display:block}.verification-statuses b{font-size:9px;color:#526177}.verification-statuses small{margin-top:1px;font-size:9.5px;color:#254d3e}
+    .evidence-details,.sources-details{margin-top:9px;border-top:1px dashed #dfe4ef;padding-top:8px}.evidence-details summary,.sources-details summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:9px;background:#f6f8fc;color:#69748c;font:700 9px Montserrat}.evidence-details[open] summary,.sources-details[open] summary{margin-bottom:8px}.evidence-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.sources-details .source-list{margin-top:0}
+    .reputation-strip{margin-top:9px;padding:9px 11px}.reputation-strip b{font-size:11px}.reputation-strip small{font-size:8.5px}.reviews-open,.reviews-link{padding:7px 9px;font-size:9px}
+    .candidate>.source-caption{margin-top:10px}.candidate .actions{margin-top:10px}
+    @media(max-width:1100px){.fact-panels{grid-template-columns:repeat(2,minmax(0,1fr))}.fact-panel.unknown{grid-column:1/-1}}@media(max-width:900px){.candidate-grid.structured{grid-template-columns:1fr}.fact-panels{grid-template-columns:repeat(2,minmax(0,1fr))}.fact-panel.unknown{grid-column:1/-1}.verification-statuses,.evidence-list{grid-template-columns:1fr}.key-signals.compact{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -147,6 +159,6 @@
 
   <script src="assets/search-config.js"></script>
   <script src="assets/search-preferences.js"></script>
-  <script src="assets/live-search.js?v=public-v3-20260920"></script>
+  <script src="assets/live-search.js?v=public-v4-20260920"></script>
 </body>
 </html>

@@ -202,10 +202,188 @@
     return { title: '', text };
   }
 
+  function compactText(value) {
+    return String(value || '').replace(/\s+/g, ' ').replace(/\s+([,.;:])/g, '$1').trim();
+  }
+
+  function moneyText(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.round(n).toLocaleString('ru-RU') : '';
+  }
+
+  function priceEntriesFromFact(fact) {
+    const raw = compactText(fact?.label || '').replace(/^Цена:\s*/i, '');
+    const entries = [];
+    const rx = /(\d[\d\s]*(?:[.,]\d+)?)\s*(?:руб\.?|р\.?|₽)(?:\s*\/\s*(?:м²|м2|мкв))?/gi;
+    let m;
+    while ((m = rx.exec(raw))) {
+      const amount = Number(String(m[1]).replace(/\s/g,'').replace(',','.'));
+      if (!Number.isFinite(amount)) continue;
+      const tail = raw.slice(m.index, Math.min(raw.length, m.index + m[0].length + 10));
+      const before = raw.slice(Math.max(0,m.index - 45), m.index).toLowerCase();
+      const after = raw.slice(m.index + m[0].length, Math.min(raw.length, m.index + m[0].length + 45)).toLowerCase();
+      const perM2 = /\/\s*(?:м²|м2|мкв)|мкв/i.test(before + ' ' + m[0] + ' ' + tail);
+      const around = before + ' ' + after;
+      const context = /потол/.test(around) ? 'потолок' : /однослойн/.test(after) ? '1 слой' : /двухслойн/.test(after) ? '2 слоя' : /тр[её]хслойн/.test(after) ? '3 слоя' : '';
+      entries.push({ amount, perM2, context });
+    }
+    return entries;
+  }
+
+  function isCasePriceFact(fact) {
+    const l = String(fact?.label || '');
+    return /серия дома|тип балкона|площадь\s+\d|перечень работ|\bсмотреть\b|облицовка стен|\b\d{1,2}\s+(?:январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)/i.test(l);
+  }
+
+  function isOffTaskPriceFact(fact) {
+    const l = String(fact?.label || '').toLowerCase();
+    if (task?.categoryId === 'balcony-insulation' && /остеклен/.test(l) && !/утеплен/.test(l)) return true;
+    return false;
+  }
+
+  function priceSummary(priceFacts) {
+    const evidence = [], relevant = [];
+    priceFacts.forEach(f => {
+      if (isCasePriceFact(f) || isOffTaskPriceFact(f)) evidence.push(f);
+      else relevant.push(f);
+    });
+    const entries = relevant.flatMap(f => priceEntriesFromFact(f).map(x => ({ ...x, fact:f })));
+    if (!entries.length) return { fact:null, evidence:[...evidence,...relevant] };
+    const sqm = entries.filter(x => x.perM2).sort((a,b) => a.amount - b.amount);
+    const unitless = entries.filter(x => !x.perM2).sort((a,b) => a.amount - b.amount);
+    const basis = sqm[0] || unitless[0];
+    const distinct = [];
+    for (const entry of entries) {
+      if (!distinct.some(x => x.amount === entry.amount && x.perM2 === entry.perM2)) distinct.push(entry);
+    }
+    let text = `от ${moneyText(basis.amount)} ₽${basis.perM2 ? '/м²' : ''}`;
+    if (!basis.perM2) text += ' · единица на сайте не указана';
+    const alternatives = distinct.filter(x => x !== basis && x.amount !== basis.amount).slice(0,3);
+    if (alternatives.length) {
+      const altText = alternatives.map(x => `${x.context ? x.context + ' ' : ''}${moneyText(x.amount)} ₽${x.perM2 ? '/м²' : ''}`).join(' · ');
+      text += ` · ${alternatives.some(x=>x.context) ? '' : 'варианты: '}${altText}`;
+    }
+    const fact = { label:`Цена: ${text}`, status:'claimed', sourceId:basis.fact?.sourceId, compact:true };
+    const used = new Set(entries.map(x => x.fact));
+    return { fact, evidence:[...evidence,...relevant.filter(f => !used.has(f))] };
+  }
+
+  function shortestUseful(facts, title) {
+    if (!facts.length) return null;
+    const cleaned = facts.map(f => {
+      let text = compactText(f.label).replace(new RegExp(`^${title}:\\s*`,'i'),'');
+      text = text.replace(/^Качество\s+/i,'').replace(/^При[её]мка и гарантия\s+/i,'').replace(/^Процесс выглядит так:\s*/i,'');
+      return { fact:f, text };
+    }).filter(x => x.text);
+    cleaned.sort((a,b) => a.text.length - b.text.length);
+    const pick = cleaned[0];
+    return pick ? { label:`${title}: ${pick.text}`, status:pick.fact.status, sourceId:pick.fact.sourceId, compact:true } : null;
+  }
+
+  function compactGuarantee(facts) {
+    const pick = shortestUseful(facts,'Гарантия');
+    if (!pick) return null;
+    let text = splitFactLabel(pick.label).text;
+    if (/договор.*гарант/i.test(text)) text = 'Работа по договору, гарантия заявлена на сайте.';
+    else if (/гарант.*работ.*материал/i.test(text)) text = 'Гарантия на выполненные работы и материалы.';
+    else if (text.length > 95) text = text.slice(0,92).replace(/[,:;\s]+$/,'') + '…';
+    return { ...pick, label:`Гарантия: ${text}` };
+  }
+
+  function compactTerm(facts) {
+    if (!facts.length) return null;
+    for (const f of facts) {
+      const text = compactText(f.label).replace(/^Срок:\s*/i,'');
+      const insulation = text.match(/(\d+(?:[.,]\d+)?)\s*д(?:ень|ня|ней)\s*[-–—]?\s*(?:отделк\w*\s+и\s+)?утеплен/i);
+      if (insulation) return { label:`Срок: утепление${/отделк/i.test(insulation[0]) ? ' и отделка' : ''} — около ${String(insulation[1]).replace('.',',')} дней`, status:f.status, sourceId:f.sourceId, compact:true };
+      const direct = text.match(/(?:за|срок\s*[-–—:]?)\s*(\d+(?:[.,]\d+)?)\s*д(?:ень|ня|ней)/i);
+      if (direct && !/наш балкон превратился|отзыв/i.test(text)) return { label:`Срок: от ${String(direct[1]).replace('.',',')} дней`, status:f.status, sourceId:f.sourceId, compact:true };
+    }
+    return null;
+  }
+
+  function compactMeasurement(facts) {
+    if (!facts.length) return null;
+    const free = facts.find(f => /бесплатн.*замер|бесплатн.*замер.*расч[её]т/i.test(f.label));
+    const pick = free || facts[0];
+    return { label:free ? 'Замер: бесплатно, с расчётом стоимости' : 'Замер: перед окончательным расчётом', status:pick.status, sourceId:pick.sourceId, compact:true };
+  }
+
+  function expandUnknownFacts(facts) {
+    if (!facts.length) return [];
+    const text = facts.map(f=>String(f.label||'')).join(' ').toLowerCase();
+    const base = facts[0];
+    const out = [];
+    if (/минимальн.*объ[её]м/.test(text)) out.push({label:'Минимальный заказ: уточнить',status:'unknown',sourceId:base.sourceId,compact:true});
+    if (/срок старта/.test(text)) out.push({label:'Дата старта работ: уточнить',status:'unknown',sourceId:base.sourceId,compact:true});
+    if (/окончательн.*цена/.test(text)) out.push({label:'Итоговая цена: после запроса по вашему ТЗ',status:'unknown',sourceId:base.sourceId,compact:true});
+    return out.length ? out.slice(0,3) : facts.slice(0,3);
+  }
+
+  function normalizeFactBuckets(candidate, facts) {
+    const raw = { price:[], guarantee:[], term:[], measurement:[], verification:[], reputation:[], unknown:[], other:[] };
+    for (const fact of facts) {
+      const l = String(fact?.label || '').toLowerCase();
+      if (fact?.status === 'unknown') raw.unknown.push(fact);
+      else if (/^цена:/.test(l)) raw.price.push(fact);
+      else if (/^гарантия:/.test(l)) raw.guarantee.push(fact);
+      else if (/^срок:/.test(l)) raw.term.push(fact);
+      else if (/^замер:/.test(l)) raw.measurement.push(fact);
+      else if (/отзыв|рейтинг|яндекс карт|2гис|репутац/.test(l)) raw.reputation.push(fact);
+      else raw.verification.push(fact);
+    }
+    const price = priceSummary(raw.price);
+    const terms = [price.fact, compactGuarantee(raw.guarantee), compactTerm(raw.term), compactMeasurement(raw.measurement)].filter(Boolean);
+    const evidence = [...price.evidence];
+    raw.guarantee.forEach(f => { if (!terms.some(t => t.sourceId === f.sourceId && /^Гарантия:/.test(t.label))) evidence.push(f); });
+    raw.term.forEach(f => { if (!terms.some(t => t.sourceId === f.sourceId && /^Срок:/.test(t.label))) evidence.push(f); });
+    raw.measurement.forEach(f => { if (!terms.some(t => t.sourceId === f.sourceId && /^Замер:/.test(t.label))) evidence.push(f); });
+    return { terms:terms.slice(0,4), verification:raw.verification, reputation:raw.reputation, unknown:expandUnknownFacts(raw.unknown), evidence };
+  }
+
+  function verificationItems(candidate) {
+    const items = [];
+    const groups = uniqueSourceGroups(candidate);
+    const official = groups.find(g => g.label === 'Официальный сайт') || groups.find(g => candidate.website && g.host === hostOf(candidate.website));
+    const rep = reviewModel(candidate);
+    if (official) items.push({label:'Официальный сайт',value:'найден',status:'ok'});
+    if (official?.pages) items.push({label:'Страниц проверено',value:String(official.pages),status:'ok'});
+    if (rep?.platform === 'Яндекс Карты') items.push({label:'Яндекс Карты',value:'профиль подтверждён',status:'ok'});
+    const domain = candidate.trustProfile?.history?.domain;
+    if (domain?.ageYears != null) items.push({label:'Возраст домена',value:`${domain.ageYears} лет`,status:'ok'});
+    return items.slice(0,4);
+  }
+
+  function renderVerificationSummary(candidate) {
+    const items = verificationItems(candidate);
+    if (!items.length) return '';
+    return `<section class="fact-panel verification verification-summary"><h3>Проверка компании<span>${items.length}</span></h3><div class="verification-statuses">${items.map(x => `<div><span class="verify-check">✓</span><p><b>${esc(x.label)}</b><small>${esc(x.value)}</small></p></div>`).join('')}</div></section>`;
+  }
+
+  function renderWhyPanel(candidate) {
+    const reasons = [...new Set((candidate.rankReasons || []).map(x => compactText(x)).filter(Boolean))];
+    const first = reasons.slice(0,3);
+    const rest = reasons.slice(3);
+    return `<section class="why-panel"><h3>Почему подходит</h3><ul>${(first.length ? first : ['Найден по профильному поисковому запросу.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${rest.length ? `<details class="why-more"><summary>Ещё ${rest.length}</summary><ul>${rest.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}</section>`;
+  }
+
+  function renderEvidenceDetails(candidate, items) {
+    if (!items?.length) return '';
+    const unique = [];
+    const seen = new Set();
+    for (const fact of items) {
+      const key = compactText(fact?.label).toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key); unique.push(fact);
+    }
+    if (!unique.length) return '';
+    return `<details class="evidence-details"><summary>Примеры и доказательства · ${unique.length}</summary><div class="evidence-list">${unique.slice(0,6).map(f => renderFactItem(candidate,f)).join('')}</div></details>`;
+  }
+
   function renderFactItem(candidate, fact) {
     const source = sourceById(candidate, fact.sourceId);
     const split = splitFactLabel(fact.label);
-    const sourceHtml = source ? `<a class="fact-source" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'fact'))}" target="_blank" rel="noopener">Источник ↗</a>` : '';
+    const sourceHtml = source && !fact.compact ? `<a class="fact-source" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'fact'))}" target="_blank" rel="noopener">Источник ↗</a>` : '';
     return `<div class="fact-compact ${factClass(fact.status)}"><span class="fact-dot">${factIcon(fact.status)}</span><div>${split.title ? `<b>${esc(split.title)}</b>` : ''}<p>${esc(split.text)}</p>${sourceHtml}</div></div>`;
   }
 
@@ -218,19 +396,11 @@
 
   function renderKeySignals(candidate) {
     const items = [];
-    const rep = reviewModel(candidate);
     const domain = candidate.trustProfile?.history?.domain;
     const exp = candidate.trustProfile?.history?.claimedExperience;
-    if (rep) {
-      const main = rep.rating != null ? `★ ${Number(rep.rating).toFixed(1).replace('.',',')}` : (rep.yearCount ? `${rep.yearCount}` : `${rep.totalCount || '—'}`);
-      const sub = rep.yearCount ? `отзывов за ${rep.year}` : `${rep.totalCount || 0} оценок`;
-      items.push(`<div class="key-signal"><span>Репутация</span><b>${esc(main)}</b><small>${esc(sub)}</small></div>`);
-    }
     if (domain?.ageYears != null) items.push(`<div class="key-signal"><span>Домен</span><b>${esc(domain.ageYears)} лет</b><small>${esc(domain.domain || '')}</small></div>`);
     if (exp?.claimedYears) items.push(`<div class="key-signal"><span>Опыт</span><b>${esc(exp.claimedYears)} лет</b><small>заявлено компанией</small></div>`);
-    const channels = [candidate.phone ? 'телефон' : '', candidate.email ? 'email' : ''].filter(Boolean);
-    if (channels.length) items.push(`<div class="key-signal"><span>Контакты</span><b>${channels.length}/2</b><small>${esc(channels.join(' + '))}</small></div>`);
-    return items.length ? `<div class="key-signals">${items.slice(0,4).join('')}</div>` : '';
+    return items.length ? `<div class="key-signals compact">${items.join('')}</div>` : '';
   }
 
   function renderReputation(candidate) {
@@ -354,24 +524,22 @@
   function renderCard(candidate, index) {
     const type = typeMeta(candidate.type);
     const allFacts = allCandidateFacts(candidate);
-    const buckets = { terms: [], verification: [], reputation: [], unknown: [] };
-    allFacts.forEach(f => buckets[factBucket(f)].push(f));
+    const normalized = normalizeFactBuckets(candidate, allFacts);
     const sources = uniqueSourceGroups(candidate).map(source => {
       const pageText = source.pages > 1 ? ` · ${source.pages} страницы проверено` : '';
       return `<a class="source-pill" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'source'))}" target="_blank" rel="noopener"><b>${esc(source.label)}</b><span>${esc(source.host)}${esc(pageText)}</span></a>`;
     }).join('');
-    const why = (candidate.rankReasons || []).map(x => `<li>${esc(x)}</li>`).join('');
     const action = externalAction(candidate);
     const actionHtml = action
       ? `<a class="btn secondary" href="${esc(action.url)}" target="_blank" rel="noopener">${esc(action.label)}</a>`
       : '';
     const initials = candidate.name.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase();
     const structuredFacts = [
-      renderFactPanel(candidate, 'Условия и цены', buckets.terms, 'terms'),
-      renderFactPanel(candidate, 'Проверка компании', buckets.verification, 'verification'),
-      renderFactPanel(candidate, 'Репутация', buckets.reputation, 'reputation'),
-      renderFactPanel(candidate, 'Что уточнить', buckets.unknown, 'unknown')
+      renderFactPanel(candidate, 'Условия и цены', normalized.terms, 'terms'),
+      renderVerificationSummary(candidate),
+      renderFactPanel(candidate, 'Что уточнить у исполнителя', normalized.unknown, 'unknown')
     ].filter(Boolean).join('');
+    const evidence = renderEvidenceDetails(candidate, normalized.evidence);
 
     return `<article class="candidate" data-type="${esc(candidate.type)}">
       <div class="candidate-head">
@@ -388,10 +556,11 @@
       ${renderKeySignals(candidate)}
       ${renderReputation(candidate)}
       <div class="candidate-grid structured">
-        <section class="why-panel"><h3>Почему подходит</h3><ul>${why || '<li>Найден по профильному поисковому запросу.</li>'}</ul></section>
+        ${renderWhyPanel(candidate)}
         <div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div>
       </div>
-      ${sources ? `<div class="source-caption">Источники проверки</div><div class="source-list">${sources}</div>` : ''}
+      ${evidence}
+      ${sources ? `<details class="sources-details"><summary>Источники проверки · ${uniqueSourceGroups(candidate).length}</summary><div class="source-list">${sources}</div></details>` : ''}
       <div class="actions">
         <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="requests.html?candidate=${encodeURIComponent(candidate.id)}">Подготовить запрос</a>
         ${actionHtml}
