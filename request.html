@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Запрос исполнителю — Сделает</title>
+
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/prod-ui.css">
+
+<style>
+.request-page{
+  max-width:920px;
+  margin:0 auto;
+}
+
+.request-back{
+  display:inline-flex;
+  margin-bottom:18px;
+  color:#65708d;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:700;
+}
+
+.request-hero{
+  margin-bottom:18px;
+}
+
+.request-hero h1{
+  margin:5px 0 7px;
+  font:900 28px Montserrat,Roboto,sans-serif;
+  color:#12182f;
+}
+
+.request-hero p{
+  margin:0;
+  color:#6c7690;
+  line-height:1.55;
+}
+
+.request-preview{
+  margin-top:18px;
+  padding:20px;
+  border:1px solid #e0e6f1;
+  border-radius:18px;
+  background:#fff;
+}
+
+.request-preview h2{
+  margin:0 0 13px;
+  font:850 15px Montserrat,Roboto,sans-serif;
+}
+
+.request-text{
+  white-space:pre-wrap;
+  font-size:14px;
+  line-height:1.65;
+  color:#303a55;
+}
+
+.channel-section{
+  margin-top:22px;
+}
+
+.channel-title{
+  margin-bottom:10px;
+  font:850 14px Montserrat,Roboto,sans-serif;
+  color:#202945;
+}
+
+.auto-channel{
+  border:2px solid #5b55f5;
+  border-radius:20px;
+  padding:18px;
+  background:linear-gradient(135deg,#f7f6ff,#f4f9ff);
+  box-shadow:0 8px 24px rgba(91,85,245,.08);
+}
+
+.auto-channel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.auto-channel-name{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.mail-icon{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  box-shadow:0 3px 12px rgba(30,45,90,.08);
+}
+
+.auto-channel-name b{
+  display:block;
+  font:850 15px Montserrat,Roboto,sans-serif;
+}
+
+.auto-channel-name span{
+  display:block;
+  margin-top:3px;
+  color:#69738d;
+  font-size:12px;
+}
+
+.auto-badge{
+  padding:6px 9px;
+  border-radius:999px;
+  background:#5b55f5;
+  color:#fff;
+  font:800 9px Montserrat,Roboto,sans-serif;
+  letter-spacing:.04em;
+}
+
+.auto-info{
+  margin:15px 0;
+  padding:12px 14px;
+  border-radius:13px;
+  background:#fff;
+  color:#4c5874;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.auto-info b{
+  color:#202945;
+}
+
+.send-panel{
+  display:none;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid #dddff4;
+}
+
+.send-panel.active{
+  display:block;
+}
+
+.selected-channel{
+  margin-bottom:10px;
+  font-size:12px;
+  color:#4e5a77;
+}
+
+.selected-channel b{
+  color:#4c46dc;
+}
+
+.safe-note{
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:12px;
+  background:#fff8e8;
+  border:1px solid #f1dfad;
+  color:#755c1c;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.manual-label{
+  display:inline-flex;
+  margin-bottom:9px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#f0f2f7;
+  color:#707991;
+  font:800 9px Montserrat,Roboto,sans-serif;
+}
+
+.manual-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+.manual-action{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 12px;
+  border:1px solid #dce3ef;
+  border-radius:12px;
+  background:#fff;
+  color:#3f4a68;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.confirm-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(18,24,47,.52);
+  padding:24px;
+  align-items:center;
+  justify-content:center;
+}
+
+.confirm-overlay.open{
+  display:flex;
+}
+
+.confirm-card{
+  width:min(680px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 30px 80px rgba(10,20,50,.25);
+}
+
+.confirm-card h2{
+  margin:5px 0 16px;
+  font:900 22px Montserrat,Roboto,sans-serif;
+}
+
+.confirm-meta{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:7px 12px;
+  margin-bottom:16px;
+  font-size:12px;
+}
+
+.confirm-meta span{
+  color:#7b849b;
+}
+
+.confirm-message{
+  padding:15px;
+  border:1px solid #e0e5ef;
+  border-radius:14px;
+  background:#f9fafc;
+  white-space:pre-wrap;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.confirm-warning{
+  margin-top:13px;
+  color:#8a6514;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.confirm-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:17px;
+}
+
+@media(max-width:700px){
+  .manual-grid{
+    grid-template-columns:1fr;
+  }
+
+  .auto-channel-head{
+    flex-direction:column;
+  }
+
+  .confirm-meta{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+  <script src="/assets/analytics.js"></script>
+<link rel="manifest" href="/manifest.webmanifest"></head>
+
+<body>
+
+<noscript>
+  <div>
+    <img
+      src="https://mc.yandex.ru/watch/112503660"
+      style="position:absolute;left:-9999px"
+      alt=""
+    >
+  </div>
+</noscript>
+
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <a class="brand" href="/">
+    <img src="assets/logo-icon.svg" alt="">
+    <div>Сдела<span>ет</span></div>
+  </a>
+
+  <nav class="app-nav">
+    <a href="my-tasks.html">▤ Мои задачи</a>
+    <a href="create-task.html">＋ Новая задача</a>
+    <a href="profile.html">◉ Профиль</a>
+  </nav>
+
+  <div class="sidebar-spacer"></div>
+
+  <a class="muted"
+     href="/"
+     style="padding:10px 12px;font-size:12px">
+    ← На главную
+  </a>
+</aside>
+
+<main class="app-main">
+
+<div class="progress-wrap">
+  <div class="progress3">
+
+    <div class="stage done">
+      <span class="n">✓</span>
+      Задача
+    </div>
+
+    <div class="progress-line"></div>
+
+    <div class="stage done">
+      <span class="n">✓</span>
+      Подбор
+    </div>
+
+    <div class="progress-line"></div>
+
+    <div class="stage">
+      <span class="n">3</span>
+      Выбор
+    </div>
+
+  </div>
+</div>
+
+<div class="app-content">
+<div class="page request-page">
+
+<a class="request-back"
+   href="candidates.html">
+  ← Вернуться к кандидатам
+</a>
+
+<section class="card">
+
+<div class="request-hero">
+  <div class="eyebrow">
+    Запрос исполнителю
+  </div>
+
+  <h1 id="candidateTitle">
+    Подготовка запроса
+  </h1>
+
+  <p>
+    Один и тот же запрос помогает корректно сравнить
+    стоимость, сроки и состав предложений.
+  </p>
+</div>
+
+<div class="request-preview">
+  <h2>Что отправим исполнителю</h2>
+  <div class="request-text"
+       id="requestText"></div>
+</div>
+
+<div class="channel-section">
+
+  <div class="channel-title">
+    Как связаться с исполнителем
+  </div>
+
+  <div class="auto-channel"
+       id="emailChannel">
+
+    <div class="auto-channel-head">
+
+      <div class="auto-channel-name">
+
+        <div class="mail-icon">
+          ✉
+        </div>
+
+        <div>
+          <b>Почта</b>
+          <span>
+            Сделает отправит запрос сам
+            и сможет отследить ответ
+          </span>
+        </div>
+
+      </div>
+
+      <span class="auto-badge">
+        АВТОМАТИЧЕСКИ
+      </span>
+
+    </div>
+
+    <div class="auto-info">
+
+      <b>Получатель:</b>
+      <span id="emailRecipient">
+        email не найден
+      </span>
+
+      <br>
+
+      <span id="emailSourceRow">
+        <b>Источник:</b>
+        <span id="emailSource">не определён</span>
+      </span>
+
+      <br>
+
+      Письмо отправляется от
+      <b>requests@onsdelaet.ru</b>.
+
+      <br>
+
+      Перед отправкой вы обязательно
+      увидите полный текст письма.
+
+    </div>
+
+    <button class="btn primary"
+            id="chooseEmail"
+            type="button">
+      Выбрать почту
+    </button>
+
+    <div class="send-panel"
+         id="sendPanel">
+
+      <div class="selected-channel">
+        <b>✓ Почта выбрана</b><br>
+        Сделает отправит запрос автоматически
+        только после вашего подтверждения.
+      </div>
+
+      <button class="btn primary large"
+              id="reviewEmail"
+              type="button">
+        Проверить письмо
+      </button>
+
+      <div class="safe-note">
+        Тестовый режим:
+        реальная отправка исполнителям сейчас отключена.
+        Сервер разрешает отправку только
+        на тестовые адреса.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="channel-section">
+
+  <div class="channel-title">
+    Другие способы
+  </div>
+
+  <div class="manual-label">
+    ВРУЧНУЮ
+  </div>
+
+  <div class="manual-grid">
+
+    <a class="manual-action"
+       id="callCandidate"
+       href="#">
+      ☎ Позвонить
+    </a>
+
+    <a class="manual-action"
+       id="openCandidate"
+       href="#"
+       target="_blank"
+       rel="noopener">
+      ↗ Открыть сайт / профиль
+    </a>
+
+    <button class="manual-action"
+            id="copyRequest"
+            type="button">
+      ⧉ Скопировать запрос
+    </button>
+
+  </div>
+
+</div>
+
+</section>
+
+</div>
+</div>
+</main>
+
+</div>
+
+<div class="confirm-overlay"
+     id="confirmModal">
+
+  <div class="confirm-card">
+
+    <div class="eyebrow">
+      Проверка перед отправкой
+    </div>
+
+    <h2>
+      Проверьте письмо
+    </h2>
+
+    <div class="confirm-meta">
+
+      <span>Исполнитель</span>
+      <b id="confirmCandidate"></b>
+
+      <span>Кому</span>
+      <b id="confirmEmail"></b>
+
+      <span>От</span>
+      <b>
+        Сделает &lt;requests@onsdelaet.ru&gt;
+      </b>
+
+      <span>Тема</span>
+      <b id="confirmSubject"></b>
+
+    </div>
+
+    <div class="confirm-message"
+         id="confirmMessage"></div>
+
+    <div class="confirm-warning">
+      В рабочем режиме только после отдельного подтверждения
+      письмо будет реально отправлено исполнителю.
+      Отменить уже отправленное письмо нельзя.
+    </div>
+
+    <div class="confirm-actions">
+
+      <button class="btn secondary"
+              id="cancelSend"
+              type="button">
+        Отмена
+      </button>
+
+      <button class="btn primary"
+              id="confirmSend"
+              type="button"
+              disabled>
+        Отправка временно отключена
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="assets/request-page.js"></script>
+
+</body>
+</html>

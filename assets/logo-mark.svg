@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Сделает">
+  <defs>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5B55F5"/>
+      <stop offset="1" stop-color="#27C9ED"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5B55F5"/>
+      <stop offset="0.55" stop-color="#2F7DF8"/>
+      <stop offset="1" stop-color="#27C9ED"/>
+    </linearGradient>
+  </defs>
+  <circle cx="181" cy="112" r="68" fill="url(#head)"/>
+  <path d="M85 187
+           C85 145 119 126 161 126
+           H211
+           C252 126 278 146 300 179
+           L337 233
+           L397 164
+           C419 138 455 136 478 157
+           C502 179 503 215 481 241
+           L304 450
+           C277 482 227 485 196 456
+           L105 369
+           C82 347 72 315 72 283
+           V225
+           C72 211 76 198 85 187Z"
+        fill="url(#body)"/>
+  <path d="M170 299 L249 377 L423 176"
+        fill="none"
+        stroke="#fff"
+        stroke-width="38"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,70 @@
+.account-body{margin:0;background:#f6f8fc;color:#16233c;font-family:Roboto,Arial,sans-serif}
+.account-shell{min-height:100vh;display:grid;grid-template-columns:230px minmax(0,1fr)}
+.account-sidebar{position:sticky;top:0;height:100vh;box-sizing:border-box;padding:26px 18px;background:#fff;border-right:1px solid #e7edf6;display:flex;flex-direction:column}
+.account-brand{display:flex;align-items:center;gap:9px;padding:0 8px;color:#111a35;text-decoration:none;font:900 22px Montserrat,sans-serif}
+.account-brand img{width:28px;height:28px}.account-brand span{color:#3184ff}
+.account-nav{display:grid;gap:6px;margin-top:30px}
+.account-nav a{padding:12px 13px;border-radius:12px;color:#566780;text-decoration:none;font:700 12px/1.3 Montserrat,sans-serif}
+.account-nav a.active,.account-nav a:hover{background:#f1f6ff;color:#2869ef}
+.account-sidebar-bottom{margin-top:auto;display:grid;gap:8px}
+.account-sidebar-bottom a,.account-sidebar-bottom button{border:0;background:none;padding:9px 10px;text-align:left;color:#76839a;text-decoration:none;cursor:pointer;font:600 11px Montserrat,sans-serif}
+.account-main{min-width:0}
+.account-topbar{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;border-bottom:1px solid #e7edf6;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:30}
+.account-topbar-brand{display:none}
+.account-topbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto}
+.account-user{color:#6b7890;font:600 11px Montserrat,sans-serif}
+.account-content{max-width:1100px;margin:0 auto;padding:38px 32px 64px}
+.account-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:25px}
+.account-page-head h1{margin:0;color:#12213a;font:900 38px/1.08 Montserrat,sans-serif;letter-spacing:-.035em}
+.account-page-head p{margin:8px 0 0;color:#718097;font:400 14px/1.5 Roboto,sans-serif}
+.account-primary,.account-secondary{min-height:46px;padding:0 18px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;cursor:pointer;font:800 12px Montserrat,sans-serif}
+.account-primary{border:0;background:linear-gradient(110deg,#5554ff,#16c2e8);color:#fff;box-shadow:0 10px 24px rgba(68,91,240,.16)}
+.account-secondary{border:1px solid #cfdbea;background:#fff;color:#315f99}
+.account-task-list{display:grid;gap:13px}
+.account-task-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;padding:21px 22px;border:1px solid #dee7f2;border-radius:21px;background:#fff;box-shadow:0 8px 24px rgba(36,61,98,.035)}
+.account-task-title{margin:0;color:#1b2c48;font:850 18px/1.25 Montserrat,sans-serif}
+.account-task-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;color:#7b8798;font:500 10px Montserrat,sans-serif}
+.account-status{display:inline-flex;padding:6px 9px;border-radius:999px;background:#eef5ff;color:#426da8;font:800 9px/1 Montserrat,sans-serif}
+.account-status[data-status="completed"]{background:#eef7f1;color:#39775f}
+.account-status[data-status="offers_ready"]{background:#eef7f1;color:#39775f}
+.account-status[data-status="researching"]{background:#fff6e9;color:#997034}
+.account-task-result{margin-top:12px;color:#53647f;font:500 12px/1.45 Roboto,sans-serif}
+.account-task-action{min-width:220px}
+.account-empty{padding:54px 30px;border:1px dashed #cfdbea;border-radius:24px;background:#fff;text-align:center}
+.account-empty h2{margin:0;color:#1c304f;font:850 26px Montserrat,sans-serif}
+.account-empty p{max-width:520px;margin:11px auto 20px;color:#708097;font:400 14px/1.55 Roboto,sans-serif}
+.account-loading{padding:36px;color:#7a879b;text-align:center}
+.account-subtle-offer{margin-top:16px;padding:14px 16px;border:1px solid #d9e7f6;border-radius:16px;background:#f7fbff;color:#526985;font:500 12px/1.5 Roboto,sans-serif}
+.account-subtle-offer b{color:#285c99}
+.account-workspace-head{padding:24px 25px;border:1px solid #dde7f2;border-radius:23px;background:#fff;margin-bottom:14px}
+.account-workspace-head h1{margin:8px 0 7px;font:900 32px/1.1 Montserrat,sans-serif;color:#152641}
+.account-workspace-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#738097;font:500 10px Montserrat,sans-serif}
+.account-section{margin-top:13px;padding:22px 23px;border:1px solid #dfe8f3;border-radius:21px;background:#fff}
+.account-section h2{margin:0 0 12px;color:#203551;font:850 19px/1.25 Montserrat,sans-serif}
+.account-section p{margin:6px 0;color:#66768d;font:400 12px/1.55 Roboto,sans-serif}
+.account-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}
+.account-summary-item{padding:11px 12px;border-radius:13px;background:#f8faff}
+.account-summary-item span{display:block;color:#8994a5;font:700 8px Montserrat,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+.account-summary-item b{display:block;margin-top:5px;color:#334863;font:650 11px/1.35 Montserrat,sans-serif}
+.account-pricing{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.account-price-card{padding:17px;border:1px solid #dce6f1;border-radius:17px;background:#fff}
+.account-price-card.choice{border-color:#bdd4ef;box-shadow:0 12px 28px rgba(54,108,177,.08)}
+.account-price-card h3{margin:0;color:#304761;font:800 11px Montserrat,sans-serif;text-transform:uppercase}
+.account-price{margin-top:8px;color:#13263f;font:900 27px Montserrat,sans-serif}
+.account-price s{margin-left:8px;color:#99a3b1;font:600 12px Montserrat,sans-serif}
+.account-price-note{min-height:32px;margin:7px 0 12px;color:#6c7b91;font:400 10px/1.45 Roboto,sans-serif}
+.account-candidate-list,.account-response-list,.account-offer-list{display:grid;gap:9px;margin-top:12px}
+.account-mini-card{padding:14px;border:1px solid #e1e8f1;border-radius:15px;background:#fbfcff}
+.account-mini-card b{color:#283d59;font:750 11px Montserrat,sans-serif}
+.account-mini-card p{font-size:11px}
+.account-payment-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.account-payment-cell{padding:10px;background:#f8faff;border-radius:12px}
+.account-payment-cell span{display:block;color:#8793a5;font:700 8px Montserrat,sans-serif;text-transform:uppercase}
+.account-payment-cell b{display:block;margin-top:5px;color:#324861;font:700 10px Montserrat,sans-serif}
+.account-profile-card{max-width:680px;padding:23px;border:1px solid #dde7f2;border-radius:21px;background:#fff}
+.account-field{margin-top:16px}.account-field label{display:block;margin-bottom:6px;color:#4d607e;font:700 10px Montserrat,sans-serif}.account-field input{box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #d8e2ee;border-radius:13px;background:#fff;color:#17243e;font:500 13px Roboto,sans-serif}.account-field input[readonly]{background:#f7f9fc;color:#6e7c91}
+.account-error{padding:14px;border:1px solid #f0d8dc;border-radius:14px;background:#fff7f8;color:#a94a57;font:600 11px/1.45 Roboto,sans-serif}
+.account-hidden{display:none!important}
+@media(max-width:760px){
+ .account-shell{display:block}.account-sidebar{display:none}.account-topbar{height:64px;padding:0 16px}.account-topbar-brand{display:flex;align-items:center;gap:7px;color:#17223b;text-decoration:none;font:900 18px Montserrat,sans-serif}.account-topbar-brand img{width:25px;height:25px}.account-topbar-brand span{color:#3184ff}.account-user{display:none}.account-content{padding:25px 16px 44px}.account-page-head{display:block}.account-page-head h1{font-size:31px}.account-page-head .account-primary{width:100%;box-sizing:border-box;margin-top:16px}.account-task-card{grid-template-columns:1fr;padding:18px;gap:16px}.account-task-action{min-width:0;width:100%}.account-workspace-head{padding:19px}.account-workspace-head h1{font-size:27px}.account-section{padding:18px}.account-summary-grid,.account-pricing,.account-payment-grid{grid-template-columns:1fr}.account-price-note{min-height:0}
+}
