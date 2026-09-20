@@ -1,10 +1,121 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Оплата — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/prod-ui.css">
-<style>body{min-height:100vh;display:grid;place-items:center;padding:24px}.payment-result{width:min(680px,100%);padding:32px}.payment-mark{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:var(--bg);color:var(--green);font:900 28px Montserrat;margin-bottom:18px}.payment-result h1{font:900 clamp(28px,5vw,42px)/1.05 Montserrat;margin:0 0 12px}.payment-result p{color:var(--muted);font-size:16px;line-height:1.55}.status-line{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg);font-weight:700}.actions{margin-top:20px}</style></head>
-<body><main class="card payment-result"><div class="payment-mark">✓</div><div class="eyebrow">Оплата</div><h1 id="title">Проверяем оплату</h1><p id="lead">Это обычно занимает несколько секунд.</p><div class="status-line" id="status">Получаем статус заказа…</div><div class="actions"><a class="btn primary large hidden" id="continueBtn" href="candidates.html">Перейти к подбору →</a><button class="btn secondary" id="retryBtn" type="button">Проверить ещё раз</button></div></main>
-<script>
-const order=new URLSearchParams(location.search).get('order')||'';const title=document.getElementById('title'),lead=document.getElementById('lead'),status=document.getElementById('status'),go=document.getElementById('continueBtn'),retry=document.getElementById('retryBtn');
-async function check(){retry.disabled=true;status.textContent='Проверяем статус…';try{const r=await fetch('/api/payments/v1/payments/'+encodeURIComponent(order));const d=await r.json();const s=d?.order?.status||'';if(s==='paid'){title.textContent='Оплата получена';lead.textContent='Тариф «Найти» активирован для этого заказа.';status.textContent='Можно переходить к подбору исполнителей.';go.classList.remove('hidden');retry.classList.add('hidden');return}title.textContent='Оплата обрабатывается';lead.textContent='Банк подтвердил переход, но статус заказа ещё обновляется.';status.textContent='Подождите несколько секунд и проверьте ещё раз.'}catch(e){status.textContent='Не удалось получить статус. Попробуйте ещё раз.'}retry.disabled=false}
-retry.onclick=check;if(order){check();setTimeout(check,2500)}else{title.textContent='Не найден номер заказа';lead.textContent='Вернитесь к заданию и повторите оплату.';status.textContent='Номер заказа отсутствует.';retry.classList.add('hidden')}
-</script></body></html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Оплата — Сделает</title>
+<link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/prod-ui.css">
+<style>
+body{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(180deg,#f7f8fc,#f2f4fb)}
+.payment-result{width:min(760px,100%);padding:38px;border-radius:30px}
+.payment-head{display:flex;align-items:flex-start;gap:18px}.payment-mark{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:#f0f3fb;color:var(--indigo);font:900 30px Montserrat;flex:0 0 auto}
+.payment-mark.pending:before{content:'';width:30px;height:30px;border:4px solid #dce3f5;border-top-color:var(--indigo);border-radius:50%;animation:spin .8s linear infinite}.payment-mark.pending{font-size:0}
+.payment-mark.paid{background:#eaf9f1;color:var(--green)}.payment-mark.failed{background:#fff1ef;color:#b34a43}
+@keyframes spin{to{transform:rotate(360deg)}}.payment-copy{min-width:0}.payment-result h1{font:900 clamp(30px,5vw,48px)/1.04 Montserrat;margin:4px 0 10px;letter-spacing:-.04em}.payment-result p{color:var(--muted);font-size:17px;line-height:1.55;margin:0}
+.payment-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0 0}.payment-meta-item{padding:12px 14px;border:1px solid var(--line);border-radius:15px;background:#fbfcff}.payment-meta-item span{display:block;font-size:10px;color:#7b879f;text-transform:uppercase;letter-spacing:.06em;font-weight:800}.payment-meta-item b{display:block;margin-top:4px;font:800 14px Montserrat;overflow-wrap:anywhere}
+.status-box{margin-top:20px;padding:17px;border:1px solid var(--line);border-radius:18px;background:#f8f9fd}.status-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.status-line{font-weight:800;font-size:15px}.status-time{font-size:11px;color:#8791a6}
+.payment-track{height:8px;border-radius:999px;background:#e9edf7;overflow:hidden;margin-top:14px}.payment-track span{display:block;width:36%;height:100%;border-radius:inherit;background:var(--grad);animation:track 1.4s ease-in-out infinite}.payment-track.done span{width:100%;animation:none;background:var(--green)}
+@keyframes track{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
+.payment-steps{display:grid;gap:7px;margin-top:14px}.payment-step{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:11px;color:#939caf;font-size:12px;font-weight:600}.payment-step:before{content:'';width:10px;height:10px;border-radius:50%;background:#d5dbea;flex:0 0 10px}.payment-step.active{background:#f1f3ff;color:#34405e}.payment-step.active:before{background:var(--indigo);box-shadow:0 0 0 5px rgba(91,85,245,.1)}.payment-step.done{color:#168259}.payment-step.done:before{content:'✓';width:18px;height:18px;flex-basis:18px;display:grid;place-items:center;background:#e8f9f0;color:#168259;font-size:11px;font-weight:900}
+.payment-note{margin-top:15px;color:#6e7892;font-size:12px;line-height:1.5}.actions{margin-top:20px}.actions .btn{min-width:190px}.hidden{display:none!important}
+@media(max-width:650px){body{padding:12px}.payment-result{padding:24px 20px}.payment-head{display:block}.payment-mark{margin-bottom:14px}.payment-meta{grid-template-columns:1fr}.status-top{display:block}.status-time{margin-top:4px}}
+</style>
+</head><body>
+<main class="card payment-result">
+  <div class="payment-head">
+    <div class="payment-mark pending" id="paymentMark"></div>
+    <div class="payment-copy">
+      <div class="eyebrow">Оплата</div>
+      <h1 id="title">Подтверждаем оплату</h1>
+      <p id="lead">Проверяем операцию у банка. Обычно это занимает несколько секунд.</p>
+    </div>
+  </div>
+
+  <div class="payment-meta">
+    <div class="payment-meta-item"><span>Заказ</span><b id="orderValue">—</b></div>
+    <div class="payment-meta-item"><span>Тариф</span><b id="planValue">—</b></div>
+    <div class="payment-meta-item"><span>Сумма</span><b id="amountValue">—</b></div>
+  </div>
+
+  <div class="status-box">
+    <div class="status-top"><div class="status-line" id="status">Получаем статус заказа…</div><div class="status-time" id="statusTime"></div></div>
+    <div class="payment-track" id="paymentTrack"><span></span></div>
+    <div class="payment-steps">
+      <div class="payment-step done">Переход из банка завершён</div>
+      <div class="payment-step active" id="verifyStep">Подтверждаем операцию у Точки</div>
+      <div class="payment-step" id="unlockStep">Активируем тариф и открываем подбор</div>
+    </div>
+  </div>
+
+  <div class="payment-note" id="note">Не закрывайте страницу: статус обновится автоматически. Повторно оплачивать заказ не нужно.</div>
+
+  <div class="actions">
+    <a class="btn primary large hidden" id="continueBtn" href="candidates.html">Перейти к подбору →</a>
+    <button class="btn secondary hidden" id="retryBtn" type="button">Проверить сейчас</button>
+    <a class="btn secondary hidden" id="backBtn" href="task-tz.html">Вернуться к заданию</a>
+  </div>
+</main><script>
+const orderId=new URLSearchParams(location.search).get('order')||'';
+const els={
+  title:document.getElementById('title'),lead:document.getElementById('lead'),status:document.getElementById('status'),
+  statusTime:document.getElementById('statusTime'),mark:document.getElementById('paymentMark'),
+  track:document.getElementById('paymentTrack'),verify:document.getElementById('verifyStep'),unlock:document.getElementById('unlockStep'),
+  go:document.getElementById('continueBtn'),retry:document.getElementById('retryBtn'),back:document.getElementById('backBtn'),
+  order:document.getElementById('orderValue'),plan:document.getElementById('planValue'),amount:document.getElementById('amountValue'),note:document.getElementById('note')
+};
+let pollTimer=null,attempts=0,finished=false;
+const plans={find:'Подбор',choice:'До выбора'};
+function money(v){return Number(v||0).toLocaleString('ru-RU')+' ₽'}
+function stamp(){els.statusTime.textContent='Проверено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function updateMeta(order){if(!order)return;els.order.textContent=order.id||orderId||'—';els.plan.textContent=plans[order.basePlan||order.plan]||order.plan||'—';els.amount.textContent=money(order.amount)}
+function persistPaid(order){try{const raw=localStorage.getItem('sdelaet.payment.pending'),p=raw?JSON.parse(raw):{};localStorage.setItem('sdelaet.payment.pending',JSON.stringify(Object.assign({},p,{orderId:order.id,taskId:order.taskId||p.taskId||'',tariffId:order.basePlan||order.plan||p.tariffId||'',status:'paid',paidAt:order.paidAt||new Date().toISOString()})));localStorage.setItem('sdelaet.payment.confirmed',JSON.stringify({orderId:order.id,taskId:order.taskId||'',status:'paid',paidAt:order.paidAt||new Date().toISOString()}))}catch(e){}}
+function setPaid(order){
+  finished=true;clearTimeout(pollTimer);updateMeta(order);persistPaid(order);
+  els.mark.className='payment-mark paid';els.mark.textContent='✓';
+  els.title.textContent='Оплата получена';els.lead.textContent='Тариф активирован. Открываем ваш подбор исполнителей.';
+  els.status.textContent='Готово — оплата подтверждена банком.';stamp();
+  els.track.classList.add('done');els.verify.classList.remove('active');els.verify.classList.add('done');els.unlock.classList.add('done');
+  els.note.textContent='Через несколько секунд вы автоматически перейдёте к подбору.';
+  els.go.classList.remove('hidden');els.retry.classList.add('hidden');els.back.classList.add('hidden');
+  const next='candidates.html?order='+encodeURIComponent(order.id);
+  els.go.href=next;
+  setTimeout(()=>{if(!document.hidden)location.replace(next)},1400);
+}
+function setTerminal(order,status){
+  finished=true;clearTimeout(pollTimer);updateMeta(order);
+  els.mark.className='payment-mark failed';els.mark.textContent='!';
+  els.title.textContent=status==='refunded'?'Оплата возвращена':'Ссылка на оплату больше не активна';
+  els.lead.textContent='Этот заказ не может быть активирован автоматически.';
+  els.status.textContent=status==='refunded'?'По операции оформлен возврат.':'Создайте новую ссылку на оплату из задания.';
+  els.track.classList.add('hidden');els.verify.classList.remove('active');els.retry.classList.add('hidden');els.back.classList.remove('hidden');
+}
+async function check(force=false){
+  if(finished||!orderId)return;
+  attempts++;els.retry.disabled=true;els.status.textContent=force?'Проверяем у банка ещё раз…':'Проверяем статус операции…';
+  try{
+    const r=await fetch('/api/payments/v1/payments/'+encodeURIComponent(orderId),{cache:'no-store'});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||!d.ok||!d.order)throw new Error(d.error||'PAYMENT_STATUS_FAILED');
+    const order=d.order;updateMeta(order);stamp();
+    if(order.status==='paid'){setPaid(order);return}
+    if(order.status==='expired'||order.status==='refunded'){setTerminal(order,order.status);return}
+    els.status.textContent='Оплата ещё подтверждается. Проверяем автоматически…';
+    if(attempts>=4)els.retry.classList.remove('hidden');
+    pollTimer=setTimeout(()=>check(false),2200);
+  }catch(e){
+    els.status.textContent='Связь с проверкой оплаты временно недоступна. Повторим автоматически.';
+    stamp();els.retry.classList.remove('hidden');pollTimer=setTimeout(()=>check(false),3500);
+  }finally{els.retry.disabled=false}
+}
+els.retry.onclick=()=>{clearTimeout(pollTimer);check(true)};
+if(orderId){els.order.textContent=orderId;check()}else{
+  finished=true;els.mark.className='payment-mark failed';els.mark.textContent='!';
+  els.title.textContent='Не найден номер заказа';els.lead.textContent='Вернитесь к заданию и повторите создание ссылки на оплату.';
+  els.status.textContent='В адресе страницы отсутствует номер заказа.';els.track.classList.add('hidden');els.verify.classList.remove('active');els.retry.classList.add('hidden');els.back.classList.remove('hidden');
+}
+</script>
+</body></html>

@@ -9,3 +9,16 @@ export async function createTochkaPayment(env,{orderId,plan,email}){
  const d=response?.Data||response?.data||response,url=d?.paymentLink||d?.paymentUrl||d?.url;if(!url)throw Object.assign(new Error('TOCHKA_PAYMENT_URL_MISSING'),{status:502,detail:response});
  return {provider:'tochka',url,operationId:d?.operationId||'',consumerId:d?.consumerId||'',raw:d};
 }
+
+
+export async function getTochkaPaymentInfo(env,{operationId}){
+ const token=required(env,'TOCHKA_JWT_TOKEN'),id=String(operationId||'').trim();
+ if(!id)throw Object.assign(new Error('TOCHKA_OPERATION_ID_REQUIRED'),{status:400});
+ const base=String(env.TOCHKA_BASE_URL||PROD).replace(/\/$/,'');
+ const r=await fetch(`${base}/acquiring/v1.0/payments/${encodeURIComponent(id)}`,{headers:{authorization:`Bearer ${token}`,accept:'application/json'}});
+ const response=await r.json().catch(()=>({}));
+ if(!r.ok)throw Object.assign(new Error(response?.message||`TOCHKA_STATUS_HTTP_${r.status}`),{status:502,detail:response});
+ const d=response?.Data||response?.data||response;
+ const op=Array.isArray(d?.Operation)&&d.Operation.length?d.Operation[0]:d;
+ return {status:String(op?.status||d?.status||'').trim(),operationId:String(op?.operationId||d?.operationId||id),paymentLinkId:String(op?.paymentLinkId||d?.paymentLinkId||''),paidAt:op?.paidAt||d?.paidAt||null,raw:d};
+}
