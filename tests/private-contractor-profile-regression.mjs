@@ -12,9 +12,11 @@ ok(x.profile.services.some(s=>s.name==='Утепление балконов и �
 ok(x.profile.portfolio.some(p=>p.title==='Утепление лоджии'),'portfolio must parse');
 const js=fs.readFileSync('assets/live-search.js','utf8');
 const page=fs.readFileSync('candidates.html','utf8');
-for(const marker of ['function renderPrivateProfile','function renderPrivateConditions','function renderPrivateVerification','function renderPrivatePortfolio','function privateRelevantService','function privateAreaMatch']) ok(js.includes(marker),marker+' missing');
+for(const marker of ['function renderPrivateProfile','function renderPrivateSummary','function renderPrivateTaskService','function renderPrivatePortfolio','function renderPrivateMore','function privateImageUrl','function privateRelevantService','function privateAreaMatch']) ok(js.includes(marker),marker+' missing');
 ok(js.includes("5★ ${Number(stats[5] || 0)}"),'rating distribution must render');
-ok(page.includes('.private-panels'),'private profile layout must exist');
+ok(js.includes("+ '/orig'"),'Yandex portfolio image URL must use /orig');
+ok(page.includes('.private-summary'),'private summary layout must exist');
+ok(page.includes('.private-main-grid'),'private main grid must exist');
+ok(page.includes('.private-service-card'),'private service card must exist');
 ok(page.includes('.portfolio-mini'),'private portfolio cards must exist');
-ok(page.includes('.private-verification'),'private verification block must exist');
 console.log('PRIVATE CONTRACTOR PROFILE REGRESSION: PASS');

@@ -63,42 +63,28 @@
     .candidate>.source-caption{margin-top:10px}.candidate .actions{margin-top:10px}
     @media(max-width:1100px){.fact-panels{grid-template-columns:repeat(2,minmax(0,1fr))}.fact-panel.unknown{grid-column:1/-1}}@media(max-width:900px){.candidate-grid.structured{grid-template-columns:1fr}.fact-panels{grid-template-columns:repeat(2,minmax(0,1fr))}.fact-panel.unknown{grid-column:1/-1}.verification-statuses,.evidence-list{grid-template-columns:1fr}.key-signals.compact{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-    /* enriched private contractor profile */
-    .private-about{margin-top:10px;padding:11px 13px;border:1px solid #dfe6f3;border-radius:14px;background:#fbfcff}
-    .private-about span{display:block;font:800 10px Montserrat;color:#52617d}
-    .private-about p{margin:5px 0 0;font-size:10.5px;line-height:1.45;color:#64708a}
-    .private-panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
-    .private-panel{min-width:0;padding:11px;border:1px solid #dfe6f3;border-radius:14px;background:#fbfcff}
-    .private-panel h3{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;font:800 11px Montserrat;color:#2c3958}
-    .private-panel h3 span{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#edf1fa;color:#6b7690;font-size:9px}
-    .private-status-list{display:grid;gap:6px}
-    .private-status-list>div{padding:7px 8px;border-radius:10px;border:1px solid #e4e8f1;background:#fff}
-    .private-status-list span,.private-status-list b{display:block}
-    .private-status-list span{font-size:8.5px;color:#7b859d}
-    .private-status-list b{margin-top:2px;font:800 10px/1.35 Montserrat;color:#26324e}
-    .private-status-list>div.ok{border-color:#d8eadf;background:#f7fcf9}
-    .private-status-list>div.price{border-color:#d9def7;background:#f8f8ff}
-    .private-verification{background:#f7fbf9;border-color:#d9ebe2}
-    .private-verification-list{display:grid;gap:6px}
-    .private-verification-list>div{display:flex;gap:7px;align-items:flex-start;padding:7px 8px;border:1px solid #e0ece5;border-radius:10px;background:#fff}
-    .private-verification-list p{margin:0;min-width:0}
-    .private-verification-list b,.private-verification-list small{display:block}
-    .private-verification-list b{font-size:9px;color:#526177}
-    .private-verification-list small{margin-top:1px;font-size:9.5px;line-height:1.3;color:#254d3e}
-    .private-portfolio{background:#fafaff}
-    .portfolio-mini-list{display:grid;gap:7px}
-    .portfolio-mini{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center;padding:6px;border:1px solid #e3e7f3;border-radius:11px;background:#fff}
-    .portfolio-mini img{width:64px;height:52px;object-fit:cover;border-radius:8px;background:#eef1f6}
-    .portfolio-mini div{min-width:0}
-    .portfolio-mini span,.portfolio-mini strong,.portfolio-mini b{display:block}
-    .portfolio-mini span{font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:#8a94aa;font-weight:800}
-    .portfolio-mini strong{margin-top:2px;font-size:9.5px;line-height:1.3;color:#34405e}
-    .portfolio-mini b{margin-top:3px;font:800 10px Montserrat;color:#4b57a0}
-    .portfolio-note{display:block;margin-top:7px;font-size:8.5px;line-height:1.35;color:#7d879d}
-    .candidate-grid.private-decision{grid-template-columns:1fr;margin-top:10px}
-    .candidate-grid.private-decision .why-panel{max-width:none}
-    @media(max-width:1050px){.private-panels{grid-template-columns:1fr 1fr}.private-portfolio{grid-column:1/-1}.portfolio-mini-list{grid-template-columns:1fr 1fr}}
-    @media(max-width:700px){.private-panels{grid-template-columns:1fr}.private-portfolio{grid-column:auto}.portfolio-mini-list{grid-template-columns:1fr}}
+    /* private contractor — decision-first v2 */
+    .private-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:9px}
+    .private-summary>div{display:flex;align-items:center;gap:8px;min-width:0;padding:8px 9px;border:1px solid #dfe8e3;border-radius:12px;background:#f7fcf9}
+    .private-summary-icon{display:grid;place-items:center;width:22px;height:22px;flex:0 0 22px;border-radius:7px;background:#e5f7ed;color:#16825a;font-weight:900;font-size:10px}
+    .private-summary p{margin:0;min-width:0}.private-summary small,.private-summary b{display:block}.private-summary small{font-size:8px;color:#7a8790;text-transform:uppercase;letter-spacing:.04em;font-weight:800}.private-summary b{margin-top:1px;font:800 9.5px/1.25 Montserrat;color:#28483c;overflow-wrap:anywhere}
+    .private-main-grid{display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1.3fr);gap:9px;margin-top:9px}
+    .private-main-card{min-width:0;padding:12px;border:1px solid #dfe5f1;border-radius:14px;background:#fbfcff}
+    .private-card-kicker{font:800 8px Montserrat;text-transform:uppercase;letter-spacing:.06em;color:#7a86a2}
+    .private-main-card h3{margin:3px 0 0;font:800 12px/1.3 Montserrat;color:#26324e}
+    .private-service-card{background:linear-gradient(180deg,#f8f8ff,#fbfcff);border-color:#dde0f7}
+    .private-service-price{margin-top:10px;font:900 21px/1 Montserrat;color:#4854b8}.private-service-price.muted{font-size:12px;color:#7e879e}
+    .private-service-card>p{margin:8px 0 0;font-size:9.5px;line-height:1.4;color:#68738a}
+    .private-inline-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.private-inline-tags span{padding:4px 7px;border-radius:999px;background:#fff;border:1px solid #e0e5f0;font-size:8.5px;color:#68748c}
+    .private-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.private-count{display:grid;place-items:center;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:#eef1fb;color:#65718e;font:800 9px Montserrat}
+    .private-portfolio{background:#fafaff}.portfolio-mini-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+    .portfolio-mini{display:grid;grid-template-columns:88px minmax(0,1fr);gap:8px;align-items:center;min-width:0;padding:6px;border:1px solid #e3e7f3;border-radius:11px;background:#fff}
+    .portfolio-mini img{width:88px;height:68px;object-fit:cover;border-radius:8px;background:#eef1f6}.portfolio-mini.no-image{grid-template-columns:1fr}
+    .portfolio-mini div{min-width:0}.portfolio-mini span,.portfolio-mini strong,.portfolio-mini small,.portfolio-mini b{display:block}.portfolio-mini span{font-size:7.5px;text-transform:uppercase;letter-spacing:.04em;color:#8a94aa;font-weight:800}.portfolio-mini strong{margin-top:2px;font-size:9px;line-height:1.25;color:#34405e}.portfolio-mini small{display:-webkit-box;margin-top:3px;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:8px;line-height:1.3;color:#7a849b}.portfolio-mini b{margin-top:4px;font:800 9.5px Montserrat;color:#4b57a0}.portfolio-note{display:block;margin-top:6px;font-size:8px;line-height:1.3;color:#858da0}
+    .private-more{margin-top:8px}.private-more>summary{cursor:pointer;display:inline-flex;padding:5px 8px;border-radius:9px;background:#f5f7fb;color:#65718a;font:700 8.5px Montserrat}.private-more[open]>summary{margin-bottom:7px}.private-more-body{padding:10px 11px;border:1px solid #e3e7f0;border-radius:12px;background:#fbfcff}.private-specialization{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}.private-specialization b{font-size:9.5px}.private-specialization span{font-size:8.5px;color:#7b859b}.private-more-body>p{margin:7px 0 0;font-size:9.5px;line-height:1.45;color:#64708a}.private-why{margin-top:8px}.private-why>b{font-size:9px}.private-why ul{margin:5px 0 0;padding-left:16px;font-size:9px;line-height:1.4;color:#5d6981}.private-why li+li{margin-top:3px}
+    .private-clarify{margin-top:8px}.private-clarify .fact-panels{display:block}.private-clarify .fact-panel.unknown{padding:9px 10px!important}.private-clarify .fact-panel-list{grid-template-columns:repeat(3,minmax(0,1fr));display:grid}.private-clarify .fact-compact{min-height:0}
+    @media(max-width:1050px){.private-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.private-main-grid{grid-template-columns:1fr}.portfolio-mini-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:700px){.private-summary,.portfolio-mini-list,.private-clarify .fact-panel-list{grid-template-columns:1fr}.portfolio-mini{grid-template-columns:76px minmax(0,1fr)}.portfolio-mini img{width:76px;height:60px}}
 </style>
 </head>
 <body>
@@ -196,6 +182,6 @@
 
   <script src="assets/search-config.js"></script>
   <script src="assets/search-preferences.js"></script>
-  <script src="assets/live-search.js?v=public-v5-20260920"></script>
+  <script src="assets/live-search.js?v=public-v6-20260920"></script>
 </body>
 </html>

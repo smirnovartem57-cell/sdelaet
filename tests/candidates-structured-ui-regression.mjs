@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const html=fs.readFileSync('candidates.html','utf8');
 const js=fs.readFileSync('assets/live-search.js','utf8');
 function ok(v,m){if(!v)throw new Error(m)}
-ok(html.includes('assets/live-search.js?v=public-v5-20260920'),'candidates must bust live-search cache');
+ok(html.includes('assets/live-search.js?v=public-v6-20260920'),'candidates must bust live-search cache');
 ok(html.includes('.fact-panels'),'structured fact panel styles must exist');
 ok(html.includes('.reviews-modal'),'reviews popup styles must exist');
 ok(js.includes("document.getElementById('countTitle').textContent = 'Уточняем исполнителей'"),'paid search wording must say clarify contractors');

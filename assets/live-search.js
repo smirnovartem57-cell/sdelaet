@@ -571,12 +571,17 @@
   }
 
   function privatePortfolioScore(item) {
-    const value = (String(item?.title || '') + ' ' + String(item?.description || '')).toLowerCase();
+    const title = String(item?.title || '').toLowerCase();
+    const description = String(item?.description || '').toLowerCase();
+    const value = title + ' ' + description;
     let score = 0;
     if (task?.categoryId === 'balcony-insulation') {
-      if (/утеплен/.test(value)) score += 8;
-      if (/балкон|лоджи/.test(value)) score += 4;
+      if (/утеплен/.test(title)) score += 12;
+      if (/балкон|лоджи/.test(title)) score += 9;
+      if (/утеплен/.test(description)) score += 6;
+      if (/балкон|лоджи/.test(description)) score += 4;
       if (/гидроизоляц|обшив|отделк/.test(value)) score += 2;
+      if (!/утеплен|балкон|лоджи/.test(value)) return 0;
     }
     if (/okna-i-balkony/.test(String(item?.specialization || ''))) score += 2;
     return score;
@@ -592,32 +597,39 @@
     if (!valueText) return '';
     return valueText.length > 180 ? valueText.slice(0,177).replace(/[,:;\s]+$/,'') + '…' : valueText;
   }
-  function renderPrivateConditions(candidate) {
+  function privateImageUrl(url) {
+    const value = String(url || '').trim();
+    if (!value) return '';
+    if (/avatars\.mds\.yandex\.net(?::443)?\/get-ydo\//i.test(value) && !/\/orig(?:\?|$)/i.test(value)) return value.replace(/\/+$/,'') + '/orig';
+    return value;
+  }
+
+  function renderPrivateSummary(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const area = privateAreaMatch(candidate);
+    const items = [];
+    if (profile.experience?.label) items.push({ label:'Опыт', value:profile.experience.label, icon:'◷' });
+    if (profile.passportVerified) items.push({ label:'Паспорт', value:'проверен', icon:'✓' });
+    if (area) items.push({ label:'Выезд', value:area, icon:'⌖' });
+    if (profile.guaranteeClaimed) items.push({ label:'Гарантия', value:'заявлена', icon:'✓' });
+    else if (profile.freeMeasurement) items.push({ label:'Замер', value:'бесплатно', icon:'✓' });
+    if (!items.length) return '';
+    return '<div class="private-summary">' + items.slice(0,4).map(x => '<div><span class="private-summary-icon">'+esc(x.icon)+'</span><p><small>'+esc(x.label)+'</small><b>'+esc(x.value)+'</b></p></div>').join('') + '</div>';
+  }
+
+  function renderPrivateTaskService(candidate) {
     const profile = candidate.yandexServicesProfile;
     if (!profile) return '';
     const service = privateRelevantService(candidate);
-    const items = [];
-    if (profile.experience?.label) items.push({label:'Опыт',value:profile.experience.label,cls:'ok'});
-    if (service?.price != null) items.push({label:service.name,value:moneyText(service.price)+' '+privateMeasureLabel(service.priceMeasure),cls:'price'});
-    if (profile.freeMeasurement) items.push({label:'Замер',value:'бесплатно',cls:'ok'});
-    if (profile.guaranteeClaimed) items.push({label:'Гарантия',value:'заявлена мастером',cls:'ok'});
-    if (profile.openingHours) items.push({label:'График',value:profile.openingHours,cls:''});
-    if (!items.length) return '';
-    return `<section class="private-panel private-conditions"><h3>Условия<span>${items.length}</span></h3><div class="private-status-list">${items.slice(0,5).map(x => `<div class="${x.cls}"><span>${esc(x.label)}</span><b>${esc(x.value)}</b></div>`).join('')}</div></section>`;
-  }
-
-  function renderPrivateVerification(candidate) {
-    const profile = candidate.yandexServicesProfile;
-    if (!profile) return '';
-    const spec = privateSpecialization(candidate);
-    const cityMatch = privateAreaMatch(candidate);
-    const items = [
-      {label:'Профиль Яндекс Исполнителей',value:'подтверждён'},
-      profile.passportVerified ? {label:'Паспорт',value:'проверен Яндексом'} : null,
-      spec ? {label:'Специализация',value:spec.specialistName || spec.name} : null,
-      cityMatch ? {label:'Выезд',value:cityMatch} : null
-    ].filter(Boolean);
-    return `<section class="private-panel private-verification"><h3>Проверка мастера<span>${items.length}</span></h3><div class="private-verification-list">${items.map(x => `<div><span class="verify-check">✓</span><p><b>${esc(x.label)}</b><small>${esc(x.value)}</small></p></div>`).join('')}</div></section>`;
+    const taskLabel = task?.category || task?.scope || 'Ваша задача';
+    const price = service?.price != null ? moneyText(service.price) + ' ' + privateMeasureLabel(service.priceMeasure) : '';
+    const extras = [];
+    if (profile.freeMeasurement) extras.push('бесплатный замер');
+    if (profile.openingHours) extras.push('график ' + profile.openingHours);
+    if (service?.photoCount) extras.push(service.photoCount + ' фото в услуге');
+    const description = shortProfileDescription(service?.description || '');
+    return `<section class="private-main-card private-service-card"><div class="private-card-kicker">Услуга по вашей задаче</div><h3>${esc(service?.name || taskLabel)}</h3>${price ? `<div class="private-service-price">${esc(price)}</div>` : '<div class="private-service-price muted">Цена в профиле не указана</div>'}${description ? `<p>${esc(description)}</p>` : ''}${extras.length ? `<div class="private-inline-tags">${extras.map(x=>`<span>${esc(x)}</span>`).join('')}</div>` : ''}</section>`;
   }
 
   function renderPrivatePortfolio(candidate) {
@@ -626,21 +638,29 @@
     const all = privatePortfolio(candidate);
     if (!all.length) return '';
     const cards = all.slice(0,2).map(item => {
-      const image = item.coverUrl ? `<img src="${esc(item.coverUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
+      const imageUrl = privateImageUrl(item.coverUrl);
+      const image = imageUrl ? `<img src="${esc(imageUrl)}" alt="${esc(item.title || 'Пример работы')}" decoding="async" referrerpolicy="no-referrer">` : '';
       const price = item.price != null ? `<b>${esc(moneyText(item.price))} ₽</b>` : '';
-      return `<article class="portfolio-mini">${image}<div><span>Пример работы</span><strong>${esc(item.title)}</strong>${price}</div></article>`;
+      const desc = shortProfileDescription(item.description || '');
+      return `<article class="portfolio-mini">${image}<div><span>Пример работы</span><strong>${esc(item.title)}</strong>${desc ? `<small>${esc(desc)}</small>` : ''}${price}</div></article>`;
     }).join('');
-    return `<section class="private-panel private-portfolio"><h3>Примеры работ<span>${all.length}</span></h3><div class="portfolio-mini-list">${cards}</div><small class="portfolio-note">Цены в портфолио — примеры прошлых работ, не расчёт по вашему ТЗ.</small></section>`;
+    return `<section class="private-main-card private-portfolio"><div class="private-card-head"><div><div class="private-card-kicker">Портфолио</div><h3>Примеры работ</h3></div><span class="private-count">${all.length}</span></div><div class="portfolio-mini-list">${cards}</div><small class="portfolio-note">Цены — примеры прошлых работ, не расчёт по вашему ТЗ.</small></section>`;
+  }
+
+  function renderPrivateMore(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const spec = privateSpecialization(candidate);
+    const about = shortProfileDescription(profile.description);
+    const reasons = [...new Set((candidate.rankReasons || []).map(x => compactText(x)).filter(Boolean))].slice(0,5);
+    if (!about && !spec && !reasons.length) return '';
+    return `<details class="private-more"><summary>Подробнее о мастере</summary><div class="private-more-body">${spec ? `<div class="private-specialization"><b>${esc(spec.specialistName || spec.name)}</b><span>${esc(spec.name || '')}</span></div>` : ''}${about ? `<p>${esc(about)}</p>` : ''}${reasons.length ? `<div class="private-why"><b>Почему подходит</b><ul>${reasons.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}</div></details>`;
   }
 
   function renderPrivateProfile(candidate) {
     const profile = candidate.yandexServicesProfile;
     if (!profile) return '';
-    const spec = privateSpecialization(candidate);
-    const about = shortProfileDescription(profile.description);
-    const intro = (about || spec) ? `<div class="private-about">${spec ? `<span>${esc(spec.name)} · ${esc(spec.specialistName || '')}</span>` : ''}${about ? `<p>${esc(about)}</p>` : ''}</div>` : '';
-    const panels = [renderPrivateConditions(candidate),renderPrivateVerification(candidate),renderPrivatePortfolio(candidate)].filter(Boolean).join('');
-    return `${intro}${panels ? `<div class="private-panels">${panels}</div>` : ''}`;
+    return `${renderPrivateSummary(candidate)}<div class="private-main-grid">${renderPrivateTaskService(candidate)}${renderPrivatePortfolio(candidate)}</div>${renderPrivateMore(candidate)}`;
   }
   function renderCard(candidate, index) {
     const type = typeMeta(candidate.type);
@@ -681,10 +701,9 @@
       ${renderKeySignals(candidate)}
       ${renderReputation(candidate)}
       ${privateProfile}
-      <div class="candidate-grid structured ${hasPrivateProfile ? 'private-decision' : ''}">
-        ${renderWhyPanel(candidate)}
-        ${structuredFacts ? `<div class="fact-panels">${structuredFacts}</div>` : (!hasPrivateProfile ? '<div class="fact-panels"><section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section></div>' : '')}
-      </div>
+      ${hasPrivateProfile
+        ? (structuredFacts ? `<div class="private-clarify">${structuredFacts}</div>` : '')
+        : `<div class="candidate-grid structured">${renderWhyPanel(candidate)}<div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div></div>`}
       ${evidence}
       ${sources ? `<details class="sources-details"><summary>Источники проверки · ${uniqueSourceGroups(candidate).length}</summary><div class="source-list">${sources}</div></details>` : ''}
       <div class="actions">
@@ -739,6 +758,11 @@
     }));
 
     list.querySelectorAll('.reviews-open').forEach(button => button.addEventListener('click', () => openReviewsModal(button.dataset.candidate)));
+
+    list.querySelectorAll('.portfolio-mini img').forEach(img => img.addEventListener('error', () => {
+      img.closest('.portfolio-mini')?.classList.add('no-image');
+      img.remove();
+    }, { once:true }));
 
     list.querySelectorAll('.prepare-request').forEach(a => a.addEventListener('click', () => {
       const candidate = state.all.find(c => c.id === a.dataset.candidate);
