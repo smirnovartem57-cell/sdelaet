@@ -1,1 +1,48 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Профиль — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script></head><body><div class="app-shell"><aside class="sidebar"><a class="brand" href="/"><img src="assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a><nav class="app-nav"><a href="my-tasks.html">▤ Мои задачи</a><a href="create-task.html">＋ Новая задача</a><a class="active" href="profile.html">◉ Профиль</a></nav><div class="sidebar-spacer"></div><a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a></aside><main class="app-main"><div class="app-content"><div class="page narrow"><section class="card"><div class="eyebrow">Профиль</div><h1 class="hero-title">Основные настройки</h1><p class="lead">Можно сохранить имя и регион, чтобы не вводить их заново в следующих задачах.</p><div class="profile-grid"><div><label class="label" for="profileName">Имя — необязательно</label><input id="profileName" type="text" placeholder="Как к вам обращаться"></div><div><label class="label" for="profileRegion">Регион по умолчанию</label><input id="profileRegion" type="text" placeholder="Например: Москва"></div></div><div class="actions"><button class="btn primary" id="saveProfile">Сохранить</button></div></section></div></div></main></div><script>var p=sdProfile();document.getElementById('profileName').value=p.name||'';document.getElementById('profileRegion').value=p.region||'';document.getElementById('saveProfile').onclick=function(){localStorage.setItem('sdelaet.profile.v1',JSON.stringify({name:document.getElementById('profileName').value.trim(),region:document.getElementById('profileRegion').value.trim()}));alert('Сохранено')};</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Профиль — Сделает</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=account-v1">
+<script src="assets/prod-ui.js?v=region-v2"></script><script src="assets/geo-classifier.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
+</head>
+<body class="account-body">
+<div class="account-shell">
+<aside class="account-sidebar"><a class="account-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a><nav class="account-nav"><a href="my-tasks.html">Мои задачи</a><a class="active" href="profile.html">Профиль</a></nav><div class="account-sidebar-bottom"><a href="/">На главную</a><button type="button" data-account-logout>Выйти</button></div></aside>
+<main class="account-main"><header class="account-topbar"><a class="account-topbar-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a><div class="account-topbar-actions"><span class="account-user" data-account-email></span><a class="account-secondary" href="my-tasks.html">Мои задачи</a></div></header>
+<div class="account-content"><div class="account-page-head"><div><h1>Профиль</h1><p>Только данные, которые нужны для работы с вашими задачами.</p></div></div>
+<section id="profileCard" class="account-profile-card account-loading">Загружаем профиль…</section></div></main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',async function(){
+ var card=document.getElementById('profileCard');
+ try{
+  var user=await sdAccount.requireAuth(),d=await sdAccount.api('/v1/account/profile'),p=d.profile||{};
+  card.className='account-profile-card';
+  card.innerHTML='<div class="account-field"><label>Email</label><input id="profileEmail" type="email" readonly></div><div class="account-field"><label for="profileRegion">Город или регион</label><input id="profileRegion" type="text" list="profileRegionOptions" autocomplete="off" placeholder="Например: Мытищи или Московская область"><datalist id="profileRegionOptions"></datalist><div style="margin-top:6px;color:#7a879b;font-size:11px;line-height:1.45">Сохраняем канонический регион; для новой задачи город можно уточнить отдельно.</div></div><div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="account-primary" id="saveProfile" type="button">Сохранить</button><button class="account-secondary" type="button" data-account-logout>Выйти</button></div><div id="profileStatus" style="margin-top:10px"></div>';
+  document.getElementById('profileEmail').value=user.email||'';
+  var input=document.getElementById('profileRegion'),list=document.getElementById('profileRegionOptions');
+  input.value=(p.geo&&window.sdGeoClassifier)?sdGeoClassifier.display(p.geo,p.region,true):(p.region||'');
+  if(window.sdGeoClassifier)sdGeoClassifier.options().slice(0,220).forEach(function(x){var o=document.createElement('option');o.value=x.label;list.appendChild(o)});
+  document.getElementById('saveProfile').onclick=async function(){
+   var raw=input.value.trim(),status=document.getElementById('profileStatus');
+   if(!raw){status.textContent='Укажите город или регион.';return}
+   var current=(p&&p.geo)||((window.sdGetRegionPreference&&sdGetRegionPreference())||{}).geo||null;
+   var geo=window.sdGeoClassifier?sdGeoClassifier.resolve(raw,current):null;
+   var label=window.sdGeoClassifier?sdGeoClassifier.display(geo,raw,true):raw;
+   try{
+    var saved=await sdAccount.api('/v1/account/profile',{method:'POST',body:JSON.stringify({region:label,geo:geo})});
+    p=saved.profile||p;
+    input.value=(p.geo&&window.sdGeoClassifier)?sdGeoClassifier.display(p.geo,p.region,true):(p.region||label);
+    if(window.sdSetRegionPreference)sdSetRegionPreference({label:window.sdGeoClassifier?sdGeoClassifier.display(p.geo,p.region,false):(p.region||label),geo:p.geo||geo,manual:true,updatedAt:Date.now()});
+    status.textContent=geo&&geo.needsConfirmation?'Сохранено. Регион учтём как контекст и уточним город в задаче.':'Сохранено.';
+   }catch(e){status.textContent='Не удалось сохранить регион.'}
+  };
+ }catch(e){if(e.message!=='AUTH_REQUIRED'){card.className='account-error';card.textContent='Не удалось загрузить профиль.'}}
+});
+</script>
+</body></html>

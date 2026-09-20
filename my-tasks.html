@@ -1,1 +1,76 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Мои задачи — Сделает</title><link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script></head><body><div class="app-shell"><aside class="sidebar"><a class="brand" href="/"><img src="assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a><nav class="app-nav"><a class="active" href="my-tasks.html">▤ Мои задачи</a><a href="create-task.html">＋ Новая задача</a><a href="profile.html">◉ Профиль</a></nav><div class="sidebar-spacer"></div><a class="muted" href="/" style="padding:10px 12px;font-size:12px">← На главную</a></aside><main class="app-main"><div class="app-content"><div class="page narrow"><div class="eyebrow">Мои задачи</div><h1 class="hero-title">Продолжите с того места, где остановились</h1><div id="taskList" class="task-list"></div></div></div></main></div><script>var box=document.getElementById('taskList'),task=sdGetTask(),requests=sdGetRequests();if(!task){var empty=document.createElement('section');empty.className='card';empty.innerHTML='<h2 class="section-title">Задач пока нет</h2><p class="lead">Опишите, что нужно сделать — сервис поможет подготовить понятное ТЗ.</p><a class="btn primary" href="create-task.html">+ Новая задача</a>';box.appendChild(empty)}else{var prepared=Object.values(requests).filter(function(v){return v==='prepared'||v==='sent'}).length;var sent=Object.values(requests).filter(function(v){return v==='sent'}).length;var card=document.createElement('section');card.className='task-card';card.innerHTML='<div class="eyebrow">'+(task.city||'Задача')+'</div><h2>'+((task.category||'Задача'))+'</h2><p class="muted">'+(task.scope||task.description||'')+'</p><div class="task-stats"><span class="task-stat">Подбор исполнителей</span><span class="task-stat">5 кандидатов найдено</span><span class="task-stat">'+prepared+' запросов подготовлено</span>'+(sent?'<span class="task-stat">'+sent+' отправлено</span>':'')+'</div><a class="btn primary" href="candidates.html">Продолжить →</a>';box.appendChild(card)}</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Мои задачи — Сделает</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/prod-ui.css">
+<link rel="stylesheet" href="assets/account-v1.css?v=account-v1">
+<script src="assets/prod-ui.js?v=region-v2"></script>
+<script defer src="assets/account-v1.js?v=region-v2"></script>
+</head>
+<body class="account-body">
+<div class="account-shell">
+<aside class="account-sidebar">
+  <a class="account-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a>
+  <nav class="account-nav"><a class="active" href="my-tasks.html">Мои задачи</a><a href="profile.html">Профиль</a></nav>
+  <div class="account-sidebar-bottom"><a href="/">На главную</a><button type="button" data-account-logout>Выйти</button></div>
+</aside>
+<main class="account-main">
+  <header class="account-topbar"><a class="account-topbar-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a><div class="account-topbar-actions"><span class="account-user" data-account-email></span><a class="account-secondary" href="profile.html">Профиль</a></div></header>
+  <div class="account-content">
+    <div class="account-page-head"><div><h1>Мои задачи</h1><p>Все ваши задачи и следующий шаг по каждой — в одном месте.</p></div><a class="account-primary" href="create-task.html?new=1" data-new-task>+ Создать новую задачу</a></div>
+    <div id="tasksState" class="account-loading">Загружаем задачи…</div>
+  </div>
+</main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',async function(){
+  var state=document.getElementById('tasksState');
+  try{
+    await sdAccount.requireAuth();
+    sdAccount.track('my_tasks_view');
+    var data=await sdAccount.api('/v1/account/tasks');
+    var local=window.sdGetTask?sdGetTask():null;
+    if(local&&local.id&&!data.tasks.some(function(x){return x.taskId===local.id})){
+      try{await sdAccount.api('/v1/account/tasks',{method:'POST',body:JSON.stringify({task:local})});data=await sdAccount.api('/v1/account/tasks')}catch(e){}
+    }
+    render(data);
+  }catch(e){
+    if(e.message==='AUTH_REQUIRED')return;
+    state.className='account-error';state.textContent='Не удалось загрузить задачи. Попробуйте обновить страницу.';
+  }
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function render(data){
+    var tasks=data.tasks||[];
+    if(!tasks.length){
+      state.className='account-empty';
+      state.innerHTML='<h2>Здесь появятся ваши задачи</h2><p>Опишите, что нужно сделать. Сначала бесплатно исследуем рынок.</p><a class="account-primary" href="create-task.html?new=1" data-new-task>Описать задачу →</a>';
+      return;
+    }
+    state.className='account-task-list';
+    var repeat=(data.pricing&&data.pricing.repeatDiscount&&data.pricing.repeatDiscount.eligible);
+    var repeatShown=false;
+    state.innerHTML=tasks.map(function(t){
+      var draft=t.status&&t.status.code==='draft';
+      var action=draft
+        ? '<a class="account-primary account-task-action" href="#" data-resume-task="'+esc(t.taskId)+'">'+esc(t.nextAction.label)+'</a>'
+        : '<a class="account-primary account-task-action" href="'+esc(t.nextAction.href)+'">'+esc(t.nextAction.label)+'</a>';
+      var loyalty='';
+      if(repeat&&!repeatShown&&t.payment&&t.payment.status==='paid'){
+        repeatShown=true;
+        loyalty='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a></div>';
+        sdAccount.track('repeat_discount_shown',{surface:'my_tasks'});
+      }
+      return '<article class="account-task-card"><div><h2 class="account-task-title">'+esc(t.title)+'</h2><div class="account-task-meta"><span>'+esc(t.region)+'</span><span class="account-status" data-status="'+esc(t.status.code)+'">'+esc(t.status.label)+'</span><span>Обновлено '+esc(sdAccount.fmtDate(t.updatedAt||t.createdAt))+'</span></div><div class="account-task-result">'+esc(t.keyResult)+'</div>'+loyalty+'</div><div>'+action+'</div></article>';
+    }).join('');
+  }
+});
+</script>
+</body>
+</html>

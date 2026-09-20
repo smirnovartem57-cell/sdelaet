@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Задача — Сделает</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=account-v1">
+<script src="assets/prod-ui.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
+</head>
+<body class="account-body">
+<div class="account-shell">
+<aside class="account-sidebar">
+ <a class="account-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a>
+ <nav class="account-nav"><a class="active" href="my-tasks.html">Мои задачи</a><a href="profile.html">Профиль</a></nav>
+ <div class="account-sidebar-bottom"><a href="/">На главную</a><button type="button" data-account-logout>Выйти</button></div>
+</aside>
+<main class="account-main">
+ <header class="account-topbar"><a class="account-topbar-brand" href="/"><img src="assets/logo-icon.svg" alt=""><strong>Сдела<span>ет</span></strong></a><div class="account-topbar-actions"><span class="account-user" data-account-email></span><a class="account-secondary" href="my-tasks.html">Все задачи</a></div></header>
+ <div class="account-content" id="taskRoot"><div class="account-loading">Загружаем задачу…</div></div>
+</main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',async function(){
+ var root=document.getElementById('taskRoot'),id=new URLSearchParams(location.search).get('task');
+ if(!id){location.replace('/my-tasks.html');return}
+ try{
+  await sdAccount.requireAuth();
+  var d=await sdAccount.api('/v1/account/tasks/'+encodeURIComponent(id)),t=d.task;
+  render(t);
+ }catch(e){
+  if(e.message==='AUTH_REQUIRED')return;
+  if(e.message==='TASK_NOT_FOUND'){root.innerHTML='<div class="account-error">Задача не найдена или недоступна этому аккаунту. <a href="my-tasks.html">Вернуться в «Мои задачи»</a></div>';return}
+  root.innerHTML='<div class="account-error">Не удалось загрузить задачу. Попробуйте обновить страницу.</div>';
+ }
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ function list(v){return Array.isArray(v)?v.filter(Boolean):[]}
+ function render(t){
+  document.title=t.title+' — Сделает';
+  var status=t.status||{},html='';
+  html+='<div class="account-workspace-head"><div class="account-workspace-meta"><span class="account-status" data-status="'+esc(status.code)+'">'+esc(status.label)+'</span><span>'+esc(t.region)+'</span><span>Обновлено '+esc(sdAccount.fmtDate(t.updatedAt||t.createdAt))+'</span></div><h1>'+esc(t.title)+'</h1><div class="account-task-result">'+esc(t.keyResult)+'</div>';
+  if(status.code==='draft')html+='<div style="margin-top:16px"><a href="#" class="account-primary" data-resume-task="'+esc(t.taskId)+'">Продолжить заполнение</a></div>';
+  html+='</div>';
+
+  html+=taskSection(t);
+
+  if(t.research||status.code==='researching')html+=researchSection(t);
+  if(t.payment&&t.payment.status==='paid')html+=selectionSection(t);
+  if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))html+=responsesSection(t);
+  if(t.offers&&t.offers.length)html+=comparisonSection(t);
+  if(t.payment)html+=paymentSection(t);
+
+  if(t.pricing&&t.pricing.repeatDiscount&&t.pricing.repeatDiscount.eligible&&t.payment&&t.payment.status==='paid'){
+    html+='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a><div style="margin-top:5px">Подбор — 690 ₽ вместо 990 ₽ · До выбора — 1 790 ₽ вместо 2 590 ₽</div></div>';
+    sdAccount.track('repeat_discount_shown',{surface:'task'});
+  }
+  root.innerHTML=html;
+  bindActions(t);
+  if(t.research)sdAccount.track('research_result_open',{task_id:t.taskId});
+  if(t.payment&&t.payment.status==='paid')sdAccount.track('selection_open',{task_id:t.taskId});
+  if(t.offers&&t.offers.length)sdAccount.track('comparison_open',{task_id:t.taskId});
+ }
+ function taskSection(t){
+  var j=t.taskJson||{},rows=[];
+  [['Категория',j.category],['Регион',t.region],['Желаемый результат',j.goal],['Сроки',j.timing],['Объём',j.scope],['Размеры',j.wallSize]].forEach(function(x){if(x[1])rows.push('<div class="account-summary-item"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>')});
+  return '<section class="account-section" id="task-description"><h2>Задача</h2><p>'+esc(t.description||t.rawService||'Описание сохранено в задаче.')+'</p>'+(rows.length?'<div class="account-summary-grid">'+rows.join('')+'</div>':'')+'</section>';
+ }
+ function researchSection(t){
+  var r=t.research,s='<section class="account-section" id="research"><h2>Исследование рынка</h2>';
+  if(!r){s+='<p>Бесплатное исследование рынка выполняется. Результат появится здесь.</p></section>';return s}
+  s+='<p>Исследование завершено '+esc(sdAccount.fmtDate(r.createdAt))+'.</p>';
+  s+='<div class="account-summary-item"><span>Найдено вариантов</span><b>'+Number(r.candidateCount||0)+'</b></div>';
+  if(!(t.payment&&t.payment.status==='paid')&&Number(r.candidateCount||0)>0)s+=pricingBlock(t);
+  return s+'</section>';
+ }
+ function pricingBlock(t){
+  var p=t.pricing||{},tar=p.tariffs||{},repeat=p.repeatDiscount&&p.repeatDiscount.eligible;
+  var f=tar.find||{amount:990,regularAmount:990},c=tar.choice||{amount:2590,regularAmount:2590};
+  if(repeat)sdAccount.track('repeat_discount_shown',{surface:'research_result'});
+  function card(id,name,x,choice){
+   return '<div class="account-price-card '+(choice?'choice':'')+'"><h3>'+esc(name)+'</h3><div class="account-price">'+esc(sdAccount.money(x.amount))+(x.amount<x.regularAmount?'<s>'+esc(sdAccount.money(x.regularAmount))+'</s>':'')+'</div><div class="account-price-note">'+(id==='find'?'До 5 уникальных исполнителей + 1 дополнительный поиск.':'До 15 уникальных исполнителей и повторный поиск в рамках задачи, пока выбираете.')+'</div><button class="'+(choice?'account-primary':'account-secondary')+'" type="button" data-buy-plan="'+id+'">Выбрать →</button></div>';
+  }
+  return '<div style="margin-top:18px"><h3 style="margin:0;color:#304761;font:800 13px Montserrat,sans-serif">Выберите глубину подбора</h3>'+(repeat?'<p>Ваша цена для повторного обращения применится автоматически.</p>':'')+'<div class="account-pricing">'+card('find','Подбор',f,false)+card('choice','До выбора',c,true)+'</div></div>';
+ }
+ function selectionSection(t){
+  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · ');return '<div class="account-mini-card"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Контакт: '+esc(c.phone)+'</p>':'')+(c.website?'<p><a href="'+esc(c.website)+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+'</div>'}).join('');
+  return '<section class="account-section" id="selection"><h2>Подбор</h2><p>Найденные исполнители доступны после подтверждённой оплаты выбранного тарифа.</p><div class="account-candidate-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div></section>';
+ }
+ function responsesSection(t){
+  var replies=(t.replies||[]).map(function(r){return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p></div>'}).join('');
+  return '<section class="account-section" id="responses"><h2>Обращения и ответы</h2><p>Отправлено обращений: '+Number(t.counts&&t.counts.outreach||0)+' · Получено ответов: '+Number(t.counts&&t.counts.replies||0)+'</p><div class="account-response-list">'+replies+'</div></section>';
+ }
+ function comparisonSection(t){
+  var cards=(t.offers||[]).map(function(o){var n=o.normalized||{},price=n.totalPrice||n.price||n.total_price||'',time=n.leadTime||n.term||n.duration||'';return '<div class="account-mini-card"><b>Предложение исполнителя</b>'+(price?'<p>Цена: '+esc(price)+'</p>':'')+(time?'<p>Срок: '+esc(time)+'</p>':'')+'<p>Статус сравнения: '+esc(o.comparisonStatus||'готово')+'</p></div>'}).join('');
+  return '<section class="account-section" id="comparison"><h2>Сравнение предложений</h2><p>Сравниваем цену, состав работ, условия и неясные моменты.</p><div class="account-offer-list">'+cards+'</div></section>';
+ }
+ function paymentSection(t){
+  var p=t.payment,type=p.priceType==='repeat'?'Повторное обращение':'Обычная цена';
+  return '<section class="account-section" id="payment"><h2>Оплата</h2><div class="account-payment-grid"><div class="account-payment-cell"><span>Тариф</span><b>'+esc(p.planName)+'</b></div><div class="account-payment-cell"><span>Цена</span><b>'+esc(sdAccount.money(p.amount))+(p.priceType==='repeat'?' вместо '+esc(sdAccount.money(p.regularAmount)):'')+'</b></div><div class="account-payment-cell"><span>Тип цены</span><b>'+esc(type)+'</b></div><div class="account-payment-cell"><span>Статус</span><b>'+esc(p.status==='paid'?'Оплачено':'Ожидает оплаты')+'</b></div></div><p>'+esc(sdAccount.fmtDate(p.paidAt||p.createdAt))+'</p></section>';
+ }
+ function bindActions(t){
+  root.querySelectorAll('[data-buy-plan]').forEach(function(btn){
+   btn.addEventListener('click',async function(){
+    var plan=btn.dataset.buyPlan;btn.disabled=true;var old=btn.textContent;btn.textContent='Готовим оплату…';
+    try{
+      var d=await sdAccount.api('/v1/account/payment',{method:'POST',body:JSON.stringify({taskId:t.taskId,tariffId:plan})});
+      sdAccount.track('payment_link_created',{task_id:t.taskId,tariff_id:plan,amount:d.amount,price_type:d.priceType});
+      if(d.priceType==='repeat')sdAccount.track('repeat_task_started',{task_id:t.taskId,tariff_id:plan});
+      location.href=d.paymentUrl;
+    }catch(e){btn.disabled=false;btn.textContent=old;alert(e.message==='REPEAT_DISCOUNT_NOT_AVAILABLE'?'Скидка для повторной задачи сейчас недоступна.':'Не удалось подготовить оплату. Попробуйте ещё раз.')}
+   });
+  });
+ }
+});
+</script>
+</body></html>
