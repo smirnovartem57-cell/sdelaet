@@ -1,0 +1,32 @@
+name: Verify production reconcile baseline
+on:
+  push:
+    branches: [reconcile/production-v19-20260920]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify backend syntax
+        run: |
+          node --check src/server.mjs
+          node --check src/site-crawler.mjs
+          node --check src/outreach.mjs
+      - name: Compare public production files
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://onsdelaet.ru'
+          for file in create-task.html task-tz.html payment-success.html requests.html candidates.html review.html assets/live-search.js; do
+            mkdir -p "/tmp/live/$(dirname "$file")"
+            curl -fsSL --retry 3 --max-time 30 "$base/$file?reconcile_check=$(date +%s)" -o "/tmp/live/$file"
+            cmp -s "$file" "/tmp/live/$file" || {
+              echo "::error::Production mismatch: $file"
+              exit 1
+            }
+            echo "MATCH $file"
+          done
