@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const html=fs.readFileSync('candidates.html','utf8');
 const js=fs.readFileSync('assets/live-search.js','utf8');
 function ok(v,m){if(!v)throw new Error(m)}
-ok(html.includes('assets/live-search.js?v=public-v8-20260920'),'candidates must bust live-search cache');
+ok(html.includes('assets/live-search.js?v=public-v9-20260920'),'candidates must bust live-search cache');
 ok(html.includes('.fact-panels'),'structured fact panel styles must exist');
 ok(html.includes('.reviews-modal'),'reviews popup styles must exist');
 ok(js.includes("document.getElementById('countTitle').textContent = 'Уточняем исполнителей'"),'paid search wording must say clarify contractors');
@@ -13,6 +13,7 @@ ok(js.includes('function renderSourceManifest(candidate)'),'source manifest rend
 ok(js.includes('function companyHistoryModel(candidate)'),'company history model must exist');
 ok(js.includes('function renderCompanyHistory(candidate)'),'company history renderer must exist');
 ok(js.includes('function renderFnsSnapshot(candidate)'),'FNS snapshot renderer must exist');
+ok(js.includes("taskId: task.id || ''"),'browser search must send taskId');
 ok(js.includes("label:'ФНС · Прозрачный бизнес'"),'FNS must be represented in source manifest');
 ok(js.includes('function legalRegistrationYear(legal)'),'legal registration year resolver must exist');
 ok(js.includes('function renderLegalRisk(risk)'),'external legal risk slot must exist');

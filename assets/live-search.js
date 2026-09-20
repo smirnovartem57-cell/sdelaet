@@ -504,8 +504,13 @@
 
     if (!facts.length && !debt) return '';
 
+    const stamp = fns.dataDate || fns.checkedAt || '';
+    const stampText = stamp
+      ? (fns.cacheStatus === 'stale' ? 'последняя успешная проверка ' : 'проверено ') + fnsDateRu(stamp)
+      : '';
+
     return '<div class="fns-snapshot"><div class="fns-snapshot-head"><span>ФНС · Прозрачный бизнес</span><small>' +
-      esc(fns.dataDate ? 'данные на ' + fnsDateRu(fns.dataDate) : '') +
+      esc(stampText) +
       '</small></div><div class="fns-facts">' +
       facts.slice(0,5).map(x =>
         '<div><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' +
@@ -1099,6 +1104,7 @@
 
     const preference = task.executorPreference || 'any';
     const payload = {
+      taskId: task.id || '',
       categoryId: task.categoryId || 'universal-home-repair',
       category: task.category || '',
       city: task.city || '',

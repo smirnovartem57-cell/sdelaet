@@ -1,6 +1,37 @@
+import fs from 'node:fs';
+import path from 'node:path';
 const BASE='https://pb.nalog.ru/';
 const TTL=Math.max(60000,Number(process.env.FNS_PROFILE_CACHE_TTL_MS||21600000));
+const STALE_TTL=Math.max(TTL,Number(process.env.FNS_PROFILE_STALE_TTL_MS||604800000));
+const CACHE_FILE=process.env.FNS_PROFILE_CACHE_FILE||'/var/lib/sdelaet/cache/fns-profile-cache.json';
 const cache=new Map();
+
+function loadPersistentCache(){
+  try{
+    const raw=JSON.parse(fs.readFileSync(CACHE_FILE,'utf8'));
+    for(const [key,item] of Object.entries(raw||{})){
+      if(item&&Number(item.at)>0&&item.value)cache.set(key,{at:Number(item.at),value:item.value});
+    }
+  }catch{}
+}
+function persistCache(){
+  try{
+    fs.mkdirSync(path.dirname(CACHE_FILE),{recursive:true});
+    const tmp=CACHE_FILE+'.tmp-'+process.pid;
+    const raw=Object.fromEntries([...cache.entries()].filter(([,item])=>Date.now()-Number(item.at||0)<=STALE_TTL));
+    fs.writeFileSync(tmp,JSON.stringify(raw),'utf8');
+    fs.renameSync(tmp,CACHE_FILE);
+  }catch(e){console.warn('FNS cache persist failed',String(e?.message||e))}
+}
+function cachedProfile(key,{stale=false}={}){
+  const item=cache.get(key);
+  if(!item)return null;
+  const age=Date.now()-Number(item.at||0);
+  const limit=stale?STALE_TTL:TTL;
+  if(age>limit)return null;
+  return {...item.value,cacheStatus:stale&&age>TTL?'stale':'cache',cacheAgeMs:age};
+}
+loadPersistentCache();
 const txt=v=>String(v??'').trim();
 const n=v=>Number.isFinite(Number(v))?Number(v):null;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -63,19 +94,43 @@ async function poll(path,data,cookie,referer,tries=18,delay=400){
 }
 export async function fetchFnsProfile({inn,ogrn='',force=false}={}){
   const clean=txt(inn).replace(/\D/g,''); if(!/^\d{10}$|^\d{12}$/.test(clean))return null;
-  const key=clean+':'+txt(ogrn), old=cache.get(key); if(!force&&old&&Date.now()-old.at<TTL)return old.value;
-  const page=await get(BASE+'search.html',{headers:{'user-agent':'Mozilla/5.0 (compatible; SdelaetBot/1.0; +https://onsdelaet.ru/)','accept-language':'ru-RU,ru;q=0.9'}});
-  if(!page.ok)throw new Error('FNS_SEARCH_PAGE_HTTP_'+page.status);
-  const cookie=(page.headers.getSetCookie?.()||[]).map(x=>x.split(';')[0]).join('; ');
-  const init=await post('search-proc.json',{mode:'search-all',queryAll:clean,page:'1',pageSize:'10',pbCaptchaToken:'',token:''},cookie,'search.html');
-  if(init?.captchaRequired)return{available:false,provider:'ФНС · Прозрачный бизнес',reason:'captcha_required',checkedAt:new Date().toISOString(),sourceUrl:srcUrl(clean)};
-  const result=await poll('search-proc.json',()=>({id:init.id,method:'get-response'}),cookie,'search.html');
-  const sel=choose(result,clean,txt(ogrn)); if(!sel)return null;
-  let detail=null;
+  const key=clean+':'+txt(ogrn);
+  if(!force){
+    const fresh=cachedProfile(key);
+    if(fresh)return fresh;
+  }
+
   try{
-    const ci=await post('company-proc.json',{token:sel.row.token,method:'get-request'},cookie,'company.html?token='+sel.row.token);
-    if(ci?.id&&ci?.token&&!ci?.captchaRequired)detail=await poll('company-proc.json',()=>({token:ci.token,id:ci.id,method:'get-response'}),cookie,'company.html?token='+sel.row.token,20,450);
-  }catch(e){if(!/429|captcha/i.test(String(e?.message||e)))console.warn('FNS detail failed',clean,String(e?.message||e))}
-  const value=normalizeFnsProfile({inn:clean,ogrn,searchRow:sel.row,kind:sel.kind,detail}); cache.set(key,{at:Date.now(),value}); return value;
+    const page=await get(BASE+'search.html',{headers:{'user-agent':'Mozilla/5.0 (compatible; SdelaetBot/1.0; +https://onsdelaet.ru/)','accept-language':'ru-RU,ru;q=0.9'}});
+    if(!page.ok)throw new Error('FNS_SEARCH_PAGE_HTTP_'+page.status);
+    const cookie=(page.headers.getSetCookie?.()||[]).map(x=>x.split(';')[0]).join('; ');
+    const init=await post('search-proc.json',{mode:'search-all',queryAll:clean,page:'1',pageSize:'10',pbCaptchaToken:'',token:''},cookie,'search.html');
+
+    if(init?.captchaRequired){
+      const stale=cachedProfile(key,{stale:true});
+      if(stale)return {...stale,cacheStatus:'stale',fallbackReason:'captcha_required'};
+      return{available:false,provider:'ФНС · Прозрачный бизнес',reason:'captcha_required',checkedAt:new Date().toISOString(),sourceUrl:srcUrl(clean)};
+    }
+
+    const result=await poll('search-proc.json',()=>({id:init.id,method:'get-response'}),cookie,'search.html');
+    const sel=choose(result,clean,txt(ogrn)); if(!sel)return null;
+    let detail=null;
+    try{
+      const ci=await post('company-proc.json',{token:sel.row.token,method:'get-request'},cookie,'company.html?token='+sel.row.token);
+      if(ci?.id&&ci?.token&&!ci?.captchaRequired)detail=await poll('company-proc.json',()=>({token:ci.token,id:ci.id,method:'get-response'}),cookie,'company.html?token='+sel.row.token,20,450);
+    }catch(e){if(!/429|captcha/i.test(String(e?.message||e)))console.warn('FNS detail failed',clean,String(e?.message||e))}
+
+    const value=normalizeFnsProfile({inn:clean,ogrn,searchRow:sel.row,kind:sel.kind,detail});
+    if(value){
+      value.cacheStatus='live';
+      cache.set(key,{at:Date.now(),value});
+      persistCache();
+    }
+    return value;
+  }catch(error){
+    const stale=cachedProfile(key,{stale:true});
+    if(stale)return {...stale,cacheStatus:'stale',fallbackReason:String(error?.message||error)};
+    throw error;
+  }
 }
-export function clearFnsProfileCache(){cache.clear()}
+export function clearFnsProfileCache(){cache.clear();try{fs.rmSync(CACHE_FILE,{force:true})}catch{}}
