@@ -71,4 +71,4 @@ for (const [name, args] of commands) {
   passed += 1;
 }
 console.log('Platform readiness: ' + passed + '/' + commands.length + ' automated gates PASS');
-console.log('External gates: manual user-facing review DEFERRED; VDS deployment INFRA_BLOCKED until SSH secrets are restored.');
+console.log('External gates: manual user-facing review DEFERRED; FirstVDS deployment is handled by the server-side exact-SHA timer.');

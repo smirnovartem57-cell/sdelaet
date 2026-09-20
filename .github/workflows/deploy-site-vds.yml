@@ -3,57 +3,44 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['*.html','assets/**','src/**','tests/**','docs/product/**','tools/**','.github/workflows/deploy-site-vds.yml']
+    paths:
+      - '*.html'
+      - 'assets/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'docs/product/**'
+      - 'tools/**'
+      - 'ops/**'
+      - '.github/workflows/deploy-site-vds.yml'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Validate platform readiness
         run: node tools/platform-readiness.mjs
       - name: Validate Metrika goal wiring
         run: node tests/metrika-goals-regression.mjs
-      - name: Prepare SSH
+      - name: Validate server-side deploy contract
+        run: node tests/deploy-path-regression.mjs
+      - name: Wait for exact server-side deploy
         shell: bash
-        env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}", VDS_SSH_KEY: "${{ secrets.VDS_SSH_KEY }}" }
         run: |
           set -euo pipefail
-          test -n "$VDS_HOST" || { echo 'Missing VDS_HOST'; exit 1; }
-          test -n "$VDS_USER" || { echo 'Missing VDS_USER'; exit 1; }
-          test -n "$VDS_SSH_KEY" || { echo 'Missing VDS_SSH_KEY'; exit 1; }
-          mkdir -p ~/.ssh; printf '%s\n' "$VDS_SSH_KEY" > ~/.ssh/id_ed25519; chmod 600 ~/.ssh/id_ed25519; ssh-keyscan -H "$VDS_HOST" >> ~/.ssh/known_hosts
-      - name: Deploy current repository files
-        shell: bash
-        env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
-        run: |
-          set -euo pipefail
-          TARGET=/opt/sdelaet/current
-          ssh "$VDS_USER@$VDS_HOST" "mkdir -p '$TARGET/assets/category-profiles' '$TARGET/assets/category-offer-rules' '$TARGET/docs/product/categories' '$TARGET/docs/product/agents' '$TARGET/docs/product/EXPERT_MODELS' '$TARGET/src' '$TARGET/tests'"
-          rsync -az --checksum --exclude '.git/' --exclude '.github/' --exclude 'search-api/' ./ "$VDS_USER@$VDS_HOST:$TARGET/"
-      - name: Validate and restart API runtime
-        shell: bash
-        env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
-        run: |
-          set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" '
-            set -e
-            TARGET=/opt/sdelaet/current
-            NODE=/opt/sdelaet/runtime/node24/bin/node
-            "$NODE" --check "$TARGET/src/offer-contract.mjs"
-            "$NODE" --check "$TARGET/src/offer-contract-gap-engine.mjs"
-            "$NODE" --check "$TARGET/src/offer-pipeline.mjs"
-            if systemctl list-unit-files | grep -q "^sdelaet-api.service"; then
-              systemctl restart sdelaet-api.service
-              sleep 1
-              systemctl is-active --quiet sdelaet-api.service
-              curl -fsS http://127.0.0.1:3210/health >/dev/null
+          expected="$GITHUB_SHA"
+          for attempt in $(seq 1 36); do
+            actual="$(curl -fsS --max-time 10 "https://onsdelaet.ru/assets/deploy-version.txt?ts=$(date +%s)" 2>/dev/null | tr -d '\r\n' || true)"
+            if [ "$actual" = "$expected" ]; then
+              echo "FirstVDS exact deploy confirmed: $actual"
+              exit 0
             fi
-          '
-      - name: Production smoke check
-        shell: bash
-        env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}" }
-        run: |
-          set -euo pipefail
-          ssh "$VDS_USER@$VDS_HOST" "cd /opt/sdelaet/current && node tools/category-agents/production-smoke.mjs"
-          echo 'FirstVDS deploy smoke check passed'
+            echo "Waiting for FirstVDS: attempt=$attempt current=${actual:-none} expected=$expected"
+            sleep 5
+          done
+          echo "::error::FirstVDS server-side deploy did not reach exact SHA $expected"
+          exit 1
