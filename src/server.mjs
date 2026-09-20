@@ -5128,8 +5128,16 @@ async function enrichCompanyCandidates(candidates, maxSites=5) {
         ? 'not_crawled'
         : 'no_website';
 
+    c.telegramStatus = c.telegram || c.messenger
+      ? 'found'
+      : c.website
+        ? 'not_crawled'
+        : 'no_website';
+
     c.emailSourceUrl = '';
     c.emailSourceLabel = '';
+    c.telegramSourceUrl = '';
+    c.telegramSourceLabel = '';
   }
 
   const targets = companies
@@ -5177,6 +5185,12 @@ async function enrichCompanyCandidates(candidates, maxSites=5) {
 
     if (!c.email) {
       c.emailStatus = crawl.emails?.length
+        ? 'found'
+        : 'not_found';
+    }
+
+    if (!c.telegram && !c.messenger) {
+      c.telegramStatus = crawl.telegrams?.length
         ? 'found'
         : 'not_found';
     }
@@ -5238,6 +5252,35 @@ async function enrichCompanyCandidates(candidates, maxSites=5) {
       c.facts.push({
         status: 'confirmed',
         label: `Электронная почта: ${crawl.emails[0]}`,
+        sourceId: siteSourceId
+      });
+    }
+
+    if (crawl.telegrams?.length) {
+      c.telegram = crawl.telegrams[0];
+      c.telegrams = crawl.telegrams;
+      c.telegramStatus = 'found';
+
+      const telegramSource =
+        (crawl.telegramSources || [])
+          .find(
+            item =>
+              item.telegram ===
+              crawl.telegrams[0]
+          );
+
+      c.telegramSourceUrl =
+        telegramSource?.url ||
+        crawl.sourceUrl;
+
+      c.telegramSourceLabel =
+        telegramSource?.url
+          ? 'Официальный сайт · Telegram'
+          : 'Официальный сайт';
+
+      c.facts.push({
+        status: 'confirmed',
+        label: `Telegram: ${crawl.telegrams[0]}`,
         sourceId: siteSourceId
       });
     }
@@ -13406,6 +13449,154 @@ const server = http.createServer(async (req, res) => {
         res,
         error.status || error.statusCode || 500,
         { ok: false, saved: false, error: error.message || 'TAXONOMY_SIGNAL_FAILED' },
+        origin
+      );
+    }
+  }
+
+
+  if (
+    req.method === 'POST' &&
+    req.url === '/v1/candidates/contact-refresh'
+  ) {
+    try {
+      const body = await readBody(req);
+      const taskId = text(body.taskId || body.task_id);
+      const candidateId = text(body.candidateId || body.candidate_id);
+
+      if (!taskId || !candidateId) {
+        return sendJson(
+          res,
+          400,
+          { ok: false, error: 'TASK_AND_CANDIDATE_REQUIRED' },
+          origin
+        );
+      }
+
+      const row = db.prepare(`
+        SELECT
+          c.rowid AS candidate_rowid,
+          c.raw_json,
+          c.website
+        FROM candidates c
+        INNER JOIN search_runs sr
+          ON sr.id = c.run_id
+        WHERE sr.task_id = ?
+          AND c.candidate_id = ?
+        ORDER BY sr.created_at DESC
+        LIMIT 1
+      `).get(taskId, candidateId);
+
+      if (!row) {
+        return sendJson(
+          res,
+          404,
+          { ok: false, error: 'CANDIDATE_NOT_IN_TASK' },
+          origin
+        );
+      }
+
+      let candidate = {};
+      try {
+        candidate = JSON.parse(row.raw_json || '{}');
+      } catch {}
+
+      const website = text(row.website || candidate.website);
+
+      if (!website) {
+        return sendJson(
+          res,
+          200,
+          {
+            ok: true,
+            candidateId,
+            telegram: '',
+            telegrams: [],
+            telegramStatus: 'no_website'
+          },
+          origin
+        );
+      }
+
+      const crawl = await crawlCompanySite(website);
+
+      if (!crawl?.ok) {
+        return sendJson(
+          res,
+          200,
+          {
+            ok: true,
+            candidateId,
+            telegram: '',
+            telegrams: [],
+            telegramStatus: 'crawl_failed'
+          },
+          origin
+        );
+      }
+
+      candidate.telegramStatus =
+        crawl.telegrams?.length
+          ? 'found'
+          : 'not_found';
+
+      if (crawl.telegrams?.length) {
+        candidate.telegram = crawl.telegrams[0];
+        candidate.telegrams = crawl.telegrams;
+
+        const source =
+          (crawl.telegramSources || [])
+            .find(item =>
+              item.telegram === crawl.telegrams[0]
+            );
+
+        candidate.telegramSourceUrl =
+          source?.url || crawl.sourceUrl;
+
+        candidate.telegramSourceLabel =
+          source?.url
+            ? 'Официальный сайт · Telegram'
+            : 'Официальный сайт';
+      }
+
+      if (!candidate.email && crawl.emails?.length) {
+        candidate.email = crawl.emails[0];
+        candidate.emails = crawl.emails;
+        candidate.emailStatus = 'found';
+      }
+
+      db.prepare(
+        'UPDATE candidates SET raw_json = ? WHERE rowid = ?'
+      ).run(
+        JSON.stringify(candidate),
+        row.candidate_rowid
+      );
+
+      return sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          candidateId,
+          telegram: candidate.telegram || '',
+          telegrams: candidate.telegrams || [],
+          telegramStatus: candidate.telegramStatus,
+          telegramSourceUrl: candidate.telegramSourceUrl || '',
+          telegramSourceLabel: candidate.telegramSourceLabel || '',
+          email: candidate.email || ''
+        },
+        origin
+      );
+    } catch (error) {
+      return sendJson(
+        res,
+        error.status || 500,
+        {
+          ok: false,
+          error:
+            error.message ||
+            'CONTACT_REFRESH_FAILED'
+        },
         origin
       );
     }
