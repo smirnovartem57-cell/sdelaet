@@ -8,3 +8,4 @@ async function save(data){const f=file();await mkdir(path.dirname(f),{recursive:
 export async function putOrder(order){const all=await load();all[order.id]=order;await save(all);return order}
 export async function getOrder(id){const all=await load();return all[id]||null}
 export async function patchOrder(id,patch){const all=await load();if(!all[id])return null;all[id]={...all[id],...patch,updatedAt:new Date().toISOString()};await save(all);return all[id]}
+export async function listOrders(){return Object.values(await load())}

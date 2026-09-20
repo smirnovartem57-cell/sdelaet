@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Sdelaet Payment Watchdog every 2 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+AccuracySec=20s
+Persistent=true
+Unit=sdelaet-payment-watchdog.service
+
+[Install]
+WantedBy=timers.target

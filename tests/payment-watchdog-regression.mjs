@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import {isTestOrder,shouldAlertPending} from '../payment-api/payment-watchdog.mjs';
+function ok(v,m){if(!v)throw new Error(m)}
+const now=Date.now();
+const old=new Date(now-11*60_000).toISOString();
+const fresh=new Date(now-3*60_000).toISOString();
+ok(isTestOrder({taskId:'TEST-PROD-001'}),'TEST-PROD must be excluded');
+ok(isTestOrder({taskId:'fiscal-receipt-smoke-find'}),'fiscal smoke must be excluded');
+ok(!isTestOrder({taskId:'task-real-1'}),'real task must not be excluded');
+ok(shouldAlertPending({status:'pending',taskId:'task-real-1',createdAt:old})===true,'real pending >10m must alert');
+ok(shouldAlertPending({status:'pending',taskId:'task-real-1',createdAt:fresh})===false,'fresh pending must not alert');
+ok(shouldAlertPending({status:'paid',taskId:'task-real-1',createdAt:old})===false,'paid must not alert');
+ok(shouldAlertPending({status:'pending',taskId:'TEST-PROD-002',createdAt:old})===false,'test pending must not alert');
+const watchdog=fs.readFileSync('payment-api/payment-watchdog.mjs','utf8');
+const service=fs.readFileSync('payment-api/sdelaet-payment-watchdog.service','utf8');
+const timer=fs.readFileSync('payment-api/sdelaet-payment-watchdog.timer','utf8');
+ok(watchdog.includes('ADMIN_TELEGRAM_CHAT_ID'),'watchdog must support admin Telegram alerts');
+ok(watchdog.includes('TELEGRAM_GATEWAY_URL'),'watchdog must support Telegram gateway');
+ok(service.includes('/etc/sdelaet/telegram.env'),'watchdog service must load Telegram env');
+ok(service.includes('/etc/sdelaet/api.env'),'watchdog service must load admin chat env');
+ok(service.includes('payment-watchdog.mjs'),'watchdog service must run watchdog script');
+ok(timer.includes('OnUnitActiveSec=2min'),'watchdog timer must run every 2 minutes');
+console.log('PAYMENT WATCHDOG REGRESSION: PASS');

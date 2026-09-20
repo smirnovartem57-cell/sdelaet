@@ -1,0 +1,14 @@
+[Unit]
+Description=Sdelaet Payment Watchdog
+After=network-online.target exim4.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sdelaet/payment-api.env
+EnvironmentFile=/etc/sdelaet/telegram.env
+EnvironmentFile=/etc/sdelaet/api.env
+ExecStart=/usr/bin/node /opt/sdelaet/payment-api/payment-watchdog.mjs
+User=www-data
+Group=www-data
+Nice=10
