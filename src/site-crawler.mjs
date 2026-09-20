@@ -283,6 +283,7 @@ function extractCompanyName(html, text, jsonLd) {
 function extractContacts(html, text, jsonLd) {
   const phones = [];
   const emails = [];
+  const telegrams = [];
 
   for (const item of jsonLd) {
     if (item?.telephone) phones.push(String(item.telephone));
@@ -295,6 +296,17 @@ function extractContacts(html, text, jsonLd) {
 
   for (const m of html.matchAll(/href=["']mailto:([^"'?#]+)["']/gi)) {
     emails.push(clean(m[1]));
+  }
+
+  for (const m of html.matchAll(/href=["'](?:https?:\/\/)?(?:www\.)?t\.me\/([A-Za-z0-9_]{5,})[^"']*["']/gi)) {
+    const username = String(m[1] || '').trim();
+    if (username && !/^(?:share|joinchat|addstickers|s)$/i.test(username)) {
+      telegrams.push('@' + username);
+    }
+  }
+
+  for (const m of html.matchAll(/href=["']tg:\/\/resolve\?domain=([A-Za-z0-9_]{5,})[^"']*["']/gi)) {
+    telegrams.push('@' + String(m[1] || '').trim());
   }
 
   for (const m of text.matchAll(
@@ -310,6 +322,12 @@ function extractContacts(html, text, jsonLd) {
 
     emails: unique(
       emails.map(x => String(x).trim().toLowerCase())
+    ).slice(0, 5),
+
+    telegrams: unique(
+      telegrams
+        .map(x => String(x).trim())
+        .filter(Boolean)
     ).slice(0, 5)
   };
 }
@@ -1282,6 +1300,7 @@ export async function crawlCompanySite(url) {
 
   const phoneRecords = [];
   const emailRecords = [];
+  const telegramRecords = [];
 
   for (const page of pages) {
     for (
@@ -1303,6 +1322,16 @@ export async function crawlCompanySite(url) {
         url: page.url
       });
     }
+
+    for (
+      const telegram
+      of page.contacts.telegrams || []
+    ) {
+      telegramRecords.push({
+        value: telegram,
+        url: page.url
+      });
+    }
   }
 
   const phones =
@@ -1315,6 +1344,13 @@ export async function crawlCompanySite(url) {
   const emails =
     unique(
       emailRecords.map(
+        item => item.value
+      )
+    );
+
+  const telegrams =
+    unique(
+      telegramRecords.map(
         item => item.value
       )
     );
@@ -1332,6 +1368,23 @@ export async function crawlCompanySite(url) {
 
     emailSources.push({
       email,
+      url: record.url
+    });
+  }
+
+  const telegramSources = [];
+
+  for (const telegram of telegrams) {
+    const record =
+      telegramRecords.find(
+        item =>
+          item.value === telegram
+      );
+
+    if (!record) continue;
+
+    telegramSources.push({
+      telegram,
       url: record.url
     });
   }
@@ -1433,9 +1486,11 @@ export async function crawlCompanySite(url) {
 
     phones,
     emails,
+    telegrams,
 
     phoneSources,
     emailSources,
+    telegramSources,
 
     inspectedUrls:
       pages.map(page => page.url),
