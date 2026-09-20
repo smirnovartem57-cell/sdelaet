@@ -997,6 +997,7 @@
       const key = button.dataset.filter;
       const base = key === 'all' ? 'Все' : key === 'company' ? 'Компании' : key === 'private' ? 'Частные мастера' : 'Тип не подтверждён';
       button.textContent = `${base} · ${counts[key] || 0}`;
+      button.classList.toggle('hidden', key === 'unverified' && !counts.unverified);
     });
   }
 
@@ -1004,6 +1005,10 @@
     try {
       localStorage.setItem('sdelaet.search.results.v1', JSON.stringify({
         taskId: task.id || '',
+        categoryId: task.categoryId || '',
+        city: task.city || '',
+        executorPreference: task.executorPreference || 'any',
+        filter: state.filter,
         runId: state.runId,
         generatedAt: state.generatedAt,
         candidates: state.all
@@ -1011,8 +1016,65 @@
     } catch {}
   }
 
+  function restoreSearchResults() {
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem('sdelaet.search.results.v1') || 'null');
+    } catch {}
+
+    if (!saved || !Array.isArray(saved.candidates) || !saved.candidates.length) return false;
+
+    const currentTaskId = String(task.id || '');
+    const savedTaskId = String(saved.taskId || '');
+    const sameTask = currentTaskId && savedTaskId
+      ? currentTaskId === savedTaskId
+      : String(saved.categoryId || '') === String(task.categoryId || '') &&
+        String(saved.city || '') === String(task.city || '');
+
+    if (!sameTask) return false;
+
+    state.all = saved.candidates;
+    state.live = true;
+    state.runId = saved.runId || '';
+    state.generatedAt = saved.generatedAt || '';
+    state.filter = saved.filter || (
+      task.executorPreference === 'company'
+        ? 'company'
+        : task.executorPreference === 'private'
+          ? 'private'
+          : 'all'
+    );
+
+    if (
+      state.filter === 'unverified' &&
+      !state.all.some(candidate => candidate.type === 'unverified')
+    ) {
+      state.filter = 'all';
+    }
+
+    const status = document.getElementById('searchStatus');
+    const filters = document.getElementById('filters');
+    const guide = document.getElementById('journeyGuide');
+    const introLead = document.querySelector('.search-intro .lead');
+
+    status.className = 'search-status ok';
+    status.innerHTML = `<div class="status-dot">✓</div><div><b>Подбор восстановлен</b><span>${esc(String(state.all.length))} кандидатов · повторный поиск не запускался</span></div>`;
+    if (introLead) introLead.textContent = 'Подбор сохранён. Можно продолжить с того же места или изменить параметры поиска.';
+    filters.classList.remove('hidden');
+    guide?.classList.remove('hidden');
+    setupFilters();
+    render();
+    return true;
+  }
+
   function render() {
     const list = document.getElementById('candidateList');
+    if (
+      state.filter === 'unverified' &&
+      !state.all.some(candidate => candidate.type === 'unverified')
+    ) {
+      state.filter = 'all';
+    }
     const visible = visibleCandidates();
     list.innerHTML = visible.map(renderCard).join('') || '<div class="empty">По выбранному фильтру кандидатов пока нет.</div>';
     document.getElementById('countTitle').textContent = countLabel(visible.length, state.filter);
@@ -1035,6 +1097,7 @@
       if (!candidate) return;
       try {
         localStorage.setItem('sdelaet.candidate.selected.v1', JSON.stringify(candidate));
+        saveSearchResults();
       } catch {}
       track('candidate_request_prepare', { candidate_id: candidate.id, candidate_type: candidate.type });
     }));
@@ -1061,6 +1124,12 @@
 
   function setupPreference() {
     const box = document.getElementById('preference');
+
+    if (restoreSearchResults()) {
+      box.classList.add('hidden');
+      return;
+    }
+
     const current = task.executorPreference;
 
     if (current) {
@@ -1071,8 +1140,10 @@
 
     box.querySelectorAll('[data-choice]').forEach(button => {
       button.onclick = () => {
-        task.executorPreference = button.dataset.choice;
-        saveTask(task);
+        const latestTask = readTask();
+        latestTask.executorPreference = button.dataset.choice;
+        Object.assign(task, latestTask);
+        saveTask(latestTask);
         state.filter = button.dataset.choice === 'company' ? 'company' : button.dataset.choice === 'private' ? 'private' : 'all';
         box.classList.add('hidden');
         track('contractor_type_selected', { contractor_type: button.dataset.choice });
@@ -1083,10 +1154,14 @@
     const change = document.getElementById('changePreference');
     if (change) {
       change.onclick = () => {
+        const latestTask = readTask();
+        delete latestTask.executorPreference;
         delete task.executorPreference;
-        saveTask(task);
+        saveTask(latestTask);
         state.all = [];
         state.filter = 'all';
+        localStorage.removeItem('sdelaet.search.results.v1');
+        document.getElementById('journeyGuide')?.classList.add('hidden');
         showPreference();
         track('contractor_type_change');
       };
@@ -1163,6 +1238,7 @@
       status.innerHTML = `<div class="status-dot">✓</div><div><b>Проверка исполнителей завершена</b><span>${esc(String(data.count ?? state.all.length))} кандидатов · ${esc(sourceSummary(state.all))}</span></div>`;
       if (introLead) introLead.textContent = 'Подбор готов: кандидаты проверены по доступным публичным источникам. Ниже — главное по каждому исполнителю.';
       filters.classList.remove('hidden');
+      document.getElementById('journeyGuide')?.classList.remove('hidden');
       setupFilters();
       render();
 
