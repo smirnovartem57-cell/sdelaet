@@ -687,6 +687,10 @@ async function prepare(body) {
     throw error;
   }
 
+  const attachments = channel === 'email'
+    ? normalizeOutboundAttachments(body.attachments)
+    : [];
+
   const telegram = String(body.metadata?.telegram || '').trim();
   assertAuthorizedTarget(auth,{taskId:body.taskId,candidateId,channel,recipient,telegram,message});
   const existing=db.prepare(`SELECT * FROM outreach_attempts WHERE authorization_id=? AND candidate_id=? AND channel=? ORDER BY prepared_at DESC LIMIT 1`).get(authorizationId,candidateId,channel);
@@ -729,6 +733,7 @@ async function prepare(body) {
         status,
         prepared_at,
 
+        attachments_json,
         metadata_json
       )
     VALUES (
@@ -740,7 +745,7 @@ async function prepare(body) {
       ?, ?,
       ?, ?,
       ?, ?,
-      ?
+      ?, ?
     )
   `).run(
     requestId,
@@ -770,6 +775,7 @@ async function prepare(body) {
     'prepared',
     preparedAt,
 
+    JSON.stringify(attachments),
     JSON.stringify(body.metadata || {})
   );
 
