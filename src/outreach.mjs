@@ -896,59 +896,16 @@ async function sendEmail(requestId) {
   let message;
 
   if (attachments.length) {
-    const mixedBoundary =
-      `----=_SdelaetMixed_${crypto.randomBytes(12).toString('hex')}`;
-
-    const parts = [
-      ...baseHeaders,
-      `Content-Type: multipart/mixed; boundary="${mixedBoundary}"`,
-      '',
-      `--${mixedBoundary}`,
-      'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: 8bit',
-      '',
-      body
-    ];
-
+    const mixedBoundary = `----=_SdelaetMixed_${crypto.randomBytes(12).toString('hex')}`;
+    const parts = [...baseHeaders, `Content-Type: multipart/mixed; boundary="${mixedBoundary}"`, '', `--${mixedBoundary}`, 'Content-Type: text/plain; charset=UTF-8', 'Content-Transfer-Encoding: 8bit', '', body];
     for (const attachment of attachments) {
-      const encodedName =
-        encodeURIComponent(
-          String(
-            attachment.name ||
-            'photo.jpg'
-          )
-        ).replace(
-          /'/g,
-          '%27'
-        );
-
-      parts.push(
-        `--${mixedBoundary}`,
-        `Content-Type: ${attachment.type || 'application/octet-stream'}`,
-        'Content-Transfer-Encoding: base64',
-        `Content-Disposition: attachment; filename*=UTF-8''${encodedName}`,
-        '',
-        wrapBase64(attachment.data)
-      );
+      const encodedName = encodeURIComponent(String(attachment.name || 'photo.jpg')).replace(/'/g, '%27');
+      parts.push(`--${mixedBoundary}`, `Content-Type: ${attachment.type || 'application/octet-stream'}`, 'Content-Transfer-Encoding: base64', `Content-Disposition: attachment; filename*=UTF-8''${encodedName}`, '', wrapBase64(attachment.data));
     }
-
-    parts.push(
-      `--${mixedBoundary}--`,
-      ''
-    );
-
-    message =
-      parts.join('\r\n');
-
+    parts.push(`--${mixedBoundary}--`, '');
+    message = parts.join('\\r\\n');
   } else {
-    message = [
-      ...baseHeaders,
-      'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: 8bit',
-      '',
-      body,
-      ''
-    ].join('\r\n');
+    message = [...baseHeaders, 'Content-Type: text/plain; charset=UTF-8', 'Content-Transfer-Encoding: 8bit', '', body, ''].join('\\r\\n');
   }
 
   try {
