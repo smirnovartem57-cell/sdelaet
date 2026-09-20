@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import {extractYandexServicesProfile} from '../src/yandex-services-profile.mjs';
+function ok(v,m){if(!v)throw new Error(m)}
+const html=`<script type="application/ld+json">{"@type":"LocalBusiness","name":"Мастер","description":"Опыт работы более 7 лет. Даю гарантию. Замеры делаю бесплатно.","openingHours":"с 9 до 21","areaServed":["Москва","Мытищи"],"aggregateRating":{"ratingValue":4.9,"reviewCount":51}}</script><div class="Achievement-Text">Паспорт проверен</div><script>window.S={"ratingStats":{"1":1,"2":0,"3":0,"4":3,"5":47},"spec":{"name":"Ремонт и установка окон и балконов","numberId":1708,"seoId":"/r","specialistName":"Монтажник окон","isPhotoSpecialization":true,"services":[{"rubricId":"/okna/uteplenie","attrs":{"name":"Утепление балконов и лоджий","price":2500,"priceMeasure":"square_meter","photoUrls":["a","b"]}}]},"portfolio":{"p":{"title":"Утепление лоджии","description":"Утепление пола и потолка","price":50000,"coverUrl":"https://img.test/a.jpg","rubricsNames":{"occupation":"/remont","specialization":"/okna-i-balkony"}}}};</script>`;
+const x=extractYandexServicesProfile(html,'https://uslugi.yandex.ru/profile/Test-1');
+ok(x.profile.experience?.minYears===7,'experience must parse');
+ok(x.profile.passportVerified,'passport verification must parse');
+ok(x.profile.guaranteeClaimed,'guarantee must parse');
+ok(x.profile.freeMeasurement,'free measurement must parse');
+ok(x.profile.areaServed.includes('Мытищи'),'service area must parse');
+ok(x.profile.services.some(s=>s.name==='Утепление балконов и лоджий'&&s.price===2500),'relevant service price must parse');
+ok(x.profile.portfolio.some(p=>p.title==='Утепление лоджии'),'portfolio must parse');
+const js=fs.readFileSync('assets/live-search.js','utf8');
+const page=fs.readFileSync('candidates.html','utf8');
+for(const marker of ['function renderPrivateProfile','function renderPrivateConditions','function renderPrivateVerification','function renderPrivatePortfolio','function privateRelevantService','function privateAreaMatch']) ok(js.includes(marker),marker+' missing');
+ok(js.includes("5★ ${Number(stats[5] || 0)}"),'rating distribution must render');
+ok(page.includes('.private-panels'),'private profile layout must exist');
+ok(page.includes('.portfolio-mini'),'private portfolio cards must exist');
+ok(page.includes('.private-verification'),'private verification block must exist');
+console.log('PRIVATE CONTRACTOR PROFILE REGRESSION: PASS');

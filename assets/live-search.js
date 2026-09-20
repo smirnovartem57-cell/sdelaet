@@ -411,11 +411,16 @@
     if (rep.totalCount != null) parts.push(`${rep.totalCount} оценок`);
     if (rep.yearCount) parts.push(`${rep.yearCount} отзывов за ${rep.year}`);
     const topics = [...(rep.topics?.positive || [])].slice(0,2).map(t => `${t.label} · ${t.mentions}`).join(' · ');
+    const stats = rep.ratingStats || null;
+    const statsText = stats && candidate.type === 'private'
+      ? `5★ ${Number(stats[5] || 0)} из ${Number(rep.totalCount || 0)} · 1–2★ ${Number(stats[1] || 0) + Number(stats[2] || 0)}`
+      : '';
     const hasTexts = rep.positive.length || rep.neutral.length || rep.negative.length;
     const action = hasTexts
       ? `<button type="button" class="reviews-open" data-candidate="${esc(candidate.id)}">Посмотреть отзывы</button>`
       : rep.profileUrl ? `<a class="reviews-link" href="${esc(rep.profileUrl)}" target="_blank" rel="noopener">Профиль и оценки ↗</a>` : '';
-    return `<div class="reputation-strip"><div><span>${esc(rep.platform)}</span><b>${esc(parts.join(' · ') || 'Профиль найден')}</b>${topics ? `<small>Чаще отмечают: ${esc(topics)}</small>` : ''}</div>${action}</div>`;
+    const subline = topics ? `Чаще отмечают: ${topics}` : statsText;
+    return `<div class="reputation-strip"><div><span>${esc(rep.platform)}</span><b>${esc(parts.join(' · ') || 'Профиль найден')}</b>${subline ? `<small>${esc(subline)}</small>` : ''}</div>${action}</div>`;
   }
 
   function reviewDate(value) {
@@ -521,6 +526,122 @@
     return `<div class="avito-note"><b>Данные Avito</b><span>${esc(text)}</span></div>`;
   }
 
+  function privateMeasureLabel(measure) {
+    return ({ square_meter:'₽/м²', m:'₽/м', running_meter:'₽/м', piece:'₽/шт.', hour:'₽/час', service:'₽/услуга' }[String(measure || '')] || '₽');
+  }
+
+  function privateRelevantService(candidate) {
+    const services = candidate.yandexServicesProfile?.services || [];
+    if (!services.length) return null;
+    if (task?.categoryId === 'balcony-insulation') {
+      return services.find(s => /утепление балконов и лоджий/i.test(s.name))
+        || services.find(s => /отделка балконов и лоджий/i.test(s.name) && /утеплен/i.test(s.description || ''))
+        || null;
+    }
+    const hay = compactText([task?.category, task?.scope, task?.description].filter(Boolean).join(' ')).toLowerCase();
+    const tokens = [...new Set((hay.match(/[а-яё]{5,}/gi) || []).map(x => x.slice(0,6)))];
+    let best = null, score = 0;
+    for (const service of services) {
+      const value = (String(service.name || '') + ' ' + String(service.description || '')).toLowerCase();
+      const current = tokens.reduce((sum,t) => sum + (value.includes(t) ? 1 : 0), 0);
+      if (current > score) { score = current; best = service; }
+    }
+    return score ? best : null;
+  }
+
+  function privateAreaMatch(candidate) {
+    const areas = candidate.yandexServicesProfile?.areaServed || [];
+    const city = String(task?.city || '').trim().toLowerCase();
+    const region = String(task?.region || '').trim().toLowerCase();
+    if (city) {
+      const direct = areas.find(x => String(x || '').toLowerCase().includes(city));
+      if (direct) return direct;
+    }
+    if (region) {
+      const regional = areas.find(x => String(x || '').toLowerCase().includes(region) || region.includes(String(x || '').toLowerCase()));
+      if (regional) return regional;
+    }
+    return null;
+  }
+
+  function privateSpecialization(candidate) {
+    const specs = candidate.yandexServicesProfile?.specializations || [];
+    if (task?.categoryId?.startsWith('balcony-')) return specs.find(s => /окон|балкон/i.test(String(s.name || '') + ' ' + String(s.specialistName || ''))) || specs[0] || null;
+    return specs[0] || null;
+  }
+
+  function privatePortfolioScore(item) {
+    const value = (String(item?.title || '') + ' ' + String(item?.description || '')).toLowerCase();
+    let score = 0;
+    if (task?.categoryId === 'balcony-insulation') {
+      if (/утеплен/.test(value)) score += 8;
+      if (/балкон|лоджи/.test(value)) score += 4;
+      if (/гидроизоляц|обшив|отделк/.test(value)) score += 2;
+    }
+    if (/okna-i-balkony/.test(String(item?.specialization || ''))) score += 2;
+    return score;
+  }
+
+  function privatePortfolio(candidate) {
+    const items = candidate.yandexServicesProfile?.portfolio || [];
+    return items.map((item,index) => ({item,index,score:privatePortfolioScore(item)})).filter(x => x.score > 0).sort((a,b) => b.score - a.score || a.index - b.index).map(x => x.item);
+  }
+
+  function shortProfileDescription(value) {
+    const valueText = compactText(value);
+    if (!valueText) return '';
+    return valueText.length > 180 ? valueText.slice(0,177).replace(/[,:;\s]+$/,'') + '…' : valueText;
+  }
+  function renderPrivateConditions(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const service = privateRelevantService(candidate);
+    const items = [];
+    if (profile.experience?.label) items.push({label:'Опыт',value:profile.experience.label,cls:'ok'});
+    if (service?.price != null) items.push({label:service.name,value:moneyText(service.price)+' '+privateMeasureLabel(service.priceMeasure),cls:'price'});
+    if (profile.freeMeasurement) items.push({label:'Замер',value:'бесплатно',cls:'ok'});
+    if (profile.guaranteeClaimed) items.push({label:'Гарантия',value:'заявлена мастером',cls:'ok'});
+    if (profile.openingHours) items.push({label:'График',value:profile.openingHours,cls:''});
+    if (!items.length) return '';
+    return `<section class="private-panel private-conditions"><h3>Условия<span>${items.length}</span></h3><div class="private-status-list">${items.slice(0,5).map(x => `<div class="${x.cls}"><span>${esc(x.label)}</span><b>${esc(x.value)}</b></div>`).join('')}</div></section>`;
+  }
+
+  function renderPrivateVerification(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const spec = privateSpecialization(candidate);
+    const cityMatch = privateAreaMatch(candidate);
+    const items = [
+      {label:'Профиль Яндекс Исполнителей',value:'подтверждён'},
+      profile.passportVerified ? {label:'Паспорт',value:'проверен Яндексом'} : null,
+      spec ? {label:'Специализация',value:spec.specialistName || spec.name} : null,
+      cityMatch ? {label:'Выезд',value:cityMatch} : null
+    ].filter(Boolean);
+    return `<section class="private-panel private-verification"><h3>Проверка мастера<span>${items.length}</span></h3><div class="private-verification-list">${items.map(x => `<div><span class="verify-check">✓</span><p><b>${esc(x.label)}</b><small>${esc(x.value)}</small></p></div>`).join('')}</div></section>`;
+  }
+
+  function renderPrivatePortfolio(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const all = privatePortfolio(candidate);
+    if (!all.length) return '';
+    const cards = all.slice(0,2).map(item => {
+      const image = item.coverUrl ? `<img src="${esc(item.coverUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
+      const price = item.price != null ? `<b>${esc(moneyText(item.price))} ₽</b>` : '';
+      return `<article class="portfolio-mini">${image}<div><span>Пример работы</span><strong>${esc(item.title)}</strong>${price}</div></article>`;
+    }).join('');
+    return `<section class="private-panel private-portfolio"><h3>Примеры работ<span>${all.length}</span></h3><div class="portfolio-mini-list">${cards}</div><small class="portfolio-note">Цены в портфолио — примеры прошлых работ, не расчёт по вашему ТЗ.</small></section>`;
+  }
+
+  function renderPrivateProfile(candidate) {
+    const profile = candidate.yandexServicesProfile;
+    if (!profile) return '';
+    const spec = privateSpecialization(candidate);
+    const about = shortProfileDescription(profile.description);
+    const intro = (about || spec) ? `<div class="private-about">${spec ? `<span>${esc(spec.name)} · ${esc(spec.specialistName || '')}</span>` : ''}${about ? `<p>${esc(about)}</p>` : ''}</div>` : '';
+    const panels = [renderPrivateConditions(candidate),renderPrivateVerification(candidate),renderPrivatePortfolio(candidate)].filter(Boolean).join('');
+    return `${intro}${panels ? `<div class="private-panels">${panels}</div>` : ''}`;
+  }
   function renderCard(candidate, index) {
     const type = typeMeta(candidate.type);
     const allFacts = allCandidateFacts(candidate);
@@ -534,11 +655,15 @@
       ? `<a class="btn secondary" href="${esc(action.url)}" target="_blank" rel="noopener">${esc(action.label)}</a>`
       : '';
     const initials = candidate.name.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase();
-    const structuredFacts = [
-      renderFactPanel(candidate, 'Условия и цены', normalized.terms, 'terms'),
-      renderVerificationSummary(candidate),
-      renderFactPanel(candidate, 'Что уточнить у исполнителя', normalized.unknown, 'unknown')
-    ].filter(Boolean).join('');
+    const hasPrivateProfile = candidate.type === 'private' && !!candidate.yandexServicesProfile;
+    const structuredFacts = hasPrivateProfile
+      ? [renderFactPanel(candidate, 'Что уточнить у мастера', normalized.unknown, 'unknown')].filter(Boolean).join('')
+      : [
+          renderFactPanel(candidate, 'Условия и цены', normalized.terms, 'terms'),
+          renderVerificationSummary(candidate),
+          renderFactPanel(candidate, 'Что уточнить у исполнителя', normalized.unknown, 'unknown')
+        ].filter(Boolean).join('');
+    const privateProfile = hasPrivateProfile ? renderPrivateProfile(candidate) : '';
     const evidence = renderEvidenceDetails(candidate, normalized.evidence);
 
     return `<article class="candidate" data-type="${esc(candidate.type)}">
@@ -555,9 +680,10 @@
       ${renderContacts(candidate)}
       ${renderKeySignals(candidate)}
       ${renderReputation(candidate)}
-      <div class="candidate-grid structured">
+      ${privateProfile}
+      <div class="candidate-grid structured ${hasPrivateProfile ? 'private-decision' : ''}">
         ${renderWhyPanel(candidate)}
-        <div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div>
+        ${structuredFacts ? `<div class="fact-panels">${structuredFacts}</div>` : (!hasPrivateProfile ? '<div class="fact-panels"><section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section></div>' : '')}
       </div>
       ${evidence}
       ${sources ? `<details class="sources-details"><summary>Источники проверки · ${uniqueSourceGroups(candidate).length}</summary><div class="source-list">${sources}</div></details>` : ''}
