@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const html=fs.readFileSync('candidates.html','utf8');
 const js=fs.readFileSync('assets/live-search.js','utf8');
 function ok(v,m){if(!v)throw new Error(m)}
-ok(html.includes('assets/live-search.js?v=public-v7-20260920'),'candidates must bust live-search cache');
+ok(html.includes('assets/live-search.js?v=public-v8-20260920'),'candidates must bust live-search cache');
 ok(html.includes('.fact-panels'),'structured fact panel styles must exist');
 ok(html.includes('.reviews-modal'),'reviews popup styles must exist');
 ok(js.includes("document.getElementById('countTitle').textContent = 'Уточняем исполнителей'"),'paid search wording must say clarify contractors');
@@ -12,6 +12,8 @@ ok(js.includes('function sourceManifest(candidate)'),'source provenance manifest
 ok(js.includes('function renderSourceManifest(candidate)'),'source manifest renderer must exist');
 ok(js.includes('function companyHistoryModel(candidate)'),'company history model must exist');
 ok(js.includes('function renderCompanyHistory(candidate)'),'company history renderer must exist');
+ok(js.includes('function renderFnsSnapshot(candidate)'),'FNS snapshot renderer must exist');
+ok(js.includes("label:'ФНС · Прозрачный бизнес'"),'FNS must be represented in source manifest');
 ok(js.includes('function legalRegistrationYear(legal)'),'legal registration year resolver must exist');
 ok(js.includes('function renderLegalRisk(risk)'),'external legal risk slot must exist');
 ok(js.includes("'Условия и цены'"),'commercial facts must have a dedicated block');
@@ -28,6 +30,7 @@ ok(js.includes('function priceSummary(priceFacts)'),'prices must be normalized a
 ok(js.includes('function isCasePriceFact(fact)'),'case/example prices must be separated from primary terms');
 ok(js.includes('reasons.slice(0,3)'),'only three decision reasons should be visible initially');
 ok(html.includes('.company-history'),'company history styles must exist');
+ok(html.includes('.fns-snapshot'),'FNS snapshot styles must exist');
 ok(html.includes('.source-manifest'),'source manifest styles must exist');
 ok(html.includes('.legal-risk'),'external legal risk styles must exist');
 ok(html.includes('.fact-panel.unknown'),'unknowns must have dedicated highlighted presentation');

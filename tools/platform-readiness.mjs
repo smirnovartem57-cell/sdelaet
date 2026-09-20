@@ -36,6 +36,7 @@ const commands = [
   ['payment watchdog', ['tests/payment-watchdog-regression.mjs']],
   ['candidates structured UI', ['tests/candidates-structured-ui-regression.mjs']],
   ['private contractor profile', ['tests/private-contractor-profile-regression.mjs']],
+  ['FNS legal profile', ['tests/fns-profile-regression.mjs']],
   ['search qualification', ['tests/search-qualification-regression.mjs']],
   ['expert runtime fallback', ['tests/expert-runtime-fallback-regression.mjs']],
   ['agent pipeline', ['tests/category-agent-pipeline-regression.mjs']],

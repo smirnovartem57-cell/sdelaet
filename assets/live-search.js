@@ -391,14 +391,14 @@
 
     if (!legal) {
       level = 'unknown';
-      title = 'Юрлицо пока не идентифицировано';
-      text = 'На найденных страницах не удалось однозначно связать сайт с ИП или ООО.';
+      title = 'На сайте не нашли реквизиты юрлица';
+      text = 'На доступных страницах сайта не нашли ИНН/ОГРН или название ИП/ООО, поэтому пока не можем однозначно связать бренд с юридическим лицом.';
     } else if (legalYear && domainYear && legalYear > domainYear + 2) {
       level = 'attention';
       title = 'Текущее юрлицо моложе сайта';
       text = claimedYear && claimedYear < domainYear
-        ? 'Домен существует с ' + domainYear + ' года, бренд заявляет работу с ' + claimedYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену договорного лица.'
-        : 'Домен существует с ' + domainYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену договорного лица.';
+        ? 'Домен существует с ' + domainYear + ' года, бренд заявляет работу с ' + claimedYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену юридического лица.'
+        : 'Домен существует с ' + domainYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену юридического лица.';
     } else if (legalYear && domainYear && domainYear > legalYear + 2) {
       level = 'info';
       title = 'Текущий сайт моложе юрлица';
@@ -410,7 +410,7 @@
     } else if (legalYear && claimedYear && legalYear > claimedYear + 2) {
       level = 'attention';
       title = 'Заявленная история старше текущего юрлица';
-      text = 'Компания заявляет работу с ' + claimedYear + ' года, текущее юрлицо относится к ' + legalYear + ' году. Перед договором стоит сверить текущее договорное лицо.';
+      text = 'Компания заявляет работу с ' + claimedYear + ' года, текущее юрлицо относится к ' + legalYear + ' году. Перед заключением договора стоит сверить текущее юридическое лицо.';
     } else {
       const parts = [];
       if (legalYear) parts.push('юрлицо с ' + legalYear);
@@ -431,14 +431,103 @@
     return '<div class="legal-risk ' + level + '"><div><span>' + esc(risk.provider) + '</span><b>' + esc(label) + '</b>' + (risk.summary && risk.summary !== label ? '<small>' + esc(risk.summary) + '</small>' : '') + '</div>' + (factors.length ? '<ul>' + factors.map(x=>'<li>' + esc(x.label || x) + '</li>').join('') + '</ul>' : '') + source + '</div>';
   }
 
+  function fnsDateRu(value) {
+    const d = value ? new Date(value) : null;
+    return d && !Number.isNaN(d.getTime())
+      ? d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' })
+      : '';
+  }
+
+  function compactRub(value) {
+    const amount = Number(value);
+    if (!Number.isFinite(amount)) return '';
+    const opts = { minimumFractionDigits:0, maximumFractionDigits:1 };
+    if (Math.abs(amount) >= 1e9) return (amount / 1e9).toLocaleString('ru-RU', opts) + ' млрд ₽';
+    if (Math.abs(amount) >= 1e6) return (amount / 1e6).toLocaleString('ru-RU', opts) + ' млн ₽';
+    if (Math.abs(amount) >= 1e3) return (amount / 1e3).toLocaleString('ru-RU', opts) + ' тыс. ₽';
+    return Math.round(amount).toLocaleString('ru-RU') + ' ₽';
+  }
+
+  function renderFnsSnapshot(candidate) {
+    const fns = candidate.fnsProfile;
+    if (!fns || fns.available === false) return '';
+
+    const facts = [];
+
+    if (fns.statusLabel) {
+      facts.push({
+        label:'Статус',
+        value:fns.statusLabel,
+        note:fns.registeredAt ? 'регистрация ' + fnsDateRu(fns.registeredAt) : ''
+      });
+    }
+
+    if (fns.capital?.amount != null) {
+      facts.push({
+        label:'Уставный капитал',
+        value:compactRub(fns.capital.amount),
+        note:'по данным ФНС'
+      });
+    }
+
+    if (fns.employees?.count != null) {
+      facts.push({
+        label:'Сотрудники',
+        value:Number(fns.employees.count).toLocaleString('ru-RU'),
+        note:String(fns.employees.year || '') + ' · среднесписочная численность'
+      });
+    }
+
+    if (fns.finance?.income != null) {
+      facts.push({
+        label:'Доходы',
+        value:compactRub(fns.finance.income),
+        note:String(fns.finance.year || '') + ' · по данным ФНС'
+      });
+    }
+
+    if (fns.msp?.label) {
+      facts.push({
+        label:'МСП',
+        value:fns.msp.label,
+        note:fns.msp.since ? 'в реестре с ' + fnsDateRu(fns.msp.since) : ''
+      });
+    }
+
+    const debt = fns.debt?.amount > 0
+      ? '<div class="fns-debt"><b>Есть опубликованная налоговая задолженность</b><span>' +
+        esc(compactRub(fns.debt.amount)) +
+        ' · ' +
+        esc(String(fns.debt.period || '').padStart(2,'0') + '.' + String(fns.debt.year || '')) +
+        '</span></div>'
+      : '';
+
+    if (!facts.length && !debt) return '';
+
+    return '<div class="fns-snapshot"><div class="fns-snapshot-head"><span>ФНС · Прозрачный бизнес</span><small>' +
+      esc(fns.dataDate ? 'данные на ' + fnsDateRu(fns.dataDate) : '') +
+      '</small></div><div class="fns-facts">' +
+      facts.slice(0,5).map(x =>
+        '<div><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' +
+        (x.note ? '<small>' + esc(x.note) + '</small>' : '') +
+        '</div>'
+      ).join('') +
+      '</div>' + debt + '</div>';
+  }
+
+
   function renderCompanyHistory(candidate) {
     const h = companyHistoryModel(candidate);
-    const legalName = legalDisplayName(h.legal);
+    const fns = candidate.fnsProfile;
     const rows = [];
-    if (h.legalYear) rows.push({label:'Текущее юрлицо',value:'с ' + h.legalYear + ' года · по ' + (String(h.legal?.ogrn || '').length === 15 ? 'ОГРНИП' : 'ОГРН')});
+    if (fns?.registeredAt) {
+      rows.push({label:'Текущее юрлицо',value:'зарегистрировано ' + fnsDateRu(fns.registeredAt)});
+    } else if (h.legalYear) {
+      rows.push({label:'Текущее юрлицо',value:'с ' + h.legalYear + ' года · по ' + (String(h.legal?.ogrn || '').length === 15 ? 'ОГРНИП' : 'ОГРН')});
+    }
     if (h.domain?.domain) rows.push({label:'Текущий домен',value:h.domainYear ? 'с ' + h.domainYear + ' года' : h.domain.domain});
     if (h.claimedYear) rows.push({label:'Компания заявляет',value:'работу с ' + h.claimedYear + ' года'});
-    return '<section class="company-history"><h3>Компания и история</h3><div class="company-history-grid">' + rows.map(x=>'<div><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b></div>').join('') + '</div><div class="history-signal ' + h.level + '"><b>' + esc(h.title) + '</b><p>' + esc(h.text) + '</p></div>' + renderLegalRisk(h.legalRisk) + '</section>';
+    return '<section class="company-history"><h3>Компания и история</h3><div class="company-history-grid">' + rows.map(x=>'<div><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b></div>').join('') + '</div><div class="history-signal ' + h.level + '"><b>' + esc(h.title) + '</b><p>' + esc(h.text) + '</p></div>' + renderFnsSnapshot(candidate) + renderLegalRisk(h.legalRisk) + '</section>';
   }
 
   function sourceManifest(candidate) {
@@ -451,6 +540,7 @@
     const domain = candidate.trustProfile?.history?.domain;
     const rep = reviewModel(candidate);
     const privateProfile = candidate.yandexServicesProfile;
+    const fns = candidate.fnsProfile;
 
     if (official || candidate.website) {
       const urls = new Map();
@@ -465,10 +555,27 @@
       const used = [];
       if (candidate.phone || candidate.email) used.push('контакты');
       if ((candidate.facts || []).some(f=>/^(Цена|Гарантия|Срок|Замер):/.test(f.label||''))) used.push('условия работы');
-      if (legal?.inn) used.push('ИНН и договорное лицо');
+      if (legal?.inn) used.push('ИНН и юридическое лицо');
       if (exp) used.push('заявленный стаж');
       const primaryUrl = canonicalSourceUrl(official?.url || candidate.website);
       items.push({key:'site',label:'Сайт исполнителя',host:hostOf(primaryUrl),url:primaryUrl,used:[...new Set(used)],urls:[...urls.values()]});
+    }
+
+    if (fns && fns.available !== false) {
+      const used = ['статус и дата регистрации','ИНН и ОГРН'];
+      if (fns.capital?.amount != null) used.push('уставный капитал');
+      if (fns.employees?.count != null) used.push('среднесписочная численность');
+      if (fns.finance?.income != null) used.push('доходы');
+      if (fns.msp?.label) used.push('категория МСП');
+      if (fns.debt?.amount > 0) used.push('актуальная налоговая задолженность');
+      items.push({
+        key:'fns',
+        label:'ФНС · Прозрачный бизнес',
+        host:'pb.nalog.ru',
+        url:fns.sourceUrl || '',
+        used,
+        urls:fns.sourceUrl ? [{url:fns.sourceUrl,label:'Карточка / поиск по ИНН'}] : []
+      });
     }
 
     if (search) items.push({key:'yandex_search',label:'Яндекс Поиск',host:'yandex.ru',url:'',used:['поиск страниц и профилей кандидата'],urls:[]});
@@ -539,8 +646,9 @@
     if (domain?.ageYears != null) items.push('<div class="key-signal"><span>Домен</span><b>' + esc(domain.ageYears) + ' лет</b><small>' + esc(domain.domain || '') + '</small></div>');
     if (candidate.type === 'company' && legal) {
       const name = legalDisplayName(legal);
-      if (name) items.push('<div class="key-signal legal-name"><span>Юрлицо</span><b>' + esc(name) + '</b><small>договорное лицо с сайта</small></div>');
-      if (legal.inn) items.push('<div class="key-signal"><span>ИНН</span><b>' + esc(legal.inn) + '</b><small>реквизиты сайта</small></div>');
+      const verified = candidate.fnsProfile && candidate.fnsProfile.available !== false;
+      if (name) items.push('<div class="key-signal legal-name"><span>Юрлицо</span><b>' + esc(name) + '</b><small>' + esc(verified ? 'подтверждено ФНС' : 'юридическое лицо с сайта') + '</small></div>');
+      if (legal.inn) items.push('<div class="key-signal"><span>ИНН</span><b>' + esc(legal.inn) + '</b><small>' + esc(verified ? 'подтверждено ФНС' : 'реквизиты сайта') + '</small></div>');
     }
     return items.length ? '<div class="key-signals compact company-signals">' + items.join('') + '</div>' : '';
   }
