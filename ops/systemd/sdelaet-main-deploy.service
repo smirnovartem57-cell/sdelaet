@@ -1,0 +1,11 @@
+[Unit]
+Description=Deploy sdelaet main from GitHub
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sdelaet-deploy-main
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6
