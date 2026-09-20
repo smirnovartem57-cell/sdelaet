@@ -176,6 +176,8 @@
       const raw = String(fact.label).trim();
       if (/^(Телефон|Электронная почта):/i.test(raw)) return;
       if (/^Страница найдена через поиск Яндекса/i.test(raw)) return;
+      if (/^(Найден официальный сайт|Проверено страниц официального сайта|Кандидат найден в \d+ типах источников)/i.test(raw)) return;
+      if (/^(Домен зарегистрирован|На официальном сайте заявлена работа|Заявленный стаж превышает возраст текущего домена)/i.test(raw)) return;
       if (rep && (/Организация подтверждена в Яндекс Картах/i.test(raw) || /^Яндекс Карты:/i.test(raw))) return;
       const key = raw.toLowerCase().replace(/\s+/g,' ').trim();
       if (seen.has(key)) return;
@@ -341,43 +343,179 @@
     return { terms:terms.slice(0,4), verification:raw.verification, reputation:raw.reputation, unknown:expandUnknownFacts(raw.unknown), evidence };
   }
 
-  function verificationItems(candidate) {
-    const items = [];
-    const groups = uniqueSourceGroups(candidate);
-    const official = groups.find(g => g.label === 'Официальный сайт') || groups.find(g => candidate.website && g.host === hostOf(candidate.website));
-    const rep = reviewModel(candidate);
-    if (official) items.push({label:'Официальный сайт',value:'найден',status:'ok'});
-    if (official?.pages) items.push({label:'Страниц проверено',value:String(official.pages),status:'ok'});
-    if (rep?.platform === 'Яндекс Карты') items.push({label:'Яндекс Карты',value:'профиль подтверждён',status:'ok'});
-    const domain = candidate.trustProfile?.history?.domain;
-    if (domain?.ageYears != null) items.push({label:'Возраст домена',value:`${domain.ageYears} лет`,status:'ok'});
-    return items.slice(0,4);
+  function legalDisplayName(legal) {
+    if (!legal) return '';
+    const form = String(legal.legalForm || '').trim();
+    const name = String(legal.legalName || '').trim();
+    return [form, name].filter(Boolean).join(' ').trim();
   }
 
-  function renderVerificationSummary(candidate) {
-    const items = verificationItems(candidate);
+  function legalRegistrationYear(legal) {
+    if (!legal) return null;
+    if (legal.registeredAt) {
+      const d = new Date(legal.registeredAt);
+      if (!Number.isNaN(d.getTime())) return d.getFullYear();
+    }
+    const number = String(legal.ogrn || legal.ogrnip || '').replace(/\\D/g,'');
+    if (number.length === 13 || number.length === 15) {
+      const yy = Number(number.slice(1,3));
+      const year = 2000 + yy;
+      const current = new Date().getFullYear();
+      if (year >= 2002 && year <= current + 1) return year;
+    }
+    return null;
+  }
+
+  function domainRegistrationYear(candidate) {
+    const value = candidate.trustProfile?.history?.domain?.createdAt;
+    if (!value) return null;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d.getFullYear();
+  }
+
+  function claimedSinceYear(candidate) {
+    const exp = candidate.claimedExperience || candidate.trustProfile?.history?.claimedExperience;
+    if (Number(exp?.sinceYear)) return Number(exp.sinceYear);
+    const years = Number(exp?.claimedYears);
+    return Number.isFinite(years) && years > 0 ? new Date().getFullYear() - years : null;
+  }
+
+  function companyHistoryModel(candidate) {
+    const legal = candidate.legalIdentity || candidate.trustProfile?.legalIdentity || null;
+    const domain = candidate.trustProfile?.history?.domain || null;
+    const exp = candidate.claimedExperience || candidate.trustProfile?.history?.claimedExperience || null;
+    const legalYear = legalRegistrationYear(legal);
+    const domainYear = domainRegistrationYear(candidate);
+    const claimedYear = claimedSinceYear(candidate);
+    let level = 'neutral', title = 'История без явных противоречий', text = '';
+
+    if (!legal) {
+      level = 'unknown';
+      title = 'Юрлицо пока не идентифицировано';
+      text = 'На найденных страницах не удалось однозначно связать сайт с ИП или ООО.';
+    } else if (legalYear && domainYear && legalYear > domainYear + 2) {
+      level = 'attention';
+      title = 'Текущее юрлицо моложе сайта';
+      text = claimedYear && claimedYear < domainYear
+        ? 'Домен существует с ' + domainYear + ' года, бренд заявляет работу с ' + claimedYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену договорного лица.'
+        : 'Домен существует с ' + domainYear + ' года, текущее юрлицо — с ' + legalYear + ' года. Это может означать смену договорного лица.';
+    } else if (legalYear && domainYear && domainYear > legalYear + 2) {
+      level = 'info';
+      title = 'Текущий сайт моложе юрлица';
+      text = 'Юрлицо существует с ' + legalYear + ' года, текущий домен зарегистрирован в ' + domainYear + ' году. Компания могла менять сайт.';
+    } else if (claimedYear && domainYear && claimedYear < domainYear - 2) {
+      level = 'info';
+      title = 'Заявленная история старше текущего домена';
+      text = 'Компания заявляет работу с ' + claimedYear + ' года, текущий домен зарегистрирован в ' + domainYear + ' году. Это само по себе не является риском — сайт мог меняться.';
+    } else if (legalYear && claimedYear && legalYear > claimedYear + 2) {
+      level = 'attention';
+      title = 'Заявленная история старше текущего юрлица';
+      text = 'Компания заявляет работу с ' + claimedYear + ' года, текущее юрлицо относится к ' + legalYear + ' году. Перед договором стоит сверить текущее договорное лицо.';
+    } else {
+      const parts = [];
+      if (legalYear) parts.push('юрлицо с ' + legalYear);
+      if (domainYear) parts.push('домен с ' + domainYear);
+      if (claimedYear) parts.push('заявленная работа с ' + claimedYear);
+      text = parts.length ? parts.join(' · ') : 'Собранных дат пока недостаточно для сравнения истории.';
+    }
+
+    return { legal, domain, exp, legalYear, domainYear, claimedYear, level, title, text, legalRisk:candidate.legalRisk || candidate.trustProfile?.legalRisk || null };
+  }
+
+  function renderLegalRisk(risk) {
+    if (!risk || !risk.provider) return '';
+    const level = ['green','yellow','red'].includes(risk.level) ? risk.level : 'unknown';
+    const label = level === 'green' ? 'Существенных рисков не обнаружено' : level === 'yellow' ? 'Есть факторы, требующие внимания' : level === 'red' ? 'Обнаружены существенные факторы риска' : (risk.summary || 'Внешняя проверка выполнена');
+    const factors = Array.isArray(risk.factors) ? risk.factors.slice(0,3) : [];
+    const source = risk.sourceUrl ? '<a href="' + esc(risk.sourceUrl) + '" target="_blank" rel="noopener">Открыть источник ↗</a>' : '';
+    return '<div class="legal-risk ' + level + '"><div><span>' + esc(risk.provider) + '</span><b>' + esc(label) + '</b>' + (risk.summary && risk.summary !== label ? '<small>' + esc(risk.summary) + '</small>' : '') + '</div>' + (factors.length ? '<ul>' + factors.map(x=>'<li>' + esc(x.label || x) + '</li>').join('') + '</ul>' : '') + source + '</div>';
+  }
+
+  function renderCompanyHistory(candidate) {
+    const h = companyHistoryModel(candidate);
+    const legalName = legalDisplayName(h.legal);
+    const rows = [];
+    if (h.legalYear) rows.push({label:'Текущее юрлицо',value:'с ' + h.legalYear + ' года · по ' + (String(h.legal?.ogrn || '').length === 15 ? 'ОГРНИП' : 'ОГРН')});
+    if (h.domain?.domain) rows.push({label:'Текущий домен',value:h.domainYear ? 'с ' + h.domainYear + ' года' : h.domain.domain});
+    if (h.claimedYear) rows.push({label:'Компания заявляет',value:'работу с ' + h.claimedYear + ' года'});
+    return '<section class="company-history"><h3>Компания и история</h3><div class="company-history-grid">' + rows.map(x=>'<div><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b></div>').join('') + '</div><div class="history-signal ' + h.level + '"><b>' + esc(h.title) + '</b><p>' + esc(h.text) + '</p></div>' + renderLegalRisk(h.legalRisk) + '</section>';
+  }
+
+  function sourceManifest(candidate) {
+    const items = [];
+    const sources = candidate.sources || [];
+    const official = sources.find(s => s.kind === 'official_site') || sources.find(s => s.url && candidate.website && hostOf(s.url) === hostOf(candidate.website));
+    const search = sources.find(s => s.kind === 'web_search');
+    const legal = candidate.legalIdentity;
+    const exp = candidate.claimedExperience || candidate.trustProfile?.history?.claimedExperience;
+    const domain = candidate.trustProfile?.history?.domain;
+    const rep = reviewModel(candidate);
+    const privateProfile = candidate.yandexServicesProfile;
+
+    if (official || candidate.website) {
+      const urls = new Map();
+      const addUrl = (url,label) => {
+        const clean = canonicalSourceUrl(url);
+        if (clean && !urls.has(clean)) urls.set(clean,{url:clean,label});
+      };
+      addUrl(official?.url || candidate.website,'Основная страница');
+      addUrl(candidate.emailSourceUrl,'Контакты');
+      addUrl(legal?.sourceUrl,'Реквизиты');
+      addUrl(exp?.sourceUrl,'О компании / стаж');
+      const used = [];
+      if (candidate.phone || candidate.email) used.push('контакты');
+      if ((candidate.facts || []).some(f=>/^(Цена|Гарантия|Срок|Замер):/.test(f.label||''))) used.push('условия работы');
+      if (legal?.inn) used.push('ИНН и договорное лицо');
+      if (exp) used.push('заявленный стаж');
+      const primaryUrl = canonicalSourceUrl(official?.url || candidate.website);
+      items.push({key:'site',label:'Сайт исполнителя',host:hostOf(primaryUrl),url:primaryUrl,used:[...new Set(used)],urls:[...urls.values()]});
+    }
+
+    if (search) items.push({key:'yandex_search',label:'Яндекс Поиск',host:'yandex.ru',url:'',used:['поиск страниц и профилей кандидата'],urls:[]});
+
+    if (rep?.platform === 'Яндекс Карты') {
+      items.push({key:'yandex_maps',label:'Яндекс Карты',host:'yandex.ru/maps',url:rep.profileUrl,used:['отзывы и оценки','темы отзывов'],urls:rep.profileUrl?[{url:rep.profileUrl,label:'Профиль компании'}]:[]});
+    }
+
+    if (rep?.platform === 'Яндекс Исполнители' || privateProfile?.profileUrl) {
+      const url = privateProfile?.profileUrl || rep?.profileUrl || '';
+      items.push({key:'yandex_services',label:'Яндекс Исполнители',host:'uslugi.yandex.ru',url,used:['рейтинг и оценки','опыт и специализация','услуги и портфолио'],urls:url?[{url,label:'Профиль мастера'}]:[]});
+    }
+
+    if (domain?.domain) {
+      items.push({key:'whois',label:'WHOIS домена',host:domain.domain,url:'',used:['дата регистрации домена'],urls:[]});
+    }
+
+    const risk = candidate.legalRisk || candidate.trustProfile?.legalRisk;
+    if (risk?.provider) {
+      items.push({key:'legal_risk',label:risk.provider,host:'',url:risk.sourceUrl||'',used:['внешняя проверка юрлица','факторы риска'],urls:risk.sourceUrl?[{url:risk.sourceUrl,label:'Отчёт проверки'}]:[]});
+    }
+
+    return items;
+  }
+
+  function renderSourceManifest(candidate) {
+    const items = sourceManifest(candidate);
     if (!items.length) return '';
-    return `<section class="fact-panel verification verification-summary"><h3>Проверка компании<span>${items.length}</span></h3><div class="verification-statuses">${items.map(x => `<div><span class="verify-check">✓</span><p><b>${esc(x.label)}</b><small>${esc(x.value)}</small></p></div>`).join('')}</div></section>`;
+    return '<details class="sources-details source-manifest"><summary>Источники проверки · ' + items.length + '</summary><div class="source-manifest-list">' + items.map(item => {
+      const link = item.url ? '<a href="' + esc(item.url) + '" target="_blank" rel="noopener">Открыть ↗</a>' : '';
+      const used = item.used.length ? '<p>Использовано: ' + esc(item.used.join(' · ')) + '</p>' : '';
+      const pages = item.urls.length > 1 ? '<details><summary>Конкретные страницы · ' + item.urls.length + '</summary><div class="source-url-list">' + item.urls.map(x=>'<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.label) + ' ↗</a>').join('') + '</div></details>' : '';
+      return '<div class="source-manifest-item"><div class="source-manifest-head"><div><b>' + esc(item.label) + '</b>' + (item.host ? '<span>' + esc(item.host) + '</span>' : '') + '</div>' + link + '</div>' + used + pages + '</div>';
+    }).join('') + '</div></details>';
   }
 
   function renderWhyPanel(candidate) {
-    const reasons = [...new Set((candidate.rankReasons || []).map(x => compactText(x)).filter(Boolean))];
+    const reasons = [...new Set((candidate.rankReasons || []).map(x => compactText(x)).filter(Boolean))].filter(x =>
+      !/Кандидат подтверждается несколькими независимыми источниками/i.test(x) &&
+      !/Найден официальный сайт компании/i.test(x) &&
+      !/Найдены дополнительные сведения об условиях работы/i.test(x) &&
+      !/Подтверждённых данных о рейтинге и отзывах/i.test(x) &&
+      !/^Яндекс (?:Карты|Исполнители):/i.test(x)
+    );
     const first = reasons.slice(0,3);
     const rest = reasons.slice(3);
     return `<section class="why-panel"><h3>Почему подходит</h3><ul>${(first.length ? first : ['Найден по профильному поисковому запросу.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${rest.length ? `<details class="why-more"><summary>Ещё ${rest.length}</summary><ul>${rest.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}</section>`;
-  }
-
-  function renderEvidenceDetails(candidate, items) {
-    if (!items?.length) return '';
-    const unique = [];
-    const seen = new Set();
-    for (const fact of items) {
-      const key = compactText(fact?.label).toLowerCase();
-      if (!key || seen.has(key)) continue;
-      seen.add(key); unique.push(fact);
-    }
-    if (!unique.length) return '';
-    return `<details class="evidence-details"><summary>Примеры и доказательства · ${unique.length}</summary><div class="evidence-list">${unique.slice(0,6).map(f => renderFactItem(candidate,f)).join('')}</div></details>`;
   }
 
   function renderFactItem(candidate, fact) {
@@ -397,10 +535,14 @@
   function renderKeySignals(candidate) {
     const items = [];
     const domain = candidate.trustProfile?.history?.domain;
-    const exp = candidate.trustProfile?.history?.claimedExperience;
-    if (domain?.ageYears != null) items.push(`<div class="key-signal"><span>Домен</span><b>${esc(domain.ageYears)} лет</b><small>${esc(domain.domain || '')}</small></div>`);
-    if (exp?.claimedYears) items.push(`<div class="key-signal"><span>Опыт</span><b>${esc(exp.claimedYears)} лет</b><small>заявлено компанией</small></div>`);
-    return items.length ? `<div class="key-signals compact">${items.join('')}</div>` : '';
+    const legal = candidate.legalIdentity;
+    if (domain?.ageYears != null) items.push('<div class="key-signal"><span>Домен</span><b>' + esc(domain.ageYears) + ' лет</b><small>' + esc(domain.domain || '') + '</small></div>');
+    if (candidate.type === 'company' && legal) {
+      const name = legalDisplayName(legal);
+      if (name) items.push('<div class="key-signal legal-name"><span>Юрлицо</span><b>' + esc(name) + '</b><small>договорное лицо с сайта</small></div>');
+      if (legal.inn) items.push('<div class="key-signal"><span>ИНН</span><b>' + esc(legal.inn) + '</b><small>реквизиты сайта</small></div>');
+    }
+    return items.length ? '<div class="key-signals compact company-signals">' + items.join('') + '</div>' : '';
   }
 
   function renderReputation(candidate) {
@@ -666,10 +808,6 @@
     const type = typeMeta(candidate.type);
     const allFacts = allCandidateFacts(candidate);
     const normalized = normalizeFactBuckets(candidate, allFacts);
-    const sources = uniqueSourceGroups(candidate).map(source => {
-      const pageText = source.pages > 1 ? ` · ${source.pages} страницы проверено` : '';
-      return `<a class="source-pill" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'source'))}" target="_blank" rel="noopener"><b>${esc(source.label)}</b><span>${esc(source.host)}${esc(pageText)}</span></a>`;
-    }).join('');
     const action = externalAction(candidate);
     const actionHtml = action
       ? `<a class="btn secondary" href="${esc(action.url)}" target="_blank" rel="noopener">${esc(action.label)}</a>`
@@ -680,11 +818,10 @@
       ? [renderFactPanel(candidate, 'Что уточнить у мастера', normalized.unknown, 'unknown')].filter(Boolean).join('')
       : [
           renderFactPanel(candidate, 'Условия и цены', normalized.terms, 'terms'),
-          renderVerificationSummary(candidate),
+          renderCompanyHistory(candidate),
           renderFactPanel(candidate, 'Что уточнить у исполнителя', normalized.unknown, 'unknown')
         ].filter(Boolean).join('');
     const privateProfile = hasPrivateProfile ? renderPrivateProfile(candidate) : '';
-    const evidence = renderEvidenceDetails(candidate, normalized.evidence);
 
     return `<article class="candidate" data-type="${esc(candidate.type)}">
       <div class="candidate-head">
@@ -704,8 +841,7 @@
       ${hasPrivateProfile
         ? (structuredFacts ? `<div class="private-clarify">${structuredFacts}</div>` : '')
         : `<div class="candidate-grid structured">${renderWhyPanel(candidate)}<div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div></div>`}
-      ${evidence}
-      ${sources ? `<details class="sources-details"><summary>Источники проверки · ${uniqueSourceGroups(candidate).length}</summary><div class="source-list">${sources}</div></details>` : ''}
+      ${renderSourceManifest(candidate)}
       <div class="actions">
         <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="requests.html?candidate=${encodeURIComponent(candidate.id)}">Подготовить запрос</a>
         ${actionHtml}

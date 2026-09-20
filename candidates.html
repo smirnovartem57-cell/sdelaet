@@ -85,6 +85,35 @@
     .private-clarify{margin-top:8px}.private-clarify .fact-panels{display:block}.private-clarify .fact-panel.unknown{padding:9px 10px!important}.private-clarify .fact-panel-list{grid-template-columns:repeat(3,minmax(0,1fr));display:grid}.private-clarify .fact-compact{min-height:0}
     @media(max-width:1050px){.private-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.private-main-grid{grid-template-columns:1fr}.portfolio-mini-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:700px){.private-summary,.portfolio-mini-list,.private-clarify .fact-panel-list{grid-template-columns:1fr}.portfolio-mini{grid-template-columns:76px minmax(0,1fr)}.portfolio-mini img{width:76px;height:60px}}
+
+    /* company history + source provenance */
+    .key-signals.compact.company-signals{grid-template-columns:170px minmax(220px,320px) 190px;max-width:760px}
+    .key-signal.legal-name b{font-size:13px;line-height:1.25}
+    .company-history{min-width:0;padding:10px;border:1px solid #dbe8e2;border-radius:14px;background:#f7fbf9}
+    .company-history>h3{margin:0 0 7px;font:800 12px Montserrat;color:#285d53}
+    .company-history-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+    .company-history-grid>div{padding:7px 8px;border:1px solid #e0ebe5;border-radius:10px;background:#fff;min-width:0}
+    .company-history-grid span,.company-history-grid b{display:block}
+    .company-history-grid span{font-size:8px;color:#7b8795;text-transform:uppercase;letter-spacing:.04em;font-weight:800}
+    .company-history-grid b{margin-top:2px;font:800 9.5px/1.3 Montserrat;color:#29483d;overflow-wrap:anywhere}
+    .history-signal{margin-top:7px;padding:8px 9px;border-radius:10px;background:#f1f4f9}
+    .history-signal b{display:block;font:800 9.5px Montserrat;color:#49566f}
+    .history-signal p{margin:3px 0 0;font-size:9px;line-height:1.38;color:#68748b}
+    .history-signal.info{background:#f1f6ff}.history-signal.info b{color:#46639e}
+    .history-signal.attention{background:#fff7e9}.history-signal.attention b{color:#8d5c0a}
+    .history-signal.unknown{background:#f6f7fa}.history-signal.unknown b{color:#69748a}
+    .legal-risk{margin-top:7px;padding:8px 9px;border:1px solid #e1e5ee;border-radius:10px;background:#fff}
+    .legal-risk span,.legal-risk b,.legal-risk small{display:block}.legal-risk span{font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:#808aa0;font-weight:800}.legal-risk b{margin-top:2px;font:800 9.5px Montserrat}.legal-risk small{margin-top:3px;font-size:8.5px;color:#6e7890}.legal-risk ul{margin:5px 0 0;padding-left:16px;font-size:8.5px;color:#5c6880}.legal-risk a{display:inline-block;margin-top:5px;font-size:8.5px}.legal-risk.green{border-color:#cfe8d9;background:#f6fcf8}.legal-risk.yellow{border-color:#ecdcae;background:#fffaf0}.legal-risk.red{border-color:#edceca;background:#fff7f6}
+    .source-manifest{margin-top:9px;border-top:1px dashed #dfe4ef;padding-top:8px}
+    .source-manifest>summary{cursor:pointer;display:inline-flex;align-items:center;padding:5px 8px;border-radius:9px;background:#f6f8fc;color:#69748c;font:700 9px Montserrat}
+    .source-manifest[open]>summary{margin-bottom:8px}
+    .source-manifest-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .source-manifest-item{min-width:0;padding:9px 10px;border:1px solid #e2e7f1;border-radius:12px;background:#fbfcff}
+    .source-manifest-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.source-manifest-head>div{min-width:0}.source-manifest-head b,.source-manifest-head span{display:block}.source-manifest-head b{font:800 10px Montserrat;color:#34405d}.source-manifest-head span{margin-top:2px;font-size:8.5px;color:#8992a6;overflow-wrap:anywhere}.source-manifest-head>a{white-space:nowrap;font-size:8.5px;color:#5369ba}
+    .source-manifest-item>p{margin:6px 0 0;font-size:9px;line-height:1.35;color:#647088}
+    .source-manifest-item>details{margin-top:6px}.source-manifest-item>details summary{cursor:pointer;font-size:8.5px;color:#69758e}.source-url-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.source-url-list a{padding:4px 6px;border-radius:7px;background:#fff;border:1px solid #e2e6ef;font-size:8px;color:#5369ba}
+    @media(max-width:1050px){.key-signals.compact.company-signals{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}.source-manifest-list{grid-template-columns:1fr}}
+    @media(max-width:700px){.key-signals.compact.company-signals,.company-history-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -182,6 +211,6 @@
 
   <script src="assets/search-config.js"></script>
   <script src="assets/search-preferences.js"></script>
-  <script src="assets/live-search.js?v=public-v6-20260920"></script>
+  <script src="assets/live-search.js?v=public-v7-20260920"></script>
 </body>
 </html>

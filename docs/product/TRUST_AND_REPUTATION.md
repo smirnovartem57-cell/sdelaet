@@ -226,6 +226,15 @@ trustProfile: {
     checkedAt: ''
   },
 
+  legalRisk: {
+    provider: '',          // e.g. Контур.Светофор / Контур.Фокус
+    level: 'unknown',      // green | yellow | red | unknown
+    summary: '',
+    factors: [],           // [{ level, label, code }]
+    sourceUrl: '',
+    checkedAt: ''
+  },
+
   consistency: {
     matchedFields: [],
     sourceCount: 0,
