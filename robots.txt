@@ -6,7 +6,6 @@ Disallow: /profile.html
 Disallow: /create-task.html
 Disallow: /task-tz.html
 Disallow: /candidates.html
-Disallow: /comparison.html
 
 # UX-параметры не создают отдельные поисковые страницы
 Clean-param: region&login&return
