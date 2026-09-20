@@ -55,11 +55,20 @@ for(const item of categories){
   fs.mkdirSync(dir,{recursive:true});
   fs.writeFileSync(path.join(dir,'index.html'),render(item));
 }
-const indexCards=categories.map((item)=>`<a class="seo-list-card" href="./${item.categoryId}/"><b>${esc(item.title)}</b><span>Найти и сравнить исполнителей →</span></a>`).join('');
+const indexCards=manifest.categories.map((item)=>`<a class="seo-list-card" href="./${item.categoryId}/"><b>${esc(item.title)}</b><span>Найти и сравнить исполнителей →</span></a>`).join('');
 const index=`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Услуги ремонта — найти и сравнить исполнителей | Сделает</title><meta name="description" content="Категории ремонта и домашних работ в Москве и Московской области. Подготовка ТЗ, поиск исполнителей и сравнение предложений."><link rel="canonical" href="${baseUrl}/uslugi/"><link rel="stylesheet" href="../assets/prod-ui.css"><link rel="stylesheet" href="../assets/seo-pages.css"></head><body><header class="site-header"><div class="site-header-inner"><a class="brand" href="/"><img src="../assets/logo-icon.svg" alt=""><div>Сдела<span>ет</span></div></a><a class="btn primary" href="../create-task.html">Описать задачу →</a></div></header><main><div class="seo-wrap"><section class="seo-hero"><div class="eyebrow">Дом и ремонт</div><h1>Услуги ремонта: подготовить задачу и сравнить исполнителей</h1><p>Выберите направление или опишите проблему своими словами.</p></section><div class="seo-list">${indexCards}</div></div></main></body></html>`;
 fs.writeFileSync(path.join(outRoot,'index.html'),index);
-const urls=[baseUrl+'/',baseUrl+'/uslugi/',...categories.map((item)=>baseUrl+'/uslugi/'+item.categoryId+'/')];
+const regionalPath=path.join(root,'sitemap-regions.xml');
+if(!fs.existsSync(regionalPath))throw new Error('SEO_REGIONAL_SITEMAP_REQUIRED');
+const regionalXml=fs.readFileSync(regionalPath,'utf8');
+const regionalUrls=[...regionalXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)=>match[1]);
+const expectedRegional=manifest.categories.length*29;
+if(regionalUrls.length!==expectedRegional||new Set(regionalUrls).size!==expectedRegional)throw new Error('SEO_REGIONAL_SITEMAP_SHAPE_INVALID');
+const baseUrls=[baseUrl+'/',baseUrl+'/uslugi/',...manifest.categories.map((item)=>baseUrl+'/uslugi/'+item.categoryId+'/')];
+const urls=[...baseUrls,...regionalUrls];
+if(urls.length!==2132||new Set(urls).size!==2132)throw new Error('SEO_MAIN_SITEMAP_SHAPE_INVALID');
 const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+urls.map((url)=>`  <url><loc>${url}</loc><lastmod>${lastmod}</lastmod></url>`).join('\n')+'\n</urlset>\n';
 fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
-fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
+const robots=`User-agent: *\nAllow: /\nDisallow: /my-tasks.html\nDisallow: /task.html\nDisallow: /profile.html\nDisallow: /create-task.html\nDisallow: /task-tz.html\nDisallow: /candidates.html\n\n# UX-параметры не создают отдельные поисковые страницы\nClean-param: region&login&return\n\nSitemap: ${baseUrl}/sitemap.xml\nSitemap: ${baseUrl}/sitemap-regions.xml\n`;
+fs.writeFileSync(path.join(root,'robots.txt'),robots);
 console.log(`SEO pages generated: ${categories.length} categories + index; BALCONY_INSULATION reserved for parallel work.`);
