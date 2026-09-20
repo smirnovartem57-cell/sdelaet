@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate platform readiness
         run: node tools/platform-readiness.mjs
+      - name: Validate Metrika goal wiring
+        run: node tests/metrika-goals-regression.mjs
       - name: Prepare SSH
         shell: bash
         env: { VDS_HOST: "${{ secrets.VDS_HOST }}", VDS_USER: "${{ secrets.VDS_USER }}", VDS_SSH_KEY: "${{ secrets.VDS_SSH_KEY }}" }
