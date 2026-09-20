@@ -1,0 +1,20 @@
+name: v20 verification
+on:
+  push:
+    branches: [fix/v20-flow-regressions]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax checks
+        run: |
+          node --check src/server.mjs
+          node --check src/site-crawler.mjs
+          node --check src/outreach.mjs
+      - name: v20 flow regression
+        run: node tests/v20-flow-regression.mjs
