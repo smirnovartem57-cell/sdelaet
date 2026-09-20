@@ -99,6 +99,205 @@
     }[kind] || 'Источник');
   }
 
+  function canonicalSourceUrl(url) {
+    try {
+      const u = new URL(url);
+      [...u.searchParams.keys()].forEach(k => {
+        if (/^(utm_|yclid$|ysclid$|gclid$|fbclid$)/i.test(k)) u.searchParams.delete(k);
+      });
+      u.hash = '';
+      u.pathname = u.pathname.replace(/\/+$/, '') || '/';
+      return u.toString();
+    } catch { return String(url || ''); }
+  }
+
+  function uniqueSourceGroups(candidate) {
+    const groups = new Map();
+    for (const source of candidate.sources || []) {
+      const host = source.host || hostOf(source.url) || 'Источник';
+      const key = host.toLowerCase();
+      let group = groups.get(key);
+      if (!group) {
+        group = { host, urls: new Map(), kinds: new Set(), preferred: source };
+        groups.set(key, group);
+      }
+      group.kinds.add(source.kind || '');
+      const canonical = canonicalSourceUrl(source.url);
+      if (canonical && !group.urls.has(canonical)) group.urls.set(canonical, source);
+      const priority = source.kind === 'official_site' ? 4 : source.kind === 'yandex_maps' ? 3 : source.kind === 'yandex_services' ? 3 : source.kind === '2gis' ? 3 : source.kind === 'avito' ? 3 : 1;
+      const current = group.preferred;
+      const currentPriority = current?.kind === 'official_site' ? 4 : ['yandex_maps','yandex_services','2gis','avito'].includes(current?.kind) ? 3 : 1;
+      if (priority > currentPriority) group.preferred = source;
+    }
+    return [...groups.values()].map(group => {
+      const preferred = group.preferred || [...group.urls.values()][0] || {};
+      return {
+        host: group.host,
+        label: group.kinds.has('official_site') ? 'Официальный сайт' : (preferred.label || kindLabel(preferred.kind)),
+        url: preferred.url || ([...group.urls.values()][0] || {}).url || '',
+        pages: group.urls.size || 1
+      };
+    });
+  }
+
+  function reviewModel(candidate) {
+    const mapsRaw = candidate.yandexMapsReviews?.reviews || candidate.trustProfile?.reputation?.sources?.find(s => s.platform === 'yandex_maps')?.reviews;
+    const mapsMeta = candidate.trustProfile?.reputation?.yandexMaps || {};
+    if (mapsRaw?.available) {
+      return {
+        platform: 'Яндекс Карты',
+        profileUrl: candidate.yandexMapsReviews?.profileUrl || mapsMeta.mapsUrl || '',
+        rating: mapsMeta.rating ?? null,
+        totalCount: mapsMeta.reviewsCount ?? null,
+        year: mapsRaw.year || new Date().getFullYear(),
+        yearCount: Number(mapsRaw.totalFound || 0),
+        counts: mapsRaw.counts || {},
+        topics: mapsRaw.topics || {},
+        positive: Array.isArray(mapsRaw.positive) ? mapsRaw.positive : [],
+        neutral: Array.isArray(mapsRaw.neutral) ? mapsRaw.neutral : [],
+        negative: Array.isArray(mapsRaw.negative) ? mapsRaw.negative : []
+      };
+    }
+    const ys = candidate.yandexServicesReputation || candidate.trustProfile?.reputation?.sources?.find(s => s.platform === 'yandex_services');
+    if (ys?.matched) {
+      return {
+        platform: 'Яндекс Исполнители', profileUrl: ys.profileUrl || '', rating: ys.rating ?? null,
+        totalCount: ys.reviewsCount ?? null, year: null, yearCount: 0, counts: {}, topics: {},
+        positive: [], neutral: [], negative: [], ratingStats: ys.ratingStats || null
+      };
+    }
+    return null;
+  }
+
+  function allCandidateFacts(candidate) {
+    const out = [], seen = new Set(), rep = reviewModel(candidate);
+    const add = fact => {
+      if (!fact?.label) return;
+      const raw = String(fact.label).trim();
+      if (/^(Телефон|Электронная почта):/i.test(raw)) return;
+      if (/^Страница найдена через поиск Яндекса/i.test(raw)) return;
+      if (rep && (/Организация подтверждена в Яндекс Картах/i.test(raw) || /^Яндекс Карты:/i.test(raw))) return;
+      const key = raw.toLowerCase().replace(/\s+/g,' ').trim();
+      if (seen.has(key)) return;
+      seen.add(key); out.push(fact);
+    };
+    (candidate.facts || []).forEach(add);
+    (candidate.trustProfile?.signals || []).forEach(add);
+    (candidate.trustProfile?.history?.signals || []).forEach(add);
+    return out;
+  }
+
+  function factBucket(fact) {
+    const l = String(fact?.label || '').toLowerCase();
+    if (fact?.status === 'unknown' || /требу(ет|ют).*уточ|минимальн.*объ|окончательн.*цена/.test(l)) return 'unknown';
+    if (/цена|стоимост|гарант|срок|замер|материал|доплат|скидк/.test(l)) return 'terms';
+    if (/отзыв|рейтинг|яндекс карт|2гис|репутац/.test(l)) return 'reputation';
+    return 'verification';
+  }
+
+  function splitFactLabel(label) {
+    const text = String(label || '').trim();
+    const idx = text.indexOf(':');
+    if (idx > 0 && idx < 28) return { title: text.slice(0, idx).trim(), text: text.slice(idx + 1).trim() };
+    return { title: '', text };
+  }
+
+  function renderFactItem(candidate, fact) {
+    const source = sourceById(candidate, fact.sourceId);
+    const split = splitFactLabel(fact.label);
+    const sourceHtml = source ? `<a class="fact-source" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'fact'))}" target="_blank" rel="noopener">Источник ↗</a>` : '';
+    return `<div class="fact-compact ${factClass(fact.status)}"><span class="fact-dot">${factIcon(fact.status)}</span><div>${split.title ? `<b>${esc(split.title)}</b>` : ''}<p>${esc(split.text)}</p>${sourceHtml}</div></div>`;
+  }
+
+  function renderFactPanel(candidate, title, items, cls='') {
+    if (!items.length) return '';
+    const first = items.slice(0,4).map(f => renderFactItem(candidate,f)).join('');
+    const rest = items.slice(4).map(f => renderFactItem(candidate,f)).join('');
+    return `<section class="fact-panel ${cls}"><h3>${esc(title)}<span>${items.length}</span></h3><div class="fact-panel-list">${first}</div>${rest ? `<details class="fact-more"><summary>Ещё ${items.length - 4}</summary><div class="fact-panel-list">${rest}</div></details>` : ''}</section>`;
+  }
+
+  function renderKeySignals(candidate) {
+    const items = [];
+    const rep = reviewModel(candidate);
+    const domain = candidate.trustProfile?.history?.domain;
+    const exp = candidate.trustProfile?.history?.claimedExperience;
+    if (rep) {
+      const main = rep.rating != null ? `★ ${Number(rep.rating).toFixed(1).replace('.',',')}` : (rep.yearCount ? `${rep.yearCount}` : `${rep.totalCount || '—'}`);
+      const sub = rep.yearCount ? `отзывов за ${rep.year}` : `${rep.totalCount || 0} оценок`;
+      items.push(`<div class="key-signal"><span>Репутация</span><b>${esc(main)}</b><small>${esc(sub)}</small></div>`);
+    }
+    if (domain?.ageYears != null) items.push(`<div class="key-signal"><span>Домен</span><b>${esc(domain.ageYears)} лет</b><small>${esc(domain.domain || '')}</small></div>`);
+    if (exp?.claimedYears) items.push(`<div class="key-signal"><span>Опыт</span><b>${esc(exp.claimedYears)} лет</b><small>заявлено компанией</small></div>`);
+    const channels = [candidate.phone ? 'телефон' : '', candidate.email ? 'email' : ''].filter(Boolean);
+    if (channels.length) items.push(`<div class="key-signal"><span>Контакты</span><b>${channels.length}/2</b><small>${esc(channels.join(' + '))}</small></div>`);
+    return items.length ? `<div class="key-signals">${items.slice(0,4).join('')}</div>` : '';
+  }
+
+  function renderReputation(candidate) {
+    const rep = reviewModel(candidate);
+    if (!rep) return '';
+    const parts = [];
+    if (rep.rating != null) parts.push(`★ ${Number(rep.rating).toFixed(1).replace('.',',')}`);
+    if (rep.totalCount != null) parts.push(`${rep.totalCount} оценок`);
+    if (rep.yearCount) parts.push(`${rep.yearCount} отзывов за ${rep.year}`);
+    const topics = [...(rep.topics?.positive || [])].slice(0,2).map(t => `${t.label} · ${t.mentions}`).join(' · ');
+    const hasTexts = rep.positive.length || rep.neutral.length || rep.negative.length;
+    const action = hasTexts
+      ? `<button type="button" class="reviews-open" data-candidate="${esc(candidate.id)}">Посмотреть отзывы</button>`
+      : rep.profileUrl ? `<a class="reviews-link" href="${esc(rep.profileUrl)}" target="_blank" rel="noopener">Профиль и оценки ↗</a>` : '';
+    return `<div class="reputation-strip"><div><span>${esc(rep.platform)}</span><b>${esc(parts.join(' · ') || 'Профиль найден')}</b>${topics ? `<small>Чаще отмечают: ${esc(topics)}</small>` : ''}</div>${action}</div>`;
+  }
+
+  function reviewDate(value) {
+    const d = value ? new Date(value) : null;
+    return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+  }
+
+  function ensureReviewsModal() {
+    let modal = document.getElementById('reviewsModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'reviewsModal';
+    modal.className = 'reviews-modal';
+    modal.innerHTML = `<div class="reviews-backdrop" data-reviews-close></div><div class="reviews-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewsTitle"><button type="button" class="reviews-close" data-reviews-close aria-label="Закрыть">×</button><div id="reviewsContent"></div></div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target.closest('[data-reviews-close]')) closeReviewsModal(); });
+    return modal;
+  }
+
+  function reviewItemHtml(review, tone) {
+    const rating = Number(review?.rating);
+    const stars = Number.isFinite(rating) ? `★ ${rating}` : '';
+    const date = reviewDate(review?.updatedTime);
+    const sourceUrl = review?.sourceUrl || '';
+    return `<article class="review-item ${tone}"><div class="review-head"><div><b>${esc(review?.author || 'Пользователь')}</b>${date ? `<span>${esc(date)}</span>` : ''}</div>${stars ? `<strong>${esc(stars)}</strong>` : ''}</div><p>${esc(review?.text || '')}</p>${review?.businessComment ? `<details class="business-reply"><summary>Ответ компании</summary><div>${esc(review.businessComment)}</div></details>` : ''}${sourceUrl ? `<a class="review-source" href="${esc(sourceUrl)}" target="_blank" rel="noopener">Открыть оригинал ↗</a>` : ''}</article>`;
+  }
+
+  function reviewSection(title, items, tone) {
+    if (!items?.length) return '';
+    return `<section class="reviews-section"><h3>${esc(title)}<span>${items.length}</span></h3><div class="review-list">${items.slice(0,3).map(r => reviewItemHtml(r,tone)).join('')}</div></section>`;
+  }
+
+  function openReviewsModal(candidateId) {
+    const candidate = state.all.find(c => c.id === candidateId);
+    const rep = candidate && reviewModel(candidate);
+    if (!candidate || !rep) return;
+    const modal = ensureReviewsModal();
+    const counts = rep.counts || {};
+    const positiveTopics = (rep.topics?.positive || []).slice(0,4).map(t => `<span>${esc(t.label)} · ${esc(t.mentions)}</span>`).join('');
+    const negativeTopics = (rep.topics?.negative || []).slice(0,4).map(t => `<span>${esc(t.label)} · ${esc(t.mentions)}</span>`).join('');
+    const meta = [rep.platform, rep.year ? `${rep.year} год` : '', rep.totalCount != null ? `всего ${rep.totalCount} оценок` : ''].filter(Boolean).join(' · ');
+    document.getElementById('reviewsContent').innerHTML = `<div class="eyebrow">Отзывы и репутация</div><h2 id="reviewsTitle">${esc(candidate.name)}</h2><p class="reviews-meta">${esc(meta)}</p><div class="review-summary"><div class="positive"><b>${esc(counts.positive ?? rep.positive.length)}</b><span>положительных</span></div><div class="neutral"><b>${esc(counts.neutral ?? rep.neutral.length)}</b><span>нейтральных</span></div><div class="negative"><b>${esc(counts.negative ?? rep.negative.length)}</b><span>критических</span></div></div>${positiveTopics || negativeTopics ? `<div class="review-topics">${positiveTopics ? `<div><b>Чаще хвалят</b>${positiveTopics}</div>` : ''}${negativeTopics ? `<div class="negative"><b>Что критикуют</b>${negativeTopics}</div>` : ''}</div>` : ''}${reviewSection('Положительные отзывы',rep.positive,'positive')}${reviewSection('Критические отзывы',rep.negative,'negative')}${reviewSection('Нейтральные отзывы',rep.neutral,'neutral')}${rep.profileUrl ? `<div class="reviews-footer"><a class="btn secondary" href="${esc(rep.profileUrl)}" target="_blank" rel="noopener">Все отзывы в ${esc(rep.platform)} ↗</a></div>` : ''}`;
+    modal.classList.add('open');
+    document.body.classList.add('reviews-opened');
+    track('candidate_reviews_open',{candidate_id:candidate.id,platform:rep.platform,year_count:rep.yearCount||0});
+  }
+
+  function closeReviewsModal() {
+    document.getElementById('reviewsModal')?.classList.remove('open');
+    document.body.classList.remove('reviews-opened');
+  }
+
   function typeMeta(type) {
     if (type === 'private') return { label: 'Частный мастер', cls: 'private' };
     if (type === 'unverified') return { label: 'Тип не подтверждён', cls: 'unverified' };
@@ -154,24 +353,25 @@
 
   function renderCard(candidate, index) {
     const type = typeMeta(candidate.type);
-    const facts = (candidate.facts || []).map(fact => {
-      const source = sourceById(candidate, fact.sourceId);
-      const sourceHtml = source
-        ? `<a href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'fact'))}" target="_blank" rel="noopener">Источник: ${esc(source.label || kindLabel(source.kind))} · ${esc(source.host || hostOf(source.url))} ↗</a>`
-        : '';
-      return `<div class="fact-row ${factClass(fact.status)}"><div class="fact-icon">${factIcon(fact.status)}</div><div><div>${esc(fact.label)}</div>${sourceHtml}</div></div>`;
+    const allFacts = allCandidateFacts(candidate);
+    const buckets = { terms: [], verification: [], reputation: [], unknown: [] };
+    allFacts.forEach(f => buckets[factBucket(f)].push(f));
+    const sources = uniqueSourceGroups(candidate).map(source => {
+      const pageText = source.pages > 1 ? ` · ${source.pages} страницы проверено` : '';
+      return `<a class="source-pill" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'source'))}" target="_blank" rel="noopener"><b>${esc(source.label)}</b><span>${esc(source.host)}${esc(pageText)}</span></a>`;
     }).join('');
-
-    const sources = (candidate.sources || []).map(source =>
-      `<a class="source-pill" href="${esc(platform(source.url) ? source.url : outbound(source.url, candidate.id, 'source'))}" target="_blank" rel="noopener"><b>${esc(source.label || kindLabel(source.kind))}</b><span>${esc(source.host || hostOf(source.url))}</span></a>`
-    ).join('');
-
     const why = (candidate.rankReasons || []).map(x => `<li>${esc(x)}</li>`).join('');
     const action = externalAction(candidate);
     const actionHtml = action
       ? `<a class="btn secondary" href="${esc(action.url)}" target="_blank" rel="noopener">${esc(action.label)}</a>`
       : '';
     const initials = candidate.name.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase();
+    const structuredFacts = [
+      renderFactPanel(candidate, 'Условия и цены', buckets.terms, 'terms'),
+      renderFactPanel(candidate, 'Проверка компании', buckets.verification, 'verification'),
+      renderFactPanel(candidate, 'Репутация', buckets.reputation, 'reputation'),
+      renderFactPanel(candidate, 'Что уточнить', buckets.unknown, 'unknown')
+    ].filter(Boolean).join('');
 
     return `<article class="candidate" data-type="${esc(candidate.type)}">
       <div class="candidate-head">
@@ -185,14 +385,15 @@
       </div>
       ${renderAvitoNote(candidate)}
       ${renderContacts(candidate)}
-      <div class="candidate-grid">
-        <section><h3>Почему выше в списке</h3><ul>${why || '<li>Найден по профильному поисковому запросу.</li>'}</ul></section>
-        <section><h3>Факты и происхождение</h3><div class="facts">${facts}</div></section>
+      ${renderKeySignals(candidate)}
+      ${renderReputation(candidate)}
+      <div class="candidate-grid structured">
+        <section class="why-panel"><h3>Почему подходит</h3><ul>${why || '<li>Найден по профильному поисковому запросу.</li>'}</ul></section>
+        <div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div>
       </div>
-      <div class="source-caption">Все использованные источники</div>
-      <div class="source-list">${sources}</div>
+      ${sources ? `<div class="source-caption">Источники проверки</div><div class="source-list">${sources}</div>` : ''}
       <div class="actions">
-        <button class="btn primary select-candidate" data-candidate="${esc(candidate.id)}" type="button">${state.selected.has(candidate.id)?'✓ Выбран':'Выбрать'}</button>
+        <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="requests.html?candidate=${encodeURIComponent(candidate.id)}">Подготовить запрос</a>
         ${actionHtml}
       </div>
     </article>`;
@@ -242,13 +443,17 @@
       track('candidate_source_click', { url: a.href });
     }));
 
-    list.querySelectorAll('.select-candidate').forEach(button => button.addEventListener('click', () => {
-      const id=button.dataset.candidate;if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);updateSelectionBar();render();
+    list.querySelectorAll('.reviews-open').forEach(button => button.addEventListener('click', () => openReviewsModal(button.dataset.candidate)));
+
+    list.querySelectorAll('.prepare-request').forEach(a => a.addEventListener('click', () => {
+      const candidate = state.all.find(c => c.id === a.dataset.candidate);
+      if (!candidate) return;
+      try {
+        localStorage.setItem('sdelaet.candidate.selected.v1', JSON.stringify(candidate));
+      } catch {}
+      track('candidate_request_prepare', { candidate_id: candidate.id, candidate_type: candidate.type });
     }));
   }
-
-  function updateSelectionBar(){const bar=document.getElementById('selectionBar'),count=document.getElementById('selectionCount');if(!bar||!count)return;const n=state.selected.size;bar.classList.toggle('hidden',n===0);count.textContent=n+' '+(n===1?'исполнитель выбран':'исполнителей выбрано')}
-  document.getElementById('continueSelected')?.addEventListener('click',()=>{const selected=state.all.filter(c=>state.selected.has(c.id));if(!selected.length)return;localStorage.setItem('sdelaet.candidates.selected.v1',JSON.stringify(selected));track('candidate_selection_continue',{count:selected.length});location.href='requests.html?selected=1'});
 
   function setupFilters() {
     document.querySelectorAll('[data-filter]').forEach(button => {
@@ -266,7 +471,7 @@
     document.getElementById('filters').classList.add('hidden');
     document.getElementById('searchStatus').classList.add('hidden');
     document.getElementById('candidateList').innerHTML = '';
-    document.getElementById('countTitle').textContent = 'Ищем исполнителей';
+    document.getElementById('countTitle').textContent = 'Настройте поиск';
   }
 
   function setupPreference() {
@@ -321,14 +526,17 @@
     const list = document.getElementById('candidateList');
     const filters = document.getElementById('filters');
 
+    document.getElementById('countTitle').textContent = 'Уточняем исполнителей';
+    const introLead = document.querySelector('.search-intro .lead');
+    if (introLead) introLead.textContent = 'Поиск оплачен и запущен. Уточняем найденных исполнителей: проверяем контакты, отзывы, источники и убираем дубли.';
     status.className = 'search-status loading';
-    status.innerHTML = '<div class="spinner"></div><div><b>Ищем исполнителей</b><span>Проверяем веб-поиск, профили исполнителей и доступные публичные источники, объединяем дубли…</span></div>';
+    status.innerHTML = '<div class="spinner"></div><div><b>Уточняем исполнителей</b><span>Проверяем найденных кандидатов: сайты, контакты, отзывы и происхождение данных, убираем дубли…</span></div>';
     list.innerHTML = '';
     filters.classList.add('hidden');
 
     const preference = task.executorPreference || 'any';
     const payload = {
-      categoryId: task.categoryId || 'balcony-insulation',
+      categoryId: task.categoryId || 'universal-home-repair',
       category: task.category || '',
       city: task.city || '',
       region: task.region || task.geo?.canonicalRegion || '',
@@ -336,6 +544,10 @@
       description: task.description || '',
       scope: task.scope || '',
       goal: task.goal || '',
+      categoryStatus: task.category_status || 'matched',
+      rawService: task.raw_service || task.description || '',
+      domain: task.domain || 'construction',
+      suggestedCategory: task.suggested_category || null,
       executorPreference: preference,
       limit: preference === 'any' ? 12 : 10
     };
@@ -362,7 +574,8 @@
       saveSearchResults();
 
       status.className = 'search-status ok';
-      status.innerHTML = `<div class="status-dot">✓</div><div><b>Живой поиск завершён</b><span>${esc(String(data.count ?? state.all.length))} кандидатов · ${esc(sourceSummary(state.all))}</span></div>`;
+      status.innerHTML = `<div class="status-dot">✓</div><div><b>Проверка исполнителей завершена</b><span>${esc(String(data.count ?? state.all.length))} кандидатов · ${esc(sourceSummary(state.all))}</span></div>`;
+      if (introLead) introLead.textContent = 'Подбор готов: кандидаты проверены по доступным публичным источникам. Ниже — главное по каждому исполнителю.';
       filters.classList.remove('hidden');
       setupFilters();
       render();
@@ -381,13 +594,13 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (!task || !task.city) { location.href = 'create-task.html'; return; }
-    let pending=null; try{pending=JSON.parse(localStorage.getItem('sdelaet.payment.pending')||'null')}catch{}
-    if(!pending?.orderId || pending.taskId!==(task.id||'')){location.href='task-tz.html';return;}
-    let unlocked=null; try{const r=await fetch('https://api.onsdelaet.ru/v1/shortlists/unlocked',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task_id:task.id||'',order_id:pending.orderId})});const d=await r.json();if(r.ok&&d.ok&&d.unlocked)unlocked=d}catch{}
-    if(!unlocked||!Array.isArray(unlocked.candidates)||!unlocked.candidates.length){location.href='payment-success.html?order='+encodeURIComponent(pending.orderId);return;}
-    state.all=unlocked.candidates;state.live=true;state.runId=unlocked.runId||'';state.generatedAt=unlocked.generatedAt||'';
-    document.getElementById('preference')?.classList.add('hidden');document.getElementById('filters')?.classList.remove('hidden');const status=document.getElementById('searchStatus');status.className='search-status ok';status.innerHTML=`<div class="status-dot">✓</div><div><b>Подбор открыт</b><span>${state.all.length} кандидатов доступны по подтверждённой оплате</span></div>`;setupFilters();render();track('unlocked_shortlist_view',{count:state.all.length,run_id:state.runId,order_id:pending.orderId});
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeReviewsModal(); });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!task || !task.city) {
+      location.href = 'create-task.html';
+      return;
+    }
+    setupPreference();
   });
 })();

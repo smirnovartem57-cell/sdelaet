@@ -4,6 +4,7 @@ function ok(v,m){if(!v)throw new Error(m)}
 const now=Date.now();
 const old=new Date(now-11*60_000).toISOString();
 const fresh=new Date(now-3*60_000).toISOString();
+ok(isTestOrder({id:'SD-WATCHDOG-TEST',taskId:'task-real'}),'watchdog test IDs must be excluded');
 ok(isTestOrder({taskId:'TEST-PROD-001'}),'TEST-PROD must be excluded');
 ok(isTestOrder({taskId:'fiscal-receipt-smoke-find'}),'fiscal smoke must be excluded');
 ok(!isTestOrder({taskId:'task-real-1'}),'real task must not be excluded');

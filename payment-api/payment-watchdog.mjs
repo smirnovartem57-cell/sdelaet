@@ -18,7 +18,7 @@ const stateFile=String(env.PAYMENT_WATCHDOG_STATE_FILE||'/var/lib/sdelaet-paymen
 
 function now(){return new Date().toISOString()}
 function ageMinutes(order,ts=Date.now()){const created=Date.parse(order?.createdAt||'');return Number.isFinite(created)?Math.max(0,Math.floor((ts-created)/60000)):0}
-export function isTestOrder(order){const task=String(order?.taskId||'');return /^TEST-PROD-/i.test(task)||/^fiscal-receipt-smoke-/i.test(task)}
+export function isTestOrder(order){const task=String(order?.taskId||''),id=String(order?.id||'');return /^SD-WATCHDOG-/i.test(id)||/^TEST-PROD-/i.test(task)||/^fiscal-receipt-smoke-/i.test(task)}
 export function shouldAlertPending(order,ts=Date.now()){if(!order||order.status!=='pending'||isTestOrder(order))return false;const created=Date.parse(order.createdAt||'');return Number.isFinite(created)&&(ts-created)>=alertAfterMs}
 function safe(v){return String(v==null?'—':v)}
 function paymentLink(order){return `https://onsdelaet.ru/payment-success.html?order=${encodeURIComponent(order.id)}`}

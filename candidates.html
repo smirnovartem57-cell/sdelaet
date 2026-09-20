@@ -12,12 +12,10 @@
   <style>
     .progress3 .stage.link{cursor:pointer}.progress3 .stage.link:hover{border-color:#bcc7e9;box-shadow:0 8px 20px rgba(30,40,90,.07)}
     .search-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end}.search-intro .actions{margin:0}
-    .preference{margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--bg)}
-    .preference h3{margin:0 0 4px;font:850 19px Montserrat,Roboto,sans-serif}.preference>p{margin:0 0 16px;color:var(--muted);font-size:13px}
-    .pref-stack{display:grid;gap:16px}.pref-group{display:grid;gap:8px}.pref-group h4{margin:0;font:800 13px Montserrat}.pref-group>p{margin:0;font-size:11px;color:var(--muted);line-height:1.4}
-    .segment-row{display:flex;gap:8px;flex-wrap:wrap}.segment{position:relative;display:inline-flex;align-items:center;min-height:40px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#56627f;font:800 12px Montserrat,Roboto,sans-serif;cursor:pointer;transition:.15s ease}.segment:hover{border-color:#bcc7e9;transform:translateY(-1px)}.segment input{position:absolute;opacity:0;pointer-events:none}.segment span{display:block;padding:10px 13px}.segment:has(input:checked){border-color:var(--indigo);background:#f0f1ff;color:var(--indigo)}
-    .segment-button{border:1px solid var(--line);border-radius:12px;background:#fff;color:#56627f;font:800 12px Montserrat,Roboto,sans-serif;cursor:pointer;min-height:40px;padding:10px 13px}.segment-button:hover{border-color:#bcc7e9}.segment-button.active{border-color:var(--indigo);background:#f0f1ff;color:var(--indigo)}
-    .pref-actions{display:flex;align-items:center;gap:12px;margin-top:16px}.pref-error{font-size:11px;color:#b04944;font-weight:700}.pref-hint{font-size:11px;color:var(--muted)}
+    .preference{margin-top:14px;padding:20px;border:1px solid #d7e2fb;border-radius:20px;background:linear-gradient(135deg,#f8f7ff,#f3fbff)}
+    .preference h3{margin:0 0 5px;font:850 19px Montserrat,Roboto,sans-serif}.preference>p{margin:0 0 16px;color:var(--muted);font-size:13px}
+    .pref-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pref-group{background:#fff;border:1px solid #e0e7f5;border-radius:17px;padding:14px}.pref-group h4{margin:0 0 3px;font:800 13px Montserrat}.pref-group>p{margin:0 0 10px;font-size:11px;color:#77829b;line-height:1.4}
+    .check-list{display:grid;gap:8px}.check-card{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border:1px solid #e2e8f3;border-radius:13px;background:#fbfcff;cursor:pointer;transition:.15s ease}.check-card:hover{border-color:#c7d3ef;background:#fff}.check-card input{margin-top:2px;width:17px;height:17px;accent-color:#5b55f5;flex:0 0 auto}.check-card b,.check-card span{display:block}.check-card b{font-size:12px;color:#26324f}.check-card span{font-size:10px;color:#7a849c;margin-top:2px;line-height:1.35}.pref-actions{display:flex;align-items:center;gap:12px;margin-top:14px}.pref-error{font-size:11px;color:#b04944;font-weight:700}
     .search-status{margin:14px 0;padding:13px 15px;border-radius:16px;border:1px solid #d9e3f6;background:#f8faff;display:flex;gap:11px;align-items:center}
     .search-status b,.search-status span{display:block}.search-status span{font-size:12px;color:var(--muted);margin-top:2px}.search-status.ok{background:#effbf5;border-color:#cfeadf}.search-status.warn{background:#fff8ea;border-color:#ecd7a3}
     .status-dot,.spinner{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.status-dot{background:#fff}.spinner{border:3px solid #dce4f7;border-top-color:#5b55f5;border-radius:50%;animation:spin .7s linear infinite;background:#fff}@keyframes spin{to{transform:rotate(360deg)}}
@@ -37,7 +35,21 @@
     .toast-wrap{position:fixed;right:18px;top:18px;z-index:1000;width:min(390px,calc(100vw - 36px));display:grid;gap:8px}.toast{background:#fff8ea;border:1px solid #ecd7a3;border-radius:15px;padding:12px 14px;box-shadow:0 18px 50px rgba(23,31,63,.16)}.toast.ok{background:#effbf5;border-color:#cfeadf}.toast b,.toast span{display:block}.toast span{font-size:12px;margin-top:2px}.hidden{display:none!important}
     @media(max-width:850px){.pref-grid,.candidate-grid{grid-template-columns:1fr}.candidate-head{grid-template-columns:54px 1fr}.match-badge{grid-column:1/-1;text-align:left;width:max-content}.search-intro{grid-template-columns:1fr}.filter-row{align-items:flex-start;flex-direction:column}}
     @media(max-width:620px){.search-filter,.candidate .actions{display:grid;width:100%}.search-filter .chip,.candidate .btn{width:100%}.candidate{padding:15px}.contact-list{display:grid}.contact-pill{width:100%}.change-pref{padding-left:0}.pref-actions{align-items:stretch;flex-direction:column}.pref-actions .btn{width:100%}}
-  .selection-bar{position:sticky;bottom:14px;z-index:20;margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 12px 36px rgba(34,43,69,.14);display:flex;align-items:center;justify-content:space-between;gap:14px}.selection-bar.hidden{display:none}.selection-copy b{display:block;font:800 14px Montserrat}.selection-copy span{display:block;margin-top:3px;color:var(--muted);font-size:11px}@media(max-width:650px){.selection-bar{display:grid}.selection-bar .btn{width:100%}}
+
+    /* structured candidate evidence */
+    .candidate-grid.structured{grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr);align-items:start}
+    .candidate-grid.structured>.why-panel{background:#fbfcff}.why-panel ul{font-size:12px;line-height:1.45}.why-panel li+li{margin-top:6px}
+    .key-signals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.key-signal{padding:10px 11px;border:1px solid #dfe6f4;border-radius:13px;background:#fbfcff;min-width:0}.key-signal span,.key-signal b,.key-signal small{display:block}.key-signal span{font:800 9px Montserrat;text-transform:uppercase;letter-spacing:.06em;color:#7a849c}.key-signal b{margin-top:4px;font:850 15px Montserrat;color:#24304c}.key-signal small{margin-top:2px;font-size:9px;color:#7a849c;overflow-wrap:anywhere}
+    .reputation-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:10px;padding:11px 13px;border:1px solid #d9e8df;border-radius:14px;background:#f3fbf7}.reputation-strip>div{min-width:0}.reputation-strip span,.reputation-strip b,.reputation-strip small{display:block}.reputation-strip span{font:800 9px Montserrat;text-transform:uppercase;letter-spacing:.06em;color:#557365}.reputation-strip b{margin-top:3px;font:800 12px Montserrat;color:#1d563c}.reputation-strip small{margin-top:3px;font-size:9px;color:#657b70}.reviews-open,.reviews-link{border:0;border-radius:10px;padding:8px 10px;background:#fff;color:#315d49;font:800 10px Montserrat;white-space:nowrap;cursor:pointer;text-decoration:none;box-shadow:inset 0 0 0 1px #cfe5d9}.reviews-open:hover,.reviews-link:hover{background:#eaf8f0}
+    .fact-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.fact-panel{padding:12px!important;border-radius:14px!important;background:#fbfcff!important;min-width:0}.fact-panel h3{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px!important;font:800 12px Montserrat!important}.fact-panel h3 span{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#edf1fa;color:#6c7690;font-size:9px}.fact-panel.terms h3{color:#3a4fa7}.fact-panel.verification h3{color:#285d53}.fact-panel.reputation h3{color:#786120}.fact-panel.unknown h3{color:#8b5b10}
+    .fact-panel-list{display:grid;gap:6px}.fact-compact{display:grid;grid-template-columns:20px minmax(0,1fr);gap:7px;align-items:start;padding:7px 8px;border-radius:10px;background:#fff;border:1px solid #e6eaf3}.fact-dot{width:20px;height:20px;border-radius:7px;display:grid;place-items:center;font-size:10px;font-weight:900;background:#eef2f8;color:#6d7891}.fact-compact.ok .fact-dot{background:#e9f8f0;color:#138458}.fact-compact.claim .fact-dot{background:#fff6e4;color:#9e6916}.fact-compact.risk .fact-dot{background:#fff0ef;color:#b04944}.fact-compact b{display:block;font-size:10px;color:#26324f;margin-bottom:2px}.fact-compact p{margin:0;font-size:10px;line-height:1.38;color:#58647d}.fact-source{display:inline-block;margin-top:4px;font-size:9px;color:#4f66b8}.fact-more{margin-top:7px}.fact-more summary{cursor:pointer;font:700 9px Montserrat;color:#5c6a86}.fact-more[open] summary{margin-bottom:7px}
+    .source-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:7px}.source-pill{min-width:0;padding:9px 10px}.source-pill b{font-size:10px}.source-pill span{font-size:9px;line-height:1.3}
+    /* review popup */
+    body.reviews-opened{overflow:hidden}.reviews-modal{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:22px}.reviews-modal.open{display:flex}.reviews-backdrop{position:absolute;inset:0;background:rgba(21,29,50,.58);backdrop-filter:blur(4px)}.reviews-dialog{position:relative;z-index:1;width:min(820px,100%);max-height:min(86vh,850px);overflow:auto;background:#fff;border:1px solid #dfe5f2;border-radius:24px;padding:24px;box-shadow:0 28px 80px rgba(20,30,60,.26)}.reviews-close{position:absolute;right:16px;top:14px;width:34px;height:34px;border:0;border-radius:11px;background:#f1f3f8;color:#53607b;font-size:22px;cursor:pointer}.reviews-dialog h2{font:850 25px/1.15 Montserrat;margin:4px 42px 5px 0}.reviews-meta{margin:0;color:#7a849b;font-size:11px}.review-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.review-summary>div{padding:11px;border-radius:13px;background:#f8f9fc;border:1px solid #e3e8f2}.review-summary b,.review-summary span{display:block}.review-summary b{font:850 18px Montserrat}.review-summary span{font-size:9px;color:#758099}.review-summary .positive b{color:#168259}.review-summary .negative b{color:#b04944}
+    .review-topics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}.review-topics>div{padding:10px 11px;border-radius:12px;background:#f3fbf7}.review-topics>div.negative{background:#fff5f3}.review-topics b{display:block;margin-bottom:6px;font:800 10px Montserrat}.review-topics span{display:inline-block;margin:2px 4px 2px 0;padding:4px 7px;border-radius:999px;background:#fff;font-size:9px;color:#53607a}
+    .reviews-section{margin-top:14px}.reviews-section h3{display:flex;align-items:center;gap:8px;font:800 13px Montserrat;margin:0 0 8px}.reviews-section h3 span{display:grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#edf1fa;font-size:9px;color:#6c7690}.review-list{display:grid;gap:8px}.review-item{padding:12px 13px;border:1px solid #e2e7f1;border-radius:14px;background:#fbfcff}.review-item.negative{border-color:#f0d8d5;background:#fffafa}.review-head{display:flex;justify-content:space-between;gap:12px}.review-head b,.review-head span{display:block}.review-head b{font-size:11px}.review-head span{margin-top:2px;font-size:9px;color:#8590a5}.review-head strong{font:800 11px Montserrat;color:#8c6c1c}.review-item p{margin:8px 0 0;font-size:11px;line-height:1.5;color:#4f5b74}.review-source{display:inline-block;margin-top:8px;font-size:9px;color:#4f66b8}.business-reply{margin-top:8px;padding:8px 9px;border-radius:10px;background:#f1f4f9}.business-reply summary{cursor:pointer;font:700 9px Montserrat;color:#57657f}.business-reply div{margin-top:6px;font-size:10px;line-height:1.45;color:#606b83}.reviews-footer{margin-top:16px}
+    @media(max-width:900px){.key-signals{grid-template-columns:repeat(2,1fr)}.candidate-grid.structured{grid-template-columns:1fr}.fact-panels{grid-template-columns:1fr}}
+    @media(max-width:620px){.key-signals{grid-template-columns:1fr 1fr}.reputation-strip{align-items:flex-start;flex-direction:column}.reviews-modal{padding:8px}.reviews-dialog{padding:18px 14px;max-height:94vh;border-radius:18px}.review-summary,.review-topics{grid-template-columns:1fr}.source-list{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -82,26 +94,24 @@
               <form id="searchPreferencesForm">
                 <h3>Параметры поиска</h3>
                 <p>Все доступные варианты включены по умолчанию. Снимите галочку с того, что не хотите использовать.</p>
-                <div class="pref-stack">
+                <div class="pref-grid">
                   <section class="pref-group">
                     <h4>Где искать</h4>
-                    <p>Выберите источники. По умолчанию используем все доступные.</p>
-                    <div class="segment-row">
-                      <button class="segment-button" id="allSources" type="button">Все источники</button>
-                      <label class="segment"><input id="sourceSites" type="checkbox" checked><span>Сайты компаний</span></label>
-                      <label class="segment"><input id="sourceYandexServices" type="checkbox" checked><span>Яндекс Исполнители</span></label>
-                      <label class="segment"><input id="sourceAvito" type="checkbox" checked><span>Avito</span></label>
+                    <p>Источники, которые сервис будет использовать для этой подборки.</p>
+                    <div class="check-list">
+                      <label class="check-card"><input id="sourceSites" type="checkbox" checked><span><b>Сайты компаний</b><span>Веб-поиск + проверка собственных сайтов и контактов.</span></span></label>
+                      <label class="check-card"><input id="sourceYandexServices" type="checkbox" checked><span><b>Яндекс Исполнители</b><span>Конкретные профили специалистов из Яндекс Исполнителей.</span></span></label>
+                      <label class="check-card"><input id="sourceAvito" type="checkbox" checked><span><b>Avito</b><span>Конкретные объявления услуг, найденные через веб-поиск.</span></span></label>
                     </div>
                   </section>
                   <section class="pref-group">
                     <h4>Кого искать</h4>
-                    <p>Оставьте всех исполнителей или сузьте подбор.</p>
-                    <div class="segment-row">
-                      <button class="segment-button" id="allTypes" type="button">Все исполнители</button>
-                      <label class="segment"><input id="typeCompany" type="checkbox" checked><span>Компании</span></label>
-                      <label class="segment"><input id="typePrivate" type="checkbox" checked><span>Частные мастера</span></label>
+                    <p>Можно оставить оба типа или ограничить подборку одним.</p>
+                    <div class="check-list">
+                      <label class="check-card"><input id="typeCompany" type="checkbox" checked><span><b>Компании</b><span>Организации и сервисы с подтверждаемым сайтом или профилем.</span></span></label>
+                      <label class="check-card"><input id="typePrivate" type="checkbox" checked><span><b>Частные мастера</b><span>Персональные профили конкретных исполнителей.</span></span></label>
                     </div>
-                    <div class="pref-hint">При выборе одного типа кандидаты с неподтверждённым типом в подборку не попадут.</div>
+                    <p style="margin:10px 0 0">Если выбран только один тип, кандидаты Avito с неподтверждённым типом не показываются.</p>
                   </section>
                 </div>
                 <div class="pref-actions">
@@ -129,7 +139,7 @@
             <button class="change-pref" id="changePreference">Изменить параметры поиска</button>
           </div>
 
-          <div id="candidateList" class="candidate-list"></div><div class="selection-bar hidden" id="selectionBar"><div class="selection-copy"><b id="selectionCount">0 исполнителей выбрано</b><span>Дальше проверите получателей и подготовленный запрос перед отправкой.</span></div><button class="btn primary" id="continueSelected" type="button">Продолжить с выбранными →</button></div>
+          <div id="candidateList" class="candidate-list"></div>
         </div>
       </div>
     </main>
@@ -137,6 +147,6 @@
 
   <script src="assets/search-config.js"></script>
   <script src="assets/search-preferences.js"></script>
-  <script src="assets/live-search.js"></script>
+  <script src="assets/live-search.js?v=public-v3-20260920"></script>
 </body>
 </html>
