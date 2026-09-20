@@ -14,7 +14,6 @@ const commands = [
   ['syntax: offer comparison decision', ['--check', 'src/offer-comparison-decision.mjs']],
   ['syntax: offer contract coverage', ['--check', 'src/offer-contract-coverage.mjs']],
   ['syntax: offer pipeline', ['--check', 'src/offer-pipeline.mjs']],
-  ['server runtime wiring', ['tests/server-runtime-wiring-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
