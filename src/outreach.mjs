@@ -875,7 +875,13 @@ async function sendEmail(requestId) {
     String(row.body_text || '')
       .replace(/\r?\n/g, '\r\n');
 
-  const message = [
+  let attachments = [];
+  try {
+    const parsed = JSON.parse(row.attachments_json || '[]');
+    attachments = Array.isArray(parsed) ? parsed : [];
+  } catch {}
+
+  const baseHeaders = [
     `From: ${fromHeader}`,
     `To: ${cleanHeader(row.recipient)}`,
     `Reply-To: ${replyTo}`,
@@ -884,13 +890,66 @@ async function sendEmail(requestId) {
     `Date: ${new Date().toUTCString()}`,
     `X-Sdelaet-Request-ID: ${cleanHeader(requestId)}`,
     `X-Sdelaet-Reply-Token: ${token}`,
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    '',
-    body,
-    ''
-  ].join('\r\n');
+    'MIME-Version: 1.0'
+  ];
+
+  let message;
+
+  if (attachments.length) {
+    const mixedBoundary =
+      `----=_SdelaetMixed_${crypto.randomBytes(12).toString('hex')}`;
+
+    const parts = [
+      ...baseHeaders,
+      `Content-Type: multipart/mixed; boundary="${mixedBoundary}"`,
+      '',
+      `--${mixedBoundary}`,
+      'Content-Type: text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding: 8bit',
+      '',
+      body
+    ];
+
+    for (const attachment of attachments) {
+      const encodedName =
+        encodeURIComponent(
+          String(
+            attachment.name ||
+            'photo.jpg'
+          )
+        ).replace(
+          /'/g,
+          '%27'
+        );
+
+      parts.push(
+        `--${mixedBoundary}`,
+        `Content-Type: ${attachment.type || 'application/octet-stream'}`,
+        'Content-Transfer-Encoding: base64',
+        `Content-Disposition: attachment; filename*=UTF-8''${encodedName}`,
+        '',
+        wrapBase64(attachment.data)
+      );
+    }
+
+    parts.push(
+      `--${mixedBoundary}--`,
+      ''
+    );
+
+    message =
+      parts.join('\r\n');
+
+  } else {
+    message = [
+      ...baseHeaders,
+      'Content-Type: text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding: 8bit',
+      '',
+      body,
+      ''
+    ].join('\r\n');
+  }
 
   try {
     await sendViaLocalExim({
