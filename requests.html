@@ -40,6 +40,7 @@
     .page{max-width:1320px}.layout{display:block!important}.layout>section.card{width:100%;max-width:none}.channel-preview{max-width:1080px}.request-box,.request-attachments,.outreach-box{max-width:none}
     .request-attachments{margin:22px 0;padding:18px 20px;border:1px solid #e2e7f1;border-radius:18px;background:#fbfcff}.request-attachments-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:0 0 14px}.request-attachments-head>div{display:grid;gap:5px;min-width:0}.request-attachments-head>div>b{font:850 16px/1.25 Montserrat;color:#25314d}.request-attachments-head>div>span{font-size:11px;line-height:1.45;color:#707b94}.request-attachments-head>.status-pill{margin:0;flex:0 0 auto}.request-attachments .attachment-grid{margin-top:0}.request-attachments .attachment-grid>div[style]{padding:16px 18px!important;line-height:1.55!important}.request-attachments .attachment-grid>div[style] b{font-size:13px!important;margin-bottom:6px!important}
     .channel-choice-btn.not-found{border-style:dashed;background:#fafbfe;box-shadow:none;color:#7b8497}.channel-choice-btn.not-found .channel-icon{background:#f1f3f7;color:#8a93a4}.telegram-discovery-note{display:block;margin-top:5px;font-size:9px;line-height:1.4;color:#7a8499}.telegram-discovery-note.found{color:#28765a}.outreach-fields .contact-field{align-content:start}
+    .request-attachments .attachment-grid{display:flex;flex-wrap:wrap;gap:10px}.request-attachments .attachment-card{width:190px;max-width:100%;border:1px solid #e1e6ef;border-radius:14px;background:#fff;overflow:hidden}.request-attachments .attachment-thumb{display:block;width:100%;height:118px;padding:0;border:0;background:#eef2f7;cursor:zoom-in}.request-attachments .attachment-thumb img{width:100%!important;height:118px!important;object-fit:cover!important}.request-attachments .attachment-card-info{padding:9px 10px}.request-attachments .attachment-card-info b,.request-attachments .attachment-card-info span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.request-attachments .attachment-card-info b{font-size:9px}.request-attachments .attachment-card-info span,.request-attachments .attachment-card-info a{font-size:8px}.attachment-lightbox{position:fixed;inset:0;z-index:1600;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(12,18,35,.78);backdrop-filter:blur(4px)}.attachment-lightbox.open{display:flex}.attachment-lightbox img{max-width:min(1200px,96vw);max-height:90vh;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.35)}.attachment-lightbox button{position:fixed;right:22px;top:18px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:#1e2943;font-size:25px;cursor:pointer}.mail-appbar-logo,.mail-avatar{overflow:hidden;background:#fff!important}.mail-appbar-logo img,.mail-avatar img{width:100%;height:100%;object-fit:contain;padding:3px}.mail-avatar img{padding:6px}
   </style>
 </head>
 <body>
@@ -378,9 +379,28 @@
         summary.textContent = 'Будет приложено к Email: ' + sendableImageAttachments.length + ' фото. Для Telegram эти же фото доступны ниже.';
         grid.innerHTML = sendableImageAttachments.map(function (item, index) {
           var name = attachmentDownloadName(item, index);
-          return '<article class="attachment-card"><img src="' + item.data + '" alt=""><div class="attachment-card-info"><b>' + escHtml(name) + '</b><span>' + (item.width && item.height ? item.width + ' × ' + item.height + ' px' : escHtml(item.type || 'image')) + '</span><a href="' + item.data + '" download="' + escHtml(name) + '">Скачать для Telegram</a></div></article>';
+          return '<article class="attachment-card"><button class="attachment-thumb" type="button" data-preview-src="' + item.data + '" aria-label="Увеличить фото"><img src="' + item.data + '" alt=""></button><div class="attachment-card-info"><b>' + escHtml(name) + '</b><span>' + (item.width && item.height ? item.width + ' × ' + item.height + ' px' : escHtml(item.type || 'image')) + '</span><a href="' + item.data + '" download="' + escHtml(name) + '">Скачать для Telegram</a></div></article>';
         }).join('');
       }
+      function openAttachmentLightbox(src){
+        if(!src)return;
+        var box=document.getElementById('attachmentLightbox');
+        if(!box){
+          box=document.createElement('div');
+          box.id='attachmentLightbox';
+          box.className='attachment-lightbox';
+          box.innerHTML='<button type="button" aria-label="Закрыть">×</button><img alt="">';
+          document.body.appendChild(box);
+          box.onclick=function(e){if(e.target===box||e.target.tagName==='BUTTON')box.classList.remove('open')};
+          document.addEventListener('keydown',function(e){if(e.key==='Escape')box.classList.remove('open')});
+        }
+        box.querySelector('img').src=src;
+        box.classList.add('open');
+      }
+      document.getElementById('requestAttachmentGrid').addEventListener('click',function(e){
+        var b=e.target.closest('[data-preview-src]');
+        if(b){e.preventDefault();openAttachmentLightbox(b.dataset.previewSrc)}
+      });
       var previewChannel = 'email';
 
       function parseRequestMessage(text) {
@@ -416,9 +436,9 @@
 
       function buildEmailPreview(email) {
         return '<div class="preview-shell">' +
-          '<div class="mail-appbar"><div class="mail-appbar-left"><span class="mail-appbar-logo">С</span><b>Почта</b></div><div class="mail-actions"><span>↩</span><span>⋮</span></div></div>' +
+          '<div class="mail-appbar"><div class="mail-appbar-left"><span class="mail-appbar-logo"><img src="assets/logo-icon.svg" alt="Сделает"></span><b>Почта</b></div><div class="mail-actions"><span>↩</span><span>⋮</span></div></div>' +
           '<div class="mail-subject">' + escHtml(emailSubject()) + '</div>' +
-          '<div class="mail-sender"><span class="mail-avatar">С</span><div><b>Сделает &lt;requests@onsdelaet.ru&gt;</b><span>кому: ' + escHtml(email || 'email исполнителя') + '</span></div><time>сейчас</time></div>' +
+          '<div class="mail-sender"><span class="mail-avatar"><img src="assets/logo-icon.svg" alt="Сделает"></span><div><b>Сделает &lt;requests@onsdelaet.ru&gt;</b><span>кому: ' + escHtml(email || 'email исполнителя') + '</span></div><time>сейчас</time></div>' +
           '<div class="mail-plain-body">' + escHtml(message) + '</div>' +
           emailAttachmentCards() +
           '<div class="preview-help">Так будет выглядеть обычное письмо у получателя. Интерфейс конкретной почты может немного отличаться, но тема, текст и вложения будут именно такими.</div>' +
