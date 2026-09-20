@@ -1,7 +1,29 @@
-name: v20 verification
+name: Customer flow regression
 on:
+  pull_request:
+    paths:
+      - 'create-task.html'
+      - 'task-tz.html'
+      - 'payment-success.html'
+      - 'requests.html'
+      - 'src/server.mjs'
+      - 'src/site-crawler.mjs'
+      - 'src/outreach.mjs'
+      - 'tests/v20-flow-regression.mjs'
+      - '.github/workflows/v20-verify.yml'
   push:
-    branches: [fix/v20-flow-regressions]
+    branches: [main]
+    paths:
+      - 'create-task.html'
+      - 'task-tz.html'
+      - 'payment-success.html'
+      - 'requests.html'
+      - 'src/server.mjs'
+      - 'src/site-crawler.mjs'
+      - 'src/outreach.mjs'
+      - 'tests/v20-flow-regression.mjs'
+      - '.github/workflows/v20-verify.yml'
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -16,5 +38,5 @@ jobs:
           node --check src/server.mjs
           node --check src/site-crawler.mjs
           node --check src/outreach.mjs
-      - name: v20 flow regression
+      - name: Customer flow regression
         run: node tests/v20-flow-regression.mjs
