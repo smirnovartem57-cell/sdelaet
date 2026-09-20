@@ -138,8 +138,8 @@ async function readRawBody(req, max = 512 * 1024) {
   return Buffer.concat(chunks).toString('utf8');
 }
 
-async function readJsonBody(req) {
-  const raw = await readRawBody(req);
+async function readJsonBody(req, max) {
+  const raw = await readRawBody(req, max);
 
   try {
     return JSON.parse(raw || '{}');
@@ -254,6 +254,217 @@ function validEmail(value) {
 
 function authorizationError(code,status=403) { const error=new Error(code); error.status=status; return error; }
 function parseAuthorizationTargets(auth) { try { const value=JSON.parse(auth?.targets_json||'[]'); return Array.isArray(value)?value:[]; } catch { return []; } }
+function normalizeOutboundAttachments(value) {
+  const items = Array.isArray(value) ? value : [];
+  if (items.length > 6) {
+    const error = new Error('TOO_MANY_ATTACHMENTS');
+    error.status = 400;
+    throw error;
+  }
+
+  const out = [];
+  let total = 0;
+
+  for (let index = 0; index < items.length; index += 1) {
+    const item = items[index] || {};
+    const raw = String(item.data || '');
+    const match = raw.match(/^data:(image\/jpeg|image\/png);base64,([A-Za-z0-9+/=\r\n]+)$/i);
+
+    if (!match) continue;
+
+    const data = match[2].replace(/\s+/g, '');
+    const buffer = Buffer.from(data, 'base64');
+
+    if (!buffer.length || buffer.length > 1500000) {
+      const error = new Error('ATTACHMENT_TOO_LARGE');
+      error.status = 400;
+      throw error;
+    }
+
+    total += buffer.length;
+    if (total > 5000000) {
+      const error = new Error('ATTACHMENTS_TOO_LARGE');
+      error.status = 400;
+      throw error;
+    }
+
+    const type = match[1].toLowerCase();
+    const ext = type === 'image/png' ? '.png' : '.jpg';
+    let name = String(item.name || ('photo-' + (index + 1) + ext))
+      .replace(/[\\/:*?"<>|\r\n]+/g, '-')
+      .slice(0, 120);
+
+    if (!/\.[a-z0-9]{2,5}$/i.test(name)) name += ext;
+
+    out.push({
+      name,
+      type,
+      size: buffer.length,
+      data
+    });
+  }
+
+  return out;
+}
+
+function wrapBase64(value) {
+  const chunks = String(value || '').match(/.{1,76}/g);
+  return chunks ? chunks.join('\r\n') : '';
+}
+
+function escapeEmailHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
+}
+
+function parseRequestSections(value) {
+  const rows = String(value || '')
+    .split(/\r?\n/)
+    .map(item => item.trim());
+
+  const taskIndex = rows.indexOf('Задача:');
+  const answerIndex = rows.indexOf('В ответе укажите:');
+
+  const title =
+    rows.find((item, index) =>
+      index > 0 &&
+      item &&
+      item !== 'Задача:' &&
+      !item.startsWith('—')
+    ) ||
+    'Запрос на расчёт';
+
+  const taskItems =
+    taskIndex >= 0
+      ? rows
+          .slice(
+            taskIndex + 1,
+            answerIndex >= 0
+              ? answerIndex
+              : rows.length
+          )
+          .filter(item => item.startsWith('—'))
+          .map(item =>
+            item
+              .replace(/^—\s*/, '')
+              .replace(/[.;]+$/, '')
+          )
+      : [];
+
+  const answerItems =
+    answerIndex >= 0
+      ? rows
+          .slice(answerIndex + 1)
+          .filter(item => item.startsWith('—'))
+          .map(item =>
+            item
+              .replace(/^—\s*/, '')
+              .replace(/[.;]+$/, '')
+          )
+      : [];
+
+  const notes =
+    answerIndex >= 0
+      ? rows
+          .slice(answerIndex + 1)
+          .filter(item =>
+            item &&
+            !item.startsWith('—')
+          )
+      : [];
+
+  return {
+    title,
+    taskItems,
+    answerItems,
+    notes
+  };
+}
+
+function buildEmailHtml(
+  bodyText,
+  attachmentCount = 0
+) {
+  const parsed =
+    parseRequestSections(bodyText);
+
+  const renderList =
+    items =>
+      items
+        .map(item =>
+          '<tr><td style="width:22px;vertical-align:top;padding:0 0 9px">' +
+            '<span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;border-radius:50%;background:#e8f8ef;color:#138454;font:700 11px Arial">✓</span>' +
+          '</td><td style="padding:0 0 9px;font:14px/1.45 Arial,sans-serif;color:#46536d">' +
+            escapeEmailHtml(item) +
+          '</td></tr>'
+        )
+        .join('');
+
+  const taskBlock =
+    parsed.taskItems.length
+      ? '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border:1px solid #e5e9f2;border-radius:14px;background:#fbfcff"><tr><td style="padding:18px">' +
+          '<div style="font:700 15px Arial,sans-serif;color:#2e3b5b;margin-bottom:12px">Что нужно сделать</div>' +
+          '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
+            renderList(parsed.taskItems) +
+          '</table>' +
+        '</td></tr></table>'
+      : '';
+
+  const answerBlock =
+    parsed.answerItems.length
+      ? '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border:1px solid #e5e9f2;border-radius:14px;background:#fbfcff"><tr><td style="padding:18px">' +
+          '<div style="font:700 15px Arial,sans-serif;color:#2e3b5b;margin-bottom:12px">Что указать в расчёте</div>' +
+          '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
+            renderList(parsed.answerItems) +
+          '</table>' +
+        '</td></tr></table>'
+      : '';
+
+  const noteBlock =
+    parsed.notes.length
+      ? '<div style="margin-top:14px;padding:14px 16px;border-radius:12px;background:#fff8e8;color:#685635;font:13px/1.5 Arial,sans-serif">' +
+          parsed.notes
+            .map(escapeEmailHtml)
+            .join('<br>') +
+        '</div>'
+      : '';
+
+  const attachmentBlock =
+    attachmentCount > 0
+      ? '<div style="margin-top:14px;padding:12px 14px;border:1px solid #e0e5ef;border-radius:11px;background:#f8f9fc;font:13px/1.4 Arial,sans-serif;color:#53607b">📎 К письму приложено фото: ' +
+          attachmentCount +
+        '</div>'
+      : '';
+
+  return '<!doctype html><html><body style="margin:0;padding:0;background:#f3f5f9">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f5f9"><tr><td align="center" style="padding:28px 14px">' +
+      '<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 26px rgba(31,42,85,.08)">' +
+        '<tr><td style="padding:22px 26px;background:#5751f2;background:linear-gradient(135deg,#5751f2,#20bfe6);color:#fff">' +
+          '<div style="font:800 23px Arial,sans-serif">Сделает</div>' +
+          '<div style="margin-top:5px;font:13px/1.4 Arial,sans-serif;opacity:.9">Запрос на расчёт от заказчика</div>' +
+        '</td></tr>' +
+        '<tr><td style="padding:26px">' +
+          '<div style="font:700 11px Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#625cf4">Задача для расчёта</div>' +
+          '<div style="margin-top:6px;font:700 25px/1.25 Arial,sans-serif;color:#1d2740">' +
+            escapeEmailHtml(parsed.title) +
+          '</div>' +
+          '<div style="margin-top:15px;font:14px/1.6 Arial,sans-serif;color:#536079">Добрый день. Ниже — структурированная информация по задаче. Просьба дать расчёт по указанному объёму.</div>' +
+          taskBlock +
+          answerBlock +
+          noteBlock +
+          attachmentBlock +
+        '</td></tr>' +
+        '<tr><td style="padding:16px 26px 22px;border-top:1px solid #edf0f5;font:12px/1.5 Arial,sans-serif;color:#7a8498">Ответьте на это письмо обычным ответом — мы получим его в сервисе «Сделает» и добавим в сравнение предложений.</td></tr>' +
+      '</table>' +
+    '</td></tr></table>' +
+  '</body></html>';
+}
+
 function canonicalAuthorizedChannel(channel) { const value=String(channel||'').trim(); return value==='messenger'?'telegram':value; }
 function assertAuthorizedTarget(auth,{taskId,candidateId,channel,recipient='',telegram='',message=''}) {
   if(!auth) throw authorizationError('OUTREACH_AUTHORIZATION_INVALID');
