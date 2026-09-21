@@ -1,4 +1,9 @@
 name: Deploy site to FirstVDS
+
+concurrency:
+  group: sdelaet-production-main
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
