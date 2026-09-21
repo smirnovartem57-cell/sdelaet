@@ -24,7 +24,7 @@ if ! flock -n 9; then
   echo 'DEPLOY_BUSY: another canonical deployment is active.'
   exit 45
 fi
-echo "DEPLOY_MUTEX_ACQUIRED pid=$"
+echo "DEPLOY_MUTEX_ACQUIRED pid=$$"
 
 if [ ! -s "$POLICY_FILE" ]; then
   echo 'DEPLOY_BLOCKED: publish policy is missing.'
