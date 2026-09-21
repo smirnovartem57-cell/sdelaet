@@ -23,3 +23,7 @@ jobs:
           node-version: 22
       - name: Run automated launch-readiness gates
         run: node tools/platform-readiness.mjs
+      - name: Validate canonical deploy shell syntax
+        run: bash -n ops/sdelaet-deploy-main.sh
+      - name: Validate canonical deploy contract
+        run: node tests/deploy-path-regression.mjs
