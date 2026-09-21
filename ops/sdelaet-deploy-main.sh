@@ -8,6 +8,7 @@ WEBROOT='/var/www/www-root/data/www/onsdelaet.ru'
 STATE_DIR='/var/lib/sdelaet/deploy'
 STATE_FILE="$STATE_DIR/main.sha"
 LOCK_FILE="$STATE_DIR/PUBLISH_LOCK"
+MUTEX_FILE="$STATE_DIR/deploy.lock"
 POLICY_FILE='/etc/sdelaet/PUBLISH_POLICY.md'
 VERIFY_PARITY='/usr/local/sbin/sdelaet-verify-production-parity'
 BACKUP_ROOT='/opt/sdelaet/backups/auto-main'
@@ -15,6 +16,16 @@ NODE='/opt/sdelaet/runtime/node24/bin/node'
 DEPLOY_USER='sdelaet-runner'
 
 mkdir -p "$STATE_DIR" "$BACKUP_ROOT" "$CURRENT" "$WEBROOT"
+
+# Serialize the entire canonical deployment. A second chat/process must never
+# mutate production while another deploy is validating or copying files.
+exec 9>"$MUTEX_FILE"
+if ! flock -n 9; then
+  echo 'DEPLOY_BUSY: another canonical deployment is active.'
+  exit 45
+fi
+echo "DEPLOY_MUTEX_ACQUIRED pid=$"
+
 if [ ! -s "$POLICY_FILE" ]; then
   echo 'DEPLOY_BLOCKED: publish policy is missing.'
   exit 41
@@ -57,6 +68,22 @@ test "$SOURCE_SHA" = "$REMOTE_SHA" || { echo 'DEPLOY_SHA_MISMATCH'; exit 1; }
 runuser -u "$DEPLOY_USER" -- bash -lc "cd '$REPO_DIR' && '$NODE' tools/platform-readiness.mjs"
 runuser -u "$DEPLOY_USER" -- bash -lc "cd '$REPO_DIR' && '$NODE' tests/metrika-goals-regression.mjs"
 
+# Tests may take long enough for another chat to merge new work or for someone
+# to modify production manually. Revalidate every authority immediately after
+# tests and again just before the first production mutation.
+STATE_SHA_AFTER_TESTS="$(cat "$STATE_FILE" 2>/dev/null || true)"
+if [ "$STATE_SHA_AFTER_TESTS" != "$CURRENT_SHA" ]; then
+  echo "DEPLOY_BASELINE_MOVED expected=$CURRENT_SHA actual=${STATE_SHA_AFTER_TESTS:-missing}"
+  exit 46
+fi
+"$VERIFY_PARITY" "$CURRENT_SHA"
+
+LATEST_REMOTE_SHA="$(git ls-remote "$REPO_URL" refs/heads/main | awk '{print $1}')"
+if [ "$LATEST_REMOTE_SHA" != "$SOURCE_SHA" ]; then
+  echo "DEPLOY_SUPERSEDED source=$SOURCE_SHA latest=$LATEST_REMOTE_SHA"
+  exit 47
+fi
+
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="$BACKUP_ROOT/$STAMP-$SOURCE_SHA"
 mkdir -p "$BACKUP/current" "$BACKUP/webroot"
@@ -68,6 +95,22 @@ for file in "$WEBROOT"/*.html "$WEBROOT"/robots.txt "$WEBROOT"/sitemap*.xml "$WE
   [ ! -f "$file" ] || cp -a "$file" "$BACKUP/webroot/"
 done
 echo "DEPLOY_BACKUP=$BACKUP"
+
+# Last-moment compare-and-swap guard. Nothing below this point may run unless
+# the production baseline and GitHub main are exactly the state we validated.
+PRECOPY_STATE_SHA="$(cat "$STATE_FILE" 2>/dev/null || true)"
+if [ "$PRECOPY_STATE_SHA" != "$CURRENT_SHA" ]; then
+  echo "DEPLOY_BASELINE_MOVED_BEFORE_COPY expected=$CURRENT_SHA actual=${PRECOPY_STATE_SHA:-missing}"
+  exit 46
+fi
+"$VERIFY_PARITY" "$CURRENT_SHA"
+
+PRECOPY_REMOTE_SHA="$(git ls-remote "$REPO_URL" refs/heads/main | awk '{print $1}')"
+if [ "$PRECOPY_REMOTE_SHA" != "$SOURCE_SHA" ]; then
+  echo "DEPLOY_SUPERSEDED_BEFORE_COPY source=$SOURCE_SHA latest=$PRECOPY_REMOTE_SHA"
+  exit 47
+fi
+echo "DEPLOY_PRECOPY_GUARD_PASS from=$CURRENT_SHA to=$SOURCE_SHA"
 
 rsync -a --exclude='.git/' --exclude='.github/' --exclude='search-api/' "$REPO_DIR/" "$CURRENT/"
 mkdir -p "$WEBROOT/assets" "$WEBROOT/uslugi"
