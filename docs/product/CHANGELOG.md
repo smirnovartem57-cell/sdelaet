@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — WINDOW_REPAIR manual readiness review
+- Manually reviewed Intake, diagnostic framing, Contractor Brief, recommendation/comparison text and Action Layer.
+- No critical UX/safety finding: local faults do not force full replacement, condensation remains diagnostic-first, and advertising `от` pricing cannot outrank a complete diagnosed repair.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 2 500 ₽ offer selected over `от 800 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — WINDOW_REPLACEMENT manual readiness review
 - Manually reviewed user-facing Intake, diagnostic warnings, Contractor Brief, recommendation/comparison text and Action Layer.
 - No critical UX/safety finding: replacement is not forced for potentially repairable complaints; acoustic/thermal performance is not inferred from profile chamber count; `от` pricing cannot beat a complete comparable installed quote.

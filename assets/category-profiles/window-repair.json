@@ -12,7 +12,7 @@
   "lifecycle": {
     "research": "PASS",
     "expertModel": "PASS",
-    "testing": "ACTIVE",
+    "testing": "PASS",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -163,5 +163,21 @@
     "completedAt": "2026-09-12",
     "marketEvidence": "Moscow/MO repair offers reviewed",
     "result": "PASS"
+  },
+  "testing": {
+    "startedAt": "2026-09-12",
+    "qaRegression": "14/14 PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "manualReviewedAt": "2026-09-26"
+  },
+  "releaseGate": {
+    "status": "BLOCKED",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "productionDeploy": "PENDING",
+    "blocker": "PRODUCTION_LOCKED"
   }
 }
