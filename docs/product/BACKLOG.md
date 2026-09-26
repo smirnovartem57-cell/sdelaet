@@ -20,6 +20,8 @@ Current P1 sequence:
 
 `WINDOW_REPAIR` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; diagnostic-first and condensation safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
+`BALCONY_LEAK_REPAIR` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; source-localization, condensation and anti-masking safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
+
 ## SEO category expansion
 - ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.
 - ✅ Added canonical URLs, structured data, internal linking, sitemap and robots directives.
