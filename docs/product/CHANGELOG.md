@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — ELECTRICAL_INSTALLATION manual readiness review
+- Manually reviewed Intake, electrical-safety/responsibility boundaries, Contractor Brief, recommendation/comparison text and Action Layer.
+- No critical UX/safety finding: active sparking/burning-smell scenarios require expert review, cable/protection design remains electrician-owned, and offers without required protection/testing stay incomplete.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 148 000 ₽ offer selected over `от 95 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — BALCONY_LEAK_REPAIR manual readiness review
 - Manually reviewed Intake, diagnostic/source-localization warnings, Contractor Brief, recommendation/comparison text and Action Layer.
 - No critical UX/safety finding: water traces do not prove the source, condensation is not treated as an exterior leak, and masking symptoms with finishing/sealant before diagnosis is rejected.
