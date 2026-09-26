@@ -4,7 +4,7 @@
 
 Current operational state on 2026-09-26 is intentionally fail-closed:
 
-- GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`;
+- audit-start GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`; current exact `main` must be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
