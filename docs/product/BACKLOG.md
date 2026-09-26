@@ -16,6 +16,8 @@ Current P1 sequence:
 
 `BALCONY_GLAZING` manual text review was completed on 2026-09-26 with no critical UX/safety finding, and exact-main Platform Readiness passed. Its remaining blocker is the required production-deploy gate while production is locked; do not mark READY before that evidence exists.
 
+`WINDOW_REPLACEMENT` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; profile manual-review evidence is PASS. Its remaining READY blocker is also `productionDeploy = PASS`.
+
 ## SEO category expansion
 - ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.
 - ✅ Added canonical URLs, structured data, internal linking, sitemap and robots directives.

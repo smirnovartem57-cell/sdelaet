@@ -1,6 +1,6 @@
 # WINDOW_REPLACEMENT — Expert Model
 
-Lifecycle: `EXPERT_MODEL`
+Lifecycle: `TESTING`
 Profile: `assets/category-profiles/window-replacement.json`
 Research gate: PASS — 2026-09-12
 
@@ -90,5 +90,26 @@ Target launch geography: Moscow + Moscow Oblast. Shortlist 3, max 5. Required si
 ## Research evidence summary
 Current Rosstandart entries confirm ГОСТ 23166-2024 and ГОСТ 30971-2012. Moscow/MO offers reviewed show materially different bundling: some include dismantling, mounting, reveals, sill, flashing and disposal in `под ключ`, while others list sill/reveals/flashing/disposal as separate options. This confirms that normalization must compare explicit scope, not headline price.
 
-## Next gate
-Build category-specific parser/normalizer/follow-up, 12+ QA scenarios, realistic estimate set, search qualification regression and full E2E before `TESTING`.
+## Current lifecycle gate
+Category is in `TESTING`.
+
+Confirmed automated evidence:
+- category-specific parser / normalizer / follow-up implemented;
+- Expert QA: 14/14 PASS;
+- category E2E: PASS;
+- complete installed quote is comparable;
+- advertising `от` price remains non-comparable and requires clarification;
+- missing hardware and finishing elements trigger clarification;
+- replacement is not asserted when a draft/noise complaint may have a repairable cause.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: 5 primary actions, no professional questionnaire;
+- diagnostic framing — PASS: the service does not force full replacement when adjustment/seals/mounting joints may explain the complaint;
+- acoustic/thermal framing — PASS: no result is promised from profile chamber count alone;
+- Contractor Brief — PASS: profile, glass unit, hardware, installation, dismantling, finishing elements, exclusions, extra-cost triggers, warranty and contract terms are requested explicitly;
+- recommendation/comparison — PASS: full comparable quote wins over cheaper `от` headline; incomplete offer requires clarification;
+- Action Layer — PASS: final measurement and written scope/price fixation remain required before selection.
+
+No critical UX/safety finding.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` stays separate and requires representative/live verification.

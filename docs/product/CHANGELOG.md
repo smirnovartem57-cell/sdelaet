@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-26 — WINDOW_REPLACEMENT manual readiness review
+- Manually reviewed user-facing Intake, diagnostic warnings, Contractor Brief, recommendation/comparison text and Action Layer.
+- No critical UX/safety finding: replacement is not forced for potentially repairable complaints; acoustic/thermal performance is not inferred from profile chamber count; `от` pricing cannot beat a complete comparable installed quote.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — Clarified BALCONY_GLAZING READY gate
 - Exact-main Platform Readiness passed after the manual user-facing review.
 - Verified the lifecycle regression contract: any `READY` category requires `releaseGate.status = PASS`, `e2e = PASS` and `productionDeploy = PASS`.
