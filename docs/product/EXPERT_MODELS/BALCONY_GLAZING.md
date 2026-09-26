@@ -200,4 +200,4 @@ Manual user-facing review 2026-09-26:
 
 Критичных UX/safety замечаний не найдено.
 
-До `READY`: выполнить свежий полный readiness-run на актуальном `main`, подтвердить отсутствие регрессий shared runtime и зафиксировать explicit lifecycle promotion. `READY → ACTIVE` остаётся отдельным gate с representative/live verification.
+До `READY`: exact-main Platform Readiness уже подтверждён; остаётся обязательный canonical production deploy gate (`releaseGate.productionDeploy = PASS`) и последующая explicit lifecycle promotion. Пока production закрыт `PRODUCTION_LOCKED` и exact deploy не подтверждён, статус остаётся `TESTING`. `READY → ACTIVE` остаётся отдельным gate с representative/live verification.
