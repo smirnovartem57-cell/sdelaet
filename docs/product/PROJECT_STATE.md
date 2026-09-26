@@ -14,7 +14,7 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `BALCONY_FINISHING` — `TESTING`, profile v1.1.
 - `BALCONY_GLAZING` — `TESTING`, profile v1.1.
 - `BALCONY_INSULATION` — `READY`, reference category, profile v1.2.
-- `BALCONY_LEAK_REPAIR` — `TESTING`, profile v1.1.
+- `BALCONY_LEAK_REPAIR` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
 - `ELECTRICAL_INSTALLATION` — `TESTING`, profile v1.0.
 - `FLOORING_INSTALLATION` — `TESTING`, profile v1.0.
 - `INTERIOR_DOORS` — `TESTING`, profile v1.0.
@@ -103,6 +103,7 @@ Dev-time pipeline uses 9 independent roles: research, domain expert, intake, con
 - `BALCONY_GLAZING`: manual user-facing text review completed 2026-09-26; no critical issue found. Exact `main` Platform Readiness passed, but category promotion remains blocked while the required `productionDeploy` gate is not PASS. Keep `TESTING` until canonical production publication succeeds and the READY metadata is recorded explicitly.
 - `WINDOW_REPLACEMENT`: manual user-facing review completed 2026-09-26; no critical issue found. Profile testing evidence is now PASS; READY remains blocked by the same canonical production-deploy requirement.
 - `WINDOW_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Diagnostic-first, condensation and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
+- `BALCONY_LEAK_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Source-localization, condensation and anti-masking safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - Remaining seasonal TESTING categories still require the same manual-review + fresh-gate sequence.
 - Production publication remains fail-closed under `PUBLISH_POLICY.md`. For categories promoted to `READY`, the current lifecycle regression also requires `releaseGate.productionDeploy = PASS`, so a locked/unpublished production state is a category READY blocker.
 
