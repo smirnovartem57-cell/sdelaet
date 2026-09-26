@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — PLUMBING_WORKS manual readiness review
+- Manually reviewed Intake, emergency/riser warnings, Contractor Brief, normalization/follow-up, recommendation/comparison behavior and Action Layer.
+- No critical UX/safety finding: strong leaks require localization/shutoff and urgent inspection, riser/common-building work requires separate responsibility/approval checks, and the service does not invent pipe system/diameters/distribution scheme for the user.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 96 000 ₽ distribution offer selected over advertising `от 45 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — BALCONY_LEAK_REPAIR manual readiness review
 - Manually reviewed Intake, diagnostic/source-localization warnings, Contractor Brief, recommendation/comparison text and Action Layer.
 - No critical UX/safety finding: water traces do not prove the source, condensation is not treated as an exterior leak, and masking symptoms with finishing/sealant before diagnosis is rejected.

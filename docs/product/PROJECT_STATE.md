@@ -19,7 +19,7 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `FLOORING_INSTALLATION` — `TESTING`, profile v1.0.
 - `INTERIOR_DOORS` — `TESTING`, profile v1.0.
 - `MINOR_APARTMENT_REPAIR` — `TESTING`, profile v1.0.
-- `PLUMBING_WORKS` — `TESTING`, profile v1.0.
+- `PLUMBING_WORKS` — `TESTING`, profile v1.0; manual review PASS 2026-09-26, production deploy gate pending.
 - `RADIATOR_HEATING` — `TESTING`, profile v1.0.
 - `STRETCH_CEILING` — `TESTING`, profile v1.0.
 - `TILE_INSTALLATION` — `TESTING`, profile v1.0.
@@ -112,6 +112,7 @@ Dev-time pipeline uses 9 independent roles: research, domain expert, intake, con
 - `WINDOW_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Diagnostic-first, condensation and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `BALCONY_FINISHING`: manual user-facing review completed 2026-09-26; no critical issue found. Moisture, hidden-demolition/preparation and complete-scope safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `BALCONY_LEAK_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Source-localization, condensation and anti-masking safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
+- `PLUMBING_WORKS`: manual user-facing review completed 2026-09-26; no critical issue found. Emergency leak, riser/common-building responsibility, pressure-test and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - Remaining seasonal TESTING categories still require the same manual-review + fresh-gate sequence.
 - Production publication remains fail-closed under `PUBLISH_POLICY.md`. For categories promoted to `READY`, the current lifecycle regression also requires `releaseGate.productionDeploy = PASS`, so a locked/unpublished production state is a category READY blocker.
 
