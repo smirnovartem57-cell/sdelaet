@@ -20,7 +20,7 @@ Data/runtime state: `/var/lib/sdelaet`.
 Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.timer`.
 
 ### Operational snapshot — 2026-09-26
-- GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`.
+- Audit-start GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`; subsequent safe documentation/category merges advance `main`, so deploy must always re-read the current exact SHA.
 - Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
 - Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
