@@ -1,6 +1,6 @@
 # BALCONY_GLAZING — Expert Model
 
-Lifecycle: `EXPERT_MODEL`
+Lifecycle: `TESTING`
 Profile: `assets/category-profiles/balcony-glazing.json`
 Research completed: 2026-09-12
 
@@ -180,7 +180,24 @@ Search pool расширять глубже, shortlist пользователю 
 - производительские материалы подтверждают принцип выбора по назначению (холодное/тёплое), зависимость решения от профиля, стеклопакета и монтажа;
 - реальные московские предложения показывают отдельные строки демонтажа, усиления парапета, козырька/отлива, монтажа, доставки/вывоза и используют цены `от`, что требует нормализации.
 
-## 17. Следующий lifecycle gate
-`RESEARCH` завершён. Категория переводится в `EXPERT_MODEL`.
+## 17. Текущий lifecycle gate
+Категория находится в `TESTING`.
 
-До `TESTING` ещё обязательны: category-specific Offer Parser/Normalizer/Follow-up; минимум 12 QA сценариев; реалистичные сметы; search qualification regression; полноценный E2E.
+Подтверждено:
+- category-specific Offer Parser / Normalizer / Follow-up реализованы;
+- Expert QA: 14/14 PASS;
+- category E2E: PASS;
+- search qualification / production wiring regression: PASS;
+- дешёвая рекламная цена `от` не может победить полное сопоставимое предложение;
+- вынос/изменение геометрии переводится в `EXPERT_REVIEW_REQUIRED`.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: 5 первичных действий, без профессионального опросника;
+- warnings / technical framing — PASS: тёплое и холодное остекление не смешиваются, зимний режим не обещается только по бренду профиля;
+- Contractor Brief — PASS: запрашивает единый сопоставимый состав, исключения, доплаты, гарантию и альтернативы;
+- recommendation / comparison text — PASS: выбор объясняется подтверждённой сопоставимой комплектацией; неполная цена `от` требует уточнения;
+- Action Layer — PASS: финальный замер и письменная фиксация цены/состава требуются до выбора.
+
+Критичных UX/safety замечаний не найдено.
+
+До `READY`: выполнить свежий полный readiness-run на актуальном `main`, подтвердить отсутствие регрессий shared runtime и зафиксировать explicit lifecycle promotion. `READY → ACTIVE` остаётся отдельным gate с representative/live verification.
