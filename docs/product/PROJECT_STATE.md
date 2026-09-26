@@ -95,6 +95,13 @@ Category factory automation is active. `config/service-categories.json` is the c
 - v20 flow persists recognized photo geometry, automatic region, tariff/payment entitlement and paid navigation to candidates.
 - Company enrichment includes legal-identity discovery and FNS facts: status, registration, capital, employees, finance, MSP and published tax debt when available.
 
+## Go-to-market direction
+- First commercial acquisition stage: B2C only. B2B is postponed until the B2C model is validated by real usage and revenue.
+- Primary audiences: new-apartment owners, people starting/doing renovation, country-house owners/builders, users planning expensive point improvements, and users already comparing contractors/quotes and struggling to choose.
+- The current 71-category registry is a launch catalogue, not a ceiling. Category expansion is demand-led and should follow high-ticket / high-error-cost / opaque-market opportunities.
+- Marketing should target both service demand and decision-problem intent: compare estimates, understand scope, verify contractors, reduce choice risk.
+- Expansion beyond home/repair remains a future option when the same research/verification/comparison model is economically attractive.
+
 ## Category Production Agents
 Dev-time pipeline uses 9 independent roles: research, domain expert, intake, contractor brief, comparison, consistency, technical QA, regression and release controller. New categories are created with `tools/category-agents/create-category.mjs`; lifecycle promotion to `EXPERT_MODEL`/`TESTING` uses `promote-category.mjs`. External LLM is not a required dependency.
 
