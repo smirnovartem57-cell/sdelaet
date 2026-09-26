@@ -12,7 +12,7 @@
   "lifecycle": {
     "research": "PASS",
     "expertModel": "PASS",
-    "testing": "ACTIVE",
+    "testing": "PASS",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -180,6 +180,16 @@
   "testing": {
     "qa": "14/14 PASS",
     "e2e": "PASS",
-    "manualReview": "PENDING"
+    "manualReview": "PASS",
+    "manualReviewedAt": "2026-09-26"
+  },
+  "releaseGate": {
+    "status": "BLOCKED",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "productionDeploy": "PENDING",
+    "blocker": "PRODUCTION_LOCKED"
   }
 }
