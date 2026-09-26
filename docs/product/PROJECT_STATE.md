@@ -22,9 +22,9 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 ### Operational snapshot — 2026-09-26
 - GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`.
 - Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
-- Server deploy checkout is currently on `local-v20-ui`, not `main`.
+- Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
-- No production publication is authorized from this state.
+- No production publication is authorized from this state. The matching local ref reduces one uncertainty, but does not by itself prove public-webroot/application parity.
 - Before any deploy, production changes must be reconciled into Git, parity must be proven against the recorded baseline, concurrent work preserved, and the compare-and-swap guard from `PUBLISH_POLICY.md` must pass immediately before mutation.
 
 ## Category state
