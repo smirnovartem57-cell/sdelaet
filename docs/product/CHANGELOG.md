@@ -7,6 +7,13 @@
 - Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
 - Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
 
+## 2026-09-26 — BALCONY_LEAK_REPAIR manual readiness review
+- Manually reviewed Intake, diagnostic/source-localization warnings, Contractor Brief, recommendation/comparison text and Action Layer.
+- No critical UX/safety finding: water traces do not prove the source, condensation is not treated as an exterior leak, and masking symptoms with finishing/sealant before diagnosis is rejected.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete diagnosed 18 000 ₽ offer selected over `от 6 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — BALCONY_FINISHING manual readiness review
 - Manually reviewed Intake, moisture/hidden-work warnings, Contractor Brief, recommendation/comparison text and Action Layer.
 - No critical UX/safety finding: active dampness/leaks block comparable finishing, `под ключ` must disclose preparation/demolition/floor scope, and advertising `от` pricing cannot outrank a complete estimate.

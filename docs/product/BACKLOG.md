@@ -22,6 +22,8 @@ Current P1 sequence:
 
 `BALCONY_FINISHING` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; moisture, demolition/preparation and full-floor scope safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
+`BALCONY_LEAK_REPAIR` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; source-localization, condensation and anti-masking safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
+
 `ELECTRICAL_INSTALLATION` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; active-hazard, qualified-design and required protection/testing safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
 ## SEO category expansion
