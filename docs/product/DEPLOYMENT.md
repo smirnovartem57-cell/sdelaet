@@ -60,6 +60,15 @@ equals the workflow `GITHUB_SHA`.
 
 Do not reintroduce SSH-secret deployment unless the server-side deployment architecture is intentionally retired.
 
+## Production lock and parity
+
+Production publication is always subordinate to `docs/product/PUBLISH_POLICY.md`.
+
+- `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` means **do not publish**. It is a hard operational stop, not a warning.
+- A GitHub `main` SHA newer than `/var/lib/sdelaet/deploy/main.sha` is not permission to deploy.
+- Before any publication the canonical path must prove production parity against the recorded baseline, preserve concurrent work and pass the compare-and-swap guard immediately before mutation.
+- Product/documentation PRs may continue while production is locked; they must not unlock or publish production as a side effect.
+
 ## Diagnostics
 
 Run an immediate deployment check:
