@@ -37,7 +37,7 @@
 - canonical publication: `sdelaet-main-deploy.service` / `sdelaet-main-deploy.timer`;
 - production publication is fail-closed under `docs/product/PUBLISH_POLICY.md`.
 
-Операционный snapshot на 2026-09-26: production заблокирован файлом `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED`; GitHub `main` и recorded production baseline расходятся. Это означает **не публиковать** до отдельной reconciliation/parity-проверки. Документационные и feature-ветки могут готовиться параллельно, но не должны снимать lock или запускать deploy как побочный эффект.
+Операционный snapshot на 2026-09-26: production заблокирован файлом `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED`; GitHub `main` и recorded production baseline расходятся. Server checkout `local-v20-ui` сейчас указывает ровно на recorded baseline, то есть отдельного более нового локального commit поверх baseline не обнаружено. Это означает **не публиковать** до отдельной reconciliation/parity-проверки. Документационные и feature-ветки могут готовиться параллельно, но не должны снимать lock или запускать deploy как побочный эффект.
 
 ## Source of truth
 
