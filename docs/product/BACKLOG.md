@@ -35,6 +35,15 @@ Current P1 sequence:
 
 - ✅ Unknown in-domain tasks now use the universal home/repair scenario instead of a category dead-end; raw requests are recorded as taxonomy signals for future catalogue expansion.
 
+## Demand-led B2C expansion
+
+- B2C is the only acquisition focus for the first commercial stage; B2B is deferred until the B2C model is proven with revenue and real task completion.
+- Do not treat the current 71-service registry as a fixed product boundary.
+- Build the next category waves from demand and audience research, prioritizing high-ticket, high-error-cost, comparison-heavy and opaque markets.
+- Prioritize intent/situation clusters as well as service keywords: new apartment keys, active renovation, country-house ownership/building, expensive point improvements, multiple quotes/smetas, contractor comparison and uncertainty before purchase.
+- Every proposed new niche should be screened for: average ticket, cost of a wrong choice, choice complexity, market opacity, supplier density, verification value, demand and ability to reach the user before commitment.
+- Future expansion outside home/repair is allowed only when the same research → verify → normalize → compare → shortlist product value remains strong.
+
 ## Shared platform backlog
 - ✅ Implemented shared `GEO_CLASSIFIER`: rawGeo → canonical region/locality/stable IDs, with confirmed Moscow/MO aliases and explicit uncertainty for unresolved localities.
 - ✅ Extended the shared normalized offer schema with delivery, dismantling, contract terms, alternatives, uncertainties and missing items across all categories.
