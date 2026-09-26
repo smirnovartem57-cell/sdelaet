@@ -35,7 +35,7 @@ ok('homepage loads navigation taxonomy',index.includes('navigation-taxonomy.gene
 ok('task intake loads public category registry',createTask.includes('public-category-registry.generated.js'));
 ok('search core uses generated config',core.includes('category-config.generated.mjs'));
 
-const engineVersions=new Map([...categoryEngine.matchAll(/categories\\['([^']+)'\\]=\\{id:'[^']+',title:'[^']*',serviceCode:'([^']+)',profileVersion:'([^']+)'/g)].map((m)=>[m[1],{serviceCode:m[2],profileVersion:m[3]}]));
+const engineVersions=new Map([...categoryEngine.matchAll(/categories\['([^']+)'\]=\{id:'[^']+',title:'[^']*',serviceCode:'([^']+)',profileVersion:'([^']+)'/g)].map((m)=>[m[1],{serviceCode:m[2],profileVersion:m[3]}]));
 const publicMarker='window.sdPublicCategoryRegistry=';
 const publicStart=publicRegistry.indexOf(publicMarker);
 const publicEnd=publicRegistry.indexOf(';',publicStart);
