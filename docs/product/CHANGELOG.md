@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-26 — Clarified BALCONY_GLAZING READY gate
+- Exact-main Platform Readiness passed after the manual user-facing review.
+- Verified the lifecycle regression contract: any `READY` category requires `releaseGate.status = PASS`, `e2e = PASS` and `productionDeploy = PASS`.
+- Therefore BALCONY_GLAZING remains `TESTING` while production is locked/unpublished; no READY promotion is allowed until canonical production deploy evidence exists.
+- Corrected PROJECT_STATE/BACKLOG/Expert Model so documentation matches the executable lifecycle gate.
+
 ## 2026-09-26 — Product source-of-truth and BALCONY_GLAZING manual review
 - Updated README and backlog to the current 71-category/universal-task product model.
 - Replaced obsolete seasonal “research from scratch” backlog with the actual `TESTING → READY` sequence.
