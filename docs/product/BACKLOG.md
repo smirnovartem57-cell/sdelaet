@@ -15,14 +15,15 @@ For each of `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_F
 10. move status explicitly `RESEARCH → EXPERT_MODEL → TESTING → READY` only when gates pass.
 
 ## SEO category expansion
-- ✅ Generated indexable landing pages for 70 non-balcony-insulation categories from the canonical manifest.
+- ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.
 - ✅ Added canonical URLs, structured data, internal linking, sitemap and robots directives.
 - ✅ Expansion wave 1 added 11 categories for renovation, electrical, finishing, climate and plumbing demand.
 - ✅ Expansion wave 2 added 10 categories for private houses, roofs, foundations, facades, utilities and site work.
 - ✅ Expansion wave 3 added 10 categories for flooring, plumbing fixtures, heating systems, boilers and climate service.
 - ✅ Expansion wave 4 added 10 categories for windows, doors, locks and task-specific finishing.
 - Next: research and promote expansion categories through `EXPERT_MODEL` and `TESTING`; continue SEO expansion in separate waves.
-- `BALCONY_INSULATION` remains reserved for its parallel workstream.
+
+- ✅ Unknown in-domain tasks now use the universal home/repair scenario instead of a category dead-end; raw requests are recorded as taxonomy signals for future catalogue expansion.
 
 ## Shared platform backlog
 - ✅ Implemented shared `GEO_CLASSIFIER`: rawGeo → canonical region/locality/stable IDs, with confirmed Moscow/MO aliases and explicit uncertainty for unresolved localities.

@@ -1,6 +1,6 @@
 # PROJECT_STATE
 
-Updated: 2026-09-13
+Updated: 2026-09-26
 
 ## Product
 «Сделает» turns a plain-language household repair task into a short technically sufficient Contractor Brief, finds/qualifies contractors, normalizes offers and explains which option is actually comparable and preferable.
@@ -84,9 +84,16 @@ External LLM is optional behind the shared Expert Runtime; deterministic local e
 - `KITCHEN_BACKSPLASH_INSTALLATION` — `RESEARCH`, profile v0.1.
 
 ## Current focus
-Global SEO catalogue is generated from the category manifest for 70 service categories at `/uslugi/<category-id>/`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–4 added 41 high-demand task-specific categories in honest `RESEARCH` state, including private-house, site, flooring, plumbing, heating, climate, window, door and finishing work. `BALCONY_INSULATION` is deliberately excluded because it is being developed in a parallel workstream.
+Global SEO catalogue is generated from the category manifest for all 71 service categories at `/uslugi/<category-id>/`, including `BALCONY_INSULATION`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–4 added high-demand task-specific categories in honest `RESEARCH` state across private-house, site, flooring, plumbing, heating, climate, window, door and finishing work.
 
-Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment remains a separate infrastructure gate until FirstVDS SSH secrets are restored.
+Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass; manual review for TESTING categories remains deferred. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
+
+## Current public/product flow
+- Canonical service registry: 71 categories.
+- Unknown in-domain home/repair tasks use `universal-home-repair` instead of being blocked; they preserve free description, region, object/place, desired result and attachments, and are recorded as `unclassified_in_domain` taxonomy signals.
+- Public pricing is the newer two-tier model: `Подбор` — 990 ₽ (up to 5 candidates, one additional search) and `До выбора` — 2 590 ₽ (up to 15 candidates, repeat search within the task). Eligible repeat customers receive account-level 30% pricing (690 / 1 790 ₽); this is not a third public tariff.
+- v20 flow persists recognized photo geometry, automatic region, tariff/payment entitlement and paid navigation to candidates.
+- Company enrichment includes legal-identity discovery and FNS facts: status, registration, capital, employees, finance, MSP and published tax debt when available.
 
 ## Category Production Agents
 Dev-time pipeline uses 9 independent roles: research, domain expert, intake, contractor brief, comparison, consistency, technical QA, regression and release controller. New categories are created with `tools/category-agents/create-category.mjs`; lifecycle promotion to `EXPERT_MODEL`/`TESTING` uses `promote-category.mjs`. External LLM is not a required dependency.

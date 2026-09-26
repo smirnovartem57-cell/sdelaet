@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-26 — Universal unknown-task fallback and source-of-truth sync
+- Unknown in-domain home/repair requests no longer stop at “category not configured”; they continue through `universal-home-repair` with object/place, desired-result and region clarification while retaining attachments.
+- Removed the dangerous task-search fallback that could turn a missing category into `balcony-insulation`.
+- Unclassified requests are recorded through `/v1/taxonomy/signals` as `unclassified_in_domain` for catalogue expansion; taxonomy logging is fail-open and never blocks the user flow.
+- Updated product source-of-truth to the current 71-category registry, two-tier 990 / 2 590 ₽ commercial model, server-side deploy architecture, v20 paid flow and FNS/legal enrichment.
+- Extended the existing v20 regression to lock the universal flow and prevent balcony fallback regression.
+
+
 ## 2026-09-13 — STRETCH_CEILING moved to TESTING
 - Added deterministic routing, expert rules, parser, normalizer and follow-up.
 - QA 15/15 PASS; E2E PASS, complete 69 000 ₽ offer selected over headline price per m².
