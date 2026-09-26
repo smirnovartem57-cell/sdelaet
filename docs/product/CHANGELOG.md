@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — Product source-of-truth and BALCONY_GLAZING manual review
+- Updated README and backlog to the current 71-category/universal-task product model.
+- Replaced obsolete seasonal “research from scratch” backlog with the actual `TESTING → READY` sequence.
+- Completed manual review of BALCONY_GLAZING Intake, warnings, Contractor Brief, recommendation/comparison text and Action Layer: no critical UX/safety finding.
+- Kept BALCONY_GLAZING in `TESTING`; READY requires a fresh full readiness run on current `main` and explicit promotion.
+- Documented `PRODUCTION_LOCKED` as a hard no-publish condition independent from ongoing product/documentation development.
+
 ## 2026-09-26 — Universal unknown-task fallback and source-of-truth sync
 - Unknown in-domain home/repair requests no longer stop at “category not configured”; they continue through `universal-home-repair` with object/place, desired-result and region clarification while retaining attachments.
 - Removed the dangerous task-search fallback that could turn a missing category into `balcony-insulation`.

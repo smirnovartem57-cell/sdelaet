@@ -1,18 +1,19 @@
 # BACKLOG
 
-## P1 — seasonal category research
-For each of `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`:
+## P1 — finish TESTING → READY for priority categories
 
-1. complete category-specific RESEARCH with authoritative technical/manufacturer sources;
-2. collect representative Moscow/MO contractor offers and estimate structures;
-3. document price drivers, mandatory lines, hidden extras and non-comparable variants;
-4. define contractor search queries, qualification/exclusion/profile signals;
-5. complete Expert Model and full category specification;
-6. add category-specific normalization and follow-up rules;
-7. prepare at least 12 Expert QA scenarios;
-8. add parser/normalizer/comparison regressions and category E2E;
-9. manually review user-facing Intake, warnings, Contractor Brief and recommendation text;
-10. move status explicitly `RESEARCH → EXPERT_MODEL → TESTING → READY` only when gates pass.
+The seasonal package is no longer in research: `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING` and `BALCONY_LEAK_REPAIR` are already in `TESTING` with category-specific research, Expert Models, parser/normalizer/follow-up logic, QA and E2E coverage.
+
+Current P1 sequence:
+
+1. manually review user-facing Intake, warnings, Contractor Brief, recommendation and comparison text;
+2. re-run the full category readiness gate on the latest `main`;
+3. resolve any regression against the current shared offer/search runtime;
+4. record the manual-review evidence in the category Expert Model/profile;
+5. promote `TESTING → READY` explicitly only after the current gate passes;
+6. keep `READY → ACTIVE` separate and require representative/live product verification.
+
+`BALCONY_GLAZING` manual text review was completed on 2026-09-26 with no critical UX/safety finding; its next step is a fresh readiness run and explicit READY promotion.
 
 ## SEO category expansion
 - ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.

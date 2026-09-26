@@ -98,5 +98,11 @@ Category factory automation is active. `config/service-categories.json` is the c
 ## Category Production Agents
 Dev-time pipeline uses 9 independent roles: research, domain expert, intake, contractor brief, comparison, consistency, technical QA, regression and release controller. New categories are created with `tools/category-agents/create-category.mjs`; lifecycle promotion to `EXPERT_MODEL`/`TESTING` uses `promote-category.mjs`. External LLM is not a required dependency.
 
+## Current next work
+- Priority category lifecycle work is now `TESTING → READY`, not repeated research.
+- `BALCONY_GLAZING`: manual user-facing text review completed 2026-09-26; no critical issue found. Keep `TESTING` until a fresh full readiness run on current `main` passes and promotion is recorded explicitly.
+- Remaining seasonal TESTING categories still require the same manual-review + fresh-gate sequence.
+- Production publication is independent from category readiness and must remain fail-closed under `PUBLISH_POLICY.md`.
+
 ## Release discipline
 A category is not ready because a form, routing rule or expert function exists. Follow `docs/product/CATEGORY_LIFECYCLE.md` and category-specific production gates.
