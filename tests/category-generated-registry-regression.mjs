@@ -11,6 +11,9 @@ const state=read('../docs/product/PROJECT_STATE.md');
 const index=read('../index.html');
 const createTask=read('../create-task.html');
 const core=read('../search-api/core.mjs');
+const categoryEngine=read('../assets/category-engine.js');
+const windowRepairProfile=JSON.parse(read('../assets/category-profiles/window-repair.json'));
+const windowReplacementProfile=JSON.parse(read('../assets/category-profiles/window-replacement.json'));
 
 let fail=0,pass=0;
 function ok(name,value){console.log(value?'PASS':'FAIL',name);value?pass++:fail++}
@@ -32,6 +35,9 @@ for(const category of cats){
 ok('homepage loads navigation taxonomy',index.includes('navigation-taxonomy.generated.js')&&index.includes('sdNavigationTaxonomy'));
 ok('task intake loads public category registry',createTask.includes('public-category-registry.generated.js'));
 ok('search core uses generated config',core.includes('category-config.generated.mjs'));
+
+ok('window repair engine profile version matches profile',categoryEngine.includes(`serviceCode:'WINDOW_REPAIR',profileVersion:'${windowRepairProfile.profileVersion}'`));
+ok('window replacement engine profile version matches profile',categoryEngine.includes(`serviceCode:'WINDOW_REPLACEMENT',profileVersion:'${windowReplacementProfile.profileVersion}'`));
 
 if(fail)process.exit(1);
 console.log(`Generated registry regression: ${pass} PASS, 0 FAIL`);
