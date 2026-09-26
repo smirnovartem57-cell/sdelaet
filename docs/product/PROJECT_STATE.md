@@ -10,12 +10,29 @@ Domain: `CONSTRUCTION / HOME_REPAIR`.
 Launch geography: Moscow + Moscow Oblast; category logic must remain Russia-wide.
 External LLM is optional behind the shared Expert Runtime; deterministic local expert output remains authoritative on missing provider, timeout, error or invalid response.
 
+## Repository and production topology
+
+Canonical repository: `smirnovartem57-cell/sdelaet`.
+Production host: FirstVDS.
+Server deploy clone: `/home/sdelaet-runner/deploy-repo`.
+Application tree: `/opt/sdelaet/current`.
+Data/runtime state: `/var/lib/sdelaet`.
+Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.timer`.
+
+### Operational snapshot — 2026-09-26
+- GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`.
+- Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
+- Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
+- `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
+- No production publication is authorized from this state. The matching local ref reduces one uncertainty, but does not by itself prove public-webroot/application parity.
+- Before any deploy, production changes must be reconciled into Git, parity must be proven against the recorded baseline, concurrent work preserved, and the compare-and-swap guard from `PUBLISH_POLICY.md` must pass immediately before mutation.
+
 ## Category state
 - `BALCONY_FINISHING` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
 - `BALCONY_GLAZING` — `TESTING`, profile v1.1.
 - `BALCONY_INSULATION` — `READY`, reference category, profile v1.2.
 - `BALCONY_LEAK_REPAIR` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
-- `ELECTRICAL_INSTALLATION` — `TESTING`, profile v1.0.
+- `ELECTRICAL_INSTALLATION` — `TESTING`, profile v1.0; manual review PASS 2026-09-26, production deploy gate pending.
 - `FLOORING_INSTALLATION` — `TESTING`, profile v1.0.
 - `INTERIOR_DOORS` — `TESTING`, profile v1.0.
 - `MINOR_APARTMENT_REPAIR` — `TESTING`, profile v1.0.
@@ -105,6 +122,18 @@ Category factory automation is active. `config/service-categories.json` is the c
 ## Category Production Agents
 Dev-time pipeline uses 9 independent roles: research, domain expert, intake, contractor brief, comparison, consistency, technical QA, regression and release controller. New categories are created with `tools/category-agents/create-category.mjs`; lifecycle promotion to `EXPERT_MODEL`/`TESTING` uses `promote-category.mjs`. External LLM is not a required dependency.
 
+## Current operational priority
+
+P0 is production reconciliation, not category promotion:
+
+1. compare the running application/public webroot against recorded baseline `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
+2. identify server-only or newer production changes and preserve them in Git instead of overwriting them;
+3. reconcile the canonical GitHub `main` with the production-owned delta and all current parallel PRs;
+4. run Platform Readiness, Metrika regression and relevant product/category tests on the reconciled exact SHA;
+5. remove the production lock only as an explicit release step after parity is proven;
+6. publish through the canonical server-side deploy and verify post-deploy parity/exact SHA;
+7. only then use `productionDeploy = PASS` as evidence for further `TESTING → READY` promotions.
+
 ## Current next work
 - Priority category lifecycle work is now `TESTING → READY`, not repeated research.
 - `BALCONY_GLAZING`: manual user-facing text review completed 2026-09-26; no critical issue found. Exact `main` Platform Readiness passed, but category promotion remains blocked while the required `productionDeploy` gate is not PASS. Keep `TESTING` until canonical production publication succeeds and the READY metadata is recorded explicitly.
@@ -112,6 +141,7 @@ Dev-time pipeline uses 9 independent roles: research, domain expert, intake, con
 - `WINDOW_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Diagnostic-first, condensation and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `BALCONY_FINISHING`: manual user-facing review completed 2026-09-26; no critical issue found. Moisture, hidden-demolition/preparation and complete-scope safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `BALCONY_LEAK_REPAIR`: manual user-facing review completed 2026-09-26; no critical issue found. Source-localization, condensation and anti-masking safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
+- `ELECTRICAL_INSTALLATION`: manual user-facing review completed 2026-09-26; active-hazard escalation, electrician-owned design decisions and protection/testing completeness remain intact; READY remains blocked by canonical production-deploy evidence.
 - `PLUMBING_WORKS`: manual user-facing review completed 2026-09-26; no critical issue found. Emergency leak, riser/common-building responsibility, pressure-test and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - Remaining seasonal TESTING categories still require the same manual-review + fresh-gate sequence.
 - Production publication remains fail-closed under `PUBLISH_POLICY.md`. For categories promoted to `READY`, the current lifecycle regression also requires `releaseGate.productionDeploy = PASS`, so a locked/unpublished production state is a category READY blocker.

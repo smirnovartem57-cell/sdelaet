@@ -1,5 +1,28 @@
 # BACKLOG
 
+## P0 — reconcile production before any publication
+
+Current operational state on 2026-09-26 is intentionally fail-closed:
+
+- GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`;
+- recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
+- server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
+- `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
+
+Required sequence:
+
+1. prove production parity/drift against the recorded baseline for both `/opt/sdelaet/current` and public webroot; the local deploy branch already points at the baseline, but runtime/public parity still requires verification;
+2. preserve every production-only/newer change in Git before any overwrite;
+3. refresh/reconcile current feature/documentation/category work against the latest canonical `main`;
+4. run the full readiness + Metrika + relevant product/category regression set on the reconciled exact SHA;
+5. re-check baseline/parity immediately before mutation;
+6. explicitly remove the production lock only when the release is ready;
+7. publish through `sdelaet-main-deploy.service`;
+8. verify exact production SHA, site/API health and post-deploy parity;
+9. restore/confirm timer state.
+
+Until this P0 is complete, `productionDeploy = PASS` is unavailable and categories that require it must remain below READY.
+
 ## P1 — finish TESTING → READY for priority categories
 
 The seasonal package is no longer in research: `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING` and `BALCONY_LEAK_REPAIR` are already in `TESTING` with category-specific research, Expert Models, parser/normalizer/follow-up logic, QA and E2E coverage.
@@ -23,6 +46,8 @@ Current P1 sequence:
 `BALCONY_FINISHING` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; moisture, demolition/preparation and full-floor scope safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
 `BALCONY_LEAK_REPAIR` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; source-localization, condensation and anti-masking safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`ELECTRICAL_INSTALLATION` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; active-hazard, qualified-design and required protection/testing safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
 `PLUMBING_WORKS` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; emergency leak/riser handling, pressure testing and comparable-scope guards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 

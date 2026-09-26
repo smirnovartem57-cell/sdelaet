@@ -165,3 +165,28 @@ Research gate: PASS — 2026-09-12
 - что скрытая трасса проходит в предполагаемом месте;
 - что замена автомата устранит причину срабатывания;
 - что выполненные работы соответствуют требованиям, пока это не подтверждено исполнителем/измерениями.
+
+## 16. Current lifecycle gate
+
+Category is in `TESTING`.
+
+Confirmed automated evidence:
+- Expert QA: `14/14 PASS`;
+- category E2E: `PASS`;
+- a complete 148 000 ₽ rewiring/board offer is comparable and selected over an advertising `от 95 000 ₽` offer;
+- missing protection specification and post-install testing remain critical missing works;
+- sparking / burning-smell hazard is routed to `EXPERT_REVIEW_REQUIRED`;
+- recommendation, comparison explanation and Action Layer are generated only from comparable scope.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: task type, rough scope, room state, panel need and photos; the user is not asked to design the electrical system;
+- responsibility boundary — PASS: cable size, breaker rating, RCD/differential protection and PE suitability are explicitly left to a qualified electrician after inspection/calculation;
+- hazard framing — PASS: sparking, burning smell and similar active danger do not continue as an ordinary quote-comparison flow;
+- scope transparency — PASS: cable, routing/chasing, panel/protection, materials, testing and exclusions must be explicit;
+- Contractor Brief — PASS: points/lines, cable spec, route/chasing, panel/protection, measurements/testing, exclusions, extra costs, timing, warranty and terms are requested;
+- comparison — PASS: `от` pricing and offers without required protection/testing cannot outrank a complete comparable estimate;
+- Action Layer — PASS: next steps derive from the recommended comparable offer and do not replace electrician inspection/measurements.
+
+No critical UX/safety finding.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` stays separate and requires representative/live verification.
