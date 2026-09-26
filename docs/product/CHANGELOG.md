@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — RADIATOR_HEATING manual readiness review
+- Manually reviewed Intake, central-heating/riser warnings, emergency/relocation handling, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: active leak and radiator relocation require expert review, riser/management-company dependency is explicit, and offers without a complete comparable scope remain incomplete.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 42 000 ₽ offer selected over advertising `от 18 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — PLUMBING_WORKS manual readiness review
 - Manually reviewed Intake, emergency/riser warnings, Contractor Brief, normalization/follow-up, recommendation/comparison behavior and Action Layer.
 - No critical UX/safety finding: strong leaks require localization/shutoff and urgent inspection, riser/common-building work requires separate responsibility/approval checks, and the service does not invent pipe system/diameters/distribution scheme for the user.
