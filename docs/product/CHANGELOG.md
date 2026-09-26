@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-26 — BALCONY_FINISHING manual readiness review
+- Manually reviewed Intake, moisture/hidden-work warnings, Contractor Brief, recommendation/comparison text and Action Layer.
+- No critical UX/safety finding: active dampness/leaks block comparable finishing, `под ключ` must disclose preparation/demolition/floor scope, and advertising `от` pricing cannot outrank a complete estimate.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 72 000 ₽ offer selected over `от 35 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — WINDOW_REPAIR manual readiness review
 - Manually reviewed Intake, diagnostic framing, Contractor Brief, recommendation/comparison text and Action Layer.
 - No critical UX/safety finding: local faults do not force full replacement, condensation remains diagnostic-first, and advertising `от` pricing cannot outrank a complete diagnosed repair.
