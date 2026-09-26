@@ -6,12 +6,12 @@ Current operational state on 2026-09-26 is intentionally fail-closed:
 
 - GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
-- server deploy checkout: `local-v20-ui`;
+- server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
 
 Required sequence:
 
-1. prove production parity/drift against the recorded baseline for both `/opt/sdelaet/current` and public webroot;
+1. prove production parity/drift against the recorded baseline for both `/opt/sdelaet/current` and public webroot; the local deploy branch already points at the baseline, but runtime/public parity still requires verification;
 2. preserve every production-only/newer change in Git before any overwrite;
 3. refresh/reconcile current feature/documentation/category work against the latest canonical `main`;
 4. run the full readiness + Metrika + relevant product/category regression set on the reconciled exact SHA;
