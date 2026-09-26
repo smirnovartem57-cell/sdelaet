@@ -44,9 +44,28 @@ Research result: `PASS`
 ## Market evidence
 В московских предложениях отдельно встречаются герметизация балкона, межпанельных / фасадных швов, замена козырька, ремонт плиты и комплексный ремонт. Это подтверждает необходимость сравнения по диагностированному узлу, а не по общей категории услуги.
 
-## Testing gate
+## Current lifecycle gate
+Category is in `TESTING`.
+
+Confirmed automated evidence:
 - QA: `14/14 PASS`;
 - E2E: `PASS`;
-- дешёвая цена без диагноза блокируется;
-- конденсация не нормализуется как обычная наружная протечка;
-- `READY` остаётся заблокирован до ручной проверки пользовательских формулировок.
+- complete diagnosed 18 000 ₽ repair is comparable;
+- advertising `от 6 000 ₽` without diagnosis remains non-comparable and requires clarification;
+- facade/interpanel source is parsed separately from the upper visor/joint source;
+- condensation scenario is blocked from ordinary leak comparability when cause is not properly diagnosed;
+- recommendation, comparison explanation and Action Layer are generated only from comparable diagnosed scope.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: symptom, location, glazing, timing and photos keep the flow short and evidence-oriented;
+- diagnostic framing — PASS: visible water marks never prove the entry point; source localization precedes price comparison;
+- condensation safety — PASS: condensation is not treated as an exterior leak and cannot be “fixed with sealant” without humidity/ventilation diagnosis;
+- masking prevention — PASS: finishing over water/mould traces before fixing the cause is explicitly rejected;
+- Contractor Brief — PASS: diagnosis, localized node, diagnostics cost, total price, works/materials, exclusions, extra costs, timing and node-specific warranty are requested;
+- comparison — PASS: offers diagnosing different causes are not treated as equivalent; `от` pricing without diagnosed node cannot outrank a complete repair;
+- access/risk framing — PASS: facade/high-altitude access and possible extra cost remain explicit;
+- Action Layer — PASS: next steps are based on the recommended diagnosed comparable offer.
+
+No critical UX/safety finding.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` stays separate and requires representative/live verification.
