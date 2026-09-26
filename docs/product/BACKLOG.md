@@ -10,10 +10,11 @@ Current P1 sequence:
 2. re-run the full category readiness gate on the latest `main`;
 3. resolve any regression against the current shared offer/search runtime;
 4. record the manual-review evidence in the category Expert Model/profile;
-5. promote `TESTING → READY` explicitly only after the current gate passes;
-6. keep `READY → ACTIVE` separate and require representative/live product verification.
+5. require canonical production publication evidence (`releaseGate.productionDeploy = PASS`) before READY;
+6. promote `TESTING → READY` explicitly only after all current gates pass;
+7. keep `READY → ACTIVE` separate and require representative/live product verification.
 
-`BALCONY_GLAZING` manual text review was completed on 2026-09-26 with no critical UX/safety finding; its next step is a fresh readiness run and explicit READY promotion.
+`BALCONY_GLAZING` manual text review was completed on 2026-09-26 with no critical UX/safety finding, and exact-main Platform Readiness passed. Its remaining blocker is the required production-deploy gate while production is locked; do not mark READY before that evidence exists.
 
 ## SEO category expansion
 - ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.
