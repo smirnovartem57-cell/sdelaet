@@ -42,3 +42,31 @@ Domain: `CONSTRUCTION / HOME_REPAIR / HEATING`
 - отсутствие проверки герметичности после монтажа;
 - предложение без спецификации прибора и арматуры;
 - аварийная течь, которую пытаются оформить как обычный плановый монтаж.
+
+
+## Current lifecycle gate
+Category is in `TESTING`.
+
+Confirmed automated evidence:
+- category routing: PASS;
+- deterministic Expert QA: `14/14 PASS`;
+- full E2E: PASS;
+- complete 42 000 ₽ replacement offer is comparable and selected over advertising `от 18 000 ₽`;
+- advertising / incomplete offer remains `NEEDS_CLARIFICATION`;
+- relocation and active leak scenarios route to `EXPERT_REVIEW_REQUIRED`;
+- valves/riser/pressure-test omissions trigger clarification.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: task type, system type, quantity and riser work are requested in household language; the user is not asked to design the heating system;
+- central-heating framing — PASS: riser / management-company dependency is surfaced instead of hidden in a generic quote flow;
+- emergency framing — PASS: active leak does not continue as ordinary estimate comparison;
+- relocation framing — PASS: radiator relocation requires expert review before ordinary comparison;
+- Contractor Brief — PASS: radiator specification, connection scheme, valves, riser work, demolition/mounting, pressure test, exclusions, extras, timing and warranty are requested explicitly;
+- normalization — PASS: `от` pricing and offers without a confirmed comparable scope are not treated as confirmed total offers;
+- follow-up — PASS: missing valves and pressure-test information is asked from the contractor rather than invented;
+- recommendation/comparison — PASS: complete comparable scope outranks a cheaper incomplete headline price;
+- Action Layer — PASS by the shared recommendation pipeline after comparable winner selection.
+
+No critical UX/safety finding.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` remains separate and requires representative/live verification.
