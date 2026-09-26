@@ -12,8 +12,7 @@ const index=read('../index.html');
 const createTask=read('../create-task.html');
 const core=read('../search-api/core.mjs');
 const categoryEngine=read('../assets/category-engine.js');
-const windowRepairProfile=JSON.parse(read('../assets/category-profiles/window-repair.json'));
-const windowReplacementProfile=JSON.parse(read('../assets/category-profiles/window-replacement.json'));
+
 
 let fail=0,pass=0;
 function ok(name,value){console.log(value?'PASS':'FAIL',name);value?pass++:fail++}
@@ -36,8 +35,15 @@ ok('homepage loads navigation taxonomy',index.includes('navigation-taxonomy.gene
 ok('task intake loads public category registry',createTask.includes('public-category-registry.generated.js'));
 ok('search core uses generated config',core.includes('category-config.generated.mjs'));
 
-ok('window repair engine profile version matches profile',categoryEngine.includes(`serviceCode:'WINDOW_REPAIR',profileVersion:'${windowRepairProfile.profileVersion}'`));
-ok('window replacement engine profile version matches profile',categoryEngine.includes(`serviceCode:'WINDOW_REPLACEMENT',profileVersion:'${windowReplacementProfile.profileVersion}'`));
+const engineVersions=new Map([...categoryEngine.matchAll(/categories\\['([^']+)'\\]=\\{id:'[^']+',title:'[^']*',serviceCode:'([^']+)',profileVersion:'([^']+)'/g)].map((m)=>[m[1],{serviceCode:m[2],profileVersion:m[3]}]));
+const publicMarker='window.sdPublicCategoryRegistry=';
+const publicStart=publicRegistry.indexOf(publicMarker);
+const publicEnd=publicRegistry.indexOf(';',publicStart);
+const publicCategories=JSON.parse(publicRegistry.slice(publicStart+publicMarker.length,publicEnd));
+for(const category of publicCategories){
+  const engine=engineVersions.get(category.categoryId);
+  if(engine)ok('engine profile version '+category.categoryId,engine.serviceCode===category.serviceCode&&engine.profileVersion===category.profileVersion);
+}
 
 if(fail)process.exit(1);
 console.log(`Generated registry regression: ${pass} PASS, 0 FAIL`);
