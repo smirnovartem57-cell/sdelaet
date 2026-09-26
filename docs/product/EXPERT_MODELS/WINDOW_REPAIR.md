@@ -48,11 +48,29 @@ Research completed: 2026-09-12
 ## Research evidence
 Проверены актуальные предложения московского рынка: отдельно тарифицируются регулировка, уплотнитель, фурнитура, стеклопакеты, герметизация/монтажные швы и диагностика; часть цен указана «от» и уточняется после осмотра. Это подтверждает обязательность diagnostic-first normalization.
 
-## Testing gate
+## Current lifecycle gate
+Category is in `TESTING`.
+
+Confirmed automated evidence:
 - category routing: PASS;
 - deterministic Expert QA: PASS;
-- category-specific parser/normalizer/follow-up: PASS;
+- category-specific parser / normalizer / follow-up: PASS;
 - QA regression: `14/14 PASS`;
 - full E2E: PASS;
-- manual user-facing review: deferred;
-- READY: blocked.
+- complete diagnosed repair offer is comparable;
+- advertising `от` price remains non-comparable and triggers clarification;
+- condensation scenario without diagnosis is incomplete and cannot be treated as comparable;
+- Action Layer is produced for the recommended comparable offer.
+
+Manual user-facing review 2026-09-26:
+- Intake — PASS: symptom first, quantity, optional age/urgency, photo guidance; no professional questionnaire;
+- diagnostic framing — PASS: cause and repair type are established before comparing price;
+- replacement restraint — PASS: local problems do not trigger automatic full-window replacement;
+- condensation framing — PASS: condensation is not declared an inherent window defect without checking ventilation, humidity and temperature regime;
+- Contractor Brief — PASS: visit/diagnostics cost, diagnosis, repair type, included works/parts, exclusions, extra costs, timing, warranty and contract terms are requested explicitly;
+- recommendation/comparison — PASS: a complete 2 500 ₽ diagnosed repair beats an advertising `от 800 ₽` non-comparable offer;
+- Action Layer — PASS: next steps are generated only from the recommended comparable offer.
+
+No critical UX/safety finding.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` stays separate and requires representative/live verification.
