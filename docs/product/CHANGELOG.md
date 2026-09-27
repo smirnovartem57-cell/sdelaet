@@ -7,6 +7,13 @@
 - Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
 - Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
 
+## 2026-09-27 — INTERIOR_DOORS manual readiness review
+- Manually reviewed Intake, non-standard door-system framing, structural/opening boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: opening geometry changes require expert review, hidden/sliding/double systems remain separate from ordinary swing-door comparison, and incomplete headline pricing is not treated as a confirmed comparable offer.
+- Confirmed automated evidence: QA 15/15 PASS, E2E PASS, complete 28 500 ₽ offer selected over advertising `от 3 500 ₽ за дверь`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — RADIATOR_HEATING manual readiness review
 - Manually reviewed Intake, central-heating/riser warnings, emergency/relocation handling, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: active leak and radiator relocation require expert review, riser/management-company dependency is explicit, and offers without a complete comparable scope remain incomplete.
