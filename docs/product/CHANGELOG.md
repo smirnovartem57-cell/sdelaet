@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-27 — MINOR_APARTMENT_REPAIR manual readiness review
+- Manually reviewed Intake, handyman/profile-service boundary, heavy-mounting safeguards, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: engineering work is split into specialist categories, heavy mounting requires base/fixing verification, and incomplete `от` pricing is not treated as a confirmed comparable offer.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 8 500 ₽ offer selected over advertising `от 3 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-27 — INTERIOR_DOORS manual readiness review
 - Manually reviewed Intake, non-standard door-system framing, structural/opening boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: opening geometry changes require expert review, hidden/sliding/double systems remain separate from ordinary swing-door comparison, and incomplete headline pricing is not treated as a confirmed comparable offer.
