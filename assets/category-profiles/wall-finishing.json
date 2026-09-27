@@ -12,7 +12,7 @@
   "lifecycle": {
     "research": "PASS",
     "expertModel": "PASS",
-    "testing": "ACTIVE",
+    "testing": "PASS",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -66,5 +66,21 @@
     "completedAt": "2026-09-13",
     "marketEvidence": "Moscow/MO 2026 wall preparation, wallpaper and painting price structures reviewed; preparation, primer, putty, sanding, fiberglass and demolition are separate estimate items.",
     "result": "PASS"
+  },
+  "testing": {
+    "startedAt": "2026-09-13",
+    "qaRegression": "15/15 PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "manualReviewedAt": "2026-09-27"
+  },
+  "releaseGate": {
+    "status": "BLOCKED",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "productionDeploy": "PENDING",
+    "blocker": "PRODUCTION_LOCKED"
   }
 }
