@@ -4,7 +4,7 @@
 
 Current operational state on 2026-09-27 is intentionally fail-closed:
 
-- documentation-sync GitHub `main`: `d9e0c28a4aa93122d08b00a9332b7469f5b1a685` (after PR #87); this is non-authoritative and current exact `main` must be re-read immediately before release;
+- documentation-sync GitHub `main`: `6b138321b3a6fa4369a94a53f17367e13d4ad630` (through PR #89); this is non-authoritative and current exact `main` must be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
@@ -55,10 +55,17 @@ Current P1 sequence:
 
 `INTERIOR_DOORS` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 15/15 and E2E PASS; non-standard door systems and structural opening changes remain correctly gated. Its remaining READY blocker is `productionDeploy = PASS`.
 
-Next manual-review queue after the nine completed reviews:
-1. `MINOR_APARTMENT_REPAIR` — P1;
-2. `WALL_FINISHING` — P1;
-3. then remaining TESTING categories by lifecycle priority, with P1 before P2.
+`MINOR_APARTMENT_REPAIR` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 14/14 and E2E PASS; handyman/profile-service separation and heavy-mounting safeguards remain intact. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`WALL_FINISHING` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 15/15 and E2E PASS; moisture/mold handling, preparation scope and old-covering demolition remain correctly gated. Its remaining READY blocker is `productionDeploy = PASS`.
+
+Next manual-review queue after the eleven completed reviews:
+1. `WALL_PLASTERING` — P1;
+2. `FLOOR_SCREED` — P1;
+3. `DRYWALL_PARTITIONS` — P1;
+4. `SOUNDPROOFING` — P1;
+5. `BATHROOM_WATERPROOFING` — P1;
+6. then remaining TESTING categories by lifecycle priority, with P1 before P2.
 
 For each category: review user-facing Intake/warnings/Contractor Brief/comparison wording, re-run category QA/E2E on fresh `main`, record evidence, and keep status below READY until canonical `productionDeploy = PASS`.
 
