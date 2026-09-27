@@ -20,7 +20,7 @@ Data/runtime state: `/var/lib/sdelaet`.
 Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.timer`.
 
 ### Operational snapshot — 2026-09-27
-- Documentation-sync GitHub `main`: `d9e0c28a4aa93122d08b00a9332b7469f5b1a685` (PR #87 merged); this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
+- Documentation-sync GitHub `main`: `6b138321b3a6fa4369a94a53f17367e13d4ad630` (through PR #89); this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
 - Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
 - Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
@@ -35,12 +35,12 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 - `ELECTRICAL_INSTALLATION` — `TESTING`, profile v1.0; manual review PASS 2026-09-26, production deploy gate pending.
 - `FLOORING_INSTALLATION` — `TESTING`, profile v1.0.
 - `INTERIOR_DOORS` — `TESTING`, profile v1.0; manual review PASS 2026-09-27, production deploy gate pending.
-- `MINOR_APARTMENT_REPAIR` — `TESTING`, profile v1.0.
+- `MINOR_APARTMENT_REPAIR` — `TESTING`, profile v1.0; manual review PASS 2026-09-27, production deploy gate pending.
 - `PLUMBING_WORKS` — `TESTING`, profile v1.0; manual review PASS 2026-09-26, production deploy gate pending.
 - `RADIATOR_HEATING` — `TESTING`, profile v1.0; manual review PASS 2026-09-26, production deploy gate pending.
 - `STRETCH_CEILING` — `TESTING`, profile v1.0.
 - `TILE_INSTALLATION` — `TESTING`, profile v1.0.
-- `WALL_FINISHING` — `TESTING`, profile v1.0.
+- `WALL_FINISHING` — `TESTING`, profile v1.0; manual review PASS 2026-09-27, production deploy gate pending.
 - `WINDOW_REPAIR` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
 - `WINDOW_REPLACEMENT` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
 - `WALL_PLASTERING` — `TESTING`, profile v0.2.
@@ -103,7 +103,7 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 ## Current focus
 Global SEO catalogue is generated from the category manifest for all 71 service categories at `/uslugi/<category-id>/`, including `BALCONY_INSULATION`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–4 added high-demand task-specific categories in honest `RESEARCH` state across private-house, site, flooring, plumbing, heating, climate, window, door and finishing work.
 
-Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING` and `INTERIOR_DOORS`; these categories remain `TESTING` because canonical `productionDeploy = PASS` is unavailable while production is locked. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
+Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING`, `INTERIOR_DOORS`, `MINOR_APARTMENT_REPAIR` and `WALL_FINISHING`; these categories remain `TESTING` because canonical `productionDeploy = PASS` is unavailable while production is locked. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
 
 ## Current public/product flow
 - Canonical service registry: 71 categories.
@@ -145,7 +145,9 @@ P0 is production reconciliation, not category promotion:
 - `PLUMBING_WORKS`: manual user-facing review completed 2026-09-26; no critical issue found. Emergency leak, riser/common-building responsibility, pressure-test and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `RADIATOR_HEATING`: manual user-facing review completed 2026-09-26; emergency leak, relocation, riser/central-heating dependency and pressure-test safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
 - `INTERIOR_DOORS`: manual user-facing review completed 2026-09-27; non-standard door systems, structural opening changes, mandatory door-block/furniture scope and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
-- Next P1 manual-review queue: `MINOR_APARTMENT_REPAIR`, `WALL_FINISHING`, then the remaining P1/P2 TESTING categories using the same manual-review + fresh-gate sequence.
+- `MINOR_APARTMENT_REPAIR`: manual user-facing review completed 2026-09-27; handyman/profile-service boundary, heavy-mounting safeguards, minimum-visit and comparable-scope requirements remain intact; READY remains blocked by canonical production-deploy evidence.
+- `WALL_FINISHING`: manual user-facing review completed 2026-09-27; preparation/finish-quality boundaries, moisture/mold expert-review, old-covering demolition and non-comparable `от` pricing safeguards remain intact; READY remains blocked by canonical production-deploy evidence.
+- Next P1 manual-review queue: `WALL_PLASTERING`, `FLOOR_SCREED`, `DRYWALL_PARTITIONS`, `SOUNDPROOFING`, `BATHROOM_WATERPROOFING`, then remaining TESTING categories by priority.
 - Production publication remains fail-closed under `PUBLISH_POLICY.md`. For categories promoted to `READY`, the current lifecycle regression also requires `releaseGate.productionDeploy = PASS`, so a locked/unpublished production state is a category READY blocker.
 
 ## Release discipline
