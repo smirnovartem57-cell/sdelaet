@@ -2,9 +2,9 @@
 
 ## P0 — reconcile production before any publication
 
-Current operational state on 2026-09-26 is intentionally fail-closed:
+Current operational state on 2026-09-27 is intentionally fail-closed:
 
-- audit-start GitHub `main`: `298e27a88719d9d696007092ada14f7ecbfb6ab7`; current exact `main` must be re-read immediately before release;
+- documentation-sync GitHub `main`: `d9e0c28a4aa93122d08b00a9332b7469f5b1a685` (after PR #87); this is non-authoritative and current exact `main` must be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
@@ -52,6 +52,15 @@ Current P1 sequence:
 `PLUMBING_WORKS` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; emergency leak/riser handling, pressure testing and comparable-scope guards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
 `RADIATOR_HEATING` manual text review was completed on 2026-09-26 with no critical UX/safety finding. QA 14/14 and E2E remain PASS; emergency leak, relocation, riser/central-heating dependency and pressure-test safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`INTERIOR_DOORS` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 15/15 and E2E PASS; non-standard door systems and structural opening changes remain correctly gated. Its remaining READY blocker is `productionDeploy = PASS`.
+
+Next manual-review queue after the nine completed reviews:
+1. `MINOR_APARTMENT_REPAIR` — P1;
+2. `WALL_FINISHING` — P1;
+3. then remaining TESTING categories by lifecycle priority, with P1 before P2.
+
+For each category: review user-facing Intake/warnings/Contractor Brief/comparison wording, re-run category QA/E2E on fresh `main`, record evidence, and keep status below READY until canonical `productionDeploy = PASS`.
 
 ## SEO category expansion
 - ✅ Generated indexable landing pages for all 71 categories from the canonical manifest.
