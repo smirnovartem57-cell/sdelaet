@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-27 — WALL_PLASTERING manual readiness review
+- Manually reviewed Intake, measurement/finish-quality boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: final layer thickness remains a site-inspection fact, old weak plaster demolition must be explicit, paint preparation is not treated as basic plastering, and per-m² / `от` pricing without confirmed scope is not comparable.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 92 000 ₽ offer selected over advertising `от 350 ₽/м²`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-27 — WALL_FINISHING manual readiness review
 - Manually reviewed Intake, preparation/finish-quality boundaries, moisture handling, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: active dampness/mold requires expert review, old covering demolition must be explicit, high-quality paint preparation is not treated as ordinary finish scope, and incomplete `от` pricing is not treated as a confirmed comparable offer.
