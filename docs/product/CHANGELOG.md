@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-27 — MINOR_APARTMENT_REPAIR manual readiness review
+- Manually reviewed Intake, handyman/profile-service boundary, heavy-mounting safeguards, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: engineering work is split into specialist categories, heavy mounting requires base/fixing verification, and incomplete `от` pricing is not treated as a confirmed comparable offer.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 8 500 ₽ offer selected over advertising `от 3 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-26 — RADIATOR_HEATING manual readiness review
 - Manually reviewed Intake, central-heating/riser warnings, emergency/relocation handling, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: active leak and radiator relocation require expert review, riser/management-company dependency is explicit, and offers without a complete comparable scope remain incomplete.
