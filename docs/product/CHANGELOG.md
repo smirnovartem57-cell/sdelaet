@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-27 — WALL_FINISHING manual readiness review
+- Manually reviewed Intake, preparation/finish-quality boundaries, moisture handling, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: active dampness/mold requires expert review, old covering demolition must be explicit, high-quality paint preparation is not treated as ordinary finish scope, and incomplete `от` pricing is not treated as a confirmed comparable offer.
+- Confirmed automated evidence: QA 15/15 PASS, E2E PASS, complete 76 000 ₽ offer selected over advertising `от 18 000 ₽`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-27 — MINOR_APARTMENT_REPAIR manual readiness review
 - Manually reviewed Intake, handyman/profile-service boundary, heavy-mounting safeguards, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: engineering work is split into specialist categories, heavy mounting requires base/fixing verification, and incomplete `от` pricing is not treated as a confirmed comparable offer.
