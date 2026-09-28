@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const server=readFileSync(new URL('../src/server.mjs',import.meta.url),'utf8');
+const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url),'utf8');
+assert.match(server,/USE_ACCOUNT_OUTREACH_AUTHORIZATION/);
+assert.doesNotMatch(server,/req\.url==='\/v1\/outreach\/authorize'\)\{try\{/);
+assert.match(account,/owner\(email,taskId\)/);
+assert.match(account,/PAID_ENTITLEMENT_REQUIRED/);
+assert.match(account,/outreach-authorize/);
+console.log('Outreach account authorization boundary: PASS');
