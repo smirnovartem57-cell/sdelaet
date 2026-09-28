@@ -4,7 +4,7 @@
 
 Current operational state on 2026-09-28 is intentionally fail-closed:
 
-- GitHub `main` after WALL_PLASTERING manual-review merge: `c34b1fcd1aa2769ea474ace3cbe611080b8b264e`; current exact `main` must still be re-read immediately before release;
+- GitHub `main` after SOUNDPROOFING manual-review merge: `ad979213ae8a4f1d437df2033faa30536c222e4e`; current exact `main` must still be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
@@ -61,13 +61,18 @@ Current P1 sequence:
 
 `WALL_PLASTERING` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 14/14 and E2E PASS; site-measured geometry/thickness, old-layer demolition, paint-preparation scope and non-comparable advertising-price safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
-Next manual-review queue after the eleven completed reviews:
-1. `WALL_PLASTERING` — P1;
-2. `FLOOR_SCREED` — P1;
-3. `DRYWALL_PARTITIONS` — P1;
-4. `SOUNDPROOFING` — P1;
-5. `BATHROOM_WATERPROOFING` — P1;
-6. then remaining TESTING categories by lifecycle priority, with P1 before P2.
+`FLOOR_SCREED` manual text review was completed on 2026-09-28 with no critical UX/safety finding. QA 14/14 and E2E PASS; thickness/geometry remain site-measurement facts, old screed demolition stays explicit, and incomplete per-m² / `от` pricing remains non-comparable. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`DRYWALL_PARTITIONS` manual text review was completed on 2026-09-28 with no critical UX/safety finding. QA 14/14 and E2E PASS; frame/profile, stud spacing, board-layer configuration and wet-room protection remain explicit comparison/safety facts. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`SOUNDPROOFING` manual text review was completed on 2026-09-28 with no critical UX/safety finding. QA 14/14 and E2E PASS; airborne/impact-noise diagnosis remains distinct, actual acoustic effect stays measurement-dependent, and incomplete per-m² / `от` pricing remains non-comparable. Its remaining READY blocker is `productionDeploy = PASS`.
+
+Next manual-review queue after the fifteen completed reviews:
+1. `BATHROOM_WATERPROOFING` — P1;
+2. `UNDERFLOOR_HEATING` — P1;
+3. `ENTRANCE_DOORS` — P1;
+4. `DEMOLITION_WORKS` — P1;
+5. then remaining TESTING categories by lifecycle priority, with P1 before P2.
 
 For each category: review user-facing Intake/warnings/Contractor Brief/comparison wording, re-run category QA/E2E on fresh `main`, record evidence, and keep status below READY until canonical `productionDeploy = PASS`.
 
