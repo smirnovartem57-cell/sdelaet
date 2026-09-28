@@ -20,7 +20,7 @@ Data/runtime state: `/var/lib/sdelaet`.
 Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.timer`.
 
 ### Operational snapshot — 2026-09-28
-- GitHub `main` after SOUNDPROOFING manual-review merge: `ad979213ae8a4f1d437df2033faa30536c222e4e`; this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
+- GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
 - Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
 - Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
@@ -47,7 +47,7 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 - `FLOOR_SCREED` — `TESTING`, profile v0.2; manual review PASS 2026-09-28, production deploy gate pending.
 - `DRYWALL_PARTITIONS` — `TESTING`, profile v0.2; manual review PASS 2026-09-28, production deploy gate pending.
 - `SOUNDPROOFING` — `TESTING`, profile v0.2; manual review PASS 2026-09-28, production deploy gate pending.
-- `BATHROOM_WATERPROOFING` — `TESTING`, profile v0.2.
+- `BATHROOM_WATERPROOFING` — `TESTING`, profile v0.2; manual review PASS 2026-09-28, production deploy gate pending.
 - `UNDERFLOOR_HEATING` — `TESTING`, profile v0.2.
 - `ENTRANCE_DOORS` — `TESTING`, profile v0.2.
 - `DEMOLITION_WORKS` — `TESTING`, profile v0.2.
@@ -103,7 +103,7 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 ## Current focus
 Global SEO catalogue is generated from the category manifest for all 71 service categories at `/uslugi/<category-id>/`, including `BALCONY_INSULATION`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–4 added high-demand task-specific categories in honest `RESEARCH` state across private-house, site, flooring, plumbing, heating, climate, window, door and finishing work.
 
-Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING`, `INTERIOR_DOORS`, `MINOR_APARTMENT_REPAIR`, `WALL_FINISHING`, `WALL_PLASTERING`, `FLOOR_SCREED`, `DRYWALL_PARTITIONS` and `SOUNDPROOFING`; these categories remain `TESTING` because canonical `productionDeploy = PASS` is unavailable while production is locked. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
+Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING`, `INTERIOR_DOORS`, `MINOR_APARTMENT_REPAIR`, `WALL_FINISHING`, `WALL_PLASTERING`, `FLOOR_SCREED`, `DRYWALL_PARTITIONS`, `SOUNDPROOFING` and `BATHROOM_WATERPROOFING`; these categories remain `TESTING` because canonical `productionDeploy = PASS` is unavailable while production is locked. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
 
 ## Current public/product flow
 - Canonical service registry: 71 categories.
@@ -151,7 +151,8 @@ P0 is production reconciliation, not category promotion:
 - `FLOOR_SCREED`: manual user-facing review completed 2026-09-28; thickness/geometry remain site-measurement facts, old screed demolition must be explicit, and per-m² / `от` pricing without confirmed thickness/scope remains non-comparable. READY remains blocked by canonical production-deploy evidence.
 - `DRYWALL_PARTITIONS`: manual user-facing review completed 2026-09-28; frame/profile, stud spacing and board-layer configuration remain explicit comparison facts, wet-room protection remains required, and incomplete per-m² pricing remains non-comparable. READY remains blocked by canonical production-deploy evidence.
 - `SOUNDPROOFING`: manual user-facing review completed 2026-09-28; airborne/impact-noise diagnosis remains distinct, real acoustic effect stays measurement-dependent, and pricing without system composition/thickness remains non-comparable. READY remains blocked by canonical production-deploy evidence.
-- Next P1 manual-review queue: `BATHROOM_WATERPROOFING`, `UNDERFLOOR_HEATING`, `ENTRANCE_DOORS`, `DEMOLITION_WORKS`, then remaining TESTING categories by priority.
+- `BATHROOM_WATERPROOFING`: manual user-facing review completed 2026-09-28 after closing the control-test follow-up gap; 15/15 QA and E2E PASS, watertightness remains dependent on a real control test, and incomplete per-m² / `от` pricing remains non-comparable. READY remains blocked by canonical production-deploy evidence.
+- Next P1 manual-review queue: `UNDERFLOOR_HEATING`, `ENTRANCE_DOORS`, `DEMOLITION_WORKS`, `BATHROOM_RENOVATION`, then remaining TESTING categories by priority.
 - Production publication remains fail-closed under `PUBLISH_POLICY.md`. For categories promoted to `READY`, the current lifecycle regression also requires `releaseGate.productionDeploy = PASS`, so a locked/unpublished production state is a category READY blocker.
 
 ## Release discipline
