@@ -1,5 +1,5 @@
 name: Deploy Search API to FirstVDS
-# retrigger 2026-09-28 after restoring workflow
+# native GitHub merge trigger 2026-09-28
 
 concurrency:
   group: sdelaet-search-api-production
