@@ -110,7 +110,7 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   if(!old)db.prepare("INSERT INTO tasks(task_id,client_id_crm,service_id,service_name,city,description,task_json,status,created_at,updated_at,last_completed_stage) VALUES(?,NULL,?,?,?,?,?,'draft',?,?,NULL)").run(id,text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),ts,ts);
   else db.prepare('UPDATE tasks SET service_id=?,service_name=?,city=?,description=?,task_json=?,status=?,updated_at=? WHERE task_id=?').run(text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),['draft',''].includes(text(old.status))?'draft':old.status,ts,id);
   db.prepare('INSERT INTO customer_task_owners(task_id,email,created_at,updated_at) VALUES(?,?,?,?) ON CONFLICT(task_id) DO UPDATE SET email=excluded.email,updated_at=excluded.updated_at').run(id,email,ts,ts);
-  saveAttributionSnapshot(id,t.attribution||t._attribution||null);
+  const attr=saveAttributionSnapshot(id,t.attribution||t._attribution||null);
   return detail(email,id)
  }
  function profile(email){const r=db.prepare('SELECT region,geo_json,updated_at FROM customer_profiles WHERE email=?').get(email);return{email,region:r?.region||'',geo:r?.geo_json?parse(r.geo_json,null):null,updatedAt:r?.updated_at||null}}
@@ -121,7 +121,9 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   const taskPay=taskPayments(email,id);if(taskPay.some(x=>x.status==='paid')){const e=new Error('TASK_ALREADY_PAID');e.status=409;throw e}
   const existing=taskPay.find(x=>x.status==='pending'&&basePlan(x.plan)===tariff&&x.paymentUrl);if(existing)return{ok:true,reused:true,orderId:existing.id,paymentUrl:existing.paymentUrl,plan:tariff,amount:Number(existing.amount),regularAmount:Number(existing.regularAmount||T[tariff].regular),priceType:existing.priceType||(repeatPlan(existing.plan)?'repeat':'regular')};
   const pr=pricing(email),rep=pr.repeatDiscount.eligible,plan=rep?tariff+'_repeat':tariff;
-  const rr=await fetch(paymentApiUrl+'/v1/payments',{method:'POST',headers:{'content-type':'application/json','cookie':text(req.headers.cookie)},body:JSON.stringify({plan,taskId:id,email})}),d=await rr.json().catch(()=>({}));
+  const attr=taskAttribution(id);
+  const taskRow=db.prepare('SELECT service_id,service_name,city,created_at FROM tasks WHERE task_id=?').get(id)||{};
+  const rr=await fetch(paymentApiUrl+'/v1/payments',{method:'POST',headers:{'content-type':'application/json','cookie':text(req.headers.cookie)},body:JSON.stringify({plan,taskId:id,email,ymClientId:attr?.ym_client_id||'',attribution:attr||null,serviceId:taskRow.service_id||'',serviceName:taskRow.service_name||'',city:taskRow.city||''})}),d=await rr.json().catch(()=>({}));
   if(!rr.ok||!d.ok){const e=new Error(d.error||'PAYMENT_LINK_FAILED');e.status=rr.status||500;throw e}
   return{ok:true,reused:false,orderId:d.orderId,paymentUrl:d.paymentUrl,plan:tariff,amount:pr.tariffs[tariff].amount,regularAmount:pr.tariffs[tariff].regularAmount,priceType:rep?'repeat':'regular'}
  }
