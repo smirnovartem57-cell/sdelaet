@@ -7,6 +7,10 @@ concurrency:
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'search-api/**'
+      - '.github/workflows/deploy-search-api.yml'
   push:
     branches: [main]
     paths:
@@ -15,14 +19,18 @@ on:
 
 jobs:
   deploy:
+    if: github.event_name != 'pull_request' || (github.actor == 'smirnovartem57-cell' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       VDS_HOST: ${{ secrets.VDS_HOST }}
       VDS_USER: ${{ secrets.VDS_USER }}
       VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -49,8 +57,8 @@ jobs:
         run: |
           set -euo pipefail
           tar -czf /tmp/search-api.tgz search-api
-          scp -q /tmp/search-api.tgz "$VDS_USER@$VDS_HOST:/tmp/sdelaet-search-api-$GITHUB_SHA.tgz"
-          ssh "$VDS_USER@$VDS_HOST" "EXPECTED_SHA='$GITHUB_SHA' ARCHIVE='/tmp/sdelaet-search-api-$GITHUB_SHA.tgz' bash -s" <<'REMOTE'
+          scp -q /tmp/search-api.tgz "$VDS_USER@$VDS_HOST:/tmp/sdelaet-search-api-$SOURCE_SHA.tgz"
+          ssh "$VDS_USER@$VDS_HOST" "EXPECTED_SHA='$SOURCE_SHA' ARCHIVE='/tmp/sdelaet-search-api-$SOURCE_SHA.tgz' bash -s" <<'REMOTE'
           set -euo pipefail
           TARGET=/opt/sdelaet/search-api
           STATE=/var/lib/sdelaet/deploy/search-api.sha
