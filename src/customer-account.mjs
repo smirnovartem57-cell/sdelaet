@@ -1,3 +1,4 @@
+import { listTaskOffers, getOfferDialogueHistory } from './offer-pipeline.mjs';
 import fs from 'node:fs';
 
 const T={
@@ -22,7 +23,7 @@ function safeGeo(v,regionFallback=''){
 }
 function body(req,max=524288){return new Promise((ok,fail)=>{let n=0,a=[];req.on('data',c=>{n+=c.length;if(n>max){fail(Object.assign(new Error('PAYLOAD_TOO_LARGE'),{status:413}));req.destroy();return}a.push(c)});req.on('end',()=>{try{ok(JSON.parse(Buffer.concat(a).toString('utf8')||'{}'))}catch{fail(Object.assign(new Error('BAD_JSON'),{status:400}))}});req.on('error',fail)})}
 
-export function createCustomerAccount({db,customerAuth,sendJson,paymentStoreFile=process.env.PAYMENT_STORE_FILE||'/var/lib/sdelaet-payments/orders.json',paymentApiUrl='http://127.0.0.1:8790'}){
+export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreach=null,paymentStoreFile=process.env.PAYMENT_STORE_FILE||'/var/lib/sdelaet-payments/orders.json',paymentApiUrl='http://127.0.0.1:8790'}){
  db.exec(
   'CREATE TABLE IF NOT EXISTS customer_task_owners(task_id TEXT PRIMARY KEY,email TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'+
   'CREATE INDEX IF NOT EXISTS idx_customer_task_owners_email ON customer_task_owners(email,updated_at);'+
@@ -81,10 +82,12 @@ export function createCustomerAccount({db,customerAuth,sendJson,paymentStoreFile
  function detail(email,id){
   owner(email,id);const row=db.prepare('SELECT * FROM tasks WHERE task_id=?').get(id);if(!row){const e=new Error('TASK_NOT_FOUND');e.status=404;throw e}
   const s=aggregate(email,row),latest=db.prepare("SELECT id FROM search_runs WHERE task_id=? AND status='ok' ORDER BY created_at DESC LIMIT 1").get(id),paid=s.payment?.status==='paid';let candidates=[];
-  if(paid&&latest){const lim=T[s.payment.plan]?.limit||5;candidates=db.prepare('SELECT candidate_id,type,name,match_level,website,phone,address,raw_json FROM candidates WHERE run_id=? ORDER BY rowid LIMIT ?').all(latest.id,lim).map(x=>{const r=parse(x.raw_json,{});return{id:x.candidate_id,type:x.type,name:x.name,matchLevel:x.match_level,website:x.website,phone:x.phone,address:x.address,why:Array.isArray(r.rankReasons)?r.rankReasons:(r.reason?[r.reason]:[])}})}
-  const replies=db.prepare('SELECT candidate_id,reply_type,channel,raw_text,received_at FROM contractor_replies WHERE task_id=? ORDER BY received_at DESC LIMIT 20').all(id);
-  const offers=db.prepare('SELECT candidate_id,comparison_status,normalized_json,created_at,updated_at FROM contractor_offers WHERE task_id=? ORDER BY updated_at DESC LIMIT 20').all(id).map(x=>({candidateId:x.candidate_id,comparisonStatus:x.comparison_status,normalized:parse(x.normalized_json,{}),createdAt:x.created_at,updatedAt:x.updated_at}));
-  return{...s,candidates,replies,offers,pricing:pricing(email)}
+  if(paid&&latest){const lim=T[s.payment.plan]?.limit||5;candidates=db.prepare('SELECT candidate_id,type,name,match_level,website,phone,address,raw_json FROM candidates WHERE run_id=? ORDER BY rowid LIMIT ?').all(latest.id,lim).map(x=>{const r=parse(x.raw_json,{});return{id:x.candidate_id,type:x.type,name:x.name,matchLevel:x.match_level,website:x.website,phone:x.phone,address:x.address,email:text(r.email||(Array.isArray(r.emails)?r.emails[0]:'')),telegram:text(r.telegram||(Array.isArray(r.telegrams)?r.telegrams[0]:'')),why:Array.isArray(r.rankReasons)?r.rankReasons:(r.reason?[r.reason]:[])}})}
+  const outreach=db.prepare('SELECT request_id,candidate_id,candidate_name,channel,recipient,status,prepared_at,sent_at,delivered_at,replied_at,failed_at,last_error FROM outreach_attempts WHERE task_id=? ORDER BY prepared_at DESC LIMIT 50').all(id).map(x=>({requestId:x.request_id,candidateId:x.candidate_id,candidateName:x.candidate_name,channel:x.channel,recipient:x.recipient,status:x.status,preparedAt:x.prepared_at,sentAt:x.sent_at,deliveredAt:x.delivered_at,repliedAt:x.replied_at,failedAt:x.failed_at,lastError:x.last_error}));
+  const replies=db.prepare('SELECT request_id,candidate_id,reply_type,channel,raw_text,received_at FROM contractor_replies WHERE task_id=? ORDER BY received_at DESC LIMIT 50').all(id);
+  const offers=listTaskOffers(db,id).map(x=>({candidateId:x.candidate_id,requestId:x.request_id,offerId:x.offer_id,version:x.version,comparable:x.comparable,comparisonStatus:x.comparison_status,normalized:x.normalized,gaps:x.gaps,risks:x.risks,dialogue:x.dialogue,createdAt:x.created_at,updatedAt:x.updated_at}));
+  const dialogues={};for(const o of offers){if(o.requestId&&!dialogues[o.requestId])dialogues[o.requestId]=getOfferDialogueHistory(db,o.requestId)}
+  return{...s,candidates,outreach,replies,offers,dialogues,pricing:pricing(email)}
  }
  function upsert(email,t){
   if(!t||typeof t!=='object'){const e=new Error('TASK_REQUIRED');e.status=400;throw e}const id=text(t.id||t.taskId);if(!id){const e=new Error('TASK_ID_REQUIRED');e.status=400;throw e}
@@ -122,6 +125,8 @@ export function createCustomerAccount({db,customerAuth,sendJson,paymentStoreFile
    if(req.method==='GET'&&u.pathname==='/v1/account/pricing'){const id=text(u.searchParams.get('taskId'));if(id)owner(email,id);reply(res,200,{ok:true,...pricing(email)},origin);return true}
    if(req.method==='POST'&&u.pathname==='/v1/account/payment-authorize'){const b=await body(req);reply(res,200,{ok:true,...authorize(email,text(b.taskId),text(b.plan))},origin);return true}
    if(req.method==='POST'&&u.pathname==='/v1/account/payment'){reply(res,200,await createPayment(req,email,await body(req)),origin);return true}
+   const oa=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/outreach-authorize$/);
+   if(req.method==='POST'&&oa){const taskId=decodeURIComponent(oa[1]);owner(email,taskId);if(typeof authorizeOutreach!=='function'){const e=new Error('OUTREACH_AUTHORIZATION_UNAVAILABLE');e.status=503;throw e}const b=await body(req);const message=text(b.message);const candidateId=text(b.candidateId||b.candidate_id);if(!message||!candidateId||b.explicitConfirm!==true){const e=new Error('OUTREACH_CONFIRMATION_REQUIRED');e.status=400;throw e}const ps=taskPayments(email,taskId),paid=ps.find(x=>x.status==='paid');if(!paid){const e=new Error('PAID_ENTITLEMENT_REQUIRED');e.status=403;throw e}const result=await authorizeOutreach({taskId,orderId:paid.id,idempotencyKey:text(b.idempotencyKey||b.idempotency_key)||('account:'+taskId+':'+candidateId+':'+Date.now()),candidateIds:[candidateId],message,explicitConfirm:true});reply(res,200,{ok:true,authorized:true,...result},origin);return true}
    reply(res,404,{ok:false,error:'ACCOUNT_ROUTE_NOT_FOUND'},origin);return true
   }catch(e){reply(res,e?.status||500,{ok:false,error:e?.message||'ACCOUNT_FAILED'},origin);return true}
  }

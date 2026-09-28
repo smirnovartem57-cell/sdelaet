@@ -108,7 +108,8 @@ function sendJson(res, status, data, origin='') {
 const customerAccount = createCustomerAccount({
   db,
   customerAuth,
-  sendJson
+  sendJson,
+  authorizeOutreach: body => authorizeOutreach(body)
 });
 
 function text(v) {
@@ -13105,6 +13106,8 @@ db.exec(`CREATE TABLE IF NOT EXISTS outreach_authorizations (
  plan TEXT NOT NULL, candidate_ids_json TEXT NOT NULL, message_sha256 TEXT NOT NULL,
  created_at TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'authorized'
 ); CREATE INDEX IF NOT EXISTS idx_outreach_auth_task ON outreach_authorizations(task_id,created_at);`);
+const outreachAuthColumns=new Set(db.prepare('PRAGMA table_info(outreach_authorizations)').all().map(x=>x.name));
+if(!outreachAuthColumns.has('targets_json'))db.exec("ALTER TABLE outreach_authorizations ADD COLUMN targets_json TEXT NOT NULL DEFAULT '[]'");
 
 async function authorizeOutreach(body){
  const taskId=text(body.taskId||body.task_id),orderId=text(body.orderId||body.order_id),key=text(body.idempotencyKey||body.idempotency_key);
@@ -13120,9 +13123,22 @@ async function authorizeOutreach(body){
  const usedRows=db.prepare('SELECT candidate_ids_json FROM outreach_authorizations WHERE task_id=? AND status=?').all(taskId,'authorized'),used=new Set(); for(const r of usedRows)for(const id of JSON.parse(r.candidate_ids_json))used.add(id); ids.forEach(id=>used.add(id));
  if(used.size>tariff.candidateLimit){const e=new Error('TARIFF_CANDIDATE_LIMIT_REACHED');e.status=403;throw e;}
  const recent=db.prepare("SELECT count(*) n FROM outreach_authorizations WHERE task_id=? AND created_at>=datetime('now','-1 hour')").get(taskId); if(Number(recent?.n||0)>=20){const e=new Error('OUTREACH_RATE_LIMITED');e.status=429;throw e;}
+ const targetMap=new Map();
+ for(const run of runs){
+  for(const row of db.prepare('SELECT candidate_id,raw_json FROM candidates WHERE run_id=?').all(run.id)){
+   const candidateId=text(row.candidate_id); if(!ids.includes(candidateId)||targetMap.has(candidateId))continue;
+   let raw={};try{raw=JSON.parse(row.raw_json||'{}')}catch{}
+   const email=text(raw.email||(Array.isArray(raw.emails)?raw.emails[0]:''));
+   const telegram=text(raw.telegram||(Array.isArray(raw.telegrams)?raw.telegrams[0]:''));
+   const channels=[];if(email)channels.push('email');if(telegram)channels.push('telegram');
+   targetMap.set(candidateId,{candidateId,channels,email,telegram});
+  }
+ }
+ const targets=ids.map(candidateId=>targetMap.get(candidateId)||{candidateId,channels:[],email:'',telegram:''});
+ if(targets.some(x=>!x.channels.length)){const e=new Error('CANDIDATE_CONTACT_NOT_AVAILABLE');e.status=409;throw e;}
  const id='oa_'+crypto.randomUUID(),sha=crypto.createHash('sha256').update(message).digest('hex'),createdAt=new Date().toISOString();
- db.prepare('INSERT INTO outreach_authorizations(id,idempotency_key,order_id,task_id,plan,candidate_ids_json,message_sha256,created_at,status) VALUES(?,?,?,?,?,?,?,?,?)').run(id,key,orderId,taskId,tariff.id,JSON.stringify(ids),sha,createdAt,'authorized');
- return {replayed:false,authorizationId:id,plan:tariff.id,candidateLimit:tariff.candidateLimit,candidateIds:ids,messageSha256:sha};
+ db.prepare('INSERT INTO outreach_authorizations(id,idempotency_key,order_id,task_id,plan,candidate_ids_json,message_sha256,created_at,status,targets_json) VALUES(?,?,?,?,?,?,?,?,?,?)').run(id,key,orderId,taskId,tariff.id,JSON.stringify(ids),sha,createdAt,'authorized',JSON.stringify(targets));
+ return {replayed:false,authorizationId:id,plan:tariff.id,candidateLimit:tariff.candidateLimit,candidateIds:ids,messageSha256:sha,targets};
 }
 
 const server = http.createServer(async (req, res) => {
