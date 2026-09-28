@@ -40,3 +40,14 @@ jobs:
           node --check src/outreach.mjs
       - name: Customer flow regression
         run: node tests/v20-flow-regression.mjs
+
+      - name: Production outreach security smoke
+        run: |
+          set -euo pipefail
+          legacy_code="$(curl -sS -o /tmp/legacy.json -w '%{http_code}' --max-time 15 -X POST https://api.onsdelaet.ru/v1/outreach/authorize -H 'content-type: application/json' --data '{}')"
+          test "$legacy_code" = "410"
+          grep -q 'USE_ACCOUNT_OUTREACH_AUTHORIZATION' /tmp/legacy.json
+          account_code="$(curl -sS -o /tmp/account.json -w '%{http_code}' --max-time 15 -X POST https://api.onsdelaet.ru/v1/account/tasks/not-a-real-task/outreach-authorize -H 'content-type: application/json' --data '{}')"
+          test "$account_code" = "401"
+          grep -q 'AUTH_REQUIRED' /tmp/account.json
+          echo "PRODUCTION_OUTREACH_SECURITY_PASS legacy=$legacy_code account=$account_code"
