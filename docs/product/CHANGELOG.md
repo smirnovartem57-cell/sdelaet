@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-28 — BATHROOM_WATERPROOFING manual readiness review
+- Manually reviewed Intake, site-inspection and shower/drain boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- Found and fixed one real readiness gap: the six-question follow-up limit could truncate the required post-installation control-test question; PR #96 reordered category-specific follow-up priorities so control-test proof is always requested before secondary clarifications.
+- Exact-head Platform Readiness passed after the fix; deterministic QA is 15/15 PASS and E2E PASS, selecting the complete 54 000 ₽ offer over advertising `от 500 ₽/м²`.
+- No critical UX/safety finding remains: watertightness is not claimed without a control test, drain/penetration nodes and substrate condition remain explicit, and incomplete headline pricing stays non-comparable.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-28 — Product source-of-truth sync after SOUNDPROOFING review
 - Synced PROJECT_STATE and BACKLOG to the actual current main after FLOOR_SCREED, DRYWALL_PARTITIONS and SOUNDPROOFING manual-review merges.
 - Recorded all three categories as manualReview PASS while keeping them in TESTING because canonical productionDeploy remains PENDING under PRODUCTION_LOCKED.
