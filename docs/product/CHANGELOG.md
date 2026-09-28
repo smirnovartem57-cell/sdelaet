@@ -7,6 +7,12 @@
 - Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
 - Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
 
+## 2026-09-28 — Product source-of-truth sync after WALL_PLASTERING review
+- Merged the WALL_PLASTERING manual readiness evidence into main; category remains TESTING because canonical productionDeploy is still pending.
+- Updated PROJECT_STATE and BACKLOG so the next manual-review queue starts with FLOOR_SCREED.
+- Updated FIRST_PACKAGE_READY_AUDIT: the five seasonal TESTING categories have manual review PASS; the remaining blocker is canonical production reconciliation/publication, not missing GitHub SSH secrets.
+- Kept production fail-closed while /var/lib/sdelaet/deploy/PRODUCTION_LOCKED exists and runtime/public parity is not yet proven.
+
 ## 2026-09-27 — WALL_PLASTERING manual readiness review
 - Manually reviewed Intake, measurement/finish-quality boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: final layer thickness remains a site-inspection fact, old weak plaster demolition must be explicit, paint preparation is not treated as basic plastering, and per-m² / `от` pricing without confirmed scope is not comparable.
