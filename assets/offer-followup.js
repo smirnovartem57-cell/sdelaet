@@ -101,12 +101,13 @@
       if(offer.junctionTreatmentIncluded!==true)items.push('как обработаны примыкания и акустические швы');
       if(offer.acousticMaterialsSpecified!==true)items.push('какие материалы и марки входят');
     }else if(task.serviceCode==='BATHROOM_WATERPROOFING'){
-      if(!offer.workArea)items.push('какая площадь пола и стен учтена');
       if(!offer.waterproofingSystem)items.push('какая система гидроизоляции применяется');
       if(!offer.waterproofingLayers)items.push('сколько слоёв наносится');
       if(offer.waterproofingSurfacePreparationIncluded!==true)items.push('входит ли подготовка и грунтование основания');
       if(offer.cornerTapeIncluded!==true)items.push('входят ли ленты углов и примыканий');
       if(offer.pipePenetrationsIncluded!==true)items.push('как герметизируются проходки труб и трап');
+      if(offer.waterproofingControlTestIncluded!==true)items.push('выполняется ли контрольное испытание гидроизоляции / пролив после высыхания');
+      if(!offer.workArea)items.push('какая площадь пола и стен учтена');
       if(!offer.waterproofingWallHeight)items.push('какая высота захода гидроизоляции на стены');
       if(!offer.dryingTime)items.push('какое время межслойной сушки и полного высыхания');
     }else if(task.serviceCode==='ROOF_REPAIR'){

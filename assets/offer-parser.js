@@ -142,6 +142,7 @@
     var wh=raw.match(/(?:заход|высота)[^.;\n]{0,15}(\d+(?:[.,]\d+)?)\s*(?:см|мм|м)/i);if(wh)o.waterproofingWallHeight=wh[0].trim();
     if(/гидроизоляц.{0,30}(материал|мастик)|мастик.{0,20}(входит|включ)/.test(low))o.waterproofingMaterialsSpecified=true;
     var dry=raw.match(/(?:сушк|высыхан)[^.;\n]{0,30}/i);if(dry)o.dryingTime=dry[0].trim();
+    if(/контрольн.{0,20}испыт|пролив.{0,20}(выполн|проведен|проведён)|провер.{0,20}герметичност/.test(low)){o.waterproofingControlTestIncluded=true;o.worksIncluded.push('контрольное испытание гидроизоляции')}
     if(/мягк.{0,10}кровл|рулонн.{0,10}кровл/.test(low))o.roofType='soft';else if(/металлочереп|профнаст|фальц/.test(low))o.roofType='metal';else if(/черепиц/.test(low))o.roofType='tile';
     var ra=low.match(/(\d+(?:[.,]\d+)?)\s*(?:м2|м²|кв.?\s*м)/);if(ra)o.roofRepairArea=Number(ra[1].replace(',','.'));
     if(/диагност|осмотр.{0,15}кровл|поиск.{0,15}протеч/.test(low))o.roofDiagnosis=true;
