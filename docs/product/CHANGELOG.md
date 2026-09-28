@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-28 — SOUNDPROOFING manual readiness review
+- Manually reviewed Intake, airborne/impact-noise diagnostic boundaries, site-inspection limits, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: actual acoustic effect remains measurement-dependent, structural/flanking paths are not inferred remotely, and per-m² / `от` pricing without system composition/thickness is not comparable.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 148 000 ₽ offer selected over advertising `от 1 900 ₽/м²`.
+- Reconciled the stale Expert Model document from old RESEARCH wording to the implemented TESTING contract.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-28 — DRYWALL_PARTITIONS manual readiness review
 - Manually reviewed Intake, site-inspection/moisture boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: frame/profile, spacing and board layers remain explicit comparison facts, wet rooms retain material/protection safeguards, and per-m² / `от` pricing without configuration is not comparable.
