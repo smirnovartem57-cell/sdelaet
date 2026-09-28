@@ -12,7 +12,7 @@
   "lifecycle": {
     "research": "PASS",
     "expertModel": "PASS",
-    "testing": "ACTIVE",
+    "testing": "PASS",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -68,5 +68,21 @@
     "completedAt": "2026-09-13",
     "marketEvidence": "СП 71.13330.2017 + московские предложения 2026: обмазочная/рулонная система, подготовка, число слоев, углы и проходки должны раскрываться отдельно.",
     "result": "PASS"
+  },
+  "testing": {
+    "startedAt": "2026-09-13",
+    "qaRegression": "15/15 PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "manualReviewedAt": "2026-09-28"
+  },
+  "releaseGate": {
+    "status": "BLOCKED",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "productionDeploy": "PENDING",
+    "blocker": "PRODUCTION_LOCKED"
   }
 }
