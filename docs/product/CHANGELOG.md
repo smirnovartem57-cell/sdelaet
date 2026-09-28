@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-28 — Product source-of-truth sync after SOUNDPROOFING review
+- Synced PROJECT_STATE and BACKLOG to the actual current main after FLOOR_SCREED, DRYWALL_PARTITIONS and SOUNDPROOFING manual-review merges.
+- Recorded all three categories as manualReview PASS while keeping them in TESTING because canonical productionDeploy remains PENDING under PRODUCTION_LOCKED.
+- Advanced the next manual-review queue to BATHROOM_WATERPROOFING, UNDERFLOOR_HEATING, ENTRANCE_DOORS and DEMOLITION_WORKS.
+- Updated the audit main SHA to `ad979213ae8a4f1d437df2033faa30536c222e4e`; release code must still re-read exact main immediately before any publication.
+
 ## 2026-09-28 — SOUNDPROOFING manual readiness review
 - Manually reviewed Intake, airborne/impact-noise diagnostic boundaries, site-inspection limits, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: actual acoustic effect remains measurement-dependent, structural/flanking paths are not inferred remotely, and per-m² / `от` pricing without system composition/thickness is not comparable.
