@@ -4,7 +4,7 @@
 
 Current operational state on 2026-09-28 is intentionally fail-closed:
 
-- GitHub `main` after SOUNDPROOFING manual-review merge: `ad979213ae8a4f1d437df2033faa30536c222e4e`; current exact `main` must still be re-read immediately before release;
+- GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; current exact `main` must still be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
@@ -67,11 +67,13 @@ Current P1 sequence:
 
 `SOUNDPROOFING` manual text review was completed on 2026-09-28 with no critical UX/safety finding. QA 14/14 and E2E PASS; airborne/impact-noise diagnosis remains distinct, actual acoustic effect stays measurement-dependent, and incomplete per-m² / `от` pricing remains non-comparable. Its remaining READY blocker is `productionDeploy = PASS`.
 
-Next manual-review queue after the fifteen completed reviews:
-1. `BATHROOM_WATERPROOFING` — P1;
-2. `UNDERFLOOR_HEATING` — P1;
-3. `ENTRANCE_DOORS` — P1;
-4. `DEMOLITION_WORKS` — P1;
+`BATHROOM_WATERPROOFING` manual text review was completed on 2026-09-28 after closing one real readiness gap: the six-question contractor follow-up could omit the required control-test proof. The runtime now prioritizes the control-test question; exact-head Platform Readiness passed, QA is 15/15 PASS and E2E PASS with the complete 54 000 ₽ offer selected over advertising `от 500 ₽/м²`. Its remaining READY blocker is `productionDeploy = PASS`.
+
+Next manual-review queue after the sixteen completed reviews:
+1. `UNDERFLOOR_HEATING` — P1;
+2. `ENTRANCE_DOORS` — P1;
+3. `DEMOLITION_WORKS` — P1;
+4. `BATHROOM_RENOVATION` — P1;
 5. then remaining TESTING categories by lifecycle priority, with P1 before P2.
 
 For each category: review user-facing Intake/warnings/Contractor Brief/comparison wording, re-run category QA/E2E on fresh `main`, record evidence, and keep status below READY until canonical `productionDeploy = PASS`.
