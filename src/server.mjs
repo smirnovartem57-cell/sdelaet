@@ -108,7 +108,8 @@ function sendJson(res, status, data, origin='') {
 const customerAccount = createCustomerAccount({
   db,
   customerAuth,
-  sendJson
+  sendJson,
+  authorizeOutreach: body => authorizeOutreach(body)
 });
 
 function text(v) {
