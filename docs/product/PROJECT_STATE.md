@@ -21,13 +21,13 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 
 ### Operational snapshot — 2026-09-28
 - GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
-- Recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`.
+- Recorded production baseline: `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33`.
 - Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` exists.
 - No production publication is authorized from this state. The matching local ref reduces one uncertainty, but does not by itself prove public-webroot/application parity.
 - Before any deploy, production changes must be reconciled into Git, parity must be proven against the recorded baseline, concurrent work preserved, and the compare-and-swap guard from `PUBLISH_POLICY.md` must pass immediately before mutation.
 
-- Reconciliation audit 2026-09-28: production baseline → current main contains no tracked file deletions, no `src/*` runtime changes and no `ops/*` deployment changes; universal fallback remains the critical unpublished frontend fix. Production remains locked pending explicit release verification.
+- Production release 2026-09-28: canonical deploy PASS at `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33`; post-deploy parity PASS; API health PASS; universal-home-repair search PASS (5 candidates); known-category search PASS (5 candidates); canonical deploy timer active.
 
 ## Category state
 - `BALCONY_FINISHING` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.

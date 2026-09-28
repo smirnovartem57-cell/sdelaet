@@ -5,7 +5,7 @@
 Current operational state on 2026-09-28 is intentionally fail-closed:
 
 - GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; current exact `main` must still be re-read immediately before release;
-- recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
+- recorded production baseline: `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
 
