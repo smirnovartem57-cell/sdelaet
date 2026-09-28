@@ -109,6 +109,7 @@
       if(offer.pipePenetrationsIncluded!==true)items.push('как герметизируются проходки труб и трап');
       if(!offer.waterproofingWallHeight)items.push('какая высота захода гидроизоляции на стены');
       if(!offer.dryingTime)items.push('какое время межслойной сушки и полного высыхания');
+      if(offer.waterproofingControlTestIncluded!==true)items.push('выполняется ли контрольное испытание гидроизоляции / пролив после высыхания');
     }else if(task.serviceCode==='ROOF_REPAIR'){
       if(!offer.roofType)items.push('какой тип кровли учтён');
       if(offer.roofDiagnosis!==true)items.push('входит ли диагностика причины протечки');
