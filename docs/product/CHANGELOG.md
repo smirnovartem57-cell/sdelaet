@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-09-28 — Canonical production reconciliation and universal-flow recovery
+- Reconciled recorded production `f542e1c0...` against current main with no tracked deletions, no `src/*` runtime delta and no `ops/*` deploy delta before publication.
+- Canonical FirstVDS deploy completed at exact SHA `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33` with pre/post parity PASS and backup evidence.
+- Verified public deploy SHA, API health, universal-home-repair live search (5 candidates) and known-category live search (5 candidates).
+- Canonical `sdelaet-main-deploy.timer` is enabled and active.
+
 ## 2026-09-28 — BATHROOM_WATERPROOFING manual readiness review
 - Manually reviewed Intake, site-inspection and shower/drain boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - Found and fixed one real readiness gap: the six-question follow-up limit could truncate the required post-installation control-test question; PR #96 reordered category-specific follow-up priorities so control-test proof is always requested before secondary clarifications.
