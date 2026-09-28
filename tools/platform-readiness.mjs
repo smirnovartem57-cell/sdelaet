@@ -17,6 +17,7 @@ const commands = [
   ['server runtime wiring', ['tests/server-runtime-wiring-regression.mjs']],
   ['syntax: customer account', ['--check', 'src/customer-account.mjs']],
   ['task-centric outreach', ['tests/task-centric-outreach-regression.mjs']],
+  ['outreach account authorization', ['tests/outreach-account-authorization-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
