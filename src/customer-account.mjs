@@ -27,7 +27,9 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
  db.exec(
   'CREATE TABLE IF NOT EXISTS customer_task_owners(task_id TEXT PRIMARY KEY,email TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'+
   'CREATE INDEX IF NOT EXISTS idx_customer_task_owners_email ON customer_task_owners(email,updated_at);'+
-  'CREATE TABLE IF NOT EXISTS customer_profiles(email TEXT PRIMARY KEY,region TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'
+  'CREATE TABLE IF NOT EXISTS customer_profiles(email TEXT PRIMARY KEY,region TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'+
+  'CREATE TABLE IF NOT EXISTS task_attribution(task_id TEXT PRIMARY KEY,ym_client_id TEXT,internal_user_id TEXT,first_touch_json TEXT,last_touch_json TEXT,intent_cluster TEXT,attribution_saved_at TEXT NOT NULL,client_id_bound_at TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'+
+  'CREATE INDEX IF NOT EXISTS idx_task_attribution_client ON task_attribution(ym_client_id,attribution_saved_at);'
  );
  const profileCols=new Set(db.prepare('PRAGMA table_info(customer_profiles)').all().map(x=>x.name));
  if(!profileCols.has('geo_json'))db.exec('ALTER TABLE customer_profiles ADD COLUMN geo_json TEXT');
@@ -87,8 +89,18 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   const replies=db.prepare('SELECT request_id,candidate_id,reply_type,channel,raw_text,received_at FROM contractor_replies WHERE task_id=? ORDER BY received_at DESC LIMIT 50').all(id);
   const offers=listTaskOffers(db,id).map(x=>({candidateId:x.candidate_id,requestId:x.request_id,offerId:x.offer_id,version:x.version,comparable:x.comparable,comparisonStatus:x.comparison_status,normalized:x.normalized,gaps:x.gaps,risks:x.risks,dialogue:x.dialogue,createdAt:x.created_at,updatedAt:x.updated_at}));
   const dialogues={};for(const o of offers){if(o.requestId&&!dialogues[o.requestId])dialogues[o.requestId]=getOfferDialogueHistory(db,o.requestId)}
-  return{...s,candidates,outreach,replies,offers,dialogues,pricing:pricing(email)}
+  return{...s,candidates,outreach,replies,offers,dialogues,attribution:taskAttribution(id),pricing:pricing(email)}
  }
+ function safeTouch(v){const x=v&&typeof v==='object'?v:{};const out={};['source','medium','campaign','content','term','yclid','intent_cluster','landing_page','referrer','timestamp'].forEach(k=>{const val=text(x[k]);if(val)out[k]=val.slice(0,k==='referrer'||k==='landing_page'?1500:500)});return out}
+ function saveAttributionSnapshot(taskId,a){
+  if(!a||typeof a!=='object')return null;
+  const existing=db.prepare('SELECT * FROM task_attribution WHERE task_id=?').get(taskId);if(existing)return existing;
+  const first=safeTouch(a.first_touch),last=safeTouch(a.last_touch),intent=text(a.intent_cluster||last.intent_cluster||first.intent_cluster).slice(0,80),client=text(a.ym_client_id).slice(0,100),ts=text(a.attribution_saved_at)||now();
+  db.prepare('INSERT INTO task_attribution(task_id,ym_client_id,internal_user_id,first_touch_json,last_touch_json,intent_cluster,attribution_saved_at,client_id_bound_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)').run(taskId,client||null,null,JSON.stringify(first),JSON.stringify(last),intent||null,ts,client?ts:null,ts,ts);
+  return db.prepare('SELECT * FROM task_attribution WHERE task_id=?').get(taskId)
+ }
+ function bindClientId(email,taskId,value){owner(email,taskId);const id=text(value).slice(0,100);if(!id){const e=new Error('YM_CLIENT_ID_REQUIRED');e.status=400;throw e}const row=db.prepare('SELECT ym_client_id FROM task_attribution WHERE task_id=?').get(taskId);if(!row){const e=new Error('TASK_ATTRIBUTION_NOT_FOUND');e.status=404;throw e}if(row.ym_client_id&&row.ym_client_id!==id){const e=new Error('YM_CLIENT_ID_IMMUTABLE');e.status=409;throw e}const ts=now();db.prepare('UPDATE task_attribution SET ym_client_id=COALESCE(ym_client_id,?),client_id_bound_at=COALESCE(client_id_bound_at,?),updated_at=? WHERE task_id=?').run(id,ts,ts,taskId);return{id}}
+ function taskAttribution(taskId){const r=db.prepare('SELECT * FROM task_attribution WHERE task_id=?').get(taskId);return r?{ym_client_id:r.ym_client_id||'',first_touch:parse(r.first_touch_json,{}),last_touch:parse(r.last_touch_json,{}),intent_cluster:r.intent_cluster||'',attribution_saved_at:r.attribution_saved_at}:null}
  function upsert(email,t){
   if(!t||typeof t!=='object'){const e=new Error('TASK_REQUIRED');e.status=400;throw e}const id=text(t.id||t.taskId);if(!id){const e=new Error('TASK_ID_REQUIRED');e.status=400;throw e}
   sync(email);const old=db.prepare('SELECT task_id,client_id_crm,status FROM tasks WHERE task_id=?').get(id),o=db.prepare('SELECT email FROM customer_task_owners WHERE task_id=?').get(id);
@@ -98,6 +110,7 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   if(!old)db.prepare("INSERT INTO tasks(task_id,client_id_crm,service_id,service_name,city,description,task_json,status,created_at,updated_at,last_completed_stage) VALUES(?,NULL,?,?,?,?,?,'draft',?,?,NULL)").run(id,text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),ts,ts);
   else db.prepare('UPDATE tasks SET service_id=?,service_name=?,city=?,description=?,task_json=?,status=?,updated_at=? WHERE task_id=?').run(text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),['draft',''].includes(text(old.status))?'draft':old.status,ts,id);
   db.prepare('INSERT INTO customer_task_owners(task_id,email,created_at,updated_at) VALUES(?,?,?,?) ON CONFLICT(task_id) DO UPDATE SET email=excluded.email,updated_at=excluded.updated_at').run(id,email,ts,ts);
+  saveAttributionSnapshot(id,t.attribution||t._attribution||null);
   return detail(email,id)
  }
  function profile(email){const r=db.prepare('SELECT region,geo_json,updated_at FROM customer_profiles WHERE email=?').get(email);return{email,region:r?.region||'',geo:r?.geo_json?parse(r.geo_json,null):null,updatedAt:r?.updated_at||null}}
@@ -125,6 +138,7 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
    if(req.method==='GET'&&u.pathname==='/v1/account/pricing'){const id=text(u.searchParams.get('taskId'));if(id)owner(email,id);reply(res,200,{ok:true,...pricing(email)},origin);return true}
    if(req.method==='POST'&&u.pathname==='/v1/account/payment-authorize'){const b=await body(req);reply(res,200,{ok:true,...authorize(email,text(b.taskId),text(b.plan))},origin);return true}
    if(req.method==='POST'&&u.pathname==='/v1/account/payment'){reply(res,200,await createPayment(req,email,await body(req)),origin);return true}
+   const cid=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/client-id$/);if(req.method==='POST'&&cid){const b=await body(req);reply(res,200,{ok:true,...bindClientId(email,decodeURIComponent(cid[1]),b.ym_client_id)},origin);return true}
    const oa=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/outreach-authorize$/);
    if(req.method==='POST'&&oa){const taskId=decodeURIComponent(oa[1]);owner(email,taskId);if(typeof authorizeOutreach!=='function'){const e=new Error('OUTREACH_AUTHORIZATION_UNAVAILABLE');e.status=503;throw e}const b=await body(req);const message=text(b.message);const candidateId=text(b.candidateId||b.candidate_id);if(!message||!candidateId||b.explicitConfirm!==true){const e=new Error('OUTREACH_CONFIRMATION_REQUIRED');e.status=400;throw e}const ps=taskPayments(email,taskId),paid=ps.find(x=>x.status==='paid');if(!paid){const e=new Error('PAID_ENTITLEMENT_REQUIRED');e.status=403;throw e}const result=await authorizeOutreach({taskId,orderId:paid.id,idempotencyKey:text(b.idempotencyKey||b.idempotency_key)||('account:'+taskId+':'+candidateId+':'+Date.now()),candidateIds:[candidateId],message,explicitConfirm:true});reply(res,200,{ok:true,authorized:true,...result},origin);return true}
    reply(res,404,{ok:false,error:'ACCOUNT_ROUTE_NOT_FOUND'},origin);return true
