@@ -1,4 +1,5 @@
 name: Deploy Search API to FirstVDS
+# retrigger 2026-09-28 after restoring workflow
 
 concurrency:
   group: sdelaet-search-api-production
