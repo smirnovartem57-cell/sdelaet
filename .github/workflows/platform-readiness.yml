@@ -100,7 +100,9 @@ jobs:
           printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('count',0)>0,d; print('count=',d.get('count'))"
 
   diagnose-search-api:
-    if: github.event_name == 'pull_request' && github.event.pull_request.title == 'RECOVERY: deploy Search API runtime'
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.title == 'RECOVERY: deploy Search API runtime'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
