@@ -47,6 +47,7 @@
     "wallHeight",
     "materials",
     "dryingTime",
+    "controlTest",
     "exclusions",
     "extraCosts",
     "warranty",
