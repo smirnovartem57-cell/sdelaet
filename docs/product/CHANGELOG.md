@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-28 — FLOOR_SCREED manual readiness review
+- Manually reviewed Intake, measurement/technology boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
+- No critical UX/safety finding: floor deviations and layer thickness remain site-measurement facts, old screed demolition must be explicit, and per-m² / `от` pricing without confirmed thickness/scope is not comparable.
+- Confirmed automated evidence: QA 14/14 PASS, E2E PASS, complete 78 000 ₽ offer selected over advertising `от 470 ₽/м²`.
+- Recorded profile evidence: Expert Model PASS, testing PASS, manualReview PASS.
+- Kept category status `TESTING`: executable READY gate still requires canonical `productionDeploy = PASS`, currently blocked by production lock.
+
 ## 2026-09-27 — WALL_PLASTERING manual readiness review
 - Manually reviewed Intake, measurement/finish-quality boundaries, Contractor Brief, normalization/follow-up and recommendation/comparison behavior.
 - No critical UX/safety finding: final layer thickness remains a site-inspection fact, old weak plaster demolition must be explicit, paint preparation is not treated as basic plastering, and per-m² / `от` pricing without confirmed scope is not comparable.

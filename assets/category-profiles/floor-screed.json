@@ -12,7 +12,7 @@
   "lifecycle": {
     "research": "PASS",
     "expertModel": "PASS",
-    "testing": "ACTIVE",
+    "testing": "PASS",
     "ready": "PENDING"
   },
   "intakePolicy": {
@@ -66,5 +66,21 @@
     "completedAt": "2026-09-13",
     "marketEvidence": "СП 29.13330.2011 ред. 28.11.2025 + московские прайсы 2026: технология, толщина, площадь, армирование, шумо/гидроизоляция и демонтаж меняют цену.",
     "result": "PASS"
+  },
+  "testing": {
+    "startedAt": "2026-09-13",
+    "qaRegression": "14/14 PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "manualReviewedAt": "2026-09-28"
+  },
+  "releaseGate": {
+    "status": "BLOCKED",
+    "categoryRegression": "PASS",
+    "offerPipelineRegression": "PASS",
+    "e2e": "PASS",
+    "manualReview": "PASS",
+    "productionDeploy": "PENDING",
+    "blocker": "PRODUCTION_LOCKED"
   }
 }
