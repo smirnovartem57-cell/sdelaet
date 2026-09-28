@@ -27,6 +27,8 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 - No production publication is authorized from this state. The matching local ref reduces one uncertainty, but does not by itself prove public-webroot/application parity.
 - Before any deploy, production changes must be reconciled into Git, parity must be proven against the recorded baseline, concurrent work preserved, and the compare-and-swap guard from `PUBLISH_POLICY.md` must pass immediately before mutation.
 
+- Reconciliation audit 2026-09-28: production baseline → current main contains no tracked file deletions, no `src/*` runtime changes and no `ops/*` deployment changes; universal fallback remains the critical unpublished frontend fix. Production remains locked pending explicit release verification.
+
 ## Category state
 - `BALCONY_FINISHING` — `TESTING`, profile v1.1; manual review PASS 2026-09-26, production deploy gate pending.
 - `BALCONY_GLAZING` — `TESTING`, profile v1.1.
