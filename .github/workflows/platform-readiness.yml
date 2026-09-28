@@ -114,3 +114,15 @@ jobs:
         run: |
           set -euo pipefail
           curl -i -sS --max-time 30 -X POST https://api.onsdelaet.ru/v1/candidates/search -H 'content-type: application/json' --data '{"categoryId":"balcony-insulation","city":"Мытищи","description":"Нужно утеплить балкон","executorPreference":"any","limit":5}'
+
+  diagnose-universal-search:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.title == 'RECOVERY: deploy Search API runtime'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Universal category search smoke
+        run: |
+          set -euo pipefail
+          curl -i -sS --max-time 35 -X POST https://api.onsdelaet.ru/v1/candidates/search -H 'content-type: application/json' --data '{"categoryId":"universal-home-repair","category":"Другая задача по дому и ремонту","city":"Мытищи","description":"Нужно выполнить нестандартную работу по дому","executorPreference":"any","limit":5}'
