@@ -13176,7 +13176,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if(req.method==='POST'&&req.url==='/v1/outreach/authorize'){try{const body=await readBody(req);const result=await authorizeOutreach(body);return sendJson(res,200,{ok:true,authorized:true,...result},origin);}catch(error){return sendJson(res,Number(error?.status||500),{ok:false,authorized:false,error:error?.message||'OUTREACH_AUTH_FAILED'},origin);}}
+  if(req.method==='POST'&&req.url==='/v1/outreach/authorize'){return sendJson(res,410,{ok:false,authorized:false,error:'USE_ACCOUNT_OUTREACH_AUTHORIZATION'},origin);}
 
   if (
     req.url?.startsWith('/v1/outreach/') &&
