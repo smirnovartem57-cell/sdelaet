@@ -47,4 +47,25 @@ Profile: `bathroom-waterproofing` v0.2
 ## Current lifecycle gate
 Category remains `TESTING`.
 
-Automated QA/E2E exist, but manual readiness review is not closed yet. The control-test requirement discovered during manual review must pass exact-head regression before manualReview can be recorded as PASS. Canonical production publication and `releaseGate.productionDeploy = PASS` remain separate READY gates.
+Confirmed automated evidence:
+- category routing: PASS;
+- deterministic Expert QA: `15/15 PASS`;
+- full E2E: PASS;
+- complete 54 000 ₽ offer is comparable and selected over advertising `от 500 ₽/м²`;
+- system/layers, substrate preparation, corner tape, pipe penetrations/drain, wall upturn and drying are explicit comparison facts;
+- control-test evidence is parsed, normalized and required for a complete comparable offer;
+- missing control-test evidence is prioritized in contractor follow-up after the manual-review gap fix.
+
+Manual user-facing review 2026-09-28:
+- Intake — PASS: wet-zone area, substrate state, protected surfaces, covering above and drain/penetration context are requested without forcing technical guesses from the user;
+- site-inspection boundary — PASS: substrate strength/moisture/cracks, hidden leaks, old waterproofing condition and final tile-system compatibility remain inspection facts;
+- shower/drain boundary — PASS: slopes, continuous envelope, penetrations and drain-node treatment remain explicit technical risks;
+- Contractor Brief — PASS: system, layers, preparation, tapes, penetrations/drain, wall upturn, materials, drying, control test, exclusions/extras, timing and warranty are requested explicitly;
+- normalization — PASS: per-m² / `от` pricing without confirmed system composition and required nodes is not treated as comparable;
+- follow-up — PASS: the six-question cap now prioritizes system, layers, preparation, tapes, penetrations/drain and control test, so the watertightness proof is never truncated behind secondary clarifications;
+- recommendation/comparison — PASS: complete 54 000 ₽ scope outranks the cheaper incomplete headline price;
+- promise boundary — PASS: watertightness is not presented as confirmed before the post-installation control test.
+
+The manual review found one readiness gap — control-test proof could be truncated from follow-up by the six-question cap. PR #96 fixed the runtime ordering and exact-head Platform Readiness passed after the fix. No critical UX/safety finding remains.
+
+Before `READY`: canonical production publication must succeed and the executable lifecycle gate requires `releaseGate.productionDeploy = PASS`. While production is locked/unpublished the category remains `TESTING`. `READY → ACTIVE` remains separate and requires representative/live verification.
