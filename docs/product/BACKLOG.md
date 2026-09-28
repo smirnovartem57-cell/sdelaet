@@ -2,9 +2,9 @@
 
 ## P0 — reconcile production before any publication
 
-Current operational state on 2026-09-27 is intentionally fail-closed:
+Current operational state on 2026-09-28 is intentionally fail-closed:
 
-- documentation-sync GitHub `main`: `6b138321b3a6fa4369a94a53f17367e13d4ad630` (through PR #89); this is non-authoritative and current exact `main` must be re-read immediately before release;
+- GitHub `main` after WALL_PLASTERING manual-review merge: `c34b1fcd1aa2769ea474ace3cbe611080b8b264e`; current exact `main` must still be re-read immediately before release;
 - recorded production baseline: `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
 - server deploy checkout: `local-v20-ui`, currently pointing to the same `f542e1c0f810377ed751eeefc2263de9db9ab55e` baseline;
 - `/var/lib/sdelaet/deploy/PRODUCTION_LOCKED` is present.
@@ -58,6 +58,8 @@ Current P1 sequence:
 `MINOR_APARTMENT_REPAIR` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 14/14 and E2E PASS; handyman/profile-service separation and heavy-mounting safeguards remain intact. Its remaining READY blocker is `productionDeploy = PASS`.
 
 `WALL_FINISHING` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 15/15 and E2E PASS; moisture/mold handling, preparation scope and old-covering demolition remain correctly gated. Its remaining READY blocker is `productionDeploy = PASS`.
+
+`WALL_PLASTERING` manual text review was completed on 2026-09-27 with no critical UX/safety finding. QA 14/14 and E2E PASS; site-measured geometry/thickness, old-layer demolition, paint-preparation scope and non-comparable advertising-price safeguards were rechecked. Its remaining READY blocker is `productionDeploy = PASS`.
 
 Next manual-review queue after the eleven completed reviews:
 1. `WALL_PLASTERING` — P1;
