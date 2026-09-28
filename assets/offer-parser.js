@@ -155,12 +155,15 @@
     if(/водян.{0,12}(тепл|тёпл).{0,8}пол/.test(low))o.heatedFloorType='water';else if(/пленочн|плёночн|инфракрас/.test(low))o.heatedFloorType='film';else if(/нагревател.{0,8}мат/.test(low))o.heatedFloorType='mat';else if(/кабел.{0,15}(тепл|тёпл).{0,8}пол|(тепл|тёпл).{0,8}пол.{0,15}кабел/.test(low))o.heatedFloorType='cable';
     var hp=low.match(/(\d+)\s*(?:вт\/?м2|вт\/?м²)/);if(hp)o.heatedFloorPowerSpec=hp[0];
     if(/кабель|нагревател.{0,8}мат|пленочн|плёночн/.test(low))o.heatingElementSpec=(raw.match(/(?:кабель|нагревательный мат|пл[её]нка)[^.;\n]{0,50}/i)||['указан'])[0];
+    if(o.heatedFloorType==='water'){var wf=raw.match(/(?:труб[аы]?|контур(?:ы|ов)?|шаг укладки)[^.;\n]{0,70}/i);if(wf)o.heatingElementSpec=wf[0].trim();}
     if(/терморегулятор/.test(low)){o.thermostatIncluded=true;o.worksIncluded.push('терморегулятор')}
     if(/датчик.{0,10}пол|гофр.{0,12}датчик/.test(low)){o.floorSensorIncluded=true;o.worksIncluded.push('датчик пола')}
     if(/теплоизоляц|утеплител.{0,12}под.{0,8}пол/.test(low)){o.floorInsulationIncluded=true;o.worksIncluded.push('теплоизоляция основания')}
     if(/подготов.{0,15}основан|грунтов.{0,15}пол/.test(low))o.heatedFloorBasePreparationIncluded=true;
     if(/подключен.{0,15}(щит|электр|лини)|отдельн.{0,10}лини/.test(low)){o.heatedFloorElectricalConnectionIncluded=true;o.worksIncluded.push('электроподключение')}
     if(/узо|дифавтомат|автомат.{0,15}защит/.test(low))o.heatedFloorProtectionIncluded=true;
+    if(o.heatedFloorType==='water'&&/опрессов|гидравлическ.{0,20}испыт|провер.{0,20}герметич|испытан.{0,20}давлен/.test(low)){o.heatedFloorCommissioningIncluded=true;o.worksIncluded.push('опрессовка / гидравлическая проверка тёплого пола')}
+    if(o.heatedFloorType&&o.heatedFloorType!=='water'&&/(?:измерен|провер)[^.;\n]{0,25}(?:сопротив|изоляц)|пусконалад|контрольн.{0,15}измер/.test(low)){o.heatedFloorCommissioningIncluded=true;o.worksIncluded.push('проверка / измерения тёплого пола после монтажа')}
     if(/входн.{0,10}двер|стальн.{0,10}двер|металлическ.{0,10}двер/.test(low))o.entranceDoorModel=(raw.match(/(?:модель|дверь)[^.;\n]{0,60}/i)||['указана'])[0];
     var dd=raw.match(/(?:размер|блок|дверь)[^.;\n]{0,20}(\d{3,4})\s*[xх×]\s*(\d{3,4})/i);if(dd)o.entranceDoorDimensions=dd[1]+'x'+dd[2];
     if(/сталь.{0,20}(мм|лист)|короб.{0,15}(профил|сталь)|ребр.{0,10}жестк/.test(low))o.entranceDoorConstructionSpecified=true;
