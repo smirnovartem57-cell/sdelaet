@@ -31,7 +31,11 @@ jobs:
         run: node tests/search-api-deploy-regression.mjs
 
   recover-search-api:
-    if: github.event_name == 'pull_request' && github.actor == 'smirnovartem57-cell' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.title == 'RECOVERY: deploy Search API runtime'
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.actor == 'smirnovartem57-cell' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.title == 'RECOVERY: deploy Search API runtime'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
