@@ -84,13 +84,26 @@ document.addEventListener('DOMContentLoaded',async function(){
   }
   return '<div style="margin-top:18px"><h3 style="margin:0;color:#304761;font:800 13px Montserrat,sans-serif">Выберите глубину подбора</h3>'+(repeat?'<p>Ваша цена для повторного обращения применится автоматически.</p>':'')+'<div class="account-pricing">'+card('find','Подбор',f,false)+card('choice','До выбора',c,true)+'</div></div>';
  }
+ function buildOutreachMessage(t,c){
+  var j=t.taskJson||{},fields=list(j.requestFields),lines=['Добрый день!','',String(t.title||j.category||'Задача'),'','Задача:','— '+String(t.description||j.description||j.scope||'Нужен расчёт по задаче')];
+  if(t.region)lines.push('— Регион: '+t.region);
+  if(j.goal)lines.push('— Желаемый результат: '+j.goal);
+  if(j.timing)lines.push('— Сроки: '+j.timing);
+  if(j.wallSize)lines.push('— Размеры: '+j.wallSize);
+  lines.push('','В ответе укажите:');
+  (fields.length?fields:['итоговую стоимость','что входит в работы и материалы','возможные доплаты','срок выполнения','гарантию']).forEach(function(x){lines.push('— '+x)});
+  lines.push('','Ответьте, пожалуйста, обычным ответом на это письмо — сервис «Сделает» добавит предложение в сравнение.');
+  return lines.join('\n');
+ }
  function selectionSection(t){
-  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · ');return '<div class="account-mini-card"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Контакт: '+esc(c.phone)+'</p>':'')+(c.website?'<p><a href="'+esc(c.website)+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+'</div>'}).join('');
-  return '<section class="account-section" id="selection"><h2>Подбор</h2><p>Найденные исполнители доступны после подтверждённой оплаты выбранного тарифа.</p><div class="account-candidate-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div></section>';
+  var attempts=t.outreach||[];
+  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · '),a=attempts.find(function(x){return x.candidateId===c.id}),status=a?('<p><b>Обращение:</b> '+esc(a.status==='replied'?'получен ответ':a.status==='sent'?'отправлено':a.status==='failed'?'ошибка отправки':'подготовлено')+'</p>'):'';var action='';if(c.email&&!a)action='<button class="account-primary" type="button" data-send-outreach="'+esc(c.id)+'">Отправить запрос на расчёт</button>';else if(!c.email&&!a)action='<p>Публичный email не найден — автоматическая отправка недоступна.</p>';return '<div class="account-mini-card"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Телефон: '+esc(c.phone)+'</p>':'')+(c.email?'<p>Email: '+esc(c.email)+'</p>':'')+(c.website?'<p><a href="'+esc(c.website)+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+status+action+'</div>'}).join('');
+  return '<section class="account-section" id="selection"><h2>Подбор</h2><p>Здесь же можно подтвердить отправку запроса исполнителю. Полученные ответы и уточнения останутся внутри этой задачи.</p><div class="account-candidate-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div></section>';
  }
  function responsesSection(t){
-  var replies=(t.replies||[]).map(function(r){return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p></div>'}).join('');
-  return '<section class="account-section" id="responses"><h2>Обращения и ответы</h2><p>Отправлено обращений: '+Number(t.counts&&t.counts.outreach||0)+' · Получено ответов: '+Number(t.counts&&t.counts.replies||0)+'</p><div class="account-response-list">'+replies+'</div></section>';
+  var replies=(t.replies||[]).map(function(r){var d=t.dialogues&&t.dialogues[r.request_id],state=d&&d.current_state,pending=state&&state.pending_clarifications||[];return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p>'+(state?'<p><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+(pending.length?'<p><b>Нужно уточнить:</b> '+esc((pending[0].items||[]).join('; '))+'</p>':'')+'</div>'}).join('');
+  var attempts=(t.outreach||[]).map(function(a){return '<div class="account-mini-card"><b>'+esc(a.candidateName||'Исполнитель')+'</b><p>Канал: '+esc(a.channel)+' · Статус: '+esc(a.status)+'</p>'+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p>Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
+  return '<section class="account-section" id="responses"><h2>Обращения и ответы</h2><p>Отправлено обращений: '+Number(t.counts&&t.counts.outreach||0)+' · Получено ответов: '+Number(t.counts&&t.counts.replies||0)+'</p><div class="account-response-list">'+attempts+replies+'</div></section>';
  }
  function comparisonSection(t){
   var cards=(t.offers||[]).map(function(o){var n=o.normalized||{},price=n.totalPrice||n.price||n.total_price||'',time=n.leadTime||n.term||n.duration||'';return '<div class="account-mini-card"><b>Предложение исполнителя</b>'+(price?'<p>Цена: '+esc(price)+'</p>':'')+(time?'<p>Срок: '+esc(time)+'</p>':'')+'<p>Статус сравнения: '+esc(o.comparisonStatus||'готово')+'</p></div>'}).join('');
@@ -101,6 +114,22 @@ document.addEventListener('DOMContentLoaded',async function(){
   return '<section class="account-section" id="payment"><h2>Оплата</h2><div class="account-payment-grid"><div class="account-payment-cell"><span>Тариф</span><b>'+esc(p.planName)+'</b></div><div class="account-payment-cell"><span>Цена</span><b>'+esc(sdAccount.money(p.amount))+(p.priceType==='repeat'?' вместо '+esc(sdAccount.money(p.regularAmount)):'')+'</b></div><div class="account-payment-cell"><span>Тип цены</span><b>'+esc(type)+'</b></div><div class="account-payment-cell"><span>Статус</span><b>'+esc(p.status==='paid'?'Оплачено':'Ожидает оплаты')+'</b></div></div><p>'+esc(sdAccount.fmtDate(p.paidAt||p.createdAt))+'</p></section>';
  }
  function bindActions(t){
+  root.querySelectorAll('[data-send-outreach]').forEach(function(btn){
+   btn.addEventListener('click',async function(){
+    var candidate=(t.candidates||[]).find(function(x){return x.id===btn.dataset.sendOutreach});if(!candidate||!candidate.email)return;
+    var message=buildOutreachMessage(t,candidate),ok=window.confirm('Отправить запрос исполнителю «'+candidate.name+'» на '+candidate.email+'?\n\nПосле подтверждения письмо будет отправлено реально от сервиса «Сделает».');
+    if(!ok)return;
+    btn.disabled=true;var old=btn.textContent;btn.textContent='Отправляем…';
+    try{
+      var key='task:'+t.taskId+':candidate:'+candidate.id+':'+Date.now();
+      var auth=await sdAccount.api('/v1/account/tasks/'+encodeURIComponent(t.taskId)+'/outreach-authorize',{method:'POST',body:JSON.stringify({candidateId:candidate.id,message:message,explicitConfirm:true,idempotencyKey:key})});
+      var prepared=await sdAccount.api('/v1/outreach/prepare',{method:'POST',body:JSON.stringify({taskId:t.taskId,searchRunId:t.research&&t.research.runId||'',authorizationId:auth.authorizationId,candidate:{id:candidate.id,name:candidate.name,type:candidate.type,email:candidate.email},channel:'email',recipient:candidate.email,subject:'Запрос по задаче в сервисе «Сделает»',message:message})});
+      await sdAccount.api('/v1/outreach/email/send',{method:'POST',body:JSON.stringify({requestId:prepared.outreach.requestId,authorizationId:auth.authorizationId})});
+      sdAccount.track('task_outreach_sent',{task_id:t.taskId,candidate_id:candidate.id,channel:'email'});
+      location.reload();
+    }catch(e){btn.disabled=false;btn.textContent=old;alert(e.message==='CANDIDATE_CONTACT_NOT_AVAILABLE'?'У исполнителя нет подтверждённого контакта для отправки.':'Не удалось отправить запрос: '+e.message)}
+   });
+  });
   root.querySelectorAll('[data-buy-plan]').forEach(function(btn){
    btn.addEventListener('click',async function(){
     var plan=btn.dataset.buyPlan;btn.disabled=true;var old=btn.textContent;btn.textContent='Готовим оплату…';
