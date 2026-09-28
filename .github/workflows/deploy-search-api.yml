@@ -1,0 +1,94 @@
+name: Deploy Search API to FirstVDS
+
+concurrency:
+  group: sdelaet-search-api-production
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'search-api/**'
+      - '.github/workflows/deploy-search-api.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VDS_HOST: ${{ secrets.VDS_HOST }}
+      VDS_USER: ${{ secrets.VDS_USER }}
+      VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate Search API source
+        run: |
+          set -euo pipefail
+          node --check search-api/core.mjs
+          node --check search-api/server.mjs
+          node --check search-api/worker.js
+      - name: Validate server access secrets
+        run: |
+          set -euo pipefail
+          for name in VDS_HOST VDS_USER VDS_SSH_KEY; do
+            test -n "${!name:-}" || { echo "Missing repository secret: $name"; exit 1; }
+          done
+      - name: Prepare SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VDS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VDS_HOST" >> ~/.ssh/known_hosts
+      - name: Deploy exact Search API source
+        run: |
+          set -euo pipefail
+          tar -czf /tmp/search-api.tgz search-api
+          scp -q /tmp/search-api.tgz "$VDS_USER@$VDS_HOST:/tmp/sdelaet-search-api-$GITHUB_SHA.tgz"
+          ssh "$VDS_USER@$VDS_HOST" "EXPECTED_SHA='$GITHUB_SHA' ARCHIVE='/tmp/sdelaet-search-api-$GITHUB_SHA.tgz' bash -s" <<'REMOTE'
+          set -euo pipefail
+          TARGET=/opt/sdelaet/search-api
+          STATE=/var/lib/sdelaet/deploy/search-api.sha
+          BACKUPS=/opt/sdelaet/backups/search-api
+          SERVICE=sdelaet-search-api.service
+          ENV_FILE=/etc/sdelaet/search-api.env
+          mkdir -p "$TARGET" "$BACKUPS" "$(dirname "$STATE")"
+          test -f "$ENV_FILE" || { echo "SEARCH_API_ENV_MISSING"; exit 1; }
+          systemctl cat "$SERVICE" >/dev/null
+          stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+          backup="$BACKUPS/$stamp"
+          mkdir -p "$backup"
+          cp -a "$TARGET/." "$backup/" 2>/dev/null || true
+          tmp="$(mktemp -d /opt/sdelaet/search-api-new.XXXXXX)"
+          trap 'rm -rf "$tmp"; rm -f "$ARCHIVE"' EXIT
+          tar -xzf "$ARCHIVE" -C "$tmp"
+          test -f "$tmp/search-api/core.mjs"
+          test -f "$tmp/search-api/server.mjs"
+          rsync -a --delete "$tmp/search-api/" "$TARGET/"
+          printf '%s\n' "$EXPECTED_SHA" > "$TARGET/.deploy-sha"
+          systemctl restart "$SERVICE"
+          for attempt in $(seq 1 20); do
+            if systemctl is-active --quiet "$SERVICE" && curl -fsS --max-time 2 http://127.0.0.1:8788/health >/tmp/search-health.json; then break; fi
+            sleep 1
+          done
+          systemctl is-active --quiet "$SERVICE"
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/search-health.json'))
+          assert d.get('ok') is True,d
+          assert d.get('providers',{}).get('yandexSearch') is True,d
+          print(d)
+          PY
+          printf '%s\n' "$EXPECTED_SHA" > "$STATE"
+          REMOTE
+      - name: Production live-search smoke
+        run: |
+          set -euo pipefail
+          health="$(curl -fsS --retry 5 --retry-delay 2 https://api.onsdelaet.ru/health)"
+          printf '%s' "$health" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('providers',{}).get('yandexSearch') is True,d; print(d)"
+          response="$(curl -fsS --retry 3 --retry-delay 2 -X POST https://api.onsdelaet.ru/v1/candidates/search -H 'content-type: application/json' --data '{"categoryId":"balcony-insulation","category":"Утепление балкона","city":"Мытищи","description":"Нужно утеплить балкон","executorPreference":"any","limit":5}')"
+          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('count',0)>0,d; print('count=',d.get('count'))"
