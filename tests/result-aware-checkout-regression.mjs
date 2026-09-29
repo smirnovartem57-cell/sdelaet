@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';import{readFileSync}from'node:fs';const page=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
+assert.match(page,/configureCheckoutForResult\(count\)/);
+assert.match(page,/Открыть найденных/);
+assert.match(page,/сопровождение, а не за уже найденное количество/);
+assert.match(page,/Если вариантов не хватит — продолжим поиск без доплаты/);
+assert.match(page,/CURRENT_SHORTLIST_COUNT<=5/);
+assert.match(page,/max-height:calc\(100vh - 24px\)/);
+assert.match(page,/grid-template-columns:\.8fr 1fr 1\.35fr/);
+assert.doesNotMatch(page,/До 15 исполнителей и повторный поиск до выбора/);
+console.log('Result-aware compact checkout: PASS');
