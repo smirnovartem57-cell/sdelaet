@@ -20,16 +20,16 @@ window.sdAttributionForTask=function(){var a=window.sdAttribution();return{ym_cl
 window.sdBindTaskClientId=async function(taskId){var id=sdYmClientId();if(!taskId||!id)return false;try{var r=await fetch('https://api.onsdelaet.ru/v1/account/tasks/'+encodeURIComponent(taskId)+'/client-id',{method:'POST',credentials:'include',headers:{'content-type':'application/json'},body:JSON.stringify({ym_client_id:id})});return r.ok}catch(e){return false}}
 function sdRequestYmClientId(attempt){attempt=attempt||0;try{window.ym(SD_METRIKA_COUNTER_ID,'getClientID',function(id){if(id){try{localStorage.setItem(SD_ATTR_CLIENT,String(id))}catch(e){};try{var task=window.sdGetTask&&window.sdGetTask();if(task&&task.id)window.sdBindTaskClientId(task.id)}catch(e){};return}if(attempt<12)setTimeout(function(){sdRequestYmClientId(attempt+1)},500)})}catch(e){if(attempt<12)setTimeout(function(){sdRequestYmClientId(attempt+1)},500)}}
 
-var SD_METRIKA_GOALS={tariff_tz_click:1,tariff_find_click:1,tariff_compare_click:1,tariff_choice_click:1,find_executors_click:1,payment_start:1,payment_redirect:1,payment_return:1,payment_success:1,payment_fail:1,search_start:1,search_complete:1,request_prepare:1,request_send:1};
+var SD_METRIKA_GOALS={tariff_tz_click:1,tariff_find_click:1,tariff_compare_click:1,tariff_choice_click:1,find_executors_click:1,task_created:1,research_started:1,result_ready:1,result_viewed:1,tariff_selected:1,payment_start:1,payment_redirect:1,payment_return:1,payment_success:1,payment_fail:1,search_start:1,search_complete:1,request_prepare:1,request_send:1};
 if(!window.__sdMetrikaInitialized){
   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
   window.ym(SD_METRIKA_COUNTER_ID,'init',{id:SD_METRIKA_COUNTER_ID,clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
   window.__sdMetrikaInitialized=true;
   setTimeout(function(){sdRequestYmClientId(0)},0);
 }
-window.sdGoal=function(name,extra){if(!SD_METRIKA_GOALS[name])return false;var a=window.sdAttribution?window.sdAttribution():{},payload=Object.assign({},extra||{},a.intent_cluster?{intent_cluster:a.intent_cluster}:{},a.ym_client_id?{ym_client_id:a.ym_client_id}:{});window.sdTrack(name,payload);try{window.ym(SD_METRIKA_COUNTER_ID,'reachGoal',name,payload)}catch(e){}return true};
+window.sdGoal=function(name,extra){if(!SD_METRIKA_GOALS[name])return false;var a=window.sdAttribution?window.sdAttribution():{},payload=Object.assign({},extra||{},a.intent_cluster?{intent_cluster:a.intent_cluster}:{},a.ym_client_id?{ym_client_id:a.ym_client_id}:{});window.dataLayer=window.dataLayer||[];window.dataLayer.push(Object.assign({event:name},payload));try{window.ym(SD_METRIKA_COUNTER_ID,'reachGoal',name,payload)}catch(e){}return true};
 var SD_METRIKA_ONCE={};
-function sdGoalOnce(name,extra){var key=name+':'+String(extra&&extra.order_id||'');try{if(sessionStorage.getItem('sdelaet.metrika.'+key))return false;sessionStorage.setItem('sdelaet.metrika.'+key,'1')}catch(e){if(SD_METRIKA_ONCE[key])return false;SD_METRIKA_ONCE[key]=1}return window.sdGoal(name,extra)}
+function sdGoalOnce(name,extra){var key=name+':'+String(extra&&extra.order_id||extra&&extra.task_id||'');try{if(sessionStorage.getItem('sdelaet.metrika.'+key))return false;sessionStorage.setItem('sdelaet.metrika.'+key,'1')}catch(e){if(SD_METRIKA_ONCE[key])return false;SD_METRIKA_ONCE[key]=1}return window.sdGoal(name,extra)}
 window.sdAnalytics=Object.freeze({
   tariff:function(id,extra){var goal={tz:'tariff_tz_click',find:'tariff_find_click',compare:'tariff_compare_click',choice:'tariff_choice_click'}[id];return goal?window.sdGoal(goal,extra):false},
   findExecutors:function(extra){return window.sdGoal('find_executors_click',extra)},
@@ -48,7 +48,7 @@ window.sdAnalytics=Object.freeze({
 var SD_INTERNAL_TRACK=window.sdTrack;
 window.sdTrack=function(name,extra){
   SD_INTERNAL_TRACK(name,extra);
-  if(SD_METRIKA_GOALS[name])return;
+  if(SD_METRIKA_GOALS[name])return sdGoalOnce(name,extra);
   if(name==='tz_confirmed'){window.sdAnalytics.findExecutors(extra);window.sdAnalytics.searchStart(extra)}
   else if(name==='shortlist_prepared')window.sdAnalytics.searchComplete(extra);
   else if(name==='payment_link_created')window.sdAnalytics.paymentRedirect(extra);
