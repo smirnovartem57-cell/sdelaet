@@ -27,7 +27,7 @@
   function publishClientId(value){const id=cleanMarketingValue(value,100);if(!id)return;try{localStorage.setItem(ATTR_CLIENT_KEY,id)}catch{};window.dispatchEvent(new CustomEvent('sdelaet:ym-client-id',{detail:{clientId:id}}))}
   window.sdAttribution=function(){return {ym_client_id:clientId(),first_touch:firstTouch||null,last_touch:lastTouch||null,intent_cluster:(lastTouch&&lastTouch.intent_cluster)||(firstTouch&&firstTouch.intent_cluster)||'',current_visit:currentVisit}}
   window.sdAttributionForTask=function(){const a=window.sdAttribution();return {ym_client_id:a.ym_client_id,first_touch:a.first_touch,last_touch:a.last_touch,intent_cluster:a.intent_cluster,attribution_saved_at:new Date().toISOString()}}
-  window.sdBindTaskClientId=async function(taskId){const id=clientId();if(!taskId||!id)return false;try{const r=await fetch('https://api.onsdelaet.ru/v1/attribution/tasks/'+encodeURIComponent(taskId)+'/client-id',{method:'POST',credentials:'include',headers:{'content-type':'application/json'},body:JSON.stringify({ym_client_id:id})});return r.ok}catch{return false}}
+  window.sdBindTaskClientId=async function(taskId){const id=clientId();if(!taskId||!id)return false;try{const r=await fetch('https://api.onsdelaet.ru/v1/account/tasks/'+encodeURIComponent(taskId)+'/client-id',{method:'POST',credentials:'include',headers:{'content-type':'application/json'},body:JSON.stringify({ym_client_id:id})});return r.ok}catch{return false}}
 
 
   /*
