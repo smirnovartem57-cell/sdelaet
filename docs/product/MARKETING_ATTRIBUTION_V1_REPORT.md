@@ -3,9 +3,10 @@
 Date: 2026-09-29
 
 ## Production
-- Production SHA verified: `6c4ae761bdb8d79358c199383064ff7a85460e66`.
+- Production SHA verified after final acceptance/documentation rollout: `f5e60771f4353cb5039537b4f39230f55c26954e`.
 - Recorded production drift: empty.
 - Public attribution runtime smoke: PASS.
+- Post-rollout ProjectOS verification: deploy drift empty; production tree still contains getClientID, task attribution, CRM projection, retry-safe payment lifecycle and research attribution payload.
 
 ## Implemented
 - Existing Yandex Metrika counter remains `112503660`; existing analytics bridge is extended, not replaced.
