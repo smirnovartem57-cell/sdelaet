@@ -13659,6 +13659,7 @@ const server = http.createServer(async (req, res) => {
       };
 
       const runId = saveSearchRun(result, body);
+      customerAccount.captureAttribution(text(body.taskId||body.task_id),body.attribution||null);
 
       updateTaskLifecycle(
         body.taskId ||
