@@ -40,6 +40,8 @@ assert.match(account,/attribution:attr\|\|null/);
 assert.match(payment,/paymentSuccessEvent/);
 assert.match(payment,/confirmedBy:'tochka_webhook'/);
 assert.match(payment,/\/v1\/internal\/payment-confirmed/);
+assert.match(payment,/PAYMENT_LIFECYCLE_SYNC_FAILED/);
+assert.match(payment,/existing\.status==='paid'\?existing/);
 assert.match(success,/d\.order/);
 assert.match(success,/payment_id:paid\.operationId/);
 assert.match(privacy,/Яндекс Метрику/);
