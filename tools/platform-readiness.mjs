@@ -19,6 +19,7 @@ const commands = [
   ['syntax: production UI', ['--check', 'assets/prod-ui.js']],
   ['syntax: payment API', ['--check', 'payment-api/server.mjs']],
   ['marketing attribution v1', ['tests/marketing-attribution-v1-regression.mjs']],
+  ['marketing attribution acceptance sequence', ['tests/marketing-attribution-acceptance-sequence.mjs']],
   ['task-centric outreach', ['tests/task-centric-outreach-regression.mjs']],
   ['outreach account authorization', ['tests/outreach-account-authorization-regression.mjs']],
   ['syntax: analytics attribution', ['--check', 'assets/analytics.js']],
