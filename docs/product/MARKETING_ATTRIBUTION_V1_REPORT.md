@@ -39,7 +39,7 @@ Date: 2026-09-29
 6. Public production runtime contains getClientID / First / Last / intent / task payload wiring: PASS.
 7. Payment attribution and webhook-confirmed payment-success contract: PASS (automated); real bank payment not fabricated.
 8. CRM server projection schema/lifecycle: PASS (automated); real task/payment rows require real user lifecycle.
-9. Actual event visibility inside Yandex Metrika UI/API: NOT VERIFIED from current toolset; ProjectOS has no registered sdelaet analytics project/source.
+9. Yandex Metrika source is registered in ProjectOS as `onsdelaet-russia / yandex-metrika`, but its current read-only datasets expose traffic sources, ecommerce and historical dimensions only; goal/event-parameter rows are not exposed. Actual visibility of the new reachGoal events therefore remains NOT VERIFIED through the available Data Gateway.
 10. Actual real-bank payment_success: NOT EXECUTED intentionally; requires a genuine Tochka-approved payment.
 
 ## Main implementation PRs
