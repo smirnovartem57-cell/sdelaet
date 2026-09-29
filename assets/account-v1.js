@@ -34,6 +34,15 @@ function fmtDate(v){
   return new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'short',year:'numeric'}).format(d);
 }
 function money(v){return Number(v||0).toLocaleString('ru-RU')+' ₽'}
+async function saveTask(task){
+  var payload=Object.assign({},task||{});
+  if(window.sdAttributionForTask)payload.attribution=window.sdAttributionForTask();
+  var d=await api('/v1/account/tasks',{method:'POST',body:JSON.stringify({task:payload})});
+  var id=d&&d.task&&d.task.taskId||payload.id||payload.taskId;
+  if(id&&window.sdBindTaskClientId)window.sdBindTaskClientId(id);
+  if(id&&window.sdTrack)window.sdTrack('task_created',{task_id:id,service_id:payload.categoryId||'',service_name:payload.category||'',city:payload.city||payload.locality||''});
+  return d;
+}
 async function resumeTask(taskId){
   track('task_resume',{task_id:taskId});
   var d=await api('/v1/account/tasks/'+encodeURIComponent(taskId));
@@ -53,7 +62,8 @@ async function logout(){
   await fetch(API+'/v1/auth/logout',{method:'POST',credentials:'include'}).catch(function(){});
   location.href='/';
 }
-window.sdAccount={API:API,api:api,requireAuth:requireAuth,fmtDate:fmtDate,money:money,track:track,resumeTask:resumeTask,newTask:newTask,logout:logout};
+window.sdAccount={API:API,api:api,requireAuth:requireAuth,fmtDate:fmtDate,money:money,track:track,resumeTask:resumeTask,newTask:newTask,logout:logout,saveTask:saveTask};
+window.sdAccountSaveTask=saveTask;
 document.addEventListener('click',function(e){
   var n=e.target.closest('[data-new-task]');if(n){e.preventDefault();newTask();return}
   var r=e.target.closest('[data-resume-task]');if(r){e.preventDefault();resumeTask(r.dataset.resumeTask).catch(function(){location.href='/my-tasks.html'});return}

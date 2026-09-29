@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const analytics=readFileSync(new URL('../assets/analytics.js',import.meta.url),'utf8');
+const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url),'utf8');
+const payment=readFileSync(new URL('../payment-api/server.mjs',import.meta.url),'utf8');
+const task=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
+
+assert.match(analytics,/getClientID/);
+assert.match(analytics,/sdelaet\.attribution\.first\.v1/);
+assert.match(analytics,/sdelaet\.attribution\.last\.v1/);
+assert.match(analytics,/if\(!firstTouch\)/);
+assert.match(analytics,/if\(currentVisit\.meaningful\)/);
+assert.match(analytics,/intent_cluster/);
+assert.match(analytics,/sdAttributionForTask/);
+assert.match(account,/CREATE TABLE IF NOT EXISTS task_attribution/);
+assert.match(account,/task_id TEXT PRIMARY KEY/);
+assert.match(account,/if\(existing\)return existing/);
+assert.match(account,/YM_CLIENT_ID_IMMUTABLE/);
+assert.match(account,/idx_task_attribution_client/);
+assert.match(account,/attribution:taskAttribution\(id\)/);
+assert.match(payment,/paymentSuccessEvent/);
+assert.match(payment,/existing\.status!=='paid'/);
+assert.match(payment,/confirmedBy:'tochka_webhook'/);
+for(const e of ['result_ready','result_viewed','tariff_selected','payment_start'])assert.ok(task.includes("'"+e+"'"),e);
+console.log('Marketing attribution v1 contract: PASS');

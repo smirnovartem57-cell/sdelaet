@@ -13168,6 +13168,12 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
+  if(req.method==='POST'&&req.url==='/v1/internal/payment-confirmed'){
+    const remote=String(req.socket?.remoteAddress||'');
+    if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(remote))return sendJson(res,403,{ok:false,error:'LOCAL_ONLY'},origin);
+    try{const body=await readBody(req);const taskId=text(body.taskId||body.task_id);if(!taskId)return sendJson(res,400,{ok:false,error:'TASK_ID_REQUIRED'},origin);const crm=customerAccount.recordPaymentLifecycle(taskId,{paymentId:text(body.paymentId||body.payment_id),status:text(body.status||'paid'),tariff:text(body.tariff),amount:Number(body.amount||0),paidAmount:Number(body.paidAmount||body.paid_amount||0),paidAt:text(body.paidAt||body.paid_at)||null});return sendJson(res,200,{ok:true,crm},origin)}catch(error){return sendJson(res,500,{ok:false,error:error?.message||'PAYMENT_CRM_UPDATE_FAILED'},origin)}
+  }
+
   if (await customerAuth.handle(req, res, origin)) {
     return;
   }
