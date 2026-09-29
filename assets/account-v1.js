@@ -40,6 +40,7 @@ async function saveTask(task){
   var d=await api('/v1/account/tasks',{method:'POST',body:JSON.stringify({task:payload})});
   var id=d&&d.task&&d.task.taskId||payload.id||payload.taskId;
   if(id&&window.sdBindTaskClientId)window.sdBindTaskClientId(id);
+  if(id&&window.sdTrack)window.sdTrack('task_created',{task_id:id,service_id:payload.categoryId||'',service_name:payload.category||'',city:payload.city||payload.locality||''});
   return d;
 }
 async function resumeTask(taskId){
