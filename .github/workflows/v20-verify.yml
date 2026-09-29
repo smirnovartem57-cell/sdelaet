@@ -40,3 +40,19 @@ jobs:
           node --check src/outreach.mjs
       - name: Customer flow regression
         run: node tests/v20-flow-regression.mjs
+
+      - name: Production attribution runtime smoke
+        run: |
+          set -euo pipefail
+          html="$(curl -fsS --max-time 15 https://onsdelaet.ru/create-task.html)"
+          printf '%s' "$html" | grep -q 'assets/prod-ui.js'
+          ui="$(curl -fsS --max-time 15 https://onsdelaet.ru/assets/prod-ui.js)"
+          printf '%s' "$ui" | grep -q 'getClientID'
+          printf '%s' "$ui" | grep -q 'sdelaet.attribution.first.v1'
+          printf '%s' "$ui" | grep -q 'sdelaet.attribution.last.v1'
+          printf '%s' "$ui" | grep -q 'estimate_compare'
+          printf '%s' "$ui" | grep -q 'task_created:1'
+          printf '%s' "$ui" | grep -q 'payment_success:1'
+          task="$(curl -fsS --max-time 15 https://onsdelaet.ru/task-tz.html)"
+          printf '%s' "$task" | grep -q 'sdAttributionForTask'
+          echo PRODUCTION_ATTRIBUTION_RUNTIME_PASS
