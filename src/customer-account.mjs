@@ -109,6 +109,7 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
  function recordPaymentLifecycle(taskId,{paymentId='',status='',tariff='',amount=0,paidAmount=0,paidAt=null}={}){
   syncCrmTask(taskId);const ts=now();db.prepare('UPDATE crm_task_state SET selected_tariff=COALESCE(NULLIF(?,\'\'),selected_tariff),tariff_price=CASE WHEN ?>0 THEN ? ELSE tariff_price END,payment_id=COALESCE(NULLIF(?,\'\'),payment_id),payment_status=COALESCE(NULLIF(?,\'\'),payment_status),paid_amount=CASE WHEN ?>0 THEN ? ELSE paid_amount END,paid_at=COALESCE(?,paid_at),updated_at=? WHERE task_id=?').run(tariff,Number(amount),Number(amount),paymentId,status,Number(paidAmount),Number(paidAmount),paidAt,ts,taskId);return db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get(taskId)
  }
+ function captureAttribution(taskId,a){const r=saveAttributionSnapshot(taskId,a);syncCrmTask(taskId);return r}
  function bindClientId(email,taskId,value){owner(email,taskId);const id=text(value).slice(0,100);if(!id){const e=new Error('YM_CLIENT_ID_REQUIRED');e.status=400;throw e}const row=db.prepare('SELECT ym_client_id FROM task_attribution WHERE task_id=?').get(taskId);if(!row){const e=new Error('TASK_ATTRIBUTION_NOT_FOUND');e.status=404;throw e}if(row.ym_client_id&&row.ym_client_id!==id){const e=new Error('YM_CLIENT_ID_IMMUTABLE');e.status=409;throw e}const ts=now();db.prepare('UPDATE task_attribution SET ym_client_id=COALESCE(ym_client_id,?),client_id_bound_at=COALESCE(client_id_bound_at,?),updated_at=? WHERE task_id=?').run(id,ts,ts,taskId);syncCrmTask(taskId);return{id}}
  function taskAttribution(taskId){const r=db.prepare('SELECT * FROM task_attribution WHERE task_id=?').get(taskId);return r?{ym_client_id:r.ym_client_id||'',first_touch:parse(r.first_touch_json,{}),last_touch:parse(r.last_touch_json,{}),intent_cluster:r.intent_cluster||'',attribution_saved_at:r.attribution_saved_at}:null}
  function upsert(email,t){
@@ -158,5 +159,5 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
    reply(res,404,{ok:false,error:'ACCOUNT_ROUTE_NOT_FOUND'},origin);return true
   }catch(e){reply(res,e?.status||500,{ok:false,error:e?.message||'ACCOUNT_FAILED'},origin);return true}
  }
- return{handle,recordPaymentLifecycle,_test:{upsert,detail,list,pricing,entitlement,owner,sync,authorize,profile,saveProfile,taskAttribution,syncCrmTask,recordPaymentLifecycle}}
+ return{handle,recordPaymentLifecycle,captureAttribution,_test:{upsert,detail,list,pricing,entitlement,owner,sync,authorize,profile,saveProfile,taskAttribution,syncCrmTask,recordPaymentLifecycle}}
 }

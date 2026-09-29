@@ -7,6 +7,8 @@ const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url
 const payment=readFileSync(new URL('../payment-api/server.mjs',import.meta.url),'utf8');
 const success=readFileSync(new URL('../payment-success.html',import.meta.url),'utf8');
 const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
+const taskTz=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
+const server=readFileSync(new URL('../src/server.mjs',import.meta.url),'utf8');
 
 assert.match(ui,/getClientID/);
 assert.match(ui,/sdelaet\.attribution\.first\.v1/);
@@ -30,6 +32,9 @@ assert.match(account,/if\(existing\)return existing/);
 assert.match(account,/YM_CLIENT_ID_IMMUTABLE/);
 assert.match(account,/idx_task_attribution_client/);
 assert.match(account,/recordPaymentLifecycle/);
+assert.match(account,/captureAttribution/);
+assert.match(taskTz,/attribution:window\.sdAttributionForTask/);
+assert.match(server,/customerAccount\.captureAttribution/);
 assert.match(account,/attribution:attr\|\|null/);
 
 assert.match(payment,/paymentSuccessEvent/);
