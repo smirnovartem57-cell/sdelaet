@@ -40,3 +40,14 @@ jobs:
           node --check src/outreach.mjs
       - name: Customer flow regression
         run: node tests/v20-flow-regression.mjs
+
+      - name: Production attribution smoke
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 15 https://onsdelaet.ru/assets/prod-ui.js -o /tmp/prod-ui.js
+          grep -q 'getClientID' /tmp/prod-ui.js
+          grep -q 'sdelaet.attribution.first.v1' /tmp/prod-ui.js
+          grep -q 'sdelaet.attribution.last.v1' /tmp/prod-ui.js
+          task_id="task-attribution-ci-${GITHUB_RUN_ID}"
+          response="$(curl -fsS --max-time 45 -X POST https://api.onsdelaet.ru/v1/candidates/search -H 'content-type: application/json' --data '{"taskId":"'${task_id}'","categoryId":"universal-home-repair","category":"Другая задача по дому и ремонту","city":"Мытищи","description":"Тест атрибуции без персональных данных","executorPreference":"any","limit":3,"attribution":{"ym_client_id":"ci-test-client","first_touch":{"source":"yandex","medium":"cpc","campaign":"sdelaet_attribution_test","content":"estimate_compare","term":"test_compare_estimates","yclid":"test-yclid","intent_cluster":"estimate_compare","landing_page":"/","timestamp":"2026-09-29T00:00:00.000Z"},"last_touch":{"source":"yandex","medium":"cpc","campaign":"sdelaet_attribution_test","content":"estimate_compare","term":"test_compare_estimates","yclid":"test-yclid","intent_cluster":"estimate_compare","landing_page":"/","timestamp":"2026-09-29T00:00:00.000Z"},"intent_cluster":"estimate_compare","attribution_saved_at":"2026-09-29T00:00:00.000Z"}}')"
+          printf '%s' "$response" | python -c "import json,sys; d=json.load(sys.stdin); assert d.get('ok') is True,d; assert d.get('runId'),d; print('PRODUCTION_ATTRIBUTION_SEARCH_PASS count=',d.get('count'),'runId=',d.get('runId'))"
