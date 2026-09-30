@@ -18,6 +18,8 @@ const typo=engine.analyze('Нужно утоплеить одну сторону
 assert.equal(typo.categoryId,'balcony-insulation');
 assert.match(typo.normalizedText,/утеплить/i);
 assert.doesNotMatch(typo.normalizedText,/утоплеить/i);
+assert.match(typo.params.goal,/продуван|промерзан/i);
+assert.match(typo.params.goal,/достаточно ли.*одн/i);
 
 const universal=engine.analyze('Нужно сделать что-то нестандартное в квартире');
 assert.equal(universal.categoryId,'universal-home-repair');
@@ -29,6 +31,10 @@ assert.match(intake,/Да, верно/);
 assert.match(intake,/Нет, выбрать другой/);
 assert.match(intake,/sdSetRegionPreference/);
 assert.match(intake,/task_spelling_normalized/);
+assert.match(intake,/\/v1\/account\/profile/);
+assert.match(intake,/\/v1\/account\/tasks/);
+assert.match(intake,/source:'task_confirmed'/);
+assert.match(intake,/Регион для этой задачи/);
 
 assert.match(tz,/id="assignmentDetails" open/);
 assert.match(tz,/Детали задания и схема/);
