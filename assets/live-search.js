@@ -973,7 +973,7 @@
         : `<div class="candidate-grid structured">${renderWhyPanel(candidate)}<div class="fact-panels">${structuredFacts || '<section class="fact-panel"><h3>Проверка</h3><p class="muted">Дополнительных публичных фактов пока не найдено.</p></section>'}</div></div>`}
       ${renderSourceManifest(candidate)}
       <div class="actions">
-        <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="requests.html?candidate=${encodeURIComponent(candidate.id)}">Подготовить запрос</a>
+        <a class="btn primary prepare-request" data-candidate="${esc(candidate.id)}" href="task.html?task=${encodeURIComponent(task.id||'')}&amp;candidate=${encodeURIComponent(candidate.id)}#selection">Подготовить запрос</a>
         ${actionHtml}
       </div>
     </article>`;
@@ -1182,6 +1182,7 @@
   }
 
   async function runSearch() {
+    if(state.searching)return;state.searching=true;let searchMotion=null;
     const status = document.getElementById('searchStatus');
     const list = document.getElementById('candidateList');
     const filters = document.getElementById('filters');
@@ -1191,6 +1192,7 @@
     if (introLead) introLead.textContent = 'Поиск оплачен и запущен. Уточняем найденных исполнителей: проверяем контакты, отзывы, источники и убираем дубли.';
     status.className = 'search-status loading';
     status.innerHTML = '<div class="spinner"></div><div><b>Уточняем исполнителей</b><span>Проверяем найденных кандидатов: сайты, контакты, отзывы и происхождение данных, убираем дубли…</span></div>';
+    if(window.sdMotion)searchMotion=sdMotion.operation(status,{state:'working',title:'Уточняем исполнителей',note:'Проверяем доступные данные. Результат появится после ответа сервера.'});
     list.innerHTML = '';
     filters.classList.add('hidden');
 
@@ -1253,7 +1255,7 @@
       renderSearchError(message);
       track('live_search_failed', { reason: message });
       toast(message, false);
-    }
+    }finally{state.searching=false;if(searchMotion)searchMotion.dispose();status.setAttribute('aria-busy','false');}
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeReviewsModal(); });

@@ -4,6 +4,7 @@ const analytics=readFileSync(new URL('../assets/analytics.js',import.meta.url),'
 const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url),'utf8');
 const payment=readFileSync(new URL('../payment-api/server.mjs',import.meta.url),'utf8');
 const task=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
+const taskJourney=readFileSync(new URL('../assets/task-journey-v1.js',import.meta.url),'utf8');
 
 assert.match(analytics,/getClientID/);
 assert.match(analytics,/sdelaet\.attribution\.first\.v1/);
@@ -22,5 +23,6 @@ assert.match(payment,/paymentSuccessEvent/);
 assert.match(payment,/existing\.status==='paid'\?existing/);
 assert.match(payment,/PAYMENT_LIFECYCLE_SYNC_FAILED/);
 assert.match(payment,/confirmedBy:'tochka_webhook'/);
-for(const e of ['result_ready','result_viewed','tariff_selected','payment_start'])assert.ok(task.includes("'"+e+"'"),e);
+assert.match(task,/assets\/task-journey-v1\.js/);
+for(const e of ['result_ready','result_viewed','tariff_selected','payment_start'])assert.ok(taskJourney.includes("'"+e+"'"),e);
 console.log('Marketing attribution v1 contract: PASS');
