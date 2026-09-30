@@ -20,19 +20,24 @@ ok(categoryEngine.includes("id:'objectPlace'")&&categoryEngine.includes("id:'goa
 ok(createTask.includes('/v1/taxonomy/signals'),'unclassified task must be recorded as taxonomy expansion signal');
 ok(createTask.includes("category_status:'unclassified_in_domain'"),'taxonomy signal must retain unclassified in-domain status');
 
-ok(taskTz.includes("function restoreCheckoutState()"),'checkout state must restore');
-ok(taskTz.includes("task.categoryId||'universal-home-repair'"),'missing category must search via universal home-repair path');
-ok(!taskTz.includes("task.categoryId||'balcony-insulation'"),'unknown task must never fall back to balcony insulation');
-ok(taskTz.includes("sdelaet.payment.active.v1"),'paid entitlement must persist locally');
-ok(taskTz.includes("checkExistingPaidOrder()"),'paid task must be checked before paywall');
-ok(taskTz.includes("||await checkExistingPaidOrder()"),'paywall click must re-check payment to avoid race');
-ok(taskTz.includes("openPaywallButton.textContent='Перейти к кандидатам →'"),'paid task CTA must go to candidates');
-ok(taskTz.includes("content:'Выбрано'"),'selected tariff must be visually distinct');
-ok(taskTz.includes("Выбор сохранится для этой задачи"),'tariff UI must explain persistence');
+const journey=fs.readFileSync('assets/task-journey-v1.js','utf8');
+ok(taskTz.includes("assets/task-journey-v1.js"),'task TZ must use shared journey controller');
+ok(journey.includes("RESUME='sdelaet.journey.resume.v1'"),'checkout resume state must be namespaced');
+ok(journey.includes("selectionKey(id)"),'tariff selection must persist per task');
+ok(journey.includes("resumeValid(value,now)"),'saved checkout state must be validated before resume');
+ok(journey.includes("readStorage(storage('sessionStorage'),RESUME)"),'checkout state must restore from session storage');
+ok(journey.includes("task.categoryId||'universal-home-repair'"),'missing category must search via universal home-repair path');
+ok(!journey.includes("task.categoryId||'balcony-insulation'"),'unknown task must never fall back to balcony insulation');
+ok(journey.includes("payment-status:"+""), 'payment journey module must be present');
+ok(journey.includes("taskData.task?.payment?.status==='paid'"),'paid access must be confirmed from server task state');
+ok(journey.includes("taskUrl(taskId,'#selection')"),'successful payment must continue in the same task');
+ok(journey.includes("Repeat")||journey.includes("repeat"),'journey must retain repeat-pricing flow');
+ok(journey.includes("selected"),'selected tariff must be visually distinct');
+ok(journey.includes("persistSelection()"),'tariff choice must be persisted before auth/payment handoff');
 
-ok(payment.includes("sdelaet.payment.active.v1"),'payment success must persist entitlement');
-ok(payment.includes("tariffName=pending.tariffId==='choice'?'До выбора':'Подбор'"),'success page must show actual tariff');
-ok(payment.includes("location.replace('candidates.html')"),'successful payment must continue automatically to candidates');
+ok(payment.includes("assets/task-journey-v1.js"),'payment success must use shared journey controller');
+ok(payment.includes("sdJourney.initPaymentReturn()"),'payment return page must delegate to server-verified payment flow');
+ok(!payment.includes("location.replace('candidates.html')"),'payment success must not leave the task-centric journey');
 
 ok(requests.includes('class="attachment-thumb"'),'request photos must render as compact thumbnails');
 ok(requests.includes('function openAttachmentLightbox(src)'),'request photos must enlarge on click');

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const ui = readFileSync(new URL('../assets/prod-ui.js', import.meta.url), 'utf8');
 const success = readFileSync(new URL('../payment-success.html', import.meta.url), 'utf8');
+const journey = readFileSync(new URL('../assets/task-journey-v1.js', import.meta.url), 'utf8');
 const failed = readFileSync(new URL('../payment-failed.html', import.meta.url), 'utf8');
 const review = readFileSync(new URL('../review.html', import.meta.url), 'utf8');
 
@@ -43,12 +44,14 @@ assert.match(ui, /price-card/);
 assert.match(ui, /#buySearch/);
 
 assert.match(success, /assets\/prod-ui\.js/);
-assert.match(success, /sdAnalytics\.paymentReturn/);
-assert.match(success, /sdAnalytics\.paymentStatus/);
-assert.match(success, /s==='paid'/);
+assert.match(success, /assets\/task-journey-v1\.js/);
+assert.match(success, /sdJourney\.initPaymentReturn\(\)/);
+assert.match(journey, /sdAnalytics\.paymentReturn/);
+assert.match(journey, /sdAnalytics\.paymentStatus/);
+assert.match(journey, /s==='paid'/);
 
 assert.match(failed, /assets\/prod-ui\.js/);
-assert.match(failed, /sdAnalytics\.paymentResultPage\('failed'/);
+assert.match(failed, /assets\/task-journey-v1\.js/);
 
 assert.match(review, /request_mark_sent/);
 assert.match(review, /manual-sent/);

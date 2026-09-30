@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=account-v1">
 <script src="assets/prod-ui.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
-</head>
+<link rel="stylesheet" href="assets/research-pricing-v2.css?v=journey-integration4-20260930"><link rel="stylesheet" href="assets/task-motion-v1.css?v=journey-integration4-20260930"><script src="assets/research-pricing-v2.js?v=journey-integration4-20260930"></script><script src="assets/task-motion-v1.js?v=journey-integration4-20260930"></script><script src="assets/task-journey-v1.js?v=journey-integration4-20260930"></script><script src="assets/candidate-evidence-v1.js?v=journey-integration4-20260930"></script></head>
 <body class="account-body">
 <div class="account-shell">
 <aside class="account-sidebar">
@@ -24,12 +24,14 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded',async function(){
- var root=document.getElementById('taskRoot'),id=new URLSearchParams(location.search).get('task');
+ var root=document.getElementById('taskRoot'),id=new URLSearchParams(location.search).get('task'),viewEvents=new Set();
+ function trackWorkspaceOnce(name,params){var key=name+':'+id;if(!viewEvents.has(key)){viewEvents.add(key);sdAccount.track(name,params);}}
  if(!id){location.replace('/my-tasks.html');return}
  try{
   await sdAccount.requireAuth();
   var d=await sdAccount.api('/v1/account/tasks/'+encodeURIComponent(id)),t=d.task;
   render(t);
+  if(t.research&&!(t.payment&&t.payment.status==='paid'))sdJourney.resumeCheckout({taskId:t.taskId,task:t,research:t.research,pricing:t.pricing,title:t.title,region:t.region}).catch(function(){});
  }catch(e){
   if(e.message==='AUTH_REQUIRED')return;
   if(e.message==='TASK_NOT_FOUND'){root.innerHTML='<div class="account-error">Задача не найдена или недоступна этому аккаунту. <a href="my-tasks.html">Вернуться в «Мои задачи»</a></div>';return}
@@ -40,13 +42,16 @@ document.addEventListener('DOMContentLoaded',async function(){
  function render(t){
   document.title=t.title+' — Сделает';
   var status=t.status||{},html='';
+  var researchFirst=!!t.research&&!(t.payment&&t.payment.status==='paid');
+  root.classList.toggle('rp-research-first',researchFirst);
   html+='<div class="account-workspace-head"><div class="account-workspace-meta"><span class="account-status" data-status="'+esc(status.code)+'">'+esc(status.label)+'</span><span>'+esc(t.region)+'</span><span>Обновлено '+esc(sdAccount.fmtDate(t.updatedAt||t.createdAt))+'</span></div><h1>'+esc(t.title)+'</h1><div class="account-task-result">'+esc(t.keyResult)+'</div>';
   if(status.code==='draft')html+='<div style="margin-top:16px"><a href="#" class="account-primary" data-resume-task="'+esc(t.taskId)+'">Продолжить заполнение</a></div>';
   html+='</div>';
 
-  html+=taskSection(t);
+  if(!researchFirst)html+=taskSection(t);
 
   if(t.research||status.code==='researching')html+=researchSection(t);
+  if(researchFirst)html+='<details class="rp-task-details" id="task-details"><summary>Описание и детали задачи</summary>'+taskSection(t)+'</details>';
   if(t.payment&&t.payment.status==='paid')html+=selectionSection(t);
   if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))html+=responsesSection(t);
   if(t.offers&&t.offers.length)html+=comparisonSection(t);
@@ -54,13 +59,13 @@ document.addEventListener('DOMContentLoaded',async function(){
 
   if(t.pricing&&t.pricing.repeatDiscount&&t.pricing.repeatDiscount.eligible&&t.payment&&t.payment.status==='paid'){
     html+='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a><div style="margin-top:5px">Подбор — 690 ₽ вместо 990 ₽ · До выбора — 1 790 ₽ вместо 2 590 ₽</div></div>';
-    sdAccount.track('repeat_discount_shown',{surface:'task'});
+    trackWorkspaceOnce('repeat_discount_shown',{surface:'task'});
   }
-  root.innerHTML=html;
+  sdMotion.reconcile(root,html);
   bindActions(t);
-  if(t.research)sdAccount.track('research_result_open',{task_id:t.taskId});
-  if(t.payment&&t.payment.status==='paid')sdAccount.track('selection_open',{task_id:t.taskId});
-  if(t.offers&&t.offers.length)sdAccount.track('comparison_open',{task_id:t.taskId});
+  if(t.research)trackWorkspaceOnce('research_result_open',{task_id:t.taskId});
+  if(t.payment&&t.payment.status==='paid')trackWorkspaceOnce('selection_open',{task_id:t.taskId});
+  if(t.offers&&t.offers.length)trackWorkspaceOnce('comparison_open',{task_id:t.taskId});
  }
  function taskSection(t){
   var j=t.taskJson||{},rows=[];
@@ -69,20 +74,14 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function researchSection(t){
   var r=t.research,s='<section class="account-section" id="research"><h2>Исследование рынка</h2>';
-  if(!r){s+='<p>Бесплатное исследование рынка выполняется. Результат появится здесь.</p></section>';return s}
-  s+='<p>Исследование завершено '+esc(sdAccount.fmtDate(r.createdAt))+'.</p>';
-  s+='<div class="account-summary-item"><span>Найдено вариантов</span><b>'+Number(r.candidateCount||0)+'</b></div>';
-  if(!(t.payment&&t.payment.status==='paid')&&Number(r.candidateCount||0)>0)s+=pricingBlock(t);
+  if(!r)return s+sdMotion.statusHtml('working','Исследуем рынок','Ждём подтверждённый результат. Статус обновляется в этой задаче.')+'</section>';
+  var model=sdResearchPricing.buildModel({count:r.candidateCount});
+  s+='<div class="rp-research-meta"><b>Сейчас подготовлено: '+esc(model.count==null?'—':model.count)+'</b><p>Данные исследования '+esc(sdAccount.fmtDate(r.createdAt))+'.</p></div>';
+  if(!(t.payment&&t.payment.status==='paid'))s+=pricingBlock(t);
   return s+'</section>';
  }
  function pricingBlock(t){
-  var p=t.pricing||{},tar=p.tariffs||{},repeat=p.repeatDiscount&&p.repeatDiscount.eligible;
-  var f=tar.find||{amount:990,regularAmount:990},c=tar.choice||{amount:2590,regularAmount:2590};
-  if(repeat)sdAccount.track('repeat_discount_shown',{surface:'research_result'});
-  function card(id,name,x,choice){
-   return '<div class="account-price-card '+(choice?'choice':'')+'"><h3>'+esc(name)+'</h3><div class="account-price">'+esc(sdAccount.money(x.amount))+(x.amount<x.regularAmount?'<s>'+esc(sdAccount.money(x.regularAmount))+'</s>':'')+'</div><div class="account-price-note">'+(id==='find'?'До 5 уникальных исполнителей + 1 дополнительный поиск.':'До 15 уникальных исполнителей и повторный поиск в рамках задачи, пока выбираете.')+'</div><button class="'+(choice?'account-primary':'account-secondary')+'" type="button" data-buy-plan="'+id+'">Выбрать →</button></div>';
-  }
-  return '<div style="margin-top:18px"><h3 style="margin:0;color:#304761;font:800 13px Montserrat,sans-serif">Выберите глубину подбора</h3>'+(repeat?'<p>Ваша цена для повторного обращения применится автоматически.</p>':'')+'<div class="account-pricing">'+card('find','Подбор',f,false)+card('choice','До выбора',c,true)+'</div></div>';
+  return sdResearchPricing.renderAccount({count:t.research&&t.research.candidateCount,pricing:t.pricing||{}});
  }
  function buildOutreachMessage(t,c){
   var j=t.taskJson||{},fields=list(j.requestFields),lines=['Добрый день!','',String(t.title||j.category||'Задача'),'','Задача:','— '+String(t.description||j.description||j.scope||'Нужен расчёт по задаче')];
@@ -97,12 +96,12 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function selectionSection(t){
   var attempts=t.outreach||[];
-  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · '),a=attempts.find(function(x){return x.candidateId===c.id}),status=a?('<p><b>Обращение:</b> '+esc(a.status==='replied'?'получен ответ':a.status==='sent'?'отправлено':a.status==='failed'?'ошибка отправки':'подготовлено')+'</p>'):'';var action='';if(c.email&&!a)action='<button class="account-primary" type="button" data-send-outreach="'+esc(c.id)+'">Отправить запрос на расчёт</button>';else if(!c.email&&!a)action='<p>Публичный email не найден — автоматическая отправка недоступна.</p>';return '<div class="account-mini-card"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Телефон: '+esc(c.phone)+'</p>':'')+(c.email?'<p>Email: '+esc(c.email)+'</p>':'')+(c.website?'<p><a href="'+esc(c.website)+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+status+action+'</div>'}).join('');
+  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · '),a=attempts.find(function(x){return x.candidateId===c.id}),status=a?('<p><b>Обращение:</b> '+esc(sdJourney.outreachLabel(a.status))+'</p>'):'';var action='';if(c.email&&!a)action='<button class="account-primary" type="button" data-send-outreach="'+esc(c.id)+'">Отправить запрос на расчёт</button>';else if(!c.email&&!a)action='<p>Публичный email не найден — автоматическая отправка недоступна.</p>';return '<div class="account-mini-card" data-candidate-id="'+esc(c.id)+'"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Телефон: '+esc(c.phone)+'</p>':'')+(c.email?'<p>Email: '+esc(c.email)+'</p>':'')+(sdJourney.safeExternalUrl(c.website)?'<p><a href="'+esc(sdJourney.safeExternalUrl(c.website))+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+sdCandidateEvidence.render(c)+status+action+'</div>'}).join('');
   return '<section class="account-section" id="selection"><h2>Подбор</h2><p>Здесь же можно подтвердить отправку запроса исполнителю. Полученные ответы и уточнения останутся внутри этой задачи.</p><div class="account-candidate-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div></section>';
  }
  function responsesSection(t){
   var replies=(t.replies||[]).map(function(r){var d=t.dialogues&&t.dialogues[r.request_id],state=d&&d.current_state,pending=state&&state.pending_clarifications||[];return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p>'+(state?'<p><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+(pending.length?'<p><b>Нужно уточнить:</b> '+esc((pending[0].items||[]).join('; '))+'</p>':'')+'</div>'}).join('');
-  var attempts=(t.outreach||[]).map(function(a){return '<div class="account-mini-card"><b>'+esc(a.candidateName||'Исполнитель')+'</b><p>Канал: '+esc(a.channel)+' · Статус: '+esc(a.status)+'</p>'+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p>Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
+  var attempts=(t.outreach||[]).map(function(a){return '<div class="account-mini-card"><b>'+esc(a.candidateName||'Исполнитель')+'</b><p>Канал: '+esc(a.channel)+' · Статус: '+esc(sdJourney.outreachLabel(a.status))+'</p>'+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p>Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
   return '<section class="account-section" id="responses"><h2>Обращения и ответы</h2><p>Отправлено обращений: '+Number(t.counts&&t.counts.outreach||0)+' · Получено ответов: '+Number(t.counts&&t.counts.replies||0)+'</p><div class="account-response-list">'+attempts+replies+'</div></section>';
  }
  function comparisonSection(t){
@@ -111,36 +110,10 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function paymentSection(t){
   var p=t.payment,type=p.priceType==='repeat'?'Повторное обращение':'Обычная цена';
-  return '<section class="account-section" id="payment"><h2>Оплата</h2><div class="account-payment-grid"><div class="account-payment-cell"><span>Тариф</span><b>'+esc(p.planName)+'</b></div><div class="account-payment-cell"><span>Цена</span><b>'+esc(sdAccount.money(p.amount))+(p.priceType==='repeat'?' вместо '+esc(sdAccount.money(p.regularAmount)):'')+'</b></div><div class="account-payment-cell"><span>Тип цены</span><b>'+esc(type)+'</b></div><div class="account-payment-cell"><span>Статус</span><b>'+esc(p.status==='paid'?'Оплачено':'Ожидает оплаты')+'</b></div></div><p>'+esc(sdAccount.fmtDate(p.paidAt||p.createdAt))+'</p></section>';
+  return '<section class="account-section" id="payment"><h2>Оплата</h2><div class="account-payment-grid"><div class="account-payment-cell"><span>Тариф</span><b>'+esc(p.planName)+'</b></div><div class="account-payment-cell"><span>Цена</span><b>'+esc(sdAccount.money(p.amount))+(p.priceType==='repeat'?' вместо '+esc(sdAccount.money(p.regularAmount)):'')+'</b></div><div class="account-payment-cell"><span>Тип цены</span><b>'+esc(type)+'</b></div><div class="account-payment-cell"><span>Статус</span><b>'+esc(sdJourney.paymentLabel(p.status))+'</b></div></div><p>'+esc(sdAccount.fmtDate(p.paidAt||p.createdAt))+'</p></section>';
  }
  function bindActions(t){
-  root.querySelectorAll('[data-send-outreach]').forEach(function(btn){
-   btn.addEventListener('click',async function(){
-    var candidate=(t.candidates||[]).find(function(x){return x.id===btn.dataset.sendOutreach});if(!candidate||!candidate.email)return;
-    var message=buildOutreachMessage(t,candidate),ok=window.confirm('Отправить запрос исполнителю «'+candidate.name+'» на '+candidate.email+'?\n\nПосле подтверждения письмо будет отправлено реально от сервиса «Сделает».');
-    if(!ok)return;
-    btn.disabled=true;var old=btn.textContent;btn.textContent='Отправляем…';
-    try{
-      var key='task:'+t.taskId+':candidate:'+candidate.id+':'+Date.now();
-      var auth=await sdAccount.api('/v1/account/tasks/'+encodeURIComponent(t.taskId)+'/outreach-authorize',{method:'POST',body:JSON.stringify({candidateId:candidate.id,message:message,explicitConfirm:true,idempotencyKey:key})});
-      var prepared=await sdAccount.api('/v1/outreach/prepare',{method:'POST',body:JSON.stringify({taskId:t.taskId,searchRunId:t.research&&t.research.runId||'',authorizationId:auth.authorizationId,candidate:{id:candidate.id,name:candidate.name,type:candidate.type,email:candidate.email},channel:'email',recipient:candidate.email,subject:'Запрос по задаче в сервисе «Сделает»',message:message})});
-      await sdAccount.api('/v1/outreach/email/send',{method:'POST',body:JSON.stringify({requestId:prepared.outreach.requestId,authorizationId:auth.authorizationId})});
-      sdAccount.track('task_outreach_sent',{task_id:t.taskId,candidate_id:candidate.id,channel:'email'});
-      location.reload();
-    }catch(e){btn.disabled=false;btn.textContent=old;alert(e.message==='CANDIDATE_CONTACT_NOT_AVAILABLE'?'У исполнителя нет подтверждённого контакта для отправки.':'Не удалось отправить запрос: '+e.message)}
-   });
-  });
-  root.querySelectorAll('[data-buy-plan]').forEach(function(btn){
-   btn.addEventListener('click',async function(){
-    var plan=btn.dataset.buyPlan;btn.disabled=true;var old=btn.textContent;btn.textContent='Готовим оплату…';
-    try{
-      var d=await sdAccount.api('/v1/account/payment',{method:'POST',body:JSON.stringify({taskId:t.taskId,tariffId:plan})});
-      sdAccount.track('payment_link_created',{task_id:t.taskId,tariff_id:plan,amount:d.amount,price_type:d.priceType});
-      if(d.priceType==='repeat')sdAccount.track('repeat_task_started',{task_id:t.taskId,tariff_id:plan});
-      location.href=d.paymentUrl;
-    }catch(e){btn.disabled=false;btn.textContent=old;alert(e.message==='REPEAT_DISCOUNT_NOT_AVAILABLE'?'Скидка для повторной задачи сейчас недоступна.':'Не удалось подготовить оплату. Попробуйте ещё раз.')}
-   });
-  });
+  sdJourney.mountWorkspace(root,t,render);
  }
 });
 </script>

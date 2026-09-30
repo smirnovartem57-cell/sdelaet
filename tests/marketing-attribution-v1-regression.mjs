@@ -8,6 +8,7 @@ const payment=readFileSync(new URL('../payment-api/server.mjs',import.meta.url),
 const success=readFileSync(new URL('../payment-success.html',import.meta.url),'utf8');
 const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
 const taskTz=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
+const taskJourney=readFileSync(new URL('../assets/task-journey-v1.js',import.meta.url),'utf8');
 const server=readFileSync(new URL('../src/server.mjs',import.meta.url),'utf8');
 
 assert.match(ui,/getClientID/);
@@ -33,15 +34,17 @@ assert.match(account,/YM_CLIENT_ID_IMMUTABLE/);
 assert.match(account,/idx_task_attribution_client/);
 assert.match(account,/recordPaymentLifecycle/);
 assert.match(account,/captureAttribution/);
-assert.match(taskTz,/attribution:window\.sdAttributionForTask/);
+assert.match(taskTz,/assets\/task-journey-v1\.js/);
+assert.match(taskJourney,/attribution:win\.sdAttributionForTask\?win\.sdAttributionForTask\(\):null/);
 assert.match(server,/customerAccount\.captureAttribution/);
 assert.match(account,/attribution:attr\|\|null/);
 
 assert.match(payment,/paymentSuccessEvent/);
 assert.match(payment,/confirmedBy:'tochka_webhook'/);
 assert.match(payment,/\/v1\/internal\/payment-confirmed/);
-assert.match(success,/d\.order/);
-assert.match(success,/payment_id:paid\.operationId/);
+assert.match(success,/sdJourney\.initPaymentReturn\(\)/);
+assert.match(taskJourney,/var paid=d\.order\|\|\{\}/);
+assert.match(taskJourney,/payment_id:paid\.operationId\|\|order/);
 assert.match(privacy,/Яндекс Метрику/);
 assert.match(privacy,/не передаются имя, телефон, email/);
 
