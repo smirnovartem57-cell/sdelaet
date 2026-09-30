@@ -108,3 +108,6 @@
 #paywall.rp-checkout .rp-note-small{margin:0;font:400 12px/1.4 Roboto,Arial,sans-serif;color:#596980}
 @media(max-width:700px){#paywall.rp-checkout .rp-footer{bottom:-16px}.rp-account-pricing .rp-plan{padding:16px}}
 @media(min-width:901px) and (max-height:760px){#paywall.rp-checkout .modal-card{padding:18px}#paywall.rp-checkout .rp-header h2{font-size:23px}#paywall.rp-checkout .rp-header .lead{font-size:13px}#paywall.rp-checkout .rp-footer{bottom:-18px;margin-top:10px;padding-top:10px}#paywall.rp-checkout .tariff-card{padding:12px}#paywall.rp-checkout .tariff-card ul{font-size:12px}#paywall.rp-checkout .rp-availability{font-size:12px}#paywall.rp-checkout .rp-candidate-copy{font-size:13px}}
+
+#paywall.rp-checkout .sj-pay-explain{margin:9px 0 2px;padding:10px 12px;border:1px solid #dce7f5;border-radius:12px;background:#fff;color:#52637e;font:400 12px/1.45 Roboto,Arial,sans-serif}
+#paywall.rp-checkout .sj-pay-explain b{color:#243b5a}
