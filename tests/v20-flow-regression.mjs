@@ -10,7 +10,7 @@ function ok(value,message){if(!value)throw new Error(message)}
 
 ok(createTask.includes('function applyDetectedContext()'),'detected context normalizer must exist');
 ok(createTask.includes("filter(function(q){return q.type!=='sizes'})"),'recognized photo geometry must remove sizes question');
-ok(createTask.includes("filter(function(q){return q.id!=='city'})"),'confident region must remove city question');
+ok(createTask.includes("type:'regionConfirm'")&&createTask.includes('Да, верно')&&createTask.includes('Нет, выбрать другой'),'confident region must be confirmed instead of silently removing the city question');
 ok(createTask.includes("https://ipwho.is/?fields=success,country_code,city,region"),'new task must resolve region by IP when no saved preference exists');
 ok(createTask.includes('(editMode&&saved&&saved.geo)'), 'editing must prefer saved task geo over current IP');
 ok(createTask.includes('await regionReady;await analyzeTaskInput'),'analysis must wait for region resolution');
