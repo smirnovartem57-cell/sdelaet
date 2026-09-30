@@ -89,15 +89,22 @@ function sendOtpMail(email, code) {
     'Ваш код входа: ' + code,
     '',
     'Код действует 10 минут и подходит только для одного входа.',
+    'Вход выполняется на onsdelaet.ru.',
     'Если вы не запрашивали вход, просто проигнорируйте это письмо.'
   ].join('\r\n');
+  const messageId = '<auth-' + crypto.randomUUID() + '@onsdelaet.ru>';
   const message = [
     'From: ' + from,
     'To: <' + email + '>',
+    'Reply-To: requests@onsdelaet.ru',
+    'Date: ' + new Date().toUTCString(),
+    'Message-ID: ' + messageId,
     'Subject: ' + subject,
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
     'Content-Transfer-Encoding: 8bit',
+    'Auto-Submitted: auto-generated',
+    'X-Auto-Response-Suppress: All',
     '',
     body
   ].join('\r\n');
@@ -106,7 +113,7 @@ function sendOtpMail(email, code) {
     const socket = net.createConnection({ host: '127.0.0.1', port: 25 });
     socket.setTimeout(12000);
     const commands = [
-      'EHLO onsdelaet.local\r\n',
+      'EHLO onsdelaet.ru\r\n',
       'MAIL FROM:<' + envelopeFrom + '>\r\n',
       'RCPT TO:<' + email + '>\r\n',
       'DATA\r\n',
