@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   var r=t.research,s='<section class="account-section" id="research"><h2>Исследование рынка</h2>';
   if(!r)return s+sdMotion.statusHtml('working','Исследуем рынок','Ждём подтверждённый результат. Статус обновляется в этой задаче.')+'</section>';
   var model=sdResearchPricing.buildModel({count:r.candidateCount});
-  s+='<div class="rp-research-meta"><b>Сейчас подготовлено: '+esc(model.count==null?'—':model.count)+'</b><p>Данные исследования '+esc(sdAccount.fmtDate(r.createdAt))+'.</p></div>';
+  s+='<div class="rp-research-meta"><b>На первом этапе найдено: '+esc(model.count==null?'—':model.count)+'</b><p>Это текущий результат исследования, а не лимит рынка. Данные '+esc(sdAccount.fmtDate(r.createdAt))+'.</p></div>';
   if(!(t.payment&&t.payment.status==='paid'))s+=pricingBlock(t);
   return s+'</section>';
  }

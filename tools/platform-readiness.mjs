@@ -25,6 +25,7 @@ const commands = [
   ['syntax: analytics attribution', ['--check', 'assets/analytics.js']],
   ['syntax: payment attribution', ['--check', 'payment-api/server.mjs']],
   ['marketing attribution', ['tests/marketing-attribution-regression.mjs']],
+  ['task intake region TZ', ['tests/task-intake-region-tz-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
