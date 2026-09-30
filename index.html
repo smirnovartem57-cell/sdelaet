@@ -1103,7 +1103,7 @@ authEmailForm&&authEmailForm.addEventListener('submit',function(e){
   e.preventDefault();setAuthStatus('Отправляем код…');
   fetch(API+'/v1/auth/request-code',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:authEmail.value.trim()})})
   .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
-  .then(function(x){if(!x.ok)throw new Error(x.j&&x.j.error||'Не удалось отправить код');challengeId=x.j.challengeId;authEmailForm.hidden=true;authCodeForm.hidden=false;setAuthStatus('Код отправлен на '+authEmail.value.trim()+'. Он действует 10 минут.','ok');setTimeout(function(){authCode.focus()},30)})
+  .then(function(x){if(!x.ok)throw new Error(x.j&&x.j.error||'Не удалось отправить код');challengeId=x.j.challengeId;authEmailForm.hidden=true;authCodeForm.hidden=false;setAuthStatus('Код отправлен на '+authEmail.value.trim()+'. Он действует 10 минут. Если письма нет во «Входящих», проверьте «Спам».','ok');setTimeout(function(){authCode.focus()},30)})
   .catch(function(err){setAuthStatus(err.message==='AUTH_CODE_RATE_LIMIT'?'Код уже отправлен. Повторите через минуту.':'Не удалось отправить код. Попробуйте ещё раз.','error')});
 });
 authCodeForm&&authCodeForm.addEventListener('submit',function(e){
