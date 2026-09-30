@@ -5770,7 +5770,7 @@ async function performSearch(body) {
       yandexSearch(
         `site:uslugi.yandex.ru/profile ${query} ${city}`,
         'private'
-      )
+      ).catch(() => [])
     );
   }
 
@@ -5784,7 +5784,7 @@ async function performSearch(body) {
       yandexSearch(
         `site:avito.ru ${query} ${city}`,
         'avito'
-      )
+      ).catch(() => [])
     );
   }
 
@@ -13659,22 +13659,34 @@ const server = http.createServer(async (req, res) => {
       };
 
       const runId = saveSearchRun(result, body);
-      customerAccount.captureAttribution(text(body.taskId||body.task_id),body.attribution||null);
 
-      updateTaskLifecycle(
-        body.taskId ||
-        body.task_id,
-        body.refinement
-          ? 'refined_search'
-          : 'search_completed'
-      );
+      // A saved shortlist is the primary result. Non-critical side effects
+      // must never convert a successful research request into an HTTP 500.
+      try {
+        customerAccount.captureAttribution(
+          text(body.taskId || body.task_id),
+          body.attribution || null
+        );
+      } catch {}
 
-      if (!body.refinement) {
-        scheduleSelectionFollowup(
+      try {
+        updateTaskLifecycle(
           body.taskId ||
           body.task_id,
-          'search_completed'
+          body.refinement
+            ? 'refined_search'
+            : 'search_completed'
         );
+      } catch {}
+
+      if (!body.refinement) {
+        try {
+          scheduleSelectionFollowup(
+            body.taskId ||
+            body.task_id,
+            'search_completed'
+          );
+        } catch {}
       }
 
       return sendJson(

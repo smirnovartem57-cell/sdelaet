@@ -146,7 +146,7 @@ function initResearch(task,options){
   latestResearch=result;updateStage(1);op.set('ready','Бесплатное исследование завершено','На первом этапе найдено '+result.count+' '+win.sdResearchPricing.noun(Number(result.count))+'. Теперь можно бесплатно вернуться к заданию или выбрать платный тариф для открытия контактов и продолжения работы сервиса.');
   track('result_viewed',{task_id:task.id,service:task.categoryId||task.category||''});
   await openCheckout({taskId:task.id,task:task,research:result,title:task.category,region:task.city,trigger:btn});
- }catch(e){op.set(win.navigator.onLine===false?'offline':'error','Не удалось завершить исследование','Задание не сброшено. Проверьте соединение и повторите запрос.');}
+ }catch(e){var offline=win.navigator.onLine===false,msg=offline?'Нет соединения с интернетом. Задание сохранено.':'Исследование не завершилось: '+String(e&&e.message||'SEARCH_FAILED')+'. Задание сохранено, оплату начинать не нужно.';op.set(offline?'offline':'error','Не удалось завершить исследование',msg);}
  finally{researchBusy=false;op.dispose();if(surface)win.sdMotion.layout(surface,()=>surface.classList.remove('sj-research-active'));btn.textContent=latestResearch?'Посмотреть бесплатный результат →':'Исследовать рынок бесплатно →';}}
  btn.onclick=run;
  // Resume only the matching task. It opens checkout, never submits a payment.
