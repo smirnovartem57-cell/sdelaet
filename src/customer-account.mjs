@@ -1,6 +1,7 @@
 import { listTaskOffers, getOfferDialogueHistory } from './offer-pipeline.mjs';
 import fs from 'node:fs';
 import { candidatePublicEvidence } from './candidate-public-evidence.mjs';
+import crypto from 'node:crypto';
 
 const T={
  find:{id:'find',name:'Подбор',regular:990,repeat:690,limit:5},
@@ -36,6 +37,26 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
  const profileCols=new Set(db.prepare('PRAGMA table_info(customer_profiles)').all().map(x=>x.name));
  if(!profileCols.has('geo_json'))db.exec('ALTER TABLE customer_profiles ADD COLUMN geo_json TEXT');
  function requireSession(req){const s=customerAuth.getSession(req);if(!s?.email){const e=new Error('AUTH_REQUIRED');e.status=401;throw e}return norm(s.email)}
+ function ensureClientForEmail(email){
+  const normalized=norm(email);
+  if(!normalized){const e=new Error('AUTH_EMAIL_REQUIRED');e.status=400;throw e}
+  const existing=db.prepare("SELECT client_id_crm FROM clients WHERE lower(COALESCE(email_normalized,email,''))=? ORDER BY created_at ASC LIMIT 1").get(normalized);
+  if(existing?.client_id_crm)return text(existing.client_id_crm);
+  const ts=now(),clientId='client_account_'+crypto.createHash('sha256').update(normalized).digest('hex').slice(0,20);
+  const byId=db.prepare('SELECT client_id_crm FROM clients WHERE client_id_crm=?').get(clientId);
+  if(byId?.client_id_crm)return text(byId.client_id_crm);
+  db.prepare(`
+    INSERT INTO clients(
+      client_id_crm,name,phone,phone_normalized,email,email_normalized,
+      preferred_contact,ym_client_id,consent_personal_data,consent_at,
+      consent_version,created_at,updated_at
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+  `).run(
+    clientId,'','', '',normalized,normalized,
+    'email',null,0,null,null,ts,ts
+  );
+  return clientId;
+ }
  function sync(email){
   const rows=db.prepare("SELECT DISTINCT t.task_id FROM tasks t INNER JOIN clients c ON c.client_id_crm=t.client_id_crm WHERE lower(COALESCE(c.email_normalized,c.email,''))=?").all(email);
   const q=db.prepare('INSERT INTO customer_task_owners(task_id,email,created_at,updated_at) VALUES(?,?,?,?) ON CONFLICT(task_id) DO NOTHING'),ts=now();
@@ -118,9 +139,9 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   sync(email);const old=db.prepare('SELECT task_id,client_id_crm,status FROM tasks WHERE task_id=?').get(id),o=db.prepare('SELECT email FROM customer_task_owners WHERE task_id=?').get(id);
   if(o&&norm(o.email)!==email){const e=new Error('TASK_NOT_FOUND');e.status=404;throw e}
   if(old&&!o&&old.client_id_crm){const c=db.prepare('SELECT email,email_normalized FROM clients WHERE client_id_crm=?').get(old.client_id_crm);if(c&&norm(c.email_normalized||c.email)!==email){const e=new Error('TASK_NOT_FOUND');e.status=404;throw e}}
-  const ts=now();
-  if(!old)db.prepare("INSERT INTO tasks(task_id,client_id_crm,service_id,service_name,city,description,task_json,status,created_at,updated_at,last_completed_stage) VALUES(?,NULL,?,?,?,?,?,'draft',?,?,NULL)").run(id,text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),ts,ts);
-  else db.prepare('UPDATE tasks SET service_id=?,service_name=?,city=?,description=?,task_json=?,status=?,updated_at=? WHERE task_id=?').run(text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),['draft',''].includes(text(old.status))?'draft':old.status,ts,id);
+  const ts=now(),clientIdCrm=text(old?.client_id_crm)||ensureClientForEmail(email);
+  if(!old)db.prepare("INSERT INTO tasks(task_id,client_id_crm,service_id,service_name,city,description,task_json,status,created_at,updated_at,last_completed_stage) VALUES(?,?,?,?,?,?,?,'draft',?,?,NULL)").run(id,clientIdCrm,text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),ts,ts);
+  else db.prepare('UPDATE tasks SET client_id_crm=?,service_id=?,service_name=?,city=?,description=?,task_json=?,status=?,updated_at=? WHERE task_id=?').run(clientIdCrm,text(t.categoryId),text(t.category||t.raw_service||'Задача'),text(t.locality||t.city||t.region),text(t.description||t.scope||t.raw_service),JSON.stringify(t),['draft',''].includes(text(old.status))?'draft':old.status,ts,id);
   db.prepare('INSERT INTO customer_task_owners(task_id,email,created_at,updated_at) VALUES(?,?,?,?) ON CONFLICT(task_id) DO UPDATE SET email=excluded.email,updated_at=excluded.updated_at').run(id,email,ts,ts);
   const attr=saveAttributionSnapshot(id,t.attribution||t._attribution||null);
   syncCrmTask(id);
@@ -160,5 +181,5 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
    reply(res,404,{ok:false,error:'ACCOUNT_ROUTE_NOT_FOUND'},origin);return true
   }catch(e){reply(res,e?.status||500,{ok:false,error:e?.message||'ACCOUNT_FAILED'},origin);return true}
  }
- return{handle,recordPaymentLifecycle,captureAttribution,_test:{upsert,detail,list,pricing,entitlement,owner,sync,authorize,profile,saveProfile,taskAttribution,syncCrmTask,recordPaymentLifecycle}}
+ return{handle,recordPaymentLifecycle,captureAttribution,_test:{upsert,detail,list,pricing,entitlement,owner,sync,ensureClientForEmail,authorize,profile,saveProfile,taskAttribution,syncCrmTask,recordPaymentLifecycle}}
 }
