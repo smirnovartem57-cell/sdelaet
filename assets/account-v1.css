@@ -273,3 +273,26 @@
 .selection-send-result h2{margin:0 0 10px!important}.selection-send-result p{max-width:560px;margin:6px auto!important;color:#64748b;font-size:11px!important;line-height:1.5!important}
 .selection-send-result .account-primary{margin-top:12px}
 @media(max-width:700px){.outreach-state-banner{grid-template-columns:34px 1fr}.outreach-state-banner>a{grid-column:2}.outreach-attempt-head{align-items:flex-start;flex-direction:column}}
+
+
+/* outreach preparation layer — 2026-10-03 */
+.outreach-prep-dialog{width:min(820px,100%)}
+.outreach-prep-lead{margin:0 0 14px!important;color:#6d7d92!important}
+.outreach-prep-recipients{display:grid;gap:9px}
+.outreach-prep-recipient{padding:11px 12px;border:1px solid #e0e7f1;border-radius:13px;background:#fafbfd}
+.outreach-prep-recipient-head b,.outreach-prep-recipient-head span{display:block}
+.outreach-prep-recipient-head b{font:800 10.5px Montserrat,sans-serif;color:#2d425f}
+.outreach-prep-recipient-head span{margin-top:2px;color:#8490a3;font-size:9px}
+.outreach-prep-channels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.outreach-prep-channels label{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid #dce5f0;border-radius:11px;background:#fff;cursor:pointer}
+.outreach-prep-channels label:has(input:checked){border-color:#9fc0ea;background:#f3f8ff}
+.outreach-prep-channels label.disabled{opacity:.5;cursor:not-allowed}
+.outreach-prep-channels input{margin-top:2px;accent-color:#4c72dc}
+.outreach-prep-channels b,.outreach-prep-channels small{display:block}
+.outreach-prep-channels b{font:800 9px Montserrat,sans-serif;color:#324863}
+.outreach-prep-channels small{margin-top:2px;color:#7f8a9c;font-size:8.5px;overflow-wrap:anywhere}
+.outreach-prep-message-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:17px}
+.outreach-prep-message-head h3{margin:0!important;font:800 11px Montserrat,sans-serif}
+.outreach-prep-message-head span{color:#8a95a5;font-size:8.5px}
+.outreach-prep-message{white-space:pre-wrap;margin:8px 0 0;padding:12px;border:1px solid #dfe7f1;border-radius:12px;background:#f8faff;color:#465a76;font:400 10px/1.5 Roboto,sans-serif;max-height:260px;overflow:auto}
+@media(max-width:620px){.outreach-prep-channels{grid-template-columns:1fr}.outreach-prep-message-head{align-items:flex-start;flex-direction:column}}
