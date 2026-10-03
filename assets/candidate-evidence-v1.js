@@ -30,7 +30,7 @@ function render(candidate){
   if(f.dataDate)lines.push('<p class="sj-muted">'+(f.cacheStatus==='stale'?'Последняя успешная проверка: ':'Дата данных: ')+esc(f.dataDate.slice(0,10))+'</p>');
   if(url(f.sourceUrl))lines.push('<a href="'+esc(url(f.sourceUrl))+'" target="_blank" rel="noopener noreferrer">Данные ФНС ↗</a>');
   parts.push('<div class="sj-evidence-cell"><b>ФНС · сведения о юрлице</b>'+lines.join('')+'</div>');
- }else if(f)parts.push('<div class="sj-evidence-cell"><b>Данные ФНС</b><p>Сведения не показаны как подтверждённые: требуется проверка доступности данных и связи юрлица с исполнителем.</p></div>');
+ }else if(f)parts.push('<div class="sj-evidence-cell sj-evidence-unconfirmed"><b>ФНС: связь с юрлицом не подтверждена</b><p>Мы пока не смогли надёжно подтвердить, какое юридическое лицо связано с этим исполнителем. Перед заключением договора стоит сверить реквизиты.</p></div>');
  if(facts.length)parts.push('<div class="sj-evidence-cell sj-evidence-facts"><b>Что найдено в источниках</b>'+facts.map(f=>'<p>'+esc(({claimed:'Заявлено: ',risk:'Требует внимания: ',unknown:'Не удалось подтвердить: '})[f.status]||'')+esc(f.label)+'</p>').join('')+'</div>');
  if(sources.length)parts.push('<div class="sj-evidence-cell sj-evidence-sources"><b>Источники</b>'+sources.map(s=>'<a href="'+esc(url(s.url))+'" target="_blank" rel="noopener noreferrer">'+esc(s.label||s.host||host(s.url))+' ↗</a>').join('')+'</div>');
  if(!parts.length)return '';
