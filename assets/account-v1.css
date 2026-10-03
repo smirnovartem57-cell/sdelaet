@@ -294,5 +294,23 @@
 .outreach-prep-message-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:17px}
 .outreach-prep-message-head h3{margin:0!important;font:800 11px Montserrat,sans-serif}
 .outreach-prep-message-head span{color:#8a95a5;font-size:8.5px}
-.outreach-prep-message{white-space:pre-wrap;margin:8px 0 0;padding:12px;border:1px solid #dfe7f1;border-radius:12px;background:#f8faff;color:#465a76;font:400 10px/1.5 Roboto,sans-serif;max-height:260px;overflow:auto}
+.outreach-prep-message{white-space:pre-wrap;margin:8px 0 0;padding:12px;border:1px solid #dfe7f1;border-radius:12px;background:#f8faff;color:#465a76;font:400 10px/1.5 Roboto,sans-serif}
 @media(max-width:620px){.outreach-prep-channels{grid-template-columns:1fr}.outreach-prep-message-head{align-items:flex-start;flex-direction:column}}
+
+
+/* mailbox-style outreach preview + manual Telegram */
+.outreach-channel b{display:flex!important;align-items:center;gap:7px;flex-wrap:wrap}
+.outreach-channel b em{font:800 7px Montserrat,sans-serif;font-style:normal;text-transform:uppercase;letter-spacing:.05em;padding:4px 6px;border-radius:999px}
+.outreach-channel.email b em{background:#e5f5ec;color:#2d7658}
+.outreach-channel.telegram b em{background:#eef2f7;color:#69778d}
+.outreach-channel.telegram:has(input:checked){border-color:#bdcadb;background:#f8fafc}
+.outreach-mail-preview{margin-top:16px;border:1px solid #dce5f0;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 8px 24px rgba(35,61,98,.04)}
+.outreach-mail-toolbar{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid #e7edf4;background:#f7f9fc}
+.outreach-mail-toolbar .mail-dot{width:7px;height:7px;border-radius:50%;background:#cbd4df}
+.outreach-mail-toolbar b{margin-left:5px;color:#62738a;font:800 8px Montserrat,sans-serif;text-transform:uppercase;letter-spacing:.05em}
+.outreach-mail-meta{padding:11px 14px;border-bottom:1px solid #edf1f6}
+.outreach-mail-meta>div{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:4px 0}
+.outreach-mail-meta span{color:#8a95a6;font:700 8px Montserrat,sans-serif}
+.outreach-mail-meta b{color:#354b67;font:650 9.5px/1.4 Roboto,sans-serif;overflow-wrap:anywhere}
+.outreach-mail-body{padding:16px 18px;color:#455a75;font:400 10.5px/1.6 Roboto,sans-serif;background:#fff;overflow:visible;max-height:none}
+@media(max-width:620px){.outreach-mail-meta>div{grid-template-columns:44px minmax(0,1fr)}}
