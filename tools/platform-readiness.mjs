@@ -32,6 +32,7 @@ const commands = [
   ['attachment delete', ['tests/attachment-delete-regression.mjs']],
   ['async free research', ['tests/async-free-research-regression.mjs']],
   ['account contact profile checkout', ['tests/account-contact-profile-checkout-regression.mjs']],
+  ['rich candidate selection', ['tests/rich-candidate-selection-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
