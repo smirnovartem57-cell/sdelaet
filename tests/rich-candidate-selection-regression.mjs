@@ -15,7 +15,7 @@ assert.match(task,/Не удалось проверить/);
 assert.match(task,/Требует внимания/);
 assert.match(task,/Продолжить с выбранными/);
 assert.match(task,/Подготовка запроса/);
-assert.match(task,/Текст запроса/);
+assert.match(task,/Предпросмотр письма/);
 assert.match(task,/Продолжить к финальной проверке/);
 const review=readFileSync(new URL('../review.html',import.meta.url),'utf8');
 assert.match(review,/Финальная проверка/);
