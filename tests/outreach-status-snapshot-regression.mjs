@@ -11,5 +11,7 @@ assert.match(outreach,/LIMIT 100/);
 assert.match(outreach,/writeOutreachStatusSnapshot\(\);/);
 assert.match(outreach,/externalMessageId/);
 assert.match(outreach,/lastError/);
+assert.match(outreach,/FROM outreach_authorizations/);
+assert.match(outreach,/authorizations:authRows\.map/);
 
 console.log('Outreach status snapshot regression: PASS');
