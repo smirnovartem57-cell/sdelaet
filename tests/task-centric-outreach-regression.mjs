@@ -21,7 +21,10 @@ assert.match(account,/getOfferDialogueHistory\(db,o\.requestId\)/);
 assert.match(account,/FROM outreach_attempts WHERE task_id=\?/);
 
 assert.match(task,/assets\/task-journey-v1\.js/);
-assert.match(task,/data-send-outreach/);
+assert.match(task,/data-candidate-select/);
+assert.match(task,/Продолжить с выбранными/);
+assert.match(task,/Проверка перед отправкой/);
+assert.match(task,/sdJourney\.sendOutreach\(workspaceController/);
 assert.match(taskJourney,/explicitConfirm:true/);
 assert.match(taskJourney,/\/v1\/outreach\/prepare/);
 assert.match(taskJourney,/\/v1\/outreach\/email\/send/);
