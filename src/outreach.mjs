@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { createConnection } from 'node:net';
 import { DatabaseSync } from 'node:sqlite';
 
@@ -99,6 +100,29 @@ if (!outreachAttemptColumns.has('authorization_id')) {
   db.exec(`ALTER TABLE outreach_attempts ADD COLUMN authorization_id TEXT`);
 }
 db.exec(`CREATE INDEX IF NOT EXISTS idx_outreach_authorization ON outreach_attempts(authorization_id,candidate_id,channel)`);
+
+const OUTREACH_STATUS_REPORT = process.env.OUTREACH_STATUS_REPORT || '/var/lib/sdelaet/reports/outreach-status.json';
+function writeOutreachStatusSnapshot(){
+  try{
+    const rows=db.prepare(`
+      SELECT request_id,task_id,candidate_id,candidate_name,channel,recipient,status,
+             prepared_at,sent_at,delivered_at,replied_at,failed_at,external_message_id,last_error
+      FROM outreach_attempts
+      ORDER BY prepared_at DESC
+      LIMIT 100
+    `).all();
+    const payload={generatedAt:new Date().toISOString(),count:rows.length,attempts:rows.map(row=>({
+      requestId:row.request_id,taskId:row.task_id,candidateId:row.candidate_id,candidateName:row.candidate_name,
+      channel:row.channel,recipient:row.recipient,status:row.status,preparedAt:row.prepared_at,sentAt:row.sent_at,
+      deliveredAt:row.delivered_at,repliedAt:row.replied_at,failedAt:row.failed_at,
+      externalMessageId:row.external_message_id,lastError:row.last_error
+    }))};
+    const tmp=OUTREACH_STATUS_REPORT+'.tmp';
+    fs.writeFileSync(tmp,JSON.stringify(payload,null,2),{mode:0o640});
+    fs.renameSync(tmp,OUTREACH_STATUS_REPORT);
+  }catch{}
+}
+writeOutreachStatusSnapshot();
 
 function now() {
   return new Date().toISOString();
