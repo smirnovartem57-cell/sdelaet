@@ -35,6 +35,7 @@ const commands = [
   ['rich candidate selection', ['tests/rich-candidate-selection-regression.mjs']],
   ['outreach confirmation mail', ['tests/outreach-confirmation-mail-regression.mjs']],
   ['task workspace UX polish', ['tests/task-workspace-ux-polish-regression.mjs']],
+  ['outreach post-send status', ['tests/outreach-post-send-status-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
