@@ -503,7 +503,7 @@ function sendViaLocalExim({
     let finished = false;
 
     const commands = [
-      () => 'EHLO onsdelaet.local\r\n',
+      () => 'EHLO onsdelaet.ru\r\n',
       () => `MAIL FROM:<${envelopeFrom}>\r\n`,
       () => `RCPT TO:<${recipient}>\r\n`,
       () => 'DATA\r\n',
