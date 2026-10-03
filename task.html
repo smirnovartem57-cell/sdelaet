@@ -7,9 +7,9 @@
 <link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=account-v1">
+<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=rich-selection-20261003">
 <script src="assets/prod-ui.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
-<link rel="stylesheet" href="assets/research-pricing-v2.css?v=journey-integration4-20260930"><link rel="stylesheet" href="assets/task-motion-v1.css?v=journey-integration4-20260930"><script src="assets/research-pricing-v2.js?v=journey-integration4-20260930"></script><script src="assets/task-motion-v1.js?v=journey-integration4-20260930"></script><script src="assets/task-journey-v1.js?v=journey-integration4-20260930"></script><script src="assets/candidate-evidence-v1.js?v=journey-integration4-20260930"></script></head>
+<link rel="stylesheet" href="assets/research-pricing-v2.css?v=journey-integration4-20260930"><link rel="stylesheet" href="assets/task-motion-v1.css?v=journey-integration4-20260930"><script src="assets/research-pricing-v2.js?v=journey-integration4-20260930"></script><script src="assets/task-motion-v1.js?v=journey-integration4-20260930"></script><script src="assets/task-journey-v1.js?v=rich-selection-20261003"></script><script src="assets/candidate-evidence-v1.js?v=journey-integration4-20260930"></script></head>
 <body class="account-body">
 <div class="account-shell">
 <aside class="account-sidebar">
@@ -24,7 +24,7 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded',async function(){
- var root=document.getElementById('taskRoot'),id=new URLSearchParams(location.search).get('task'),viewEvents=new Set();
+ var root=document.getElementById('taskRoot'),id=new URLSearchParams(location.search).get('task'),viewEvents=new Set(),selectedCandidateIds=new Set(),workspaceController=null;
  function trackWorkspaceOnce(name,params){var key=name+':'+id;if(!viewEvents.has(key)){viewEvents.add(key);sdAccount.track(name,params);}}
  if(!id){location.replace('/my-tasks.html');return}
  try{
@@ -94,10 +94,31 @@ document.addEventListener('DOMContentLoaded',async function(){
   lines.push('','Ответьте, пожалуйста, обычным ответом на это письмо — сервис «Сделает» добавит предложение в сравнение.');
   return lines.join('\n');
  }
+ function candidateTypeLabel(c){return c.type==='private'?'Частный мастер':c.type==='unverified'?'Тип не подтверждён':'Компания'}
+ function candidateFacts(c){
+  var facts=list(c.facts).slice(0,6);
+  if(!facts.length)return '<div class="decision-empty">Дополнительные публичные факты пока не найдены.</div>';
+  return facts.map(function(f){var st=String(f.status||'unknown'),label=st==='ok'||st==='confirmed'?'Подтверждено':st==='claim'||st==='claimed'?'Заявлено исполнителем':st==='risk'?'Требует внимания':'Не удалось проверить',cls=st==='ok'||st==='confirmed'?'ok':st==='claim'||st==='claimed'?'claim':st==='risk'?'risk':'unknown';return '<div class="decision-fact '+cls+'"><span class="decision-dot">'+(cls==='ok'?'✓':cls==='risk'?'!':cls==='claim'?'◐':'?')+'</span><div><b>'+esc(label)+'</b><p>'+esc(f.label||f.text||f.value||'Факт из источника')+'</p></div></div>'}).join('');
+ }
+ function candidateSignals(c){
+  var out=[],e=c.evidence||{},domain=e.history&&e.history.domain,fns=e.fnsProfile||c.fnsProfile,rep=c.selectionBreakdown&&c.selectionBreakdown.reputationDetails;
+  if(rep&&(rep.rating||rep.reviewsCount))out.push(['Репутация',(rep.rating?String(rep.rating):'—')+(rep.reviewsCount?' · '+rep.reviewsCount+' отзывов':'')]);
+  if(domain&&domain.domain)out.push(['Домен',domain.createdAt?'с '+String(domain.createdAt).slice(0,4):domain.domain]);
+  if(fns&&fns.available!==false)out.push(['Юрлицо',fns.registeredAt?'с '+String(fns.registeredAt).slice(0,4):(fns.active===false?'не действует':'проверено')]);
+  if(list(c.sources).length)out.push(['Источники',String(list(c.sources).length)]);
+  return out.slice(0,4).map(function(x){return '<div class="decision-signal"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>'}).join('');
+ }
+ function candidateCard(t,c,index,attempts){
+  var a=attempts.find(function(x){return x.candidateId===c.id}),why=list(c.why).slice(0,4),canSend=!!c.email&&!a,selected=selectedCandidateIds.has(c.id),site=sdJourney.safeExternalUrl(c.website),contacts='';
+  if(c.phone)contacts+='<div class="decision-contact"><span>Телефон</span><b>'+esc(c.phone)+'</b></div>';
+  if(c.email)contacts+='<div class="decision-contact"><span>Email</span><b>'+esc(c.email)+'</b></div>';
+  if(site)contacts+='<a class="decision-contact link" href="'+esc(site)+'" target="_blank" rel="noopener"><span>Сайт / профиль</span><b>Открыть ↗</b></a>';
+  var select=a?'<div class="decision-sent">Обращение: '+esc(sdJourney.outreachLabel(a.status))+'</div>':canSend?'<label class="decision-select"><input type="checkbox" data-candidate-select="'+esc(c.id)+'" '+(selected?'checked':'')+'><span><b>Выбрать для запроса</b><small>Добавим в общий запрос выбранным исполнителям</small></span></label>':'<div class="decision-unavailable"><b>Автоотправка пока недоступна</b><span>Публичный email не найден. Карточку можно использовать для ручной связи.</span></div>';
+  return '<article class="decision-candidate '+(selected?'is-selected':'')+'" data-candidate-id="'+esc(c.id)+'"><div class="decision-head"><div class="decision-avatar">'+esc(String(c.name||'?').split(/\s+/).slice(0,2).map(function(x){return x.charAt(0)}).join('').toUpperCase())+'</div><div class="decision-title"><div class="decision-rank">#'+(index+1)+' · '+esc(candidateTypeLabel(c))+'</div><h3>'+esc(c.name||'Исполнитель')+'</h3><p>'+esc(c.geo||t.region||'')+'</p></div><div class="decision-match"><span>Соответствие задаче</span><b>'+esc(c.matchLevel||'Подтверждено')+'</b></div></div>'+(contacts?'<div class="decision-contacts">'+contacts+'</div>':'')+(candidateSignals(c)?'<div class="decision-signals">'+candidateSignals(c)+'</div>':'')+'<div class="decision-grid"><section><h4>Почему подходит</h4><ul>'+(why.length?why.map(function(x){return '<li>'+esc(x)+'</li>'}).join(''):'<li>Соответствие подтверждено найденными данными.</li>')+'</ul></section><section><h4>Что удалось проверить</h4><div class="decision-facts">'+candidateFacts(c)+'</div></section></div>'+sdCandidateEvidence.render(c)+select+'<button type="button" class="account-hidden" data-send-proxy="'+esc(c.id)+'"></button></article>';
+ }
  function selectionSection(t){
-  var attempts=t.outreach||[];
-  var cards=(t.candidates||[]).map(function(c){var why=list(c.why).slice(0,2).join(' · '),a=attempts.find(function(x){return x.candidateId===c.id}),status=a?('<p><b>Обращение:</b> '+esc(sdJourney.outreachLabel(a.status))+'</p>'):'';var action='';if(c.email&&!a)action='<button class="account-primary" type="button" data-send-outreach="'+esc(c.id)+'">Отправить запрос на расчёт</button>';else if(!c.email&&!a)action='<p>Публичный email не найден — автоматическая отправка недоступна.</p>';return '<div class="account-mini-card" data-candidate-id="'+esc(c.id)+'"><b>'+esc(c.name||'Исполнитель')+'</b><p>'+esc(why||c.matchLevel||'Подходит по найденным данным')+'</p>'+(c.phone?'<p>Телефон: '+esc(c.phone)+'</p>':'')+(c.email?'<p>Email: '+esc(c.email)+'</p>':'')+(sdJourney.safeExternalUrl(c.website)?'<p><a href="'+esc(sdJourney.safeExternalUrl(c.website))+'" target="_blank" rel="noopener">Сайт / профиль →</a></p>':'')+sdCandidateEvidence.render(c)+status+action+'</div>'}).join('');
-  return '<section class="account-section" id="selection"><h2>Подбор</h2><p>Здесь же можно подтвердить отправку запроса исполнителю. Полученные ответы и уточнения останутся внутри этой задачи.</p><div class="account-candidate-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div></section>';
+  var attempts=t.outreach||[],candidates=t.candidates||[],cards=candidates.map(function(c,i){return candidateCard(t,c,i,attempts)}).join('');
+  return '<section class="account-section decision-selection" id="selection"><div class="decision-section-head"><div><div class="eyebrow">Подбор по задаче</div><h2>Сравните исполнителей и выберите подходящих</h2><p>Порядок показывает соответствие этой задаче, а не рекламный рейтинг. Основное — на первом уровне; источники, юрданные и доказательства раскрываются отдельно.</p></div><div class="decision-count">'+candidates.length+' кандидатов</div></div><div class="decision-journey"><div class="active"><b>1 · Выберите</b><span>Сравните карточки</span></div><div><b>2 · Проверьте запрос</b><span>Получатели и текст</span></div><div><b>3 · Подтвердите</b><span>Ничего без согласия</span></div><div><b>4 · Сравним ответы</b><span>Цена, сроки, состав</span></div></div><div class="account-candidate-list decision-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div><div class="decision-selection-bar" id="decisionSelectionBar" hidden><div><b><span id="decisionSelectedCount">0</span> выбрано</b><span>Проверим получателей и одинаковый запрос перед отправкой.</span></div><button class="account-primary" type="button" data-review-selected>Продолжить с выбранными →</button></div></section>';
  }
  function responsesSection(t){
   var replies=(t.replies||[]).map(function(r){var d=t.dialogues&&t.dialogues[r.request_id],state=d&&d.current_state,pending=state&&state.pending_clarifications||[];return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p>'+(state?'<p><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+(pending.length?'<p><b>Нужно уточнить:</b> '+esc((pending[0].items||[]).join('; '))+'</p>':'')+'</div>'}).join('');
@@ -112,8 +133,30 @@ document.addEventListener('DOMContentLoaded',async function(){
   var p=t.payment,type=p.priceType==='repeat'?'Повторное обращение':'Обычная цена';
   return '<section class="account-section" id="payment"><h2>Оплата</h2><div class="account-payment-grid"><div class="account-payment-cell"><span>Тариф</span><b>'+esc(p.planName)+'</b></div><div class="account-payment-cell"><span>Цена</span><b>'+esc(sdAccount.money(p.amount))+(p.priceType==='repeat'?' вместо '+esc(sdAccount.money(p.regularAmount)):'')+'</b></div><div class="account-payment-cell"><span>Тип цены</span><b>'+esc(type)+'</b></div><div class="account-payment-cell"><span>Статус</span><b>'+esc(sdJourney.paymentLabel(p.status))+'</b></div></div><p>'+esc(sdAccount.fmtDate(p.paidAt||p.createdAt))+'</p></section>';
  }
+ function updateSelectionBar(){
+  var bar=document.getElementById('decisionSelectionBar'),count=document.getElementById('decisionSelectedCount');if(!bar||!count)return;
+  count.textContent=String(selectedCandidateIds.size);bar.hidden=selectedCandidateIds.size===0;
+  root.querySelectorAll('.decision-candidate').forEach(function(card){card.classList.toggle('is-selected',selectedCandidateIds.has(card.dataset.candidateId))});
+ }
+ function closeSelectionReview(){var m=document.getElementById('selectionReviewModal');if(m)m.remove()}
+ async function openSelectionReview(t){
+  var candidates=(t.candidates||[]).filter(function(c){return selectedCandidateIds.has(c.id)});if(!candidates.length)return;
+  var sendable=candidates.filter(function(c){return !!c.email&&!((t.outreach||[]).some(function(a){return a.candidateId===c.id}))});
+  var modal=document.createElement('div');modal.id='selectionReviewModal';modal.className='selection-review-modal';
+  var message=buildOutreachMessage(t);
+  modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Проверка перед отправкой</div><h2>Кому отправим запрос</h2><div class="selection-review-recipients">'+candidates.map(function(c){return '<div><b>'+esc(c.name)+'</b><span>'+(c.email?esc(c.email):'Публичный email не найден — только ручная связь')+'</span></div>'}).join('')+'</div><h3>Одинаковый запрос для всех</h3><pre>'+esc(message)+'</pre><p class="selection-review-note">Запросы не отправляются до следующего подтверждения. Исполнители без публичного email останутся в подборе, но автоматически письмо им не уйдёт.</p><div class="selection-review-actions"><button class="account-primary" type="button" data-confirm-group-send '+(sendable.length?'':'disabled')+'>Подтвердить и отправить '+sendable.length+'</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
+  document.body.appendChild(modal);
+  modal.querySelectorAll('[data-review-close]').forEach(function(x){x.onclick=closeSelectionReview});
+  var confirm=modal.querySelector('[data-confirm-group-send]');if(confirm)confirm.onclick=async function(){confirm.disabled=true;confirm.textContent='Отправляем…';var ok=0;for(var i=0;i<sendable.length;i++){var c=sendable[i],proxy=root.querySelector('[data-send-proxy="'+CSS.escape(c.id)+'"]')||confirm;var sent=await sdJourney.sendOutreach(workspaceController,c.id,proxy,{skipConfirm:true});if(sent)ok++;}closeSelectionReview();selectedCandidateIds.clear();updateSelectionBar();if(workspaceController)await workspaceController.refresh();};
+ }
+ function bindSelectionActions(t){
+  root.querySelectorAll('[data-candidate-select]').forEach(function(input){input.onchange=function(){var cid=input.dataset.candidateSelect;if(input.checked)selectedCandidateIds.add(cid);else selectedCandidateIds.delete(cid);updateSelectionBar();sdAccount.track('candidate_selection_changed',{task_id:t.taskId,candidate_id:cid,selected:input.checked})}});
+  var review=root.querySelector('[data-review-selected]');if(review)review.onclick=function(){openSelectionReview(t)};
+  updateSelectionBar();
+ }
  function bindActions(t){
-  sdJourney.mountWorkspace(root,t,render);
+  workspaceController=sdJourney.mountWorkspace(root,t,render);
+  if(t.payment&&t.payment.status==='paid')bindSelectionActions(t);
  }
 });
 </script>
