@@ -111,11 +111,25 @@ function writeOutreachStatusSnapshot(){
       ORDER BY prepared_at DESC
       LIMIT 100
     `).all();
+    let authRows=[];
+    try{
+      authRows=db.prepare(`
+        SELECT id,task_id,order_id,plan,candidate_ids_json,created_at,status,targets_json
+        FROM outreach_authorizations
+        ORDER BY created_at DESC
+        LIMIT 100
+      `).all();
+    }catch{}
     const payload={generatedAt:new Date().toISOString(),count:rows.length,attempts:rows.map(row=>({
       requestId:row.request_id,taskId:row.task_id,candidateId:row.candidate_id,candidateName:row.candidate_name,
       channel:row.channel,recipient:row.recipient,status:row.status,preparedAt:row.prepared_at,sentAt:row.sent_at,
       deliveredAt:row.delivered_at,repliedAt:row.replied_at,failedAt:row.failed_at,
       externalMessageId:row.external_message_id,lastError:row.last_error
+    })),authorizations:authRows.map(row=>({
+      authorizationId:row.id,taskId:row.task_id,orderId:row.order_id,plan:row.plan,status:row.status,
+      candidateIds:(()=>{try{return JSON.parse(row.candidate_ids_json||'[]')}catch{return[]}})(),
+      targets:(()=>{try{return JSON.parse(row.targets_json||'[]').map(x=>({candidateId:x.candidateId,channels:x.channels||[],email:x.email||'',telegram:x.telegram||''}))}catch{return[]}})(),
+      createdAt:row.created_at
     }))};
     const tmp=OUTREACH_STATUS_REPORT+'.tmp';
     fs.writeFileSync(tmp,JSON.stringify(payload,null,2),{mode:0o640});
