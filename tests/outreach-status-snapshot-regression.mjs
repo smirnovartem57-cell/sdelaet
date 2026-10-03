@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 const outreach=readFileSync(new URL('../src/outreach.mjs',import.meta.url),'utf8');
 
 assert.match(outreach,/OUTREACH_STATUS_REPORT/);
-assert.match(outreach,/\/var\/lib\/sdelaet\/reports\/outreach-status\.json/);
+assert.match(outreach,/\/var\/lib\/sdelaet\/db\/outreach-status\.json/);
 assert.match(outreach,/function writeOutreachStatusSnapshot\(\)/);
 assert.match(outreach,/ORDER BY prepared_at DESC/);
 assert.match(outreach,/LIMIT 100/);
