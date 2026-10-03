@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(t.payment&&t.payment.status==='paid')links.push(['selection','Исполнители']);
   if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))links.push(['responses','Ответы']);
   if(t.offers&&t.offers.length)links.push(['comparison','Сравнение']);
-  links.push(['payment','Оплата']);
+  if(t.payment)links.push(['payment','Оплата']);
   return '<nav class="workspace-nav" aria-label="Разделы задачи">'+links.map(function(x){return '<a href="#'+x[0]+'">'+x[1]+'</a>'}).join('')+'</nav>';
  }
  function workspaceKpis(t){
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   return out.slice(0,4).map(function(x){return '<div class="decision-signal"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>'}).join('');
  }
  function candidateCard(t,c,index,attempts){
-  var a=attempts.find(function(x){return x.candidateId===c.id}),why=list(c.why).slice(0,2),canSend=!!c.email&&!a,selected=selectedCandidateIds.has(c.id),site=sdJourney.safeExternalUrl(c.website),contacts='',e=c.evidence||{},fns=e.fnsProfile||c.fnsProfile||null,legalConfirmed=!!(e.legalIdentity&&e.legalIdentity.inn),fnsState=fns&&fns.available!==false?(legalConfirmed?'confirmed':'partial'):'unknown';
+  var a=attempts.find(function(x){return x.candidateId===c.id}),why=list(c.why).slice(0,2),canSend=!!c.email&&!a,selected=selectedCandidateIds.has(c.id),site=sdJourney.safeExternalUrl(c.website),contacts='',e=c.evidence||{},fns=e.fnsProfile||c.fnsProfile||null,fnsConfirmed=!!(window.sdCandidateEvidence&&sdCandidateEvidence.fnsMatches&&sdCandidateEvidence.fnsMatches(c,e)),fnsState=fns&&fns.available!==false?(fnsConfirmed?'confirmed':'partial'):'unknown';
   if(c.phone)contacts+='<div class="decision-contact"><span>Телефон</span><b>'+esc(c.phone)+'</b></div>';
   if(c.email)contacts+='<div class="decision-contact"><span>Email</span><b>'+esc(c.email)+'</b></div>';
   if(site)contacts+='<a class="decision-contact link" href="'+esc(site)+'" target="_blank" rel="noopener"><span>Сайт / профиль</span><b>Открыть ↗</b></a>';
