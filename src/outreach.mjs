@@ -99,6 +99,9 @@ const outreachAttemptColumns = new Set(
 if (!outreachAttemptColumns.has('authorization_id')) {
   db.exec(`ALTER TABLE outreach_attempts ADD COLUMN authorization_id TEXT`);
 }
+if (!outreachAttemptColumns.has('attachments_json')) {
+  db.exec(`ALTER TABLE outreach_attempts ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'`);
+}
 db.exec(`CREATE INDEX IF NOT EXISTS idx_outreach_authorization ON outreach_attempts(authorization_id,candidate_id,channel)`);
 
 const OUTREACH_STATUS_REPORT = process.env.OUTREACH_STATUS_REPORT || '/var/lib/sdelaet/db/outreach-status.json';
