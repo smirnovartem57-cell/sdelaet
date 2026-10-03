@@ -131,6 +131,18 @@ function initResearch(task,options){
  options=options||{};var btn=win.document.getElementById('openPaywall');if(!btn)return;
  var box=stateBox('journeyResearch',btn.closest('.actions')||btn),latestResearch=null,surface=btn.closest('.page>section.card')||win.document.getElementById('demoDraft');
  async function saved(){try{var d=await post('/v1/shortlists/prepared',{task_id:task.id||''});return d.prepared&&Number(d.count)>0?d:null;}catch{return null;}}
+ async function waitForResearch(){
+  var started=Date.now(),lastStatus='';
+  while(Date.now()-started<240000){
+   await new Promise(function(resolve){win.setTimeout(resolve,2500)});
+   var st=await request('/v1/candidates/search-status?taskId='+encodeURIComponent(task.id||''));
+   lastStatus=st.status||'';
+   if(st.status==='completed')return st;
+   if(st.status==='failed')throw new Error(st.error||'SEARCH_FAILED');
+   if(st.status!=='running')throw new Error('RESEARCH_STATUS_'+String(st.status||'UNKNOWN').toUpperCase());
+  }
+  throw new Error(lastStatus==='running'?'RESEARCH_STILL_RUNNING':'RESEARCH_TIMEOUT');
+ }
  async function run(){if(researchBusy)return;researchBusy=true;if(surface)win.sdMotion.layout(surface,()=>surface.classList.add('sj-research-active'));var op=win.sdMotion.operation(box,{state:'starting',note:'Задание остаётся на этой странице.',buttons:[btn]});
  try{
   // A cached paid marker is never a grant. Use the authenticated server task.
@@ -139,14 +151,16 @@ function initResearch(task,options){
   var result=await saved();
   if(!result){updateStage(1);track('tz_confirmed',{task_id:task.id,category:task.category,city:task.city,version:task.version||1});op.set('working','Исследуем рынок','Ищем исполнителей под вашу задачу. Покажем результат после ответа сервера.');track('research_started',{task_id:task.id,service:task.categoryId||task.category||''});
    var payload={taskId:task.id||'',categoryId:task.categoryId||'universal-home-repair',category:task.category||'',city:task.city||task.locality||'',region:task.region||task.geo?.canonicalRegion||'',regionId:task.regionId||task.geo?.regionId||'',locality:task.locality||task.geo?.canonicalLocality||task.city||'',localityId:task.localityId||task.geo?.localityId||'',launchZone:task.launchZone||task.geo?.launchZone||'',description:task.description||'',scope:task.scope||'',goal:task.goal||'',executorPreference:'any',limit:12,attribution:win.sdAttributionForTask?win.sdAttributionForTask():null};
-   var d=await post('/v1/candidates/search',payload);if(!d.runId)throw new Error('SHORTLIST_NOT_READY');result=await saved();
-   if(!result){if(d.count===0||Array.isArray(d.candidates)&&d.candidates.length===0){op.set('empty','Подходящих кандидатов пока нет','Уточните задание и повторите поиск. Оплата не требуется.');return;}throw new Error('SHORTLIST_NOT_PERSISTED');}
+   var d=await post('/v1/candidates/search-start',payload);if(!d.accepted||!d.jobId)throw new Error('RESEARCH_START_FAILED');
+   op.set('working','Исследуем рынок','Поиск идёт на сервере. Страницу можно оставить открытой — результат появится автоматически.');
+   var status=await waitForResearch();result=await saved();
+   if(!result){if(Number(status.count)===0){op.set('empty','Подходящих кандидатов пока нет','Уточните задание и повторите поиск. Оплата не требуется.');return;}throw new Error('SHORTLIST_NOT_PERSISTED');}
    track('shortlist_prepared',{task_id:task.id,count:result.count,run_id:result.runId});track('result_ready',{task_id:task.id,service:task.categoryId||task.category||''});
   }
   latestResearch=result;updateStage(1);op.set('ready','Бесплатное исследование завершено','На первом этапе найдено '+result.count+' '+win.sdResearchPricing.noun(Number(result.count))+'. Теперь можно бесплатно вернуться к заданию или выбрать платный тариф для открытия контактов и продолжения работы сервиса.');
   track('result_viewed',{task_id:task.id,service:task.categoryId||task.category||''});
   await openCheckout({taskId:task.id,task:task,research:result,title:task.category,region:task.city,trigger:btn});
- }catch(e){var offline=win.navigator.onLine===false,msg=offline?'Нет соединения с интернетом. Задание сохранено.':'Исследование не завершилось: '+String(e&&e.message||'SEARCH_FAILED')+'. Задание сохранено, оплату начинать не нужно.';op.set(offline?'offline':'error','Не удалось завершить исследование',msg);}
+ }catch(e){var offline=win.navigator.onLine===false,code=String(e&&e.message||'SEARCH_FAILED'),still=code==='RESEARCH_STILL_RUNNING'||code==='RESEARCH_TIMEOUT',msg=offline?'Нет соединения с интернетом. Задание сохранено.':still?'Исследование всё ещё идёт на сервере. Нажмите «Посмотреть бесплатный результат» чуть позже — повторный поиск не запустится.':'Исследование не завершилось: '+code+'. Задание сохранено, оплату начинать не нужно.';op.set(offline?'offline':still?'working':'error',still?'Исследование продолжается':'Не удалось завершить исследование',msg);}
  finally{researchBusy=false;op.dispose();if(surface)win.sdMotion.layout(surface,()=>surface.classList.remove('sj-research-active'));btn.textContent=latestResearch?'Посмотреть бесплатный результат →':'Исследовать рынок бесплатно →';}}
  btn.onclick=run;
  // Resume only the matching task. It opens checkout, never submits a payment.

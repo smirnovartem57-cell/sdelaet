@@ -86,6 +86,21 @@ db.exec(`
     ON taxonomy_signals(normalized_key);
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS research_jobs (
+    job_id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    error TEXT,
+    run_id TEXT,
+    candidate_count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_research_jobs_task_updated
+    ON research_jobs(task_id, updated_at);
+`);
+
 const customerAuth = createCustomerAuth({ db, allowedOrigins: ALLOWED_ORIGINS });
 
 function sendJson(res, status, data, origin='') {
@@ -13141,6 +13156,70 @@ async function authorizeOutreach(body){
  return {replayed:false,authorizationId:id,plan:tariff.id,candidateLimit:tariff.candidateLimit,candidateIds:ids,messageSha256:sha,targets};
 }
 
+async function executeCandidateSearch(body) {
+  const entitlement = searchOrderEntitlement({
+    orderId: body.orderId || body.order_id,
+    taskId: body.taskId || body.task_id,
+    refinement: body.refinement
+  });
+  const result = await performSearch(body);
+  result.entitlement = {
+    refinement: entitlement.refinement,
+    tariffId: entitlement.tariff?.id || null
+  };
+  const runId = saveSearchRun(result, body);
+  try { customerAccount.captureAttribution(text(body.taskId || body.task_id), body.attribution || null); } catch {}
+  try { updateTaskLifecycle(body.taskId || body.task_id, body.refinement ? 'refined_search' : 'search_completed'); } catch {}
+  if (!body.refinement) {
+    try { scheduleSelectionFollowup(body.taskId || body.task_id, 'search_completed'); } catch {}
+  }
+  return { runId, result };
+}
+
+function researchJob(taskId) {
+  return db.prepare(`
+    SELECT job_id,task_id,status,error,run_id,candidate_count,created_at,updated_at
+    FROM research_jobs
+    WHERE task_id=?
+    ORDER BY updated_at DESC
+    LIMIT 1
+  `).get(taskId) || null;
+}
+
+function startResearchJob(body) {
+  const taskId = text(body.taskId || body.task_id);
+  if (!taskId) { const error = new Error('TASK_ID_REQUIRED'); error.status = 400; throw error; }
+  const existing = researchJob(taskId);
+  if (existing && existing.status === 'running' && Date.now() - Date.parse(existing.updated_at) < 10 * 60 * 1000) {
+    return { jobId: existing.job_id, taskId, reused: true };
+  }
+  const jobId = 'research_' + crypto.randomUUID();
+  const stamp = new Date().toISOString();
+  db.prepare(`
+    INSERT INTO research_jobs(job_id,task_id,status,error,run_id,candidate_count,created_at,updated_at)
+    VALUES(?,?,'running','',NULL,0,?,?)
+  `).run(jobId,taskId,stamp,stamp);
+  setImmediate(() => {
+    void (async () => {
+      try {
+        const completed = await executeCandidateSearch(body);
+        db.prepare(`
+          UPDATE research_jobs
+          SET status='completed',error='',run_id=?,candidate_count=?,updated_at=?
+          WHERE job_id=?
+        `).run(completed.runId,completed.result.candidates.length,new Date().toISOString(),jobId);
+      } catch (error) {
+        db.prepare(`
+          UPDATE research_jobs
+          SET status='failed',error=?,updated_at=?
+          WHERE job_id=?
+        `).run(String(error?.message || 'SEARCH_FAILED').slice(0,500),new Date().toISOString(),jobId);
+      }
+    })();
+  });
+  return { jobId, taskId, reused: false };
+}
+
 const server = http.createServer(async (req, res) => {
   const origin = req.headers.origin || '';
 
@@ -13627,126 +13706,75 @@ const server = http.createServer(async (req, res) => {
 
   if (
     req.method === 'POST' &&
+    req.url === '/v1/candidates/search-start'
+  ) {
+    try {
+      const body = await readBody(req);
+      if (body.refinement && typeof body.refinement === 'object' && Object.keys(body.refinement).length) {
+        return sendJson(res,400,{ok:false,error:'ASYNC_INITIAL_RESEARCH_ONLY'},origin);
+      }
+      const job = startResearchJob(body);
+      return sendJson(res,202,{ok:true,accepted:true,...job},origin);
+    } catch (error) {
+      return sendJson(res,error.status||500,{ok:false,error:error.message||'RESEARCH_START_FAILED'},origin);
+    }
+  }
+
+  if (
+    req.method === 'GET' &&
+    req.url?.startsWith('/v1/candidates/search-status')
+  ) {
+    const url = new URL(req.url,'http://localhost');
+    const taskId = text(url.searchParams.get('taskId'));
+    if (!taskId) return sendJson(res,400,{ok:false,error:'TASK_ID_REQUIRED'},origin);
+    const job = researchJob(taskId);
+    if (!job) return sendJson(res,404,{ok:false,error:'RESEARCH_JOB_NOT_FOUND'},origin);
+    return sendJson(res,200,{
+      ok:true,
+      jobId:job.job_id,
+      taskId:job.task_id,
+      status:job.status,
+      error:job.error||'',
+      runId:job.run_id||'',
+      count:Number(job.candidate_count||0),
+      updatedAt:job.updated_at
+    },origin);
+  }
+
+  if (
+    req.method === 'POST' &&
     req.url === '/v1/candidates/search'
   ) {
     try {
       const body = await readBody(req);
-
-      const entitlement =
-        searchOrderEntitlement({
-          orderId:
-            body.orderId ||
-            body.order_id,
-
-          taskId:
-            body.taskId ||
-            body.task_id,
-
-          refinement:
-            body.refinement
-        });
-
-      const result =
-        await performSearch(body);
-
-      result.entitlement = {
-        refinement:
-          entitlement.refinement,
-
-        tariffId:
-          entitlement.tariff?.id ||
-          null
-      };
-
-      const runId = saveSearchRun(result, body);
-
-      // A saved shortlist is the primary result. Non-critical side effects
-      // must never convert a successful research request into an HTTP 500.
-      try {
-        customerAccount.captureAttribution(
-          text(body.taskId || body.task_id),
-          body.attribution || null
-        );
-      } catch {}
-
-      try {
-        updateTaskLifecycle(
-          body.taskId ||
-          body.task_id,
-          body.refinement
-            ? 'refined_search'
-            : 'search_completed'
-        );
-      } catch {}
-
-      if (!body.refinement) {
-        try {
-          scheduleSelectionFollowup(
-            body.taskId ||
-            body.task_id,
-            'search_completed'
-          );
-        } catch {}
-      }
-
-      return sendJson(
-        res,
-        200,
-        {
-          ok: true,
-          runId,
-          count: result.candidates.length,
-          providers: result.providers,
-          selection: result.selection,
-          searchMeta: result.searchMeta,
-          candidates: result.candidates,
-          generatedAt: new Date().toISOString()
-        },
-        origin
-      );
+      const completed = await executeCandidateSearch(body);
+      const result = completed.result;
+      return sendJson(res,200,{
+        ok:true,
+        runId:completed.runId,
+        count:result.candidates.length,
+        providers:result.providers,
+        selection:result.selection,
+        searchMeta:result.searchMeta,
+        candidates:result.candidates,
+        generatedAt:new Date().toISOString()
+      },origin);
     } catch (error) {
       let status = error.status || 500;
-
       if (error.message === 'BAD_JSON') status = 400;
       if (error.message === 'PAYLOAD_TOO_LARGE') status = 413;
-
       const messages = {
-        SEARCH_NOT_CONFIGURED:
-          'Поисковые провайдеры ещё не настроены.',
-        CITY_REQUIRED:
-          'Нужен город или район для поиска.',
-        CATEGORY_NOT_SUPPORTED:
-          'Категория пока не подключена к автоматическому поиску.',
-        BAD_JSON:
-          'Некорректный JSON.',
-        PAYLOAD_TOO_LARGE:
-          'Запрос слишком большой.',
-
-        ORDER_REQUIRED_FOR_REFINEMENT:
-          'Повторный поиск доступен после выбора подходящего тарифа.',
-
-        ORDER_NOT_FOUND:
-          'Заказ для повторного поиска не найден.',
-
-        ORDER_TASK_MISMATCH:
-          'Этот заказ относится к другой задаче.',
-
-        REFINEMENT_NOT_INCLUDED:
-          'Повторный поиск не входит в выбранный тариф.'
+        SEARCH_NOT_CONFIGURED:'Поисковые провайдеры ещё не настроены.',
+        CITY_REQUIRED:'Нужен город или район для поиска.',
+        CATEGORY_NOT_SUPPORTED:'Категория пока не подключена к автоматическому поиску.',
+        BAD_JSON:'Некорректный JSON.',
+        PAYLOAD_TOO_LARGE:'Запрос слишком большой.',
+        ORDER_REQUIRED_FOR_REFINEMENT:'Повторный поиск доступен после выбора подходящего тарифа.',
+        ORDER_NOT_FOUND:'Заказ для повторного поиска не найден.',
+        ORDER_TASK_MISMATCH:'Этот заказ относится к другой задаче.',
+        REFINEMENT_NOT_INCLUDED:'Повторный поиск не входит в выбранный тариф.'
       };
-
-      return sendJson(
-        res,
-        status,
-        {
-          ok: false,
-          error: error.message || 'SEARCH_FAILED',
-          message:
-            messages[error.message] ||
-            'Не удалось выполнить поиск.'
-        },
-        origin
-      );
+      return sendJson(res,status,{ok:false,error:error.message||'SEARCH_FAILED',message:messages[error.message]||'Не удалось выполнить поиск.'},origin);
     }
   }
 
