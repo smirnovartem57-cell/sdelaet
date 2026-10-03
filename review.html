@@ -1,13 +1,10 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Проверка перед отправкой — Сделает</title><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script><style>body{background:var(--bg)}.review{max-width:900px;margin:0 auto;padding:34px 18px 70px}.review-card{padding:24px}.recipients{display:grid;gap:8px;margin:16px 0}.recipient{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}.recipient b,.recipient span{display:block}.recipient span{margin-top:3px;color:var(--muted);font-size:12px}.message{white-space:pre-wrap;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;line-height:1.55}.confirm{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:14px;border:1px solid #eadcae;border-radius:14px;background:#fff9e8}.confirm input{margin-top:3px}.actions{display:flex;gap:10px;flex-wrap:wrap}</style></head><body><main class="review"><section class="card review-card"><div class="eyebrow">Финальная проверка</div><h1 class="hero-title">Проверьте перед отправкой</h1><p class="lead">До вашего подтверждения ничего исполнителям не отправляется. Email будет отправлен сервисом автоматически. Telegram — только вручную: мы откроем чат с подготовленным сообщением.</p><div class="label">Получатели</div><div class="recipients" id="recipients"></div><div class="label">Текст запроса</div><div class="message" id="message"></div><div class="label" id="attachmentLabel" style="margin-top:14px">Вложения</div><div id="attachments" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><label class="confirm"><input type="checkbox" id="confirm"><span><b>Я проверил получателей, каналы и текст запроса</b><br>После нажатия «Подтвердить отправку» начнётся реальная отправка выбранным исполнителям.</span></label><div class="actions"><button class="btn primary large" id="send" disabled>Подтвердить отправку →</button><a class="btn secondary large" id="backToPreparation" href="#">← Изменить каналы и текст</a></div><div id="status" class="hidden" style="margin-top:14px"></div></section></main><script>
-(function(){
+(async function(){
   const REVIEW_KEY='sdelaet.outreach.review.v1';
   const OUTREACH_API='https://api.onsdelaet.ru';
-  let r=null,task={};
+  let r=null,taskAttachments=[],missingRequiredPhoto=false;
   try{r=JSON.parse(localStorage.getItem(REVIEW_KEY)||'null')}catch{}
-  try{task=JSON.parse(localStorage.getItem('sdelaet.task.v2')||'null')||{}}catch{}
-  const taskAttachments=Array.isArray(task.attachments)?task.attachments.filter(x=>x&&x.data&&/^image\//i.test(String(x.type||''))):[];
-  if(!r||!r.taskId||!r.orderId||!Array.isArray(r.recipients)||!r.recipients.length||!r.message){location.replace('requests.html?selected=1');return;}
-  const missingRequiredPhoto=!!r.requiresPhoto&&!taskAttachments.length;
+  if(!r||!r.taskId||!r.orderId||!Array.isArray(r.recipients)||!r.recipients.length||!r.message){location.replace('/my-tasks.html');return;}
   const recipientsEl=document.getElementById('recipients');
   const c=document.getElementById('confirm');
   const b=document.getElementById('send');
@@ -40,6 +37,13 @@
       info.textContent=labels.length?'Каналы: '+labels.join(' · '):'Нет выбранного канала';
       row.append(name,info);recipientsEl.appendChild(row);
     });
+  }
+  async function get(path){
+    const normalized=String(path||'').replace(/^\/api(?=\/v1\/)/,'');
+    const resp=await fetch(OUTREACH_API+normalized,{credentials:'include'});
+    const data=await resp.json().catch(()=>({}));
+    if(!resp.ok||!data.ok)throw new Error(data.error||'REQUEST_FAILED');
+    return data;
   }
   async function post(path,body){
     const normalized=String(path||'').replace(/^\/api(?=\/v1\/)/,'');
@@ -87,6 +91,16 @@
   document.getElementById('message').textContent=r.message;
   const attachmentBox=document.getElementById('attachments');
   const attachmentLabel=document.getElementById('attachmentLabel');
+  try{
+    const taskData=await get('/v1/account/tasks/'+encodeURIComponent(r.taskId));
+    const taskJson=taskData&&taskData.task&&taskData.task.taskJson||{};
+    taskAttachments=Array.isArray(taskJson.attachments)?taskJson.attachments.filter(x=>x&&x.data&&/^image\//i.test(String(x.type||''))):[];
+  }catch(e){
+    st.className='';
+    st.innerHTML='<div style="padding:12px 14px;border:1px solid #edcf91;border-radius:12px;background:#fff3dd;color:#775b26"><b>Не удалось проверить вложения задачи.</b><br>Обновите страницу перед отправкой. Ничего не отправлено.</div>';
+    c.disabled=true;b.disabled=true;
+  }
+  missingRequiredPhoto=!!r.requiresPhoto&&!taskAttachments.length;
   const reviewAttachments=taskAttachments;
   if(!reviewAttachments.length){attachmentLabel.style.display='none';attachmentBox.style.display='none';}
   else{attachmentBox.innerHTML=reviewAttachments.map((x,i)=>'<div style="width:110px;padding:7px;border:1px solid var(--line);border-radius:11px;background:#fff"><img src="'+x.data+'" alt="" style="display:block;width:96px;height:72px;object-fit:cover;border-radius:8px"><div style="margin-top:5px;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(x.name||('Фото '+(i+1)))+'</div></div>').join('');}
