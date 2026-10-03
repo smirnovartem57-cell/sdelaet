@@ -29,6 +29,7 @@ const commands = [
   ['free paid auth mail', ['tests/free-paid-auth-mail-regression.mjs']],
   ['free research resilience', ['tests/free-research-resilience-regression.mjs']],
   ['account task CRM client bridge', ['tests/account-task-client-bridge-regression.mjs']],
+  ['attachment delete', ['tests/attachment-delete-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
