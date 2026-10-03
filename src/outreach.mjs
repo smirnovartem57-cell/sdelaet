@@ -101,7 +101,7 @@ if (!outreachAttemptColumns.has('authorization_id')) {
 }
 db.exec(`CREATE INDEX IF NOT EXISTS idx_outreach_authorization ON outreach_attempts(authorization_id,candidate_id,channel)`);
 
-const OUTREACH_STATUS_REPORT = process.env.OUTREACH_STATUS_REPORT || '/var/lib/sdelaet/reports/outreach-status.json';
+const OUTREACH_STATUS_REPORT = process.env.OUTREACH_STATUS_REPORT || '/var/lib/sdelaet/db/outreach-status.json';
 function writeOutreachStatusSnapshot(){
   try{
     const rows=db.prepare(`
