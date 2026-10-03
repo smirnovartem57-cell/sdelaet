@@ -23,8 +23,11 @@ document.addEventListener('DOMContentLoaded',async function(){
  try{
   var user=await sdAccount.requireAuth(),d=await sdAccount.api('/v1/account/profile'),p=d.profile||{};
   card.className='account-profile-card';
-  card.innerHTML='<div class="account-field"><label>Email</label><input id="profileEmail" type="email" readonly></div><div class="account-field"><label for="profileRegion">Город или регион</label><input id="profileRegion" type="text" list="profileRegionOptions" autocomplete="off" placeholder="Например: Мытищи или Московская область"><datalist id="profileRegionOptions"></datalist><div style="margin-top:6px;color:#7a879b;font-size:11px;line-height:1.45">Сохраняем канонический регион; для новой задачи город можно уточнить отдельно.</div></div><div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="account-primary" id="saveProfile" type="button">Сохранить</button><button class="account-secondary" type="button" data-account-logout>Выйти</button></div><div id="profileStatus" style="margin-top:10px"></div>';
+  card.innerHTML='<div class="account-field"><label>Email</label><input id="profileEmail" type="email" readonly></div><div class="account-field"><label for="profileName">Имя</label><input id="profileName" type="text" autocomplete="name" maxlength="100" placeholder="Как к вам обращаться"></div><div class="account-field"><label for="profilePhone">Телефон</label><input id="profilePhone" type="tel" autocomplete="tel" maxlength="50" placeholder="+7 999 000-00-00"></div><div class="account-field"><label for="profileNotifications">Уведомления по задачам</label><select id="profileNotifications"><option value="email">Email</option><option value="telegram">Telegram</option><option value="both">Email + Telegram</option></select><div style="margin-top:6px;color:#7a879b;font-size:11px;line-height:1.45">Telegram будет использоваться после привязки аккаунта.</div></div><div class="account-field"><label for="profileRegion">Город или регион</label><input id="profileRegion" type="text" list="profileRegionOptions" autocomplete="off" placeholder="Например: Мытищи или Московская область"><datalist id="profileRegionOptions"></datalist><div style="margin-top:6px;color:#7a879b;font-size:11px;line-height:1.45">Сохраняем канонический регион; для новой задачи город можно уточнить отдельно.</div></div><div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="account-primary" id="saveProfile" type="button">Сохранить</button><button class="account-secondary" type="button" data-account-logout>Выйти</button></div><div id="profileStatus" style="margin-top:10px"></div>';
   document.getElementById('profileEmail').value=user.email||'';
+  document.getElementById('profileName').value=p.name||'';
+  document.getElementById('profilePhone').value=p.phone||'';
+  document.getElementById('profileNotifications').value=['email','telegram','both'].includes(p.notificationChannel)?p.notificationChannel:'email';
   var input=document.getElementById('profileRegion'),list=document.getElementById('profileRegionOptions');
   input.value=(p.geo&&window.sdGeoClassifier)?sdGeoClassifier.display(p.geo,p.region,true):(p.region||'');
   if(window.sdGeoClassifier)sdGeoClassifier.options().slice(0,220).forEach(function(x){var o=document.createElement('option');o.value=x.label;list.appendChild(o)});
@@ -35,11 +38,11 @@ document.addEventListener('DOMContentLoaded',async function(){
    var geo=window.sdGeoClassifier?sdGeoClassifier.resolve(raw,current):null;
    var label=window.sdGeoClassifier?sdGeoClassifier.display(geo,raw,true):raw;
    try{
-    var saved=await sdAccount.api('/v1/account/profile',{method:'POST',body:JSON.stringify({region:label,geo:geo})});
+    var saved=await sdAccount.api('/v1/account/profile',{method:'POST',body:JSON.stringify({region:label,geo:geo,name:document.getElementById('profileName').value.trim(),phone:document.getElementById('profilePhone').value.trim(),notificationChannel:document.getElementById('profileNotifications').value})});
     p=saved.profile||p;
     input.value=(p.geo&&window.sdGeoClassifier)?sdGeoClassifier.display(p.geo,p.region,true):(p.region||label);
     if(window.sdSetRegionPreference)sdSetRegionPreference({label:window.sdGeoClassifier?sdGeoClassifier.display(p.geo,p.region,false):(p.region||label),geo:p.geo||geo,manual:true,updatedAt:Date.now()});
-    status.textContent=geo&&geo.needsConfirmation?'Сохранено. Регион учтём как контекст и уточним город в задаче.':'Сохранено.';
+    status.textContent=geo&&geo.needsConfirmation?'Сохранено. Контактные данные обновлены; регион учтём как контекст и уточним город в задаче.':'Профиль сохранён.';
    }catch(e){status.textContent='Не удалось сохранить регион.'}
   };
  }catch(e){if(e.message!=='AUTH_REQUIRED'){card.className='account-error';card.textContent='Не удалось загрузить профиль.'}}

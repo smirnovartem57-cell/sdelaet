@@ -111,3 +111,5 @@
 
 #paywall.rp-checkout .sj-pay-explain{margin:9px 0 2px;padding:10px 12px;border:1px solid #dce7f5;border-radius:12px;background:#fff;color:#52637e;font:400 12px/1.45 Roboto,Arial,sans-serif}
 #paywall.rp-checkout .sj-pay-explain b{color:#243b5a}
+
+.checkout-profile-choice{display:grid;gap:8px;margin:12px 0}.checkout-profile-choice>label{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border:1px solid #dfe7f2;border-radius:13px;background:#fff;cursor:pointer}.checkout-profile-choice>label:has(input:checked){border-color:#9bbbe4;background:#f6faff}.checkout-profile-choice input{margin-top:2px}.checkout-profile-choice b{display:block;color:#243650;font:750 10.5px/1.3 Montserrat,sans-serif}.checkout-profile-choice small{display:block;margin-top:3px;color:#7b889b;font:400 9.5px/1.35 Roboto,sans-serif}.checkout-save-profile{display:flex;gap:8px;align-items:flex-start;margin-top:11px;color:#61728a;font:500 10px/1.4 Roboto,sans-serif}.checkout-save-profile input{margin-top:2px}.checkout-contact-box input[readonly]{background:#f7f9fc;color:#53637a}.checkout-contact-box .hidden{display:none!important}

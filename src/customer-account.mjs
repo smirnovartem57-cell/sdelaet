@@ -36,6 +36,9 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
  );
  const profileCols=new Set(db.prepare('PRAGMA table_info(customer_profiles)').all().map(x=>x.name));
  if(!profileCols.has('geo_json'))db.exec('ALTER TABLE customer_profiles ADD COLUMN geo_json TEXT');
+ if(!profileCols.has('name'))db.exec('ALTER TABLE customer_profiles ADD COLUMN name TEXT');
+ if(!profileCols.has('phone'))db.exec('ALTER TABLE customer_profiles ADD COLUMN phone TEXT');
+ if(!profileCols.has('notification_channel'))db.exec('ALTER TABLE customer_profiles ADD COLUMN notification_channel TEXT');
  function requireSession(req){const s=customerAuth.getSession(req);if(!s?.email){const e=new Error('AUTH_REQUIRED');e.status=401;throw e}return norm(s.email)}
  function ensureClientForEmail(email){
   const normalized=norm(email);
@@ -147,8 +150,27 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   syncCrmTask(id);
   return detail(email,id)
  }
- function profile(email){const r=db.prepare('SELECT region,geo_json,updated_at FROM customer_profiles WHERE email=?').get(email);return{email,region:r?.region||'',geo:r?.geo_json?parse(r.geo_json,null):null,updatedAt:r?.updated_at||null}}
- function saveProfile(email,b){const region=text(b?.region).slice(0,160),geo=safeGeo(b?.geo,region),label=region||geo.canonicalLocality||geo.canonicalRegion,ts=now();db.prepare('INSERT INTO customer_profiles(email,region,created_at,updated_at,geo_json) VALUES(?,?,?,?,?) ON CONFLICT(email) DO UPDATE SET region=excluded.region,updated_at=excluded.updated_at,geo_json=excluded.geo_json').run(email,label,ts,ts,JSON.stringify(geo));return profile(email)}
+ function profile(email){
+  const r=db.prepare('SELECT region,geo_json,name,phone,notification_channel,updated_at FROM customer_profiles WHERE email=?').get(email);
+  const client=db.prepare("SELECT name,phone,preferred_contact FROM clients WHERE lower(COALESCE(email_normalized,email,''))=? ORDER BY created_at ASC LIMIT 1").get(email)||{};
+  return{
+   email,
+   region:r?.region||'',
+   geo:r?.geo_json?parse(r.geo_json,null):null,
+   name:text(r?.name||client.name||''),
+   phone:text(r?.phone||client.phone||''),
+   notificationChannel:['email','telegram','both'].includes(text(r?.notification_channel))?text(r.notification_channel):(text(client.preferred_contact)==='telegram'?'telegram':'email'),
+   updatedAt:r?.updated_at||null
+  }
+ }
+ function saveProfile(email,b){
+  const current=profile(email),region=text(b?.region!==undefined?b.region:current.region).slice(0,160),geo=safeGeo(b?.geo!==undefined?b.geo:current.geo,region),label=region||geo.canonicalLocality||geo.canonicalRegion,ts=now();
+  const name=text(b?.name!==undefined?b.name:current.name).slice(0,100),phone=text(b?.phone!==undefined?b.phone:current.phone).slice(0,50),notificationChannel=['email','telegram','both'].includes(text(b?.notificationChannel||b?.notification_channel))?text(b.notificationChannel||b.notification_channel):(current.notificationChannel||'email');
+  db.prepare('INSERT INTO customer_profiles(email,region,created_at,updated_at,geo_json,name,phone,notification_channel) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(email) DO UPDATE SET region=excluded.region,updated_at=excluded.updated_at,geo_json=excluded.geo_json,name=excluded.name,phone=excluded.phone,notification_channel=excluded.notification_channel').run(email,label,ts,ts,JSON.stringify(geo),name,phone,notificationChannel);
+  const clientId=ensureClientForEmail(email);
+  db.prepare('UPDATE clients SET name=COALESCE(NULLIF(?,\'\'),name),phone=COALESCE(NULLIF(?,\'\'),phone),phone_normalized=COALESCE(NULLIF(?,\'\'),phone_normalized),preferred_contact=?,updated_at=? WHERE client_id_crm=?').run(name,phone,phone.replace(/\D+/g,''),notificationChannel==='telegram'?'telegram':'email',ts,clientId);
+  return profile(email)
+ }
  function authorize(email,id,plan){owner(email,id);if(!T[plan]){const e=new Error('UNKNOWN_TARIFF');e.status=400;throw e}if(taskPayments(email,id).some(x=>x.status==='paid')){const e=new Error('TASK_ALREADY_PAID');e.status=409;throw e}if(!entitlement(email).eligible){const e=new Error('REPEAT_DISCOUNT_NOT_AVAILABLE');e.status=403;throw e}return{allowed:true,taskId:id,plan,repeatPlan:plan+'_repeat'}}
  async function createPayment(req,email,b){
   const id=text(b?.taskId||b?.task_id),tariff=text(b?.tariffId||b?.tariff_id);if(!id||!T[tariff]){const e=new Error('TASK_AND_TARIFF_REQUIRED');e.status=400;throw e}owner(email,id);
