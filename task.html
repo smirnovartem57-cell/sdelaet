@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   var r=t.research,s='<section class="account-section account-section-research" id="research"><div class="section-title-row"><div><span class="section-kicker">Исследование рынка</span><h2>Что уже нашли</h2></div></div>';
   if(!r)return s+sdMotion.statusHtml('working','Исследуем рынок','Ждём подтверждённый результат. Статус обновляется в этой задаче.')+'</section>';
   var model=sdResearchPricing.buildModel({count:r.candidateCount});
-  s+='<div class="research-summary"><div class="research-number"><b>'+esc(model.count==null?'—':model.count)+'</b><span>найдено на первом этапе</span></div><div><p><b>Это текущий результат исследования, а не лимит рынка.</b></p><p>При необходимости поиск можно продолжить в рамках доступного тарифа.</p><small>Данные '+esc(sdAccount.fmtDate(r.createdAt))+'</small></div></div>';
+  s+='<div class="research-summary"><div class="research-number"><b>'+esc(model.count==null?'—':model.count)+'</b><span>На первом этапе найдено</span></div><div><p><b>Это текущий результат исследования, а не лимит рынка.</b></p><p>При необходимости поиск можно продолжить в рамках доступного тарифа.</p><small>Данные '+esc(sdAccount.fmtDate(r.createdAt))+'</small></div></div>';
   if(!(t.payment&&t.payment.status==='paid'))s+=pricingBlock(t);
   return s+'</section>';
  }
