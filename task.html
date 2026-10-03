@@ -139,19 +139,41 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(list(c.sources).length)out.push(['Источники',String(list(c.sources).length)]);
   return out.slice(0,4).map(function(x){return '<div class="decision-signal"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>'}).join('');
  }
+ function telegramHref(v){
+  v=String(v||'').trim();
+  if(!v)return '';
+  if(v.charAt(0)==='@')return 'https://t.me/'+v.slice(1);
+  if(/^t\.me\//i.test(v))return 'https://'+v;
+  if(/^https:\/\/t\.me\//i.test(v))return v;
+  if(/^[a-z0-9_]{5,}$/i.test(v))return 'https://t.me/'+v;
+  return '';
+ }
+ function activeAttempt(list,channel){
+  return list.find(function(a){return a.channel===channel&&!['failed','cancelled'].includes(String(a.status||''))})||null;
+ }
+ function attemptStatusMarkup(a,label){
+  if(!a)return '';
+  var st=String(a.status||''),cls=st==='failed'?'error':st==='replied'?'replied':['sent','delivered'].includes(st)?'success':'pending';
+  var title=st==='replied'?label+': ответ получен':st==='delivered'?label+': доставлено · ждём ответ':st==='sent'?label+': отправлено · ждём ответ':st==='failed'?label+': не отправлено':label+': '+sdJourney.outreachLabel(st);
+  var note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче');
+  return '<div class="decision-outreach-status '+cls+'"><b>'+esc(title)+'</b><span>'+esc(note)+'</span></div>';
+ }
  function candidateCard(t,c,index,attempts){
-  var a=attempts.find(function(x){return x.candidateId===c.id}),why=list(c.why).slice(0,2),canSend=!!c.email&&!a,selected=selectedCandidateIds.has(c.id),site=sdJourney.safeExternalUrl(c.website),contacts='',e=c.evidence||{},fns=e.fnsProfile||c.fnsProfile||null,fnsConfirmed=!!(window.sdCandidateEvidence&&sdCandidateEvidence.fnsMatches&&sdCandidateEvidence.fnsMatches(c,e)),fnsState=fns&&fns.available!==false?(fnsConfirmed?'confirmed':'partial'):'unknown';
+  var ca=attempts.filter(function(x){return x.candidateId===c.id}),emailAttempt=ca.find(function(x){return x.channel==='email'})||null,tgAttempt=ca.find(function(x){return x.channel==='messenger'||x.channel==='telegram'})||null,why=list(c.why).slice(0,2),emailAvailable=!!c.email&&!activeAttempt(ca,'email'),telegramAvailable=!!c.telegram&&!activeAttempt(ca,'messenger')&&!activeAttempt(ca,'telegram'),canSend=emailAvailable||telegramAvailable,selected=selectedCandidateIds.has(c.id),site=sdJourney.safeExternalUrl(c.website),contacts='',e=c.evidence||{},fns=e.fnsProfile||c.fnsProfile||null,fnsConfirmed=!!(window.sdCandidateEvidence&&sdCandidateEvidence.fnsMatches&&sdCandidateEvidence.fnsMatches(c,e)),fnsState=fns&&fns.available!==false?(fnsConfirmed?'confirmed':'partial'):'unknown';
   if(c.phone)contacts+='<div class="decision-contact"><span>Телефон</span><b>'+esc(c.phone)+'</b></div>';
   if(c.email)contacts+='<div class="decision-contact"><span>Email</span><b>'+esc(c.email)+'</b></div>';
+  if(c.telegram)contacts+='<div class="decision-contact"><span>Telegram</span><b>'+esc(c.telegram)+'</b></div>';
   if(site)contacts+='<a class="decision-contact link" href="'+esc(site)+'" target="_blank" rel="noopener"><span>Сайт / профиль</span><b>Открыть ↗</b></a>';
-  var select='';
-  if(a){
-   var st=String(a.status||''),cls=st==='failed'?'error':st==='replied'?'replied':['sent','delivered'].includes(st)?'success':'pending',title=st==='replied'?'Ответ получен':st==='delivered'?'Доставлено · ждём ответ':st==='sent'?'Запрос отправлен · ждём ответ':st==='failed'?'Запрос не отправлен':('Статус: '+sdJourney.outreachLabel(st)),note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку отправки.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче');
-   select='<div class="decision-outreach-status '+cls+'"><b>'+esc(title)+'</b><span>'+esc(note)+'</span></div>';
-  }else if(canSend)select='<label class="decision-select"><input type="checkbox" data-candidate-select="'+esc(c.id)+'" '+(selected?'checked':'')+'><span><b>Выбрать для запроса</b><small>Добавим в общий запрос выбранным исполнителям</small></span></label>';
-  else select='<div class="decision-outreach-status muted"><b>Автоотправка недоступна</b><span>Публичный email не найден — можно связаться вручную.</span></div>';
+  var statuses=attemptStatusMarkup(emailAttempt,'Email');
+  if(tgAttempt){
+   statuses+=attemptStatusMarkup(tgAttempt,'Telegram');
+   if(String(tgAttempt.status)==='prepared'&&telegramHref(tgAttempt.telegram)){
+    statuses+='<div class="manual-telegram-resume"><a class="account-secondary" href="'+esc(telegramHref(tgAttempt.telegram))+'" target="_blank" rel="noopener">Открыть Telegram и отправить вручную ↗</a><button class="account-secondary" type="button" data-manual-telegram-sent="'+esc(tgAttempt.requestId)+'" data-authorization-id="'+esc(tgAttempt.authorizationId||'')+'">Я отправил сообщение</button></div>';
+   }
+  }
+  var select=canSend?'<label class="decision-select"><input type="checkbox" data-candidate-select="'+esc(c.id)+'" '+(selected?'checked':'')+'><span><b>Выбрать для нового обращения</b><small>'+esc([emailAvailable?'Email автоматически':'',telegramAvailable?'Telegram вручную':''].filter(Boolean).join(' · '))+'</small></span></label>':(!ca.length?'<div class="decision-outreach-status muted"><b>Связаться автоматически нельзя</b><span>Нет Email; Telegram можно использовать только вручную, если найден контакт.</span></div>':'');
   var fnsBadge=fnsState==='confirmed'?'<span class="candidate-state good">ФНС подтверждена</span>':fnsState==='partial'?'<span class="candidate-state warn">ФНС: связь не подтверждена</span>':'<span class="candidate-state neutral">ФНС: нет подтверждения</span>';
-  return '<article class="decision-candidate '+(selected?'is-selected':'')+'" data-candidate-id="'+esc(c.id)+'" data-candidate-type="'+esc(c.type||'company')+'" data-candidate-contact="'+(c.email?'yes':'no')+'" data-candidate-fns="'+fnsState+'"><div class="decision-head"><div class="decision-avatar">'+esc(String(c.name||'?').split(/\s+/).slice(0,2).map(function(x){return x.charAt(0)}).join('').toUpperCase())+'</div><div class="decision-title"><div class="decision-rank">#'+(index+1)+' · '+esc(candidateTypeLabel(c))+'</div><h3>'+esc(c.name||'Исполнитель')+'</h3><p>'+esc(c.geo||t.region||'')+'</p></div><div class="decision-match"><span>Соответствие задаче</span><b>'+esc(c.matchLevel||'Подтверждено')+'</b></div></div><div class="candidate-state-row"><span class="candidate-state good">Профиль подходит</span>'+(c.email?'<span class="candidate-state good">Email найден</span>':'<span class="candidate-state neutral">Email не найден</span>')+fnsBadge+'</div>'+(candidateSignals(c)?'<div class="decision-signals decision-signals-primary">'+candidateSignals(c)+'</div>':'')+(contacts?'<div class="decision-contacts">'+contacts+'</div>':'')+'<div class="decision-why-compact"><b>Почему подходит</b><ul>'+(why.length?why.map(function(x){return '<li>'+esc(x)+'</li>'}).join(''):'<li>Соответствие подтверждено найденными данными.</li>')+'</ul></div><details class="decision-more"><summary><span>Подробнее: проверки, юрданные и источники</span><span>Развернуть</span></summary><div class="decision-more-body"><div class="decision-grid"><section><h4>Что удалось проверить</h4><div class="decision-facts">'+candidateFacts(c)+'</div></section><section class="decision-evidence-wrap"><h4>Источники и юридические данные</h4>'+sdCandidateEvidence.render(c)+'</section></div></div></details>'+select+'<button type="button" class="account-hidden" data-send-proxy="'+esc(c.id)+'"></button></article>';
+  return '<article class="decision-candidate '+(selected?'is-selected':'')+'" data-candidate-id="'+esc(c.id)+'" data-candidate-type="'+esc(c.type||'company')+'" data-candidate-contact="'+((c.email||c.telegram)?'yes':'no')+'" data-candidate-fns="'+fnsState+'"><div class="decision-head"><div class="decision-avatar">'+esc(String(c.name||'?').split(/\s+/).slice(0,2).map(function(x){return x.charAt(0)}).join('').toUpperCase())+'</div><div class="decision-title"><div class="decision-rank">#'+(index+1)+' · '+esc(candidateTypeLabel(c))+'</div><h3>'+esc(c.name||'Исполнитель')+'</h3><p>'+esc(c.geo||t.region||'')+'</p></div><div class="decision-match"><span>Соответствие задаче</span><b>'+esc(c.matchLevel||'Подтверждено')+'</b></div></div><div class="candidate-state-row"><span class="candidate-state good">Профиль подходит</span>'+(c.email?'<span class="candidate-state good">Email найден</span>':'<span class="candidate-state neutral">Email не найден</span>')+(c.telegram?'<span class="candidate-state neutral">Telegram найден · вручную</span>':'')+fnsBadge+'</div>'+(candidateSignals(c)?'<div class="decision-signals decision-signals-primary">'+candidateSignals(c)+'</div>':'')+(contacts?'<div class="decision-contacts">'+contacts+'</div>':'')+'<div class="decision-why-compact"><b>Почему подходит</b><ul>'+(why.length?why.map(function(x){return '<li>'+esc(x)+'</li>'}).join(''):'<li>Соответствие подтверждено найденными данными.</li>')+'</ul></div><details class="decision-more"><summary><span>Подробнее: проверки, юрданные и источники</span><span>Развернуть</span></summary><div class="decision-more-body"><div class="decision-grid"><section><h4>Что удалось проверить</h4><div class="decision-facts">'+candidateFacts(c)+'</div></section><section class="decision-evidence-wrap"><h4>Источники и юридические данные</h4>'+sdCandidateEvidence.render(c)+'</section></div></div></details>'+statuses+select+'</article>';
  }
  function selectionSection(t){
   var attempts=t.outreach||[],candidates=t.candidates||[],cards=candidates.map(function(c,i){return candidateCard(t,c,i,attempts)}).join('');
@@ -179,15 +201,17 @@ document.addEventListener('DOMContentLoaded',async function(){
  function closeSelectionReview(){var m=document.getElementById('selectionReviewModal');if(m)m.remove()}
  async function openSelectionReview(t){
   var candidates=(t.candidates||[]).filter(function(c){return selectedCandidateIds.has(c.id)});if(!candidates.length)return;
-  var attempts=t.outreach||[],available=candidates.filter(function(c){return !attempts.some(function(a){return a.candidateId===c.id&&['sent','delivered','replied','prepared','sending','queued'].includes(a.status)})});
+  var attempts=t.outreach||[];
+  function channelBlocked(candidateId,channel){return attempts.some(function(a){return a.candidateId===candidateId&&a.channel===channel&&!['failed','cancelled'].includes(String(a.status||''))})}
+  var available=candidates.filter(function(c){return (!!c.email&&!channelBlocked(c.id,'email'))||((!!c.telegram)&&!channelBlocked(c.id,'messenger')&&!channelBlocked(c.id,'telegram'))});
   if(!available.length)return;
   var modal=document.createElement('div');modal.id='selectionReviewModal';modal.className='selection-review-modal';
   var message=buildOutreachMessage(t);
   function channelRow(c){
-   var hasEmail=!!String(c.email||'').trim(),hasTelegram=!!String(c.telegram||'').trim(),emailChecked=hasEmail?'checked':'';
+   var hasEmail=!!String(c.email||'').trim(),hasTelegram=!!String(c.telegram||'').trim(),emailBlocked=channelBlocked(c.id,'email'),telegramBlocked=channelBlocked(c.id,'messenger')||channelBlocked(c.id,'telegram'),emailChecked=hasEmail&&!emailBlocked?'checked':'';
    return '<div class="outreach-prep-recipient" data-prep-candidate="'+esc(c.id)+'"><div class="outreach-prep-recipient-head"><div><b>'+esc(c.name||'Исполнитель')+'</b><span>'+esc(c.type==='private'?'Частный мастер':'Исполнитель')+'</span></div></div><div class="outreach-prep-channels">'+
-    '<label class="outreach-channel email '+(hasEmail?'':'disabled')+'"><input type="checkbox" data-prep-channel="email" '+emailChecked+' '+(hasEmail?'':'disabled')+'><span><b>Email <em>автоматически</em></b><small>'+(hasEmail?esc(c.email):'Адрес не найден')+'</small></span></label>'+
-    '<label class="outreach-channel telegram '+(hasTelegram?'':'disabled')+'"><input type="checkbox" data-prep-channel="telegram" '+(hasTelegram?'':'disabled')+'><span><b>Telegram <em>вручную</em></b><small>'+(hasTelegram?esc(c.telegram)+' · откроем чат после подтверждения':'Контакт не найден')+'</small></span></label>'+
+    '<label class="outreach-channel email '+(hasEmail&&!emailBlocked?'':'disabled')+'"><input type="checkbox" data-prep-channel="email" '+emailChecked+' '+(hasEmail&&!emailBlocked?'':'disabled')+'><span><b>Email <em>автоматически</em></b><small>'+(emailBlocked?'По этому каналу уже есть обращение':hasEmail?esc(c.email):'Адрес не найден')+'</small></span></label>'+
+    '<label class="outreach-channel telegram '+(hasTelegram&&!telegramBlocked?'':'disabled')+'"><input type="checkbox" data-prep-channel="telegram" '+(hasTelegram&&!telegramBlocked?'':'disabled')+'><span><b>Telegram <em>вручную</em></b><small>'+(telegramBlocked?'Сообщение уже подготовлено или отправлено':hasTelegram?esc(c.telegram)+' · откроем чат после подтверждения':'Контакт не найден')+'</small></span></label>'+
    '</div></div>';
   }
   var recipientsLine=available.map(function(c){return c.email?c.name+' <'+c.email+'>':c.name}).join(', ');
@@ -219,6 +243,7 @@ document.addEventListener('DOMContentLoaded',async function(){
  function bindSelectionActions(t){
   root.querySelectorAll('[data-candidate-select]').forEach(function(input){input.onchange=function(){var cid=input.dataset.candidateSelect;if(input.checked)selectedCandidateIds.add(cid);else selectedCandidateIds.delete(cid);updateSelectionBar();sdAccount.track('candidate_selection_changed',{task_id:t.taskId,candidate_id:cid,selected:input.checked})}});
   root.querySelectorAll('[data-selection-filter]').forEach(function(button){button.onclick=function(){applySelectionFilter(button.dataset.selectionFilter);sdAccount.track('candidate_filter_changed',{task_id:t.taskId,filter:button.dataset.selectionFilter})}});
+  root.querySelectorAll('[data-manual-telegram-sent]').forEach(function(button){button.onclick=async function(){var requestId=button.dataset.manualTelegramSent,authorizationId=button.dataset.authorizationId;if(!requestId||!authorizationId)return;button.disabled=true;var old=button.textContent;button.textContent='Фиксируем…';try{await sdAccount.api('/v1/outreach/manual-sent',{method:'POST',body:JSON.stringify({requestId:requestId,authorizationId:authorizationId})});sdAccount.track('request_mark_sent',{task_id:t.taskId,channel:'telegram'});if(workspaceController)await workspaceController.refresh();}catch(e){button.disabled=false;button.textContent=old;alert('Не удалось сохранить статус Telegram: '+(e.message||'ошибка'));}}});
   var review=root.querySelector('[data-review-selected]');if(review)review.onclick=function(){openSelectionReview(t)};
   updateSelectionBar();
  }
