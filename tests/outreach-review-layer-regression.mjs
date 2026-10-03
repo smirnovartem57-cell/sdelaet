@@ -6,7 +6,7 @@ const review=readFileSync(new URL('../review.html',import.meta.url),'utf8');
 const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url),'utf8');
 
 assert.match(task,/Подготовка запроса/);
-assert.match(task,/Сейчас ничего не отправляется/);
+assert.match(task,/Telegram не отправляется автоматически/);
 assert.match(task,/data-prep-channel="email"/);
 assert.match(task,/data-prep-channel="telegram"/);
 assert.match(task,/Предпросмотр письма/);
