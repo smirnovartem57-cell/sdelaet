@@ -9,7 +9,9 @@ function legalMatches(candidate,legal){
  var site=host(candidate.website),source=host(legal.sourceUrl);
  var platform=/(?:^|\.)(?:yandex\.(?:ru|com)|2gis\.ru|avito\.ru)$/;
  if(site&&source&&!platform.test(site)&&(source===site||source.endsWith('.'+site)))return true;
- return legal.discoveredVia==='legal_identity_discovery'&&legal.matchSignals?.includes('domain')&&legal.matchSignals.some(s=>['phone','address'].includes(s));
+ if(legal.discoveredVia!=='legal_identity_discovery')return false;
+ var signals=Array.isArray(legal.matchSignals)?legal.matchSignals:[],weights={domain:6,phone:6,address:6,brand:4,city:1},score=signals.reduce((n,x)=>n+(weights[x]||0),0);
+ return signals.length>=2&&score>=10&&signals.some(x=>['domain','phone','address'].includes(x));
 }
 function fnsMatches(candidate,e){return e?.fnsProfile?.available===true&&!!e.legalIdentity?.inn&&String(e.fnsProfile.inn)===String(e.legalIdentity.inn)&&legalMatches(candidate,e.legalIdentity);}
 function money(n){return n!==null&&n!==undefined&&Number.isFinite(Number(n))?Number(n).toLocaleString('ru-RU')+' ₽':'';}
