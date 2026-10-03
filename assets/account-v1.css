@@ -242,3 +242,34 @@
  .decision-contacts{display:grid!important}
  .decision-contact{min-width:0!important}
 }
+
+
+/* outreach result/status UX — 2026-10-03 */
+.outreach-state-banner{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:11px;align-items:center;margin:0 0 12px;padding:12px 14px;border:1px solid #dbe5f1;border-radius:15px;background:#fff}
+.outreach-state-banner .outreach-state-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font:900 16px Montserrat,sans-serif}
+.outreach-state-banner b,.outreach-state-banner span{display:block}
+.outreach-state-banner b{font:850 11px Montserrat,sans-serif;color:#29405d}
+.outreach-state-banner span{margin-top:3px;color:#6f7f94;font-size:9.5px;line-height:1.45}
+.outreach-state-banner a{color:#356cab;text-decoration:none;font:800 9px Montserrat,sans-serif;white-space:nowrap}
+.outreach-state-banner.waiting{border-color:#cfe6da;background:#f4fbf7}.outreach-state-banner.waiting .outreach-state-icon{background:#daf3e6;color:#237453}
+.outreach-state-banner.replied{border-color:#c9e2d5;background:#eff9f4}.outreach-state-banner.replied .outreach-state-icon{background:#d5f0e2;color:#1e7250}
+.outreach-state-banner.failed{border-color:#efd3cf;background:#fff7f6}.outreach-state-banner.failed .outreach-state-icon{background:#fde4e1;color:#a54a43}
+.outreach-state-banner.pending{border-color:#e8dfbd;background:#fffaf0}.outreach-state-banner.pending .outreach-state-icon{background:#f8edc9;color:#89671d}
+
+.decision-outreach-status.error{background:#fff2f0;color:#9e4842}.decision-outreach-status.replied{background:#eaf8f1;color:#1f7250}.decision-outreach-status.pending{background:#fff8e9;color:#8a681d}
+.outreach-attempt-card{border-left:4px solid #cbd8e8}
+.outreach-attempt-card[data-outreach-status="sent"],.outreach-attempt-card[data-outreach-status="delivered"]{border-left-color:#63b68a;background:#f6fcf8}
+.outreach-attempt-card[data-outreach-status="replied"]{border-left-color:#3aa474;background:#f2fbf6}
+.outreach-attempt-card[data-outreach-status="failed"]{border-left-color:#d17870;background:#fff8f7}
+.outreach-attempt-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.outreach-attempt-head>b{font-size:10px}.outreach-attempt-head>span{padding:5px 7px;border-radius:999px;background:#eef3f8;color:#617089;font:800 8px Montserrat,sans-serif}
+.outreach-attempt-card[data-outreach-status="sent"] .outreach-attempt-head>span,.outreach-attempt-card[data-outreach-status="delivered"] .outreach-attempt-head>span{background:#e4f5ec;color:#2a7657}
+.outreach-attempt-card[data-outreach-status="replied"] .outreach-attempt-head>span{background:#dff4e9;color:#1f7150}
+.outreach-attempt-card[data-outreach-status="failed"] .outreach-attempt-head>span{background:#fde7e4;color:#a34c45}
+
+.selection-send-result{text-align:center;padding:18px 6px 4px}
+.selection-send-result-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;font:900 25px Montserrat,sans-serif;background:#e4f6ec;color:#237453}
+.selection-send-result.partial .selection-send-result-icon{background:#fff0df;color:#a56a18}
+.selection-send-result h2{margin:0 0 10px!important}.selection-send-result p{max-width:560px;margin:6px auto!important;color:#64748b;font-size:11px!important;line-height:1.5!important}
+.selection-send-result .account-primary{margin-top:12px}
+@media(max-width:700px){.outreach-state-banner{grid-template-columns:34px 1fr}.outreach-state-banner>a{grid-column:2}.outreach-attempt-head{align-items:flex-start;flex-direction:column}}

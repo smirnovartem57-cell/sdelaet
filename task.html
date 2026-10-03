@@ -7,7 +7,7 @@
 <link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=task-ux-20261003">
+<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=outreach-status-20261003">
 <script src="assets/prod-ui.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
 <link rel="stylesheet" href="assets/research-pricing-v2.css?v=journey-integration4-20260930"><link rel="stylesheet" href="assets/task-motion-v1.css?v=journey-integration4-20260930"><script src="assets/research-pricing-v2.js?v=journey-integration4-20260930"></script><script src="assets/task-motion-v1.js?v=journey-integration4-20260930"></script><script src="assets/task-journey-v1.js?v=rich-selection-20261003"></script><script src="assets/candidate-evidence-v1.js?v=task-ux-20261003"></script></head>
 <body class="account-body">
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   html+='</div>';
   if(t.research||t.payment)html+=workspaceNav(t);
   if(t.payment&&t.payment.status==='paid')html+=workspaceKpis(t);
+  if(t.payment&&t.payment.status==='paid')html+=outreachStateBanner(t);
 
   if(!researchFirst)html+=taskSection(t,t.payment&&t.payment.status==='paid');
 
@@ -80,6 +81,20 @@ document.addEventListener('DOMContentLoaded',async function(){
  function workspaceKpis(t){
   var candidates=Number(t.counts&&t.counts.candidates||t.research&&t.research.candidateCount||0),outreach=Number(t.counts&&t.counts.outreach||0),replies=Number(t.counts&&t.counts.replies||0),offers=Number(t.counts&&t.counts.offers||0);
   return '<div class="workspace-kpis"><div><span>Найдено</span><b>'+candidates+'</b><small>исполнителей</small></div><div><span>Запросы</span><b>'+outreach+'</b><small>отправлено</small></div><div><span>Ответы</span><b>'+replies+'</b><small>получено</small></div><div><span>Предложения</span><b>'+offers+'</b><small>для сравнения</small></div></div>';
+ }
+ function outreachStateBanner(t){
+  var attempts=t.outreach||[],sent=attempts.filter(function(a){return ['sent','delivered'].includes(a.status)}),replied=attempts.filter(function(a){return a.status==='replied'}),failed=attempts.filter(function(a){return a.status==='failed'});
+  if(!attempts.length)return '';
+  if(replied.length){
+   return '<div class="outreach-state-banner replied"><div class="outreach-state-icon">✓</div><div><b>Получены ответы: '+replied.length+'</b><span>Откройте блок «Обращения и ответы» — можно переходить к сравнению предложений.</span></div><a href="#responses">Посмотреть ответы →</a></div>';
+  }
+  if(sent.length){
+   return '<div class="outreach-state-banner waiting"><div class="outreach-state-icon">✓</div><div><b>Запросы отправлены: '+sent.length+'</b><span>Ждём ответы исполнителей. Они появятся в этой задаче автоматически.'+(failed.length?' Не отправлено: '+failed.length+'.':'')+'</span></div><a href="#responses">Статус обращений →</a></div>';
+  }
+  if(failed.length){
+   return '<div class="outreach-state-banner failed"><div class="outreach-state-icon">!</div><div><b>Запросы не отправлены</b><span>Есть подтверждённая ошибка отправки. Ниже можно увидеть причину и повторить действие после исправления.</span></div><a href="#responses">Посмотреть ошибку →</a></div>';
+  }
+  return '<div class="outreach-state-banner pending"><div class="outreach-state-icon">…</div><div><b>Уточняем статус отправки</b><span>Повторно ничего не отправляем, пока не подтверждён результат предыдущей попытки.</span></div><a href="#responses">Проверить статус →</a></div>';
  }
  function taskSection(t,collapsed){
   var j=t.taskJson||{},rows=[];
@@ -129,7 +144,12 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(c.phone)contacts+='<div class="decision-contact"><span>Телефон</span><b>'+esc(c.phone)+'</b></div>';
   if(c.email)contacts+='<div class="decision-contact"><span>Email</span><b>'+esc(c.email)+'</b></div>';
   if(site)contacts+='<a class="decision-contact link" href="'+esc(site)+'" target="_blank" rel="noopener"><span>Сайт / профиль</span><b>Открыть ↗</b></a>';
-  var select=a?'<div class="decision-outreach-status success"><b>Запрос: '+esc(sdJourney.outreachLabel(a.status))+'</b><span>'+(a.sentAt?'Отправлен '+esc(sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче')+'</span></div>':canSend?'<label class="decision-select"><input type="checkbox" data-candidate-select="'+esc(c.id)+'" '+(selected?'checked':'')+'><span><b>Выбрать для запроса</b><small>Добавим в общий запрос выбранным исполнителям</small></span></label>':'<div class="decision-outreach-status muted"><b>Автоотправка недоступна</b><span>Публичный email не найден — можно связаться вручную.</span></div>';
+  var select='';
+  if(a){
+   var st=String(a.status||''),cls=st==='failed'?'error':st==='replied'?'replied':['sent','delivered'].includes(st)?'success':'pending',title=st==='replied'?'Ответ получен':st==='delivered'?'Доставлено · ждём ответ':st==='sent'?'Запрос отправлен · ждём ответ':st==='failed'?'Запрос не отправлен':('Статус: '+sdJourney.outreachLabel(st)),note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку отправки.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче');
+   select='<div class="decision-outreach-status '+cls+'"><b>'+esc(title)+'</b><span>'+esc(note)+'</span></div>';
+  }else if(canSend)select='<label class="decision-select"><input type="checkbox" data-candidate-select="'+esc(c.id)+'" '+(selected?'checked':'')+'><span><b>Выбрать для запроса</b><small>Добавим в общий запрос выбранным исполнителям</small></span></label>';
+  else select='<div class="decision-outreach-status muted"><b>Автоотправка недоступна</b><span>Публичный email не найден — можно связаться вручную.</span></div>';
   var fnsBadge=fnsState==='confirmed'?'<span class="candidate-state good">ФНС подтверждена</span>':fnsState==='partial'?'<span class="candidate-state warn">ФНС: связь не подтверждена</span>':'<span class="candidate-state neutral">ФНС: нет подтверждения</span>';
   return '<article class="decision-candidate '+(selected?'is-selected':'')+'" data-candidate-id="'+esc(c.id)+'" data-candidate-type="'+esc(c.type||'company')+'" data-candidate-contact="'+(c.email?'yes':'no')+'" data-candidate-fns="'+fnsState+'"><div class="decision-head"><div class="decision-avatar">'+esc(String(c.name||'?').split(/\s+/).slice(0,2).map(function(x){return x.charAt(0)}).join('').toUpperCase())+'</div><div class="decision-title"><div class="decision-rank">#'+(index+1)+' · '+esc(candidateTypeLabel(c))+'</div><h3>'+esc(c.name||'Исполнитель')+'</h3><p>'+esc(c.geo||t.region||'')+'</p></div><div class="decision-match"><span>Соответствие задаче</span><b>'+esc(c.matchLevel||'Подтверждено')+'</b></div></div><div class="candidate-state-row"><span class="candidate-state good">Профиль подходит</span>'+(c.email?'<span class="candidate-state good">Email найден</span>':'<span class="candidate-state neutral">Email не найден</span>')+fnsBadge+'</div>'+(candidateSignals(c)?'<div class="decision-signals decision-signals-primary">'+candidateSignals(c)+'</div>':'')+(contacts?'<div class="decision-contacts">'+contacts+'</div>':'')+'<div class="decision-why-compact"><b>Почему подходит</b><ul>'+(why.length?why.map(function(x){return '<li>'+esc(x)+'</li>'}).join(''):'<li>Соответствие подтверждено найденными данными.</li>')+'</ul></div><details class="decision-more"><summary><span>Подробнее: проверки, юрданные и источники</span><span>Развернуть</span></summary><div class="decision-more-body"><div class="decision-grid"><section><h4>Что удалось проверить</h4><div class="decision-facts">'+candidateFacts(c)+'</div></section><section class="decision-evidence-wrap"><h4>Источники и юридические данные</h4>'+sdCandidateEvidence.render(c)+'</section></div></div></details>'+select+'<button type="button" class="account-hidden" data-send-proxy="'+esc(c.id)+'"></button></article>';
  }
@@ -140,7 +160,7 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function responsesSection(t){
   var replies=(t.replies||[]).map(function(r){var d=t.dialogues&&t.dialogues[r.request_id],state=d&&d.current_state,pending=state&&state.pending_clarifications||[];return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p>'+(state?'<p><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+(pending.length?'<p><b>Нужно уточнить:</b> '+esc((pending[0].items||[]).join('; '))+'</p>':'')+'</div>'}).join('');
-  var attempts=(t.outreach||[]).map(function(a){return '<div class="account-mini-card"><b>'+esc(a.candidateName||'Исполнитель')+'</b><p>Статус: '+esc(sdJourney.outreachLabel(a.status))+'</p>'+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p class="response-error">Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
+  var attempts=(t.outreach||[]).map(function(a){var st=String(a.status||''),label=st==='replied'?'Ответ получен':st==='delivered'?'Доставлено — ждём ответ':st==='sent'?'Отправлено — ждём ответ':st==='failed'?'Не отправлено':sdJourney.outreachLabel(st);return '<div class="account-mini-card outreach-attempt-card" data-outreach-status="'+esc(st)+'"><div class="outreach-attempt-head"><b>'+esc(a.candidateName||'Исполнитель')+'</b><span>'+esc(label)+'</span></div>'+(a.recipient?'<p>'+esc(a.recipient)+'</p>':'')+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p class="response-error">Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
   return '<details class="account-section account-section-fold account-section-responses" id="responses" open><summary><span><b>Обращения и ответы</b><small>Отправлено '+Number(t.counts&&t.counts.outreach||0)+' · ответов '+Number(t.counts&&t.counts.replies||0)+'</small></span><span class="fold-action">Показать</span></summary><div class="section-body"><div class="account-response-list">'+attempts+replies+'</div></div></details>';
  }
  function comparisonSection(t){
@@ -165,7 +185,10 @@ document.addEventListener('DOMContentLoaded',async function(){
   modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Проверка перед отправкой</div><h2>Кому отправим запрос</h2><div class="selection-review-recipients">'+candidates.map(function(c){return '<div><b>'+esc(c.name)+'</b><span>'+(c.email?esc(c.email):'Публичный email не найден — только ручная связь')+'</span></div>'}).join('')+'</div><h3>Одинаковый запрос для всех</h3><pre>'+esc(message)+'</pre><p class="selection-review-note">Запросы не отправляются до следующего подтверждения. Исполнители без публичного email останутся в подборе, но автоматически письмо им не уйдёт.</p><div class="selection-review-actions"><button class="account-primary" type="button" data-confirm-group-send '+(sendable.length?'':'disabled')+'>Подтвердить и отправить '+sendable.length+'</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-review-close]').forEach(function(x){x.onclick=closeSelectionReview});
-  var confirm=modal.querySelector('[data-confirm-group-send]');if(confirm)confirm.onclick=async function(){confirm.disabled=true;confirm.textContent='Отправляем…';var ok=0;for(var i=0;i<sendable.length;i++){var c=sendable[i],proxy=root.querySelector('[data-send-proxy="'+CSS.escape(c.id)+'"]')||confirm;var sent=await sdJourney.sendOutreach(workspaceController,c.id,proxy,{skipConfirm:true});if(sent)ok++;}closeSelectionReview();selectedCandidateIds.clear();updateSelectionBar();if(workspaceController)await workspaceController.refresh();};
+  var confirm=modal.querySelector('[data-confirm-group-send]');if(confirm)confirm.onclick=async function(){confirm.disabled=true;confirm.textContent='Отправляем…';var ok=0,failed=[];for(var i=0;i<sendable.length;i++){var c=sendable[i],proxy=root.querySelector('[data-send-proxy="'+CSS.escape(c.id)+'"]')||confirm;var sent=await sdJourney.sendOutreach(workspaceController,c.id,proxy,{skipConfirm:true});if(sent)ok++;else failed.push(c.name||'Исполнитель');}
+   var dialog=modal.querySelector('.selection-review-dialog');dialog.innerHTML='<div class="selection-send-result '+(ok===sendable.length?'success':'partial')+'"><div class="selection-send-result-icon">'+(ok?'✓':'!')+'</div><h2>'+(ok===sendable.length?'Запросы отправлены':'Отправлена только часть запросов')+'</h2><p><b>Отправлено: '+ok+' из '+sendable.length+'.</b> '+(ok?'Теперь ждём ответы исполнителей. Статусы будут обновляться в этой задаче.':'')+'</p>'+(failed.length?'<p>Не отправлено: '+esc(failed.join(', '))+'.</p>':'')+'<button class="account-primary" type="button" data-result-close>Вернуться к задаче →</button></div>';
+   dialog.querySelector('[data-result-close]').onclick=async function(){closeSelectionReview();selectedCandidateIds.clear();updateSelectionBar();if(workspaceController)await workspaceController.refresh();location.hash='selection';};
+  };
  }
  function applySelectionFilter(filter){
   var cards=Array.from(root.querySelectorAll('.decision-candidate')),shown=0;
