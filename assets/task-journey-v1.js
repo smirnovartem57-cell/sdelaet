@@ -233,6 +233,7 @@ var unresolvedOutreach=new Set();
 function outreachPendingKey(key){return 'sdelaet.journey.outreach-pending.v1.'+encodeURIComponent(key);}
 function outreachUnresolved(key){return unresolvedOutreach.has(key)||!!readStorage(storage('sessionStorage'),outreachPendingKey(key));}
 function markOutreachUnresolved(key){unresolvedOutreach.add(key);writeStorage(storage('sessionStorage'),outreachPendingKey(key),{pending:true,at:Date.now()});}
+function clearOutreachUnresolved(key){unresolvedOutreach.delete(key);try{storage('sessionStorage').removeItem(outreachPendingKey(key));}catch{}}
 function sendOutreach(ws,candidateId,btn,options){options=options||{};var key=ws.task.taskId+':'+candidateId;return win.sdMotion.once('outreach:'+key,async function(){
  var c=(ws.task.candidates||[]).find(x=>x.id===candidateId);if(!c?.email||ws.task.payment?.status!=='paid')return false;
  if((ws.task.outreach||[]).some(a=>a.candidateId===candidateId)||outreachUnresolved(key)){await ws.refresh();workspaceNotice(ws.root,'Сначала проверьте статус предыдущего обращения. Повторное письмо не отправлено.',ws.refresh);return false;}
@@ -243,12 +244,11 @@ function sendOutreach(ws,candidateId,btn,options){options=options||{};var key=ws
  try{var auth=await post('/v1/account/tasks/'+encodeURIComponent(ws.task.taskId)+'/outreach-authorize',{candidateId:c.id,message:message,explicitConfirm:true,idempotencyKey:'task:'+key+':'+Date.now()});if(!auth.authorizationId)throw new Error('AUTHORIZATION_NOT_CONFIRMED');
   var prepared=await post('/v1/outreach/prepare',{taskId:ws.task.taskId,searchRunId:ws.task.research?.runId||'',authorizationId:auth.authorizationId,candidate:{id:c.id,name:c.name,type:c.type,email:c.email},channel:'email',recipient:c.email,subject:'Запрос по задаче в сервисе «Сделает»',message:message});
   if(!prepared.outreach?.requestId)throw new Error('PREPARE_NOT_CONFIRMED');op.set('pending','Передаём письмо','Проверим итоговый статус в этой задаче.');
-  await post('/v1/outreach/email/send',{requestId:prepared.outreach.requestId,authorizationId:auth.authorizationId});
-  await ws.refresh();var a=(ws.task.outreach||[]).find(x=>x.candidateId===c.id);
-  if(a&&['sent','delivered','replied'].includes(a.status)){op.set('saved','Письмо отправлено','Ответ появится в этой задаче.');track('task_outreach_sent',{task_id:ws.task.taskId,candidate_id:c.id,channel:'email'});}
-  else if(a?.status==='failed')op.set('error','Письмо не отправлено','Проверьте статус обращения.');
-  else op.set('pending','Статус отправки уточняется','Повторное письмо не запускается автоматически.');return true;
- }catch(e){op.set('error','Статус отправки не подтверждён','Проверьте обращение в задаче перед повторным действием.');workspaceNotice(ws.root,'Соединение прервалось. Не отправляйте повторно, пока не проверен статус обращения.',ws.refresh);return false;}
+  var sent=await post('/v1/outreach/email/send',{requestId:prepared.outreach.requestId,authorizationId:auth.authorizationId}),sentStatus=sent&&sent.outreach&&sent.outreach.status;
+  if(['sent','delivered','replied'].includes(sentStatus)){clearOutreachUnresolved(key);op.set('saved','Письмо отправлено','Почтовый сервер принял запрос. Ответ появится в этой задаче.');track('task_outreach_sent',{task_id:ws.task.taskId,candidate_id:c.id,channel:'email'});try{await ws.refresh();}catch{}return true;}
+  if(sentStatus==='failed'){clearOutreachUnresolved(key);op.set('error','Письмо не отправлено','Сервер подтвердил ошибку отправки. Можно повторить после исправления причины.');return false;}
+  op.set('pending','Статус отправки уточняется','Повторное письмо не запускается автоматически.');try{await ws.refresh();}catch{}return false;
+ }catch(e){var deterministic=Number(e&&e.status)>0;if(deterministic)clearOutreachUnresolved(key);var code=String(e&&e.message||'OUTREACH_SEND_FAILED'),msg=deterministic?'Отправка отклонена сервером: '+code+'. Письмо не отправлено.':'Соединение прервалось до подтверждения результата. Не отправляйте повторно, пока не проверен статус обращения.';op.set('error',deterministic?'Письмо не отправлено':'Статус отправки не подтверждён',msg);workspaceNotice(ws.root,msg,ws.refresh);return false;}
  finally{op.dispose();finish();}
  });}
 function initPaymentReturn(options){
