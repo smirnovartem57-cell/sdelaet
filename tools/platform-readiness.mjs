@@ -40,6 +40,7 @@ const commands = [
   ['outreach attachments schema', ['tests/outreach-attachments-schema-regression.mjs']],
   ['outreach review layer', ['tests/outreach-review-layer-regression.mjs']],
   ['manual Telegram outreach', ['tests/manual-telegram-outreach-regression.mjs']],
+  ['outreach resume attachments', ['tests/outreach-resume-attachments-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
