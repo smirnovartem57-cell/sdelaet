@@ -233,11 +233,11 @@ var unresolvedOutreach=new Set();
 function outreachPendingKey(key){return 'sdelaet.journey.outreach-pending.v1.'+encodeURIComponent(key);}
 function outreachUnresolved(key){return unresolvedOutreach.has(key)||!!readStorage(storage('sessionStorage'),outreachPendingKey(key));}
 function markOutreachUnresolved(key){unresolvedOutreach.add(key);writeStorage(storage('sessionStorage'),outreachPendingKey(key),{pending:true,at:Date.now()});}
-function sendOutreach(ws,candidateId,btn){var key=ws.task.taskId+':'+candidateId;return win.sdMotion.once('outreach:'+key,async function(){
+function sendOutreach(ws,candidateId,btn,options){options=options||{};var key=ws.task.taskId+':'+candidateId;return win.sdMotion.once('outreach:'+key,async function(){
  var c=(ws.task.candidates||[]).find(x=>x.id===candidateId);if(!c?.email||ws.task.payment?.status!=='paid')return false;
  if((ws.task.outreach||[]).some(a=>a.candidateId===candidateId)||outreachUnresolved(key)){await ws.refresh();workspaceNotice(ws.root,'Сначала проверьте статус предыдущего обращения. Повторное письмо не отправлено.',ws.refresh);return false;}
  var message=outreachMessage(ws.task),confirm=adapters.confirm||win.sdMotion.confirmMessage;
- if(!await confirm('Запрос для «'+(c.name||'исполнителя')+'»',message,c.email))return false;
+ if(!options.skipConfirm&&!await confirm('Запрос для «'+(c.name||'исполнителя')+'»',message,c.email))return false;
  var finish=win.sdMotion.button(btn,'Отправляем…'),box=stateBox('outreachProgress-'+String(candidateId).replace(/[^a-z0-9_-]/gi,'_'),btn.closest('.account-mini-card')||btn),op=win.sdMotion.operation(box,{state:'pending',title:'Подготавливаем обращение',note:'Отправка подтверждена вами.'});
  markOutreachUnresolved(key);
  try{var auth=await post('/v1/account/tasks/'+encodeURIComponent(ws.task.taskId)+'/outreach-authorize',{candidateId:c.id,message:message,explicitConfirm:true,idempotencyKey:'task:'+key+':'+Date.now()});if(!auth.authorizationId)throw new Error('AUTHORIZATION_NOT_CONFIRMED');
