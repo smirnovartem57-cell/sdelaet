@@ -7,7 +7,7 @@
 <link rel="icon" href="assets/logo-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=outreach-status-20261003">
+<link rel="stylesheet" href="assets/prod-ui.css"><link rel="stylesheet" href="assets/account-v1.css?v=outreach-review-layer-20261003">
 <script src="assets/prod-ui.js?v=region-v2"></script><script defer src="assets/account-v1.js?v=region-v2"></script>
 <link rel="stylesheet" href="assets/research-pricing-v2.css?v=journey-integration4-20260930"><link rel="stylesheet" href="assets/task-motion-v1.css?v=journey-integration4-20260930"><script src="assets/research-pricing-v2.js?v=journey-integration4-20260930"></script><script src="assets/task-motion-v1.js?v=journey-integration4-20260930"></script><script src="assets/task-journey-v1.js?v=rich-selection-20261003"></script><script src="assets/candidate-evidence-v1.js?v=task-ux-20261003"></script></head>
 <body class="account-body">
@@ -179,15 +179,34 @@ document.addEventListener('DOMContentLoaded',async function(){
  function closeSelectionReview(){var m=document.getElementById('selectionReviewModal');if(m)m.remove()}
  async function openSelectionReview(t){
   var candidates=(t.candidates||[]).filter(function(c){return selectedCandidateIds.has(c.id)});if(!candidates.length)return;
-  var sendable=candidates.filter(function(c){return !!c.email&&!((t.outreach||[]).some(function(a){return a.candidateId===c.id}))});
+  var attempts=t.outreach||[],available=candidates.filter(function(c){return !attempts.some(function(a){return a.candidateId===c.id&&['sent','delivered','replied','prepared','sending','queued'].includes(a.status)})});
+  if(!available.length)return;
   var modal=document.createElement('div');modal.id='selectionReviewModal';modal.className='selection-review-modal';
   var message=buildOutreachMessage(t);
-  modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Проверка перед отправкой</div><h2>Кому отправим запрос</h2><div class="selection-review-recipients">'+candidates.map(function(c){return '<div><b>'+esc(c.name)+'</b><span>'+(c.email?esc(c.email):'Публичный email не найден — только ручная связь')+'</span></div>'}).join('')+'</div><h3>Одинаковый запрос для всех</h3><pre>'+esc(message)+'</pre><p class="selection-review-note">Запросы не отправляются до следующего подтверждения. Исполнители без публичного email останутся в подборе, но автоматически письмо им не уйдёт.</p><div class="selection-review-actions"><button class="account-primary" type="button" data-confirm-group-send '+(sendable.length?'':'disabled')+'>Подтвердить и отправить '+sendable.length+'</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
+  function channelRow(c){
+   var hasEmail=!!String(c.email||'').trim(),hasTelegram=!!String(c.telegram||'').trim(),emailChecked=hasEmail?'checked':'',telegramChecked=hasTelegram?'checked':'';
+   return '<div class="outreach-prep-recipient" data-prep-candidate="'+esc(c.id)+'"><div class="outreach-prep-recipient-head"><div><b>'+esc(c.name||'Исполнитель')+'</b><span>'+esc(c.type==='private'?'Частный мастер':'Исполнитель')+'</span></div></div><div class="outreach-prep-channels">'+
+    '<label class="'+(hasEmail?'':'disabled')+'"><input type="checkbox" data-prep-channel="email" '+emailChecked+' '+(hasEmail?'':'disabled')+'><span><b>Email</b><small>'+(hasEmail?esc(c.email):'Адрес не найден')+'</small></span></label>'+
+    '<label class="'+(hasTelegram?'':'disabled')+'"><input type="checkbox" data-prep-channel="telegram" '+telegramChecked+' '+(hasTelegram?'':'disabled')+'><span><b>Telegram</b><small>'+(hasTelegram?esc(c.telegram):'Контакт не найден')+'</small></span></label>'+
+   '</div></div>';
+  }
+  modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog outreach-prep-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Подготовка запроса</div><h2>Проверьте каналы и текст</h2><p class="outreach-prep-lead">Сейчас ничего не отправляется. Выберите каналы для каждого исполнителя и проверьте точный текст запроса.</p><div class="outreach-prep-recipients">'+available.map(channelRow).join('')+'</div><div class="outreach-prep-message-head"><h3>Текст запроса</h3><span>Одинаковый для выбранных исполнителей</span></div><pre class="outreach-prep-message">'+esc(message)+'</pre><div class="selection-review-actions"><button class="account-primary" type="button" data-continue-review>Продолжить к финальной проверке →</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-review-close]').forEach(function(x){x.onclick=closeSelectionReview});
-  var confirm=modal.querySelector('[data-confirm-group-send]');if(confirm)confirm.onclick=async function(){confirm.disabled=true;confirm.textContent='Отправляем…';var ok=0,failed=[];for(var i=0;i<sendable.length;i++){var c=sendable[i],proxy=root.querySelector('[data-send-proxy="'+CSS.escape(c.id)+'"]')||confirm;var sent=await sdJourney.sendOutreach(workspaceController,c.id,proxy,{skipConfirm:true});if(sent)ok++;else failed.push(c.name||'Исполнитель');}
-   var dialog=modal.querySelector('.selection-review-dialog');dialog.innerHTML='<div class="selection-send-result '+(ok===sendable.length?'success':'partial')+'"><div class="selection-send-result-icon">'+(ok?'✓':'!')+'</div><h2>'+(ok===sendable.length?'Запросы отправлены':'Отправлена только часть запросов')+'</h2><p><b>Отправлено: '+ok+' из '+sendable.length+'.</b> '+(ok?'Теперь ждём ответы исполнителей. Статусы будут обновляться в этой задаче.':'')+'</p>'+(failed.length?'<p>Не отправлено: '+esc(failed.join(', '))+'.</p>':'')+'<button class="account-primary" type="button" data-result-close>Вернуться к задаче →</button></div>';
-   dialog.querySelector('[data-result-close]').onclick=async function(){closeSelectionReview();selectedCandidateIds.clear();updateSelectionBar();if(workspaceController)await workspaceController.refresh();location.hash='selection';};
+  var next=modal.querySelector('[data-continue-review]');
+  next.onclick=function(){
+   var recipients=[];
+   modal.querySelectorAll('[data-prep-candidate]').forEach(function(row){
+    var id=row.dataset.prepCandidate,c=available.find(function(x){return x.id===id});if(!c)return;
+    var channels=Array.from(row.querySelectorAll('[data-prep-channel]:checked')).map(function(x){return x.dataset.prepChannel});
+    if(!channels.length)return;
+    recipients.push({id:c.id,name:c.name||'Исполнитель',email:String(c.email||'').trim(),telegram:String(c.telegram||'').trim(),channels:channels});
+   });
+   if(!recipients.length){next.disabled=false;next.textContent='Выберите хотя бы один канал';return;}
+   var payload={version:5,taskId:t.taskId,orderId:t.payment&&t.payment.orderId||'',subject:'Запрос по задаче в сервисе «Сделает»',recipients:recipients,candidateIds:recipients.map(function(x){return x.id}),message:message,preparedAt:new Date().toISOString(),returnPath:'/task.html?task='+encodeURIComponent(t.taskId)+'#selection'};
+   try{localStorage.setItem('sdelaet.outreach.review.v1',JSON.stringify(payload));}catch(e){return;}
+   sdAccount.track('outreach_review_ready',{task_id:t.taskId,recipient_count:recipients.length});
+   location.href='/review.html?outreach=1';
   };
  }
  function applySelectionFilter(filter){

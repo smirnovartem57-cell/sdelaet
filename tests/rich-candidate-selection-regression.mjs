@@ -14,9 +14,12 @@ assert.match(task,/Заявлено исполнителем/);
 assert.match(task,/Не удалось проверить/);
 assert.match(task,/Требует внимания/);
 assert.match(task,/Продолжить с выбранными/);
-assert.match(task,/Проверка перед отправкой/);
-assert.match(task,/Одинаковый запрос для всех/);
-assert.match(task,/Подтвердить и отправить/);
+assert.match(task,/Подготовка запроса/);
+assert.match(task,/Текст запроса/);
+assert.match(task,/Продолжить к финальной проверке/);
+const review=readFileSync(new URL('../review.html',import.meta.url),'utf8');
+assert.match(review,/Финальная проверка/);
+assert.match(review,/Подтвердить отправку/);
 assert.match(task,/data-candidate-select/);
 assert.match(task,/sdCandidateEvidence\.render\(c\)/);
 
