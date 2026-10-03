@@ -10,8 +10,9 @@ assert.match(task,/function workspaceKpis\(t\)/);
 assert.match(task,/selection-toolbar/);
 assert.match(task,/data-selection-filter="all"/);
 assert.match(task,/data-selection-filter="contact"/);
-assert.match(task,/data-selection-filter="fns"/);
 assert.match(task,/Подробнее: проверки, юрданные и источники/);
+assert.match(task,/decision-signals-primary/);
+assert.doesNotMatch(task,/data-selection-filter="fns"/);
 assert.match(task,/decision-more/);
 assert.match(task,/decision-why-compact/);
 assert.match(task,/account-section-fold/);
@@ -20,6 +21,8 @@ assert.match(task,/applySelectionFilter\(filter\)/);
 
 assert.match(evidence,/ФНС: связь с юрлицом не подтверждена/);
 assert.match(evidence,/Перед заключением договора стоит сверить реквизиты/);
+assert.match(evidence,/score>=10/);
+assert.match(evidence,/signals.length>=2/);
 assert.doesNotMatch(evidence,/Сведения не показаны как подтверждённые/);
 
 assert.match(css,/task workspace UX hierarchy/);
