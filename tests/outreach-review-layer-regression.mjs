@@ -9,7 +9,7 @@ assert.match(task,/Подготовка запроса/);
 assert.match(task,/Сейчас ничего не отправляется/);
 assert.match(task,/data-prep-channel="email"/);
 assert.match(task,/data-prep-channel="telegram"/);
-assert.match(task,/Текст запроса/);
+assert.match(task,/Предпросмотр письма/);
 assert.match(task,/Продолжить к финальной проверке/);
 assert.match(task,/sdelaet\.outreach\.review\.v1/);
 assert.doesNotMatch(task,/Запросы не отправляются до следующего подтверждения/);
