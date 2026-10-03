@@ -1,4 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Проверка перед отправкой — Сделает</title><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script><style>body{background:var(--bg)}.review{max-width:900px;margin:0 auto;padding:34px 18px 70px}.review-card{padding:24px}.recipients{display:grid;gap:8px;margin:16px 0}.recipient{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}.recipient b,.recipient span{display:block}.recipient span{margin-top:3px;color:var(--muted);font-size:12px}.message{white-space:pre-wrap;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;line-height:1.55}.confirm{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:14px;border:1px solid #eadcae;border-radius:14px;background:#fff9e8}.confirm input{margin-top:3px}.actions{display:flex;gap:10px;flex-wrap:wrap}</style></head><body><main class="review"><section class="card review-card"><div class="eyebrow">Финальная проверка</div><h1 class="hero-title">Проверьте перед отправкой</h1><p class="lead">До вашего подтверждения ничего исполнителям не отправляется.</p><div class="label">Получатели</div><div class="recipients" id="recipients"></div><div class="label">Текст запроса</div><div class="message" id="message"></div><div class="label" id="attachmentLabel" style="margin-top:14px">Вложения</div><div id="attachments" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><label class="confirm"><input type="checkbox" id="confirm"><span><b>Я проверил получателей, каналы и текст запроса</b><br>После нажатия «Подтвердить отправку» начнётся реальная отправка выбранным исполнителям.</span></label><div class="actions"><button class="btn primary large" id="send" disabled>Подтвердить отправку →</button><a class="btn secondary large" id="backToPreparation" href="#">← Изменить каналы и текст</a></div><div id="status" class="hidden" style="margin-top:14px"></div></section></main><script>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Проверка перед отправкой — Сделает</title><link rel="stylesheet" href="assets/prod-ui.css"><script src="assets/prod-ui.js"></script><style>body{background:var(--bg)}.review{max-width:900px;margin:0 auto;padding:34px 18px 70px}.review-card{padding:24px}.recipients{display:grid;gap:8px;margin:16px 0}.recipient{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}.recipient b,.recipient span{display:block}.recipient span{margin-top:3px;color:var(--muted);font-size:12px}.message{white-space:pre-wrap;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;line-height:1.55}.confirm{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:14px;border:1px solid #eadcae;border-radius:14px;background:#fff9e8}.confirm input{margin-top:3px}.actions{display:flex;gap:10px;flex-wrap:wrap}</style></head><body><main class="review"><section class="card review-card"><div class="eyebrow">Финальная проверка</div><h1 class="hero-title">Проверьте перед отправкой</h1><p class="lead">До вашего подтверждения ничего исполнителям не отправляется. Email будет отправлен сервисом автоматически. Telegram — только вручную: мы откроем чат с подготовленным сообщением.</p><div class="label">Получатели</div><div class="recipients" id="recipients"></div><div class="label">Текст запроса</div><div class="message" id="message"></div><div class="label" id="attachmentLabel" style="margin-top:14px">Вложения</div><div id="attachments" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><label class="confirm"><input type="checkbox" id="confirm"><span><b>Я проверил получателей, каналы и текст запроса</b><br>После нажатия «Подтвердить отправку» начнётся реальная отправка выбранным исполнителям.</span></label><div class="actions"><button class="btn primary large" id="send" disabled>Подтвердить отправку →</button><a class="btn secondary large" id="backToPreparation" href="#">← Изменить каналы и текст</a></div><div id="status" class="hidden" style="margin-top:14px"></div></section></main><script>
 (function(){
   const REVIEW_KEY='sdelaet.outreach.review.v1';
   const OUTREACH_API='https://api.onsdelaet.ru';
@@ -36,8 +36,8 @@
       const row=document.createElement('div');row.className='recipient';
       const name=document.createElement('b');name.textContent=x.name||'Исполнитель';
       const info=document.createElement('span');
-      const labels=channelsFor(x).map(v=>v==='email'?'Email':v==='telegram'?'Telegram':v);
-      info.textContent=labels.length?'Каналы после подтверждения: '+labels.join(' · '):'Нет выбранного канала';
+      const labels=channelsFor(x).map(v=>v==='email'?'Email — автоматически':v==='telegram'?'Telegram — вручную':v);
+      info.textContent=labels.length?'Каналы: '+labels.join(' · '):'Нет выбранного канала';
       row.append(name,info);recipientsEl.appendChild(row);
     });
   }
@@ -68,16 +68,16 @@
     const wrap=document.createElement('div');wrap.className='actions';wrap.style.marginTop='10px';
     const link=document.createElement('a');link.className='btn secondary';
     link.href=href;link.target='_blank';link.rel='noopener';
-    link.textContent='Открыть Telegram — '+item.name;
+    link.textContent='Открыть Telegram и отправить вручную — '+item.name;
     const done=document.createElement('button');done.className='btn secondary';done.type='button';
-    done.textContent='Отметить Telegram отправленным';
+    done.textContent='Я отправил сообщение в Telegram';
     done.onclick=async()=>{
       done.disabled=true;done.textContent='Фиксируем…';
       try{
         await post('/api/v1/outreach/manual-sent',{authorizationId,requestId:item.requestId});
-        if(window.sdTrack)sdTrack('request_mark_sent',{channel:'telegram'});done.textContent='Отправлено ✓';
+        if(window.sdTrack)sdTrack('request_mark_sent',{channel:'telegram'});done.textContent='Telegram отправлен ✓';
       }catch(e){
-        done.disabled=false;done.textContent='Повторить отметку';
+        done.disabled=false;done.textContent='Я отправил сообщение в Telegram';
         alert('Не удалось зафиксировать отправку: '+(e.message||'ошибка'));
       }
     };
@@ -145,7 +145,7 @@
       const summary=document.createElement('div');
       summary.innerHTML='<b>Результат отправки</b><br>'+
         (sentEmail?'Email отправлено: '+sentEmail+'<br>':'')+
-        (tg.length?'Telegram подготовлено: '+tg.length+' — откройте Telegram ниже и подтвердите ручную отправку.<br>':'')+
+        (tg.length?'Telegram подготовлено: '+tg.length+' — сообщения ещё не отправлены. Откройте чат ниже, отправьте сообщение вручную и отметьте это.<br>':'')+
         (skipped?'Без доступного контакта: '+skipped+'<br>':'')+
         (failed.length?'<span style="color:#a34c45">Ошибки: '+failed.map(x=>x.replace(/&/g,'&amp;').replace(/</g,'&lt;')).join('; ')+'</span>':'');
       st.appendChild(summary);
