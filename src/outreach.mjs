@@ -109,7 +109,7 @@ function writeOutreachStatusSnapshot(){
   try{
     const rows=db.prepare(`
       SELECT request_id,task_id,candidate_id,candidate_name,channel,recipient,status,
-             prepared_at,sent_at,delivered_at,replied_at,failed_at,external_message_id,last_error
+             prepared_at,sent_at,delivered_at,replied_at,failed_at,external_message_id,last_error,metadata_json,attachments_json
       FROM outreach_attempts
       ORDER BY prepared_at DESC
       LIMIT 100
@@ -127,7 +127,10 @@ function writeOutreachStatusSnapshot(){
       requestId:row.request_id,taskId:row.task_id,candidateId:row.candidate_id,candidateName:row.candidate_name,
       channel:row.channel,recipient:row.recipient,status:row.status,preparedAt:row.prepared_at,sentAt:row.sent_at,
       deliveredAt:row.delivered_at,repliedAt:row.replied_at,failedAt:row.failed_at,
-      externalMessageId:row.external_message_id,lastError:row.last_error
+      externalMessageId:row.external_message_id,lastError:row.last_error,
+      attachmentCount:(()=>{try{const m=JSON.parse(row.metadata_json||'{}');if(Number.isFinite(Number(m.attachmentCount)))return Number(m.attachmentCount);const a=JSON.parse(row.attachments_json||'[]');return Array.isArray(a)?a.length:0}catch{return 0}})(),
+      contactSharing:(()=>{try{return JSON.parse(row.metadata_json||'{}').contactSharing||'service'}catch{return 'service'}})(),
+      sharedContactFields:(()=>{try{const v=JSON.parse(row.metadata_json||'{}').sharedContactFields;return Array.isArray(v)?v:[]}catch{return[]}})()
     })),authorizations:authRows.map(row=>({
       authorizationId:row.id,taskId:row.task_id,orderId:row.order_id,plan:row.plan,status:row.status,
       candidateIds:(()=>{try{return JSON.parse(row.candidate_ids_json||'[]')}catch{return[]}})(),
@@ -226,6 +229,10 @@ function getAttempt(requestId) {
 
 function safeAttempt(row) {
   if (!row) return null;
+  let metadata = {};
+  let attachments = [];
+  try { metadata = JSON.parse(row.metadata_json || '{}'); } catch {}
+  try { attachments = JSON.parse(row.attachments_json || '[]'); } catch {}
 
   return {
     requestId: row.request_id,
@@ -243,7 +250,10 @@ function safeAttempt(row) {
     sentAt: row.sent_at,
     deliveredAt: row.delivered_at,
     repliedAt: row.replied_at,
-    failedAt: row.failed_at
+    failedAt: row.failed_at,
+    attachmentCount: Number.isFinite(Number(metadata.attachmentCount)) ? Number(metadata.attachmentCount) : (Array.isArray(attachments) ? attachments.length : 0),
+    contactSharing: String(metadata.contactSharing || 'service'),
+    sharedContactFields: Array.isArray(metadata.sharedContactFields) ? metadata.sharedContactFields : []
   };
 }
 

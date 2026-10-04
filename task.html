@@ -39,31 +39,54 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
  function list(v){return Array.isArray(v)?v.filter(Boolean):[]}
+ function taskAttachments(t){
+  var j=t.taskJson||{},items=Array.isArray(j.attachments)?j.attachments:[];
+  return items.filter(function(x){return x&&(/^image\//i.test(String(x.type||''))||x.data)});
+ }
+ function contactPreference(t){
+  try{return JSON.parse(localStorage.getItem('sdelaet.contact-sharing.'+t.taskId)||'null')||{mode:'service',fields:[]}}catch(e){return{mode:'service',fields:[]}}
+ }
+ function taskStatusRail(t){
+  var counts=t.counts||{},payment=t.payment||{},attachments=taskAttachments(t),pref=contactPreference(t),sent=Number(counts.outreach||0),replies=Number(counts.replies||0),offers=Number(counts.offers||0);
+  return '<aside class="task-status-rail" aria-label="Состояние задачи"><div class="task-status-rail-head"><span>Состояние задачи</span><b>'+esc(t.title)+'</b></div>'+
+   '<div class="task-status-group"><span>Обращения</span><a href="#responses"><b>'+sent+'</b><small>отправлено</small></a><a href="#responses"><b>'+replies+'</b><small>ответов</small></a><a href="#comparison"><b>'+offers+'</b><small>предложений</small></a></div>'+
+   '<div class="task-status-row"><span>Вложения</span><a href="#task-attachments">📎 '+attachments.length+' '+(attachments.length===1?'фото':'фото')+'</a></div>'+
+   '<div class="task-status-row"><span>Связь</span><b>'+(pref.mode==='direct'?'Контакты передаются':'Ответы через «Сделает»')+'</b></div>'+
+   (payment.status?'<div class="task-status-payment"><span>Оплата</span><b>'+esc(payment.planName||'Подбор')+' · '+esc(sdAccount.money(payment.amount))+'</b><small>'+esc(sdJourney.paymentLabel(payment.status))+'</small></div>':'')+
+   '<nav><a href="#selection">Исполнители</a><a href="#responses">Ответы</a><a href="#comparison">Сравнение</a><a href="#payment">Оплата</a></nav></aside>';
+ }
+ function taskAttachmentsBlock(t){
+  var items=taskAttachments(t);
+  if(!items.length)return '<div class="task-attachments-empty" id="task-attachments"><b>Вложения</b><span>Фото к задаче не приложены.</span></div>';
+  return '<div class="task-attachments-block" id="task-attachments"><div><b>Фото и файлы · '+items.length+' приложено</b><span>Эти вложения будут показаны перед отправкой и приложены к Email.</span></div><div class="task-attachment-thumbs">'+items.slice(0,6).map(function(x,i){return x.data?'<img src="'+esc(x.data)+'" alt="Фото '+(i+1)+'">':'<span>Фото '+(i+1)+'</span>'}).join('')+'</div></div>';
+ }
  function render(t){
   document.title=t.title+' — Сделает';
-  var status=t.status||{},html='';
+  var status=t.status||{},body='';
   var researchFirst=!!t.research&&!(t.payment&&t.payment.status==='paid');
   root.classList.toggle('rp-research-first',researchFirst);
-  html+='<div class="account-workspace-head"><div class="account-workspace-meta"><span class="account-status" data-status="'+esc(status.code)+'">'+esc(status.label)+'</span><span>'+esc(t.region)+'</span><span>Обновлено '+esc(sdAccount.fmtDate(t.updatedAt||t.createdAt))+'</span></div><h1>'+esc(t.title)+'</h1><div class="account-task-result">'+esc(t.keyResult)+'</div>';
-  if(status.code==='draft')html+='<div style="margin-top:16px"><a href="#" class="account-primary" data-resume-task="'+esc(t.taskId)+'">Продолжить заполнение</a></div>';
-  html+='</div>';
-  if(t.research||t.payment)html+=workspaceNav(t);
-  if(t.payment&&t.payment.status==='paid')html+=workspaceKpis(t);
-  if(t.payment&&t.payment.status==='paid')html+=outreachStateBanner(t);
+  body+='<div class="account-workspace-head"><div class="account-workspace-meta"><span class="account-status" data-status="'+esc(status.code)+'">'+esc(status.label)+'</span><span>'+esc(t.region)+'</span><span>Обновлено '+esc(sdAccount.fmtDate(t.updatedAt||t.createdAt))+'</span></div><h1>'+esc(t.title)+'</h1><div class="account-task-result">'+esc(t.keyResult)+'</div>';
+  if(status.code==='draft')body+='<div style="margin-top:16px"><a href="#" class="account-primary" data-resume-task="'+esc(t.taskId)+'">Продолжить заполнение</a></div>';
+  body+='</div>';
+  if(t.research||t.payment)body+=workspaceNav(t);
+  if(t.payment&&t.payment.status==='paid')body+=workspaceKpis(t);
+  if(t.payment&&t.payment.status==='paid')body+=outreachStateBanner(t);
 
-  if(!researchFirst)html+=taskSection(t,t.payment&&t.payment.status==='paid');
+  if(!researchFirst)body+=taskSection(t,t.payment&&t.payment.status==='paid');
+  body+=taskAttachmentsBlock(t);
 
-  if(t.research||status.code==='researching')html+=researchSection(t);
-  if(researchFirst)html+='<details class="rp-task-details" id="task-details"><summary>Описание и детали задачи</summary>'+taskSection(t)+'</details>';
-  if(t.payment&&t.payment.status==='paid')html+=selectionSection(t);
-  if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))html+=responsesSection(t);
-  if(t.offers&&t.offers.length)html+=comparisonSection(t);
-  if(t.payment)html+=paymentSection(t);
+  if(t.research||status.code==='researching')body+=researchSection(t);
+  if(researchFirst)body+='<details class="rp-task-details" id="task-details"><summary>Описание и детали задачи</summary>'+taskSection(t)+'</details>';
+  if(t.payment&&t.payment.status==='paid')body+=selectionSection(t);
+  if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))body+=responsesSection(t);
+  if(t.offers&&t.offers.length)body+=comparisonSection(t);
+  if(t.payment)body+=paymentSection(t);
 
   if(t.pricing&&t.pricing.repeatDiscount&&t.pricing.repeatDiscount.eligible&&t.payment&&t.payment.status==='paid'){
-    html+='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a><div style="margin-top:5px">Подбор — 690 ₽ вместо 990 ₽ · До выбора — 1 790 ₽ вместо 2 590 ₽</div></div>';
+    body+='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a><div style="margin-top:5px">Подбор — 690 ₽ вместо 990 ₽ · До выбора — 1 790 ₽ вместо 2 590 ₽</div></div>';
     trackWorkspaceOnce('repeat_discount_shown',{surface:'task'});
   }
+  var html=(t.payment&&t.payment.status==='paid')?'<div class="task-workspace-layout">'+taskStatusRail(t)+'<div class="task-workspace-main">'+body+'</div></div>':body;
   sdMotion.reconcile(root,html);
   bindActions(t);
   if(t.research)trackWorkspaceOnce('research_result_open',{task_id:t.taskId});
@@ -155,7 +178,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(!a)return '';
   var st=String(a.status||''),cls=st==='failed'?'error':st==='replied'?'replied':['sent','delivered'].includes(st)?'success':'pending';
   var title=st==='replied'?label+': ответ получен':st==='delivered'?label+': доставлено · ждём ответ':st==='sent'?label+': отправлено · ждём ответ':st==='failed'?label+': не отправлено':label+': '+sdJourney.outreachLabel(st);
-  var note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче');
+  var note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)+(a.channel==='email'&&Number(a.attachmentCount||0)>0?' · '+Number(a.attachmentCount)+' фото приложено':'')+(a.contactSharing==='direct'?' · контакты переданы':' · контакты скрыты')):'Статус сохранён в задаче');
   return '<div class="decision-outreach-status '+cls+'"><b>'+esc(title)+'</b><span>'+esc(note)+'</span></div>';
  }
  function candidateCard(t,c,index,attempts){
@@ -205,8 +228,9 @@ document.addEventListener('DOMContentLoaded',async function(){
   function channelBlocked(candidateId,channel){return attempts.some(function(a){return a.candidateId===candidateId&&a.channel===channel&&!['failed','cancelled'].includes(String(a.status||''))})}
   var available=candidates.filter(function(c){return (!!c.email&&!channelBlocked(c.id,'email'))||((!!c.telegram)&&!channelBlocked(c.id,'messenger')&&!channelBlocked(c.id,'telegram'))});
   if(!available.length)return;
+  var profile={};try{var pd=await sdAccount.api('/v1/account/profile');profile=pd.profile||{}}catch(e){}
+  var savedPref=contactPreference(t),attachments=taskAttachments(t);
   var modal=document.createElement('div');modal.id='selectionReviewModal';modal.className='selection-review-modal';
-  var message=buildOutreachMessage(t);
   function channelRow(c){
    var hasEmail=!!String(c.email||'').trim(),hasTelegram=!!String(c.telegram||'').trim(),emailBlocked=channelBlocked(c.id,'email'),telegramBlocked=channelBlocked(c.id,'messenger')||channelBlocked(c.id,'telegram'),emailChecked=hasEmail&&!emailBlocked?'checked':'';
    return '<div class="outreach-prep-recipient" data-prep-candidate="'+esc(c.id)+'"><div class="outreach-prep-recipient-head"><div><b>'+esc(c.name||'Исполнитель')+'</b><span>'+esc(c.type==='private'?'Частный мастер':'Исполнитель')+'</span></div></div><div class="outreach-prep-channels">'+
@@ -215,9 +239,44 @@ document.addEventListener('DOMContentLoaded',async function(){
    '</div></div>';
   }
   var recipientsLine=available.map(function(c){return c.email?c.name+' <'+c.email+'>':c.name}).join(', ');
-  modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog outreach-prep-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Подготовка запроса</div><h2>Проверьте каналы и письмо</h2><p class="outreach-prep-lead">Email сервис отправит автоматически только после финального подтверждения. Telegram не отправляется автоматически — мы откроем чат с подготовленным текстом, а отправку подтвердите вы.</p><div class="outreach-prep-recipients">'+available.map(channelRow).join('')+'</div><div class="outreach-mail-preview"><div class="outreach-mail-toolbar"><span class="mail-dot"></span><span class="mail-dot"></span><span class="mail-dot"></span><b>Предпросмотр письма</b></div><div class="outreach-mail-meta"><div><span>От:</span><b>Сервис «Сделает» &lt;requests@onsdelaet.ru&gt;</b></div><div><span>Кому:</span><b>'+esc(recipientsLine)+'</b></div><div><span>Тема:</span><b>Запрос по задаче в сервисе «Сделает»</b></div></div><div class="outreach-mail-body">'+esc(message).replace(/\n/g,'<br>')+'</div></div><div class="selection-review-actions"><button class="account-primary" type="button" data-continue-review>Продолжить к финальной проверке →</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
+  var attachHtml=attachments.length?'<div class="outreach-attachment-summary"><div><b>Вложения к письму · '+attachments.length+'</b><span>Будут приложены к Email. Для Telegram вложения нужно отправить вручную.</span></div><div class="outreach-attachment-thumbs">'+attachments.slice(0,6).map(function(x,i){return x.data?'<img src="'+esc(x.data)+'" alt="Фото '+(i+1)+'">':'<span>Фото '+(i+1)+'</span>'}).join('')+'</div></div>':'<div class="outreach-attachment-summary empty"><b>Вложения к письму</b><span>Фото не приложены.</span></div>';
+  var directChecked=savedPref.mode==='direct'?'checked':'',serviceChecked=savedPref.mode==='direct'?'':'checked';
+  modal.innerHTML='<div class="selection-review-backdrop" data-review-close></div><div class="selection-review-dialog outreach-prep-dialog"><button class="selection-review-close" type="button" data-review-close>×</button><div class="eyebrow">Подготовка запроса</div><h2>Проверьте каналы и письмо</h2><p class="outreach-prep-lead">Email сервис отправит автоматически только после финального подтверждения. Telegram не отправляется автоматически — мы откроем чат с подготовленным текстом, а отправку подтвердите вы.</p><div class="outreach-prep-recipients">'+available.map(channelRow).join('')+'</div>'+attachHtml+
+   '<section class="contact-sharing-box"><div class="contact-sharing-head"><div><span>Связь с заказчиком</span><h3>Как исполнителю связаться с вами?</h3></div><small>Можно изменить перед отправкой</small></div>'+
+   '<label class="contact-sharing-option"><input type="radio" name="contactSharing" value="service" '+serviceChecked+'><span><b>Получать ответы через «Сделает» <em>рекомендуем</em></b><small>Ваши контакты не передаются. Исполнитель отвечает на письмо, ответ появляется в этой задаче.</small></span></label>'+
+   '<label class="contact-sharing-option"><input type="radio" name="contactSharing" value="direct" '+directChecked+'><span><b>Передать мои контакты исполнителю</b><small>Исполнитель сможет связаться напрямую. Ответы вне сервиса могут не попасть в автоматическое сравнение.</small></span></label>'+
+   '<div class="contact-sharing-fields" data-contact-fields hidden>'+
+    '<label><input type="checkbox" value="name" '+(profile.name?'checked':'disabled')+'><span>Имя <b>'+esc(profile.name||'не заполнено')+'</b></span></label>'+
+    '<label><input type="checkbox" value="phone" '+(profile.phone?'checked':'disabled')+'><span>Телефон <b>'+esc(profile.phone||'не заполнен')+'</b></span></label>'+
+    '<label><input type="checkbox" value="email" '+(profile.email?'checked':'disabled')+'><span>Email <b>'+esc(profile.email||'не заполнен')+'</b></span></label>'+
+   '</div></section>'+
+   '<div class="outreach-mail-preview"><div class="outreach-mail-toolbar"><span class="mail-dot"></span><span class="mail-dot"></span><span class="mail-dot"></span><b>Предпросмотр письма</b></div><div class="outreach-mail-meta"><div><span>От:</span><b>Сервис «Сделает» &lt;requests@onsdelaet.ru&gt;</b></div><div><span>Кому:</span><b>'+esc(recipientsLine)+'</b></div><div><span>Тема:</span><b>Запрос по задаче в сервисе «Сделает»</b></div></div><div class="outreach-mail-body" data-mail-body></div></div>'+
+   '<div class="outreach-send-summary" data-send-summary></div><div class="selection-review-actions"><button class="account-primary" type="button" data-continue-review>Продолжить к финальной проверке →</button><button class="account-secondary" type="button" data-review-close>Вернуться к выбору</button></div></div>';
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-review-close]').forEach(function(x){x.onclick=closeSelectionReview});
+  var fieldsBox=modal.querySelector('[data-contact-fields]'),mailBody=modal.querySelector('[data-mail-body]'),summary=modal.querySelector('[data-send-summary]');
+  function sharing(){
+   var mode=(modal.querySelector('input[name="contactSharing"]:checked')||{}).value||'service',fields=Array.from(fieldsBox.querySelectorAll('input:checked')).map(function(x){return x.value});
+   return{mode:mode,fields:fields};
+  }
+  function composedMessage(){
+   var pref=sharing(),msg=buildOutreachMessage(t);
+   if(pref.mode==='direct'){
+    var rows=[];
+    if(pref.fields.includes('name')&&profile.name)rows.push('Имя: '+profile.name);
+    if(pref.fields.includes('phone')&&profile.phone)rows.push('Телефон: '+profile.phone);
+    if(pref.fields.includes('email')&&profile.email)rows.push('Email: '+profile.email);
+    if(rows.length)msg+='\n\nКонтакты заказчика:\n'+rows.join('\n');
+   }
+   return msg;
+  }
+  function syncPreparation(){
+   var pref=sharing();fieldsBox.hidden=pref.mode!=='direct';
+   var msg=composedMessage();mailBody.innerHTML=esc(msg).replace(/\n/g,'<br>');
+   var selectedChannels=Array.from(modal.querySelectorAll('[data-prep-channel]:checked')).map(function(x){return x.dataset.prepChannel}),emailCount=selectedChannels.filter(function(x){return x==='email'}).length,tgCount=selectedChannels.filter(function(x){return x==='telegram'}).length;
+   summary.innerHTML='<b>Будет подготовлено</b><span>'+available.length+' '+(available.length===1?'исполнитель':'исполнителя')+(emailCount?' · Email автоматически: '+emailCount:'')+(tgCount?' · Telegram вручную: '+tgCount:'')+' · '+attachments.length+' фото · '+(pref.mode==='direct'?'контакты передаются':'контакты скрыты')+'</span>';
+  }
+  modal.addEventListener('change',syncPreparation);syncPreparation();
   var next=modal.querySelector('[data-continue-review]');
   next.onclick=function(){
    var recipients=[];
@@ -228,9 +287,11 @@ document.addEventListener('DOMContentLoaded',async function(){
     recipients.push({id:c.id,name:c.name||'Исполнитель',email:String(c.email||'').trim(),telegram:String(c.telegram||'').trim(),channels:channels,telegramManual:channels.includes('telegram')});
    });
    if(!recipients.length){next.disabled=false;next.textContent='Выберите хотя бы один канал';return;}
-   var payload={version:5,taskId:t.taskId,orderId:t.payment&&t.payment.orderId||'',subject:'Запрос по задаче в сервисе «Сделает»',recipients:recipients,candidateIds:recipients.map(function(x){return x.id}),message:message,preparedAt:new Date().toISOString(),returnPath:'/task.html?task='+encodeURIComponent(t.taskId)+'#selection'};
+   var pref=sharing(),message=composedMessage();
+   try{localStorage.setItem('sdelaet.contact-sharing.'+t.taskId,JSON.stringify(pref));}catch(e){}
+   var payload={version:6,taskId:t.taskId,orderId:t.payment&&t.payment.orderId||'',subject:'Запрос по задаче в сервисе «Сделает»',recipients:recipients,candidateIds:recipients.map(function(x){return x.id}),message:message,attachmentCount:attachments.length,contactSharing:pref,preparedAt:new Date().toISOString(),returnPath:'/task.html?task='+encodeURIComponent(t.taskId)+'#selection'};
    try{localStorage.setItem('sdelaet.outreach.review.v1',JSON.stringify(payload));}catch(e){return;}
-   sdAccount.track('outreach_review_ready',{task_id:t.taskId,recipient_count:recipients.length});
+   sdAccount.track('outreach_review_ready',{task_id:t.taskId,recipient_count:recipients.length,attachment_count:attachments.length,contact_sharing:pref.mode});
    location.href='/review.html?outreach=1';
   };
  }
