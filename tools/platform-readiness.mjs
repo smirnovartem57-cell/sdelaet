@@ -50,6 +50,7 @@ const commands = [
   ['previsit price clarification', ['tests/previsit-price-clarification-regression.mjs']],
   ['previsit estimate request', ['tests/previsit-estimate-request-regression.mjs']],
   ['previsit commercial estimate v2', ['tests/previsit-commercial-estimate-v2-regression.mjs']],
+  ['previsit request consistency', ['tests/previsit-request-consistency-regression.mjs']],
   ['task anchor offsets', ['tests/task-anchor-offsets-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
