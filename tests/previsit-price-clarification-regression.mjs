@@ -37,7 +37,8 @@ assert.match(pipeline,/предварительная стоимость до в
 assert.match(server,/decisionMode === 'auto_send'/);
 assert.match(server,/sendServiceClarificationEmail/);
 assert.match(account,/CLARIFICATION_CONFIRMATION_REQUIRED/);
-assert.match(account,/clarifications\/\(\[\^\/\]\+\)\/send/);
+assert.match(account,/clarificationSend=u\.pathname\.match/);
+assert.match(account,/CLARIFICATION_CONFIRMATION_REQUIRED/);
 assert.match(outreach,/X-Sdelaet-Clarification-ID/);
 assert.match(task,/data-send-clarification/);
 assert.match(task,/Уточнение отправлено автоматически/);
