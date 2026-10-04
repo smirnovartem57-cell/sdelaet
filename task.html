@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(!a)return '';
   var st=String(a.status||''),cls=st==='failed'?'error':st==='replied'?'replied':['sent','delivered'].includes(st)?'success':'pending';
   var title=st==='replied'?label+': ответ получен':st==='delivered'?label+': доставлено · ждём ответ':st==='sent'?label+': отправлено · ждём ответ':st==='failed'?label+': не отправлено':label+': '+sdJourney.outreachLabel(st);
-  var note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)):'Статус сохранён в задаче');
+  var note=st==='failed'?(a.lastError?('Ошибка: '+a.lastError):'Сервер подтвердил ошибку.'):(a.sentAt?('Отправлено '+sdAccount.fmtDate(a.sentAt)+(a.channel==='email'&&Number(a.attachmentCount||0)>0?' · '+Number(a.attachmentCount)+' фото приложено':'')+(a.contactSharing==='direct'?' · контакты переданы':' · контакты скрыты')):'Статус сохранён в задаче');
   return '<div class="decision-outreach-status '+cls+'"><b>'+esc(title)+'</b><span>'+esc(note)+'</span></div>';
  }
  function candidateCard(t,c,index,attempts){
