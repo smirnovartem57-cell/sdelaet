@@ -48,12 +48,19 @@ document.addEventListener('DOMContentLoaded',async function(){
  }
  function taskStatusRail(t){
   var counts=t.counts||{},payment=t.payment||{},attachments=taskAttachments(t),pref=contactPreference(t),sent=Number(counts.outreach||0),replies=Number(counts.replies||0),offers=Number(counts.offers||0);
-  return '<aside class="task-status-rail" aria-label="Состояние задачи"><div class="task-status-rail-head"><span>Состояние задачи</span><b>'+esc(t.title)+'</b></div>'+
-   '<div class="task-status-group"><span>Обращения</span><a href="#responses"><b>'+sent+'</b><small>отправлено</small></a><a href="#responses"><b>'+replies+'</b><small>ответов</small></a><a href="#comparison"><b>'+offers+'</b><small>предложений</small></a></div>'+
-   '<div class="task-status-row"><span>Вложения</span><a href="#task-attachments">📎 '+attachments.length+' '+(attachments.length===1?'фото':'фото')+'</a></div>'+
-   '<div class="task-status-row"><span>Связь</span><b>'+(pref.mode==='direct'?'Контакты передаются':'Ответы через «Сделает»')+'</b></div>'+
-   (payment.status?'<div class="task-status-payment"><span>Оплата</span><b>'+esc(payment.planName||'Подбор')+' · '+esc(sdAccount.money(payment.amount))+'</b><small>'+esc(sdJourney.paymentLabel(payment.status))+'</small></div>':'')+
-   '<nav><a href="#selection">Исполнители</a><a href="#responses">Ответы</a><a href="#comparison">Сравнение</a><a href="#payment">Оплата</a></nav></aside>';
+  return '<aside class="task-status-rail compact" aria-label="Состояние задачи">'+
+   '<div class="task-rail-top"><div><span>Задача</span><b>'+esc(t.title)+'</b></div><i class="task-rail-state">'+esc(t.status&&t.status.label||'В работе')+'</i></div>'+
+   '<div class="task-rail-metrics"><a href="#responses"><b>'+sent+'</b><small>отправлено</small></a><a href="#responses"><b>'+replies+'</b><small>ответов</small></a><a href="#comparison"><b>'+offers+'</b><small>предложений</small></a></div>'+
+   '<div class="task-rail-facts">'+
+    '<a href="#task-attachments"><span>📎 Вложения</span><b>'+attachments.length+' фото</b></a>'+
+    '<div><span>Связь</span><b>'+(pref.mode==='direct'?'Контакты передаются':'Ответы через «Сделает»')+'</b></div>'+
+    (payment.status?'<a href="#payment"><span>Оплата</span><b>'+esc(payment.planName||'Подбор')+' · '+esc(sdAccount.money(payment.amount))+'</b><small>'+esc(sdJourney.paymentLabel(payment.status))+'</small></a>':'')+
+   '</div>'+
+   '<nav><a href="#selection">Исполнители</a><a href="#responses">Ответы</a><a href="#comparison">Сравнение</a></nav>'+
+  '</aside>';
+ }
+ function sectionDivider(step,title,note){
+  return '<div class="task-stage-divider"><span>'+esc(step)+'</span><div><b>'+esc(title)+'</b><small>'+esc(note||'')+'</small></div></div>';
  }
  function taskAttachmentsBlock(t){
   var items=taskAttachments(t);
@@ -72,15 +79,15 @@ document.addEventListener('DOMContentLoaded',async function(){
   if(t.payment&&t.payment.status==='paid')body+=workspaceKpis(t);
   if(t.payment&&t.payment.status==='paid')body+=outreachStateBanner(t);
 
-  if(!researchFirst)body+=taskSection(t,t.payment&&t.payment.status==='paid');
+  if(!researchFirst){body+=sectionDivider('01','Задача','Описание, размеры и вложения');body+=taskSection(t,t.payment&&t.payment.status==='paid');}
   body+=taskAttachmentsBlock(t);
 
-  if(t.research||status.code==='researching')body+=researchSection(t);
+  if(t.research||status.code==='researching'){body+=sectionDivider('02','Исследование','Что нашли на рынке');body+=researchSection(t);}
   if(researchFirst)body+='<details class="rp-task-details" id="task-details"><summary>Описание и детали задачи</summary>'+taskSection(t)+'</details>';
-  if(t.payment&&t.payment.status==='paid')body+=selectionSection(t);
-  if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))body+=responsesSection(t);
-  if(t.offers&&t.offers.length)body+=comparisonSection(t);
-  if(t.payment)body+=paymentSection(t);
+  if(t.payment&&t.payment.status==='paid'){body+=sectionDivider('03','Исполнители','Сравните и выберите подходящих');body+=selectionSection(t);}
+  if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length)){body+=sectionDivider('04','Обращения и ответы','Статусы отправки и ответы исполнителей');body+=responsesSection(t);}
+  if(t.offers&&t.offers.length){body+=sectionDivider('05','Сравнение','Цена, сроки и условия');body+=comparisonSection(t);}
+  if(t.payment){body+=sectionDivider('06','Оплата','Тариф и статус платежа');body+=paymentSection(t);}
 
   if(t.pricing&&t.pricing.repeatDiscount&&t.pricing.repeatDiscount.eligible&&t.payment&&t.payment.status==='paid'){
     body+='<div class="account-subtle-offer"><b>Есть ещё задача?</b> Для следующего подбора у вас действует скидка 30%. <a href="create-task.html?new=1" data-new-task>Создать новую задачу</a><div style="margin-top:5px">Подбор — 690 ₽ вместо 990 ₽ · До выбора — 1 790 ₽ вместо 2 590 ₽</div></div>';
@@ -99,7 +106,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   if((t.counts&&t.counts.outreach)||(t.replies&&t.replies.length))links.push(['responses','Ответы']);
   if(t.offers&&t.offers.length)links.push(['comparison','Сравнение']);
   if(t.payment)links.push(['payment','Оплата']);
-  return '<nav class="workspace-nav" aria-label="Разделы задачи">'+links.map(function(x){return '<a href="#'+x[0]+'">'+x[1]+'</a>'}).join('')+'</nav>';
+  return '<nav class="workspace-nav workspace-progress" aria-label="Разделы задачи">'+links.map(function(x,i){return '<a href="#'+x[0]+'"><span>'+String(i+1).padStart(2,'0')+'</span>'+x[1]+'</a>'}).join('')+'</nav>';
  }
  function workspaceKpis(t){
   var candidates=Number(t.counts&&t.counts.candidates||t.research&&t.research.candidateCount||0),outreach=Number(t.counts&&t.counts.outreach||0),replies=Number(t.counts&&t.counts.replies||0),offers=Number(t.counts&&t.counts.offers||0);
