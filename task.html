@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded',async function(){
    '<div class="task-rail-metrics"><a href="#responses"><b>'+sent+'</b><small>отправлено</small></a><a href="#responses"><b>'+replies+'</b><small>ответов</small></a><a href="#comparison"><b>'+offers+'</b><small>предложений</small></a></div>'+
    '<div class="task-rail-facts">'+
     '<a href="#task-attachments"><span>📎 Вложения</span><b>'+attachments.length+' фото</b></a>'+
-    '<div><span>Связь</span><b>'+(pref.mode==='direct'?'Контакты передаются':'Через «Сделает»')+'</b></div>'+
+    '<div><span>Связь</span><b>'+(pref.mode==='direct'?'Контакты передаются':'Ответы через «Сделает»')+'</b></div>'+
     (payment.status?'<a href="#payment"><span>Оплата</span><b>'+esc(payment.planName||'Подбор')+' · '+esc(sdAccount.money(payment.amount))+'</b><small>'+esc(sdJourney.paymentLabel(payment.status))+'</small></a>':'')+
    '</div>'+
    '<nav><a href="#selection">Исполнители</a><a href="#responses">Ответы</a><a href="#comparison">Сравнение</a></nav>'+
