@@ -43,6 +43,7 @@ const commands = [
   ['outreach resume attachments', ['tests/outreach-resume-attachments-regression.mjs']],
   ['task workspace v2', ['tests/task-workspace-v2-regression.mjs']],
   ['task workspace visual polish', ['tests/task-workspace-visual-polish-regression.mjs']],
+  ['task anchor offsets', ['tests/task-anchor-offsets-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],
   ['syntax: launch UI', ['--check', 'assets/launch-v2.js']],
   ['syntax: pilot recorder', ['--check', 'tools/pilot-record.mjs']],
