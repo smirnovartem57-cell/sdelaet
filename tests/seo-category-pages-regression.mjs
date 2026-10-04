@@ -30,8 +30,8 @@ assert.equal(descriptions.size,71,'base descriptions must be unique');
 const locs=(xml)=>[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)=>match[1]);
 const sitemap=locs(fs.readFileSync(path.join(root,'sitemap.xml'),'utf8'));
 const regional=locs(fs.readFileSync(path.join(root,'sitemap-regions.xml'),'utf8'));
-assert.equal(sitemap.length,2132,'main sitemap must contain 2132 URLs');
-assert.equal(new Set(sitemap).size,2132,'main sitemap URLs must be unique');
+assert.equal(sitemap.length,73,'main sitemap must contain 73 primary URLs');
+assert.equal(new Set(sitemap).size,73,'main sitemap URLs must be unique');
 assert.equal(regional.length,2059,'regional sitemap must contain 2059 URLs');
 assert.equal(new Set(regional).size,2059,'regional sitemap URLs must be unique');
 assert.ok(sitemap.includes('https://onsdelaet.ru/'),'root must be in sitemap');
@@ -55,11 +55,11 @@ for(const url of regional){
 assert.equal(geos.size,29,'regional matrix must contain 29 geographies');
 assert.equal(cells.size,2059,'regional matrix must contain 2059 unique cells');
 for(const id of ids) assert.equal(perService.get(id)?.size,29,`service must cover 29 geographies: ${id}`);
-for(const url of regional) assert.ok(sitemap.includes(url),`regional URL must also be in main sitemap: ${url}`);
+for(const url of regional) assert.ok(!sitemap.includes(url),`regional URL must stay out of main sitemap: ${url}`);
 
 const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 assert.match(robots,/Sitemap: https:\/\/onsdelaet\.ru\/sitemap\.xml/);
-assert.match(robots,/Sitemap: https:\/\/onsdelaet\.ru\/sitemap-regions\.xml/);
+assert.doesNotMatch(robots,/Sitemap: https:\/\/onsdelaet\.ru\/sitemap-regions\.xml/,'regional sitemap must not be advertised');
 assert.doesNotMatch(robots,/comparison\.html/,'obsolete comparison.html robots rule must not return');
 for(const privatePage of ['compare.html','payment-success.html','payment-failed.html','review.html','requests.html','replies.html']){
   const html=fs.readFileSync(path.join(root,privatePage),'utf8');
@@ -67,7 +67,7 @@ for(const privatePage of ['compare.html','payment-success.html','payment-failed.
 }
 const generator=fs.readFileSync(path.join(root,'tools','generate-seo-pages.mjs'),'utf8');
 assert.match(generator,/expectedRegional=manifest\.categories\.length\*29/,'SEO generator must preserve the regional matrix');
-assert.match(generator,/urls\.length!==2132/,'SEO generator must fail closed if the main sitemap loses URLs');
-assert.match(generator,/sitemap-regions\.xml/,'SEO generator must preserve the regional sitemap declaration');
+assert.match(generator,/urls\.length!==73/,'SEO generator must fail closed if the primary sitemap shape changes');
+assert.match(generator,/sitemap-regions\.xml/,'SEO generator must preserve the regional route inventory source');
 
-console.log('SEO category pages regression: 71 services / 29 geos / 2132 URLs PASS');
+console.log('SEO category pages regression: 71 services / 29 geos / 73 primary sitemap URLs PASS');
