@@ -353,3 +353,5 @@
 @media(max-width:560px){
  .workspace-kpis{grid-template-columns:1fr 1fr!important}.decision-journey{grid-template-columns:1fr!important}.outreach-prep-channels{grid-template-columns:1fr!important}.outreach-attachment-summary{align-items:flex-start;flex-direction:column}.outreach-mail-body{padding:13px 14px;font-size:10px}.outreach-mail-meta{padding:9px 11px}.task-status-rail{grid-template-columns:1fr}.task-status-group,.task-status-row,.task-status-payment{grid-column:1}.task-status-group{grid-template-columns:repeat(3,1fr)}
 }
+
+.account-content:has(.task-workspace-layout){max-width:1320px}
