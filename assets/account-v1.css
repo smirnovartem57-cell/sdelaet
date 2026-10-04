@@ -406,3 +406,31 @@
  .task-status-rail.compact nav{display:none}
  .workspace-progress{overflow-x:auto;white-space:nowrap}
 }
+
+
+/* task anchor offsets — account topbar + sticky workspace progress */
+#taskRoot #task-description,
+#taskRoot #research,
+#taskRoot #selection,
+#taskRoot #responses,
+#taskRoot #comparison,
+#taskRoot #payment,
+#taskRoot #task-attachments{scroll-margin-top:150px}
+@media(max-width:1180px){
+ #taskRoot #task-description,
+ #taskRoot #research,
+ #taskRoot #selection,
+ #taskRoot #responses,
+ #taskRoot #comparison,
+ #taskRoot #payment,
+ #taskRoot #task-attachments{scroll-margin-top:142px}
+}
+@media(max-width:820px){
+ #taskRoot #task-description,
+ #taskRoot #research,
+ #taskRoot #selection,
+ #taskRoot #responses,
+ #taskRoot #comparison,
+ #taskRoot #payment,
+ #taskRoot #task-attachments{scroll-margin-top:126px}
+}
