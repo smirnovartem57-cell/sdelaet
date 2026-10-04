@@ -78,7 +78,7 @@ function hasValue(value) {
 
 export function classifyPrevisitPriceReply(rawText, normalized = {}) {
   const source = String(rawText || '');
-  const text = source.toLowerCase().replace(/ё/g, 'е').replace(/s+/g, ' ').trim();
+  const text = source.toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
   const visitOnlySignal = [
     /стоимост[ьи].{0,28}(после|по результатам).{0,20}(выезда|замера|осмотра)/,
     /цен[ау].{0,28}(после|по результатам).{0,20}(выезда|замера|осмотра)/,
@@ -86,7 +86,9 @@ export function classifyPrevisitPriceReply(rawText, normalized = {}) {
     /(нужен|необходим|требуется).{0,15}(выезд|замер|осмотр)/,
     /(сначала|предварительно).{0,16}(выезд|замер|осмотр)/,
     /без.{0,18}(выезда|замера|осмотра).{0,24}(не скаж|не рассч|невозможно|нельзя)/,
-    /(точн|окончательн).{0,20}(цен|стоимост).{0,24}(после|по результатам).{0,16}(выезда|замера|осмотра)/
+    /(точн|окончательн).{0,20}(цен|стоимост).{0,24}(после|по результатам).{0,16}(выезда|замера|осмотра)/,
+    /(?:точн\w*\s+)?(?:скаж\w*|назов\w*|рассчита\w*|определ\w*).{0,22}(после|по результатам).{0,16}(выезда|замера|осмотра)/,
+    /(после|по результатам).{0,16}(выезда|замера|осмотра).{0,22}(скаж\w*|назов\w*|рассчита\w*|определ\w*)/
   ].some(re => re.test(text));
 
   if (!visitOnlySignal) return {
@@ -98,8 +100,10 @@ export function classifyPrevisitPriceReply(rawText, normalized = {}) {
   };
 
   const rawPriceSignal =
-    /(?:d[ds]{2,})(?:s*(?:₽|руб(?:\.|лей|ля)?|р\b|тыс(?:\.|яч)?))/i.test(source) ||
-    /(?:ориентировочно|примерно|предварительно|от|до)\s*\d[d\s]{2,}/i.test(source);
+    /(?:\d[\d\s]{2,})(?:\s*(?:₽|руб(?:\.|лей|ля)?|р\b|тыс(?:\.|яч)?|т\.?\s*р\.?))/i.test(source) ||
+    /(?:ориентировочно|примерно|предварительно|около|порядка|от|до)\s*\d[\d\s]{2,}/i.test(source) ||
+    /\d[\d\s]*\s*(?:[-–—]|\.\.)\s*\d[\d\s]*\s*(?:₽|руб(?:\.|лей|ля)?|тыс(?:\.|яч)?|т\.?\s*р\.?)?/i.test(source) ||
+    /от\s*\d[\d\s]{1,}\s*(?:₽|руб|тыс|т\.?\s*р\.?)?\s*до\s*\d[\d\s]{1,}/i.test(source);
 
   const priceFields = ['totalPrice','workPrice','materialsPrice'];
   const hasNormalizedPrice = priceFields.some(key => Number.isFinite(Number(normalized?.[key])) && Number(normalized[key]) > 0);
@@ -128,19 +132,29 @@ export function classifyPrevisitPriceReply(rawText, normalized = {}) {
       ? 1 : 0;
 
   const detailScore = pricePoint + scopePoint + materialsPoint + termsPoint + conditionsPoint;
-  const mode = detailScore >= 2 ? 'approval_required' : 'auto_send';
+  const hasPriceSignal = Boolean(rawPriceSignal || hasNormalizedPrice);
+
+  if (hasPriceSignal) {
+    return {
+      matched: true,
+      mode: 'none',
+      detailScore,
+      hasPriceSignal: true,
+      reason: 'PREVISIT_PRICE_PROVIDED_FINAL_AFTER_VISIT'
+    };
+  }
 
   return {
     matched: true,
-    mode,
+    mode: 'auto_send',
     detailScore,
-    hasPriceSignal: Boolean(rawPriceSignal || hasNormalizedPrice),
-    reason: mode === 'auto_send' ? 'DRY_PREVISIT_PRICE_DEFERRAL' : 'RICH_REPLY_WITH_PREVISIT_PRICE_DEFERRAL'
+    hasPriceSignal: false,
+    reason: 'PREVISIT_PRICE_MISSING_BEFORE_VISIT'
   };
 }
 
 function preliminaryPriceQuestion() {
-  return 'Спасибо за ответ. На этом этапе заказчик сравнивает исполнителей до выезда мастера. По описанию задачи и приложенным фото подскажите, пожалуйста, хотя бы предварительную стоимость или диапазон «от–до». Если возможно, отдельно укажите работы и материалы. Если точная цена определяется только после замера, назовите ориентир и что может изменить итоговую стоимость.';
+  return 'Спасибо за ответ. На этом этапе заказчик сравнивает исполнителей до выезда мастера. По описанию задачи и приложенным фото подскажите, пожалуйста, хотя бы предварительную стоимость или диапазон «от–до». Точная окончательная цена после замера допустима — сейчас нужен именно ориентир для сравнения. Если даже диапазон пока назвать нельзя, перечислите, пожалуйста, какие конкретные данные можно прислать дистанционно (размеры, фото, материал, состояние объекта и т. п.), чтобы вы смогли дать предварительную оценку без выезда.';
 }
 
 export function markClarificationDelivery(db, clarificationId, {
@@ -230,7 +244,7 @@ export function processContractorReply(db, {
   const clarificationLimitReached = contractItems.length > 0 && clarificationRounds >= maxClarificationRounds;
   const finalComparisonStatus = clarificationLimitReached && !comparisonDecision.comparable ? 'expert_review' : comparisonDecision.comparisonStatus;
   const previsitDecision = classifyPrevisitPriceReply(text, normalized);
-  const specialFollowupAllowed = previsitDecision.matched && clarificationRounds < maxClarificationRounds;
+  const specialFollowupAllowed = previsitDecision.matched && previsitDecision.mode !== 'none' && clarificationRounds < maxClarificationRounds;
   const specialItems = [...new Set(['предварительная стоимость до выезда', ...contractItems])];
   const followup = specialFollowupAllowed
     ? {
