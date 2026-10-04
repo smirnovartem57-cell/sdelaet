@@ -13877,6 +13877,44 @@ const server = http.createServer(async (req, res) => {
             }
           );
 
+        if (
+          result?.clarification?.decisionMode === 'auto_send' &&
+          String(body.channel || '') === 'email'
+        ) {
+          try {
+            const sent = await sendServiceClarificationEmail({
+              requestId,
+              clarificationId: result.clarification.clarification_id,
+              message: result.clarification.question
+            });
+            markClarificationDelivery(
+              db,
+              result.clarification.clarification_id,
+              {
+                status: 'sent',
+                sentAt: sent.sentAt,
+                messageId: sent.messageId,
+                error: null
+              }
+            );
+            result.clarification.status = 'sent';
+            result.clarification.sentAt = sent.sentAt;
+            result.clarification.messageId = sent.messageId;
+          } catch (clarificationError) {
+            markClarificationDelivery(
+              db,
+              result.clarification.clarification_id,
+              {
+                status: 'send_failed',
+                error: String(clarificationError?.message || clarificationError)
+              }
+            );
+            result.clarification.status = 'send_failed';
+            result.clarification.sendError =
+              String(clarificationError?.message || clarificationError);
+          }
+        }
+
         return sendJson(
           res,
           201,
