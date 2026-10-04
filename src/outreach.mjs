@@ -1025,6 +1025,111 @@ async function sendEmail(requestId) {
   }
 }
 
+
+export async function sendServiceClarificationEmail({
+  requestId,
+  clarificationId,
+  message
+} = {}) {
+  const row = getAttempt(String(requestId || ''));
+  const text = String(message || '').trim();
+  const clarification = String(clarificationId || '').trim();
+
+  if (!row) {
+    const error = new Error('REQUEST_NOT_FOUND');
+    error.status = 404;
+    throw error;
+  }
+  if (row.channel !== 'email') {
+    const error = new Error('EMAIL_CHANNEL_REQUIRED');
+    error.status = 400;
+    throw error;
+  }
+  if (!clarification || !text) {
+    const error = new Error('CLARIFICATION_REQUIRED');
+    error.status = 400;
+    throw error;
+  }
+  if (!validEmail(row.recipient)) {
+    const error = new Error('INVALID_RECIPIENT_EMAIL');
+    error.status = 400;
+    throw error;
+  }
+
+  const envelopeFrom = process.env.EMAIL_ENVELOPE_FROM || 'requests@onsdelaet.ru';
+  if (!validEmail(envelopeFrom)) throw new Error('INVALID_EMAIL_ENVELOPE_FROM');
+
+  const fromHeader = encodeMailbox(
+    row.from_email ||
+    process.env.EMAIL_FROM ||
+    'Сделает <requests@onsdelaet.ru>'
+  );
+  const replyTo = cleanHeader(row.reply_to || 'requests@onsdelaet.ru');
+  if (!validEmail(replyTo)) throw new Error('INVALID_EMAIL_REPLY_TO');
+
+  const token = String(row.reply_token || '').replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!token) throw new Error('INVALID_REPLY_TOKEN');
+
+  const originalMessageId =
+    String(row.external_message_id || '').trim() ||
+    `<sdelaet-${token}@onsdelaet.ru>`;
+  const safeClarificationId = clarification.replace(/[^a-zA-Z0-9_-]/g, '');
+  const messageId =
+    `<sdelaet-followup-${safeClarificationId}@onsdelaet.ru>`;
+  const subjectText = String(row.subject || 'Запрос по задаче в сервисе «Сделает»').trim();
+  const subject = encodeHeader(/^re:/i.test(subjectText) ? subjectText : 'Re: ' + subjectText);
+  const body = text.replace(/\r?\n/g, '\r\n');
+
+  const headers = [
+    `From: ${fromHeader}`,
+    `To: ${cleanHeader(row.recipient)}`,
+    `Reply-To: ${replyTo}`,
+    `Subject: ${subject}`,
+    `Message-ID: ${messageId}`,
+    `In-Reply-To: ${cleanHeader(originalMessageId)}`,
+    `References: ${cleanHeader(originalMessageId)}`,
+    `Date: ${new Date().toUTCString()}`,
+    `X-Sdelaet-Request-ID: ${cleanHeader(String(requestId))}`,
+    `X-Sdelaet-Reply-Token: ${token}`,
+    `X-Sdelaet-Clarification-ID: ${cleanHeader(clarification)}`,
+    'Auto-Submitted: auto-generated',
+    'X-Auto-Response-Suppress: All',
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    body,
+    ''
+  ];
+
+  await sendViaLocalExim({
+    envelopeFrom,
+    recipient: row.recipient,
+    message: headers.join('\r\n')
+  });
+
+  addEvent(
+    String(requestId),
+    'clarification_sent',
+    'sdelaet',
+    {
+      clarificationId: clarification,
+      channel: 'email',
+      provider: 'local_exim',
+      messageId
+    }
+  );
+
+  return {
+    ok: true,
+    requestId: String(requestId),
+    clarificationId: clarification,
+    recipient: row.recipient,
+    messageId,
+    sentAt: now()
+  };
+}
+
 export async function handleOutreach(
   req,
   res,
