@@ -43,6 +43,7 @@ const commands = [
   ['outreach resume attachments', ['tests/outreach-resume-attachments-regression.mjs']],
   ['task workspace v2', ['tests/task-workspace-v2-regression.mjs']],
   ['task workspace visual polish', ['tests/task-workspace-visual-polish-regression.mjs']],
+  ['strong active progress', ['tests/strong-active-progress-regression.mjs']],
   ['task progress active', ['tests/task-progress-active-regression.mjs']],
   ['task anchor offsets', ['tests/task-anchor-offsets-regression.mjs']],
   ['previsit pricing request', ['tests/previsit-pricing-request-regression.mjs']],
