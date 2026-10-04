@@ -217,7 +217,23 @@ document.addEventListener('DOMContentLoaded',async function(){
   return '<section class="account-section decision-selection" id="selection"><div class="decision-section-head"><div><div class="eyebrow">Подбор по задаче</div><h2>Сравните исполнителей и выберите подходящих</h2><p>Сначала главное. Подробные проверки, ФНС и источники раскрываются внутри карточки — страница не должна превращаться в сплошной отчёт.</p></div><div class="decision-count">'+candidates.length+' кандидатов</div></div><div class="decision-journey"><div class="active"><b>1 · Выберите</b><span>Сравните карточки</span></div><div><b>2 · Проверьте запрос</b><span>Получатели и текст</span></div><div><b>3 · Подтвердите</b><span>Ничего без согласия</span></div><div><b>4 · Сравним ответы</b><span>Цена, сроки, состав</span></div></div><div class="selection-toolbar"><div class="selection-filters" role="group" aria-label="Фильтр исполнителей"><button type="button" class="active" data-selection-filter="all">Все · '+candidates.length+'</button>'+(companyCount?'<button type="button" data-selection-filter="company">Компании · '+companyCount+'</button>':'')+(privateCount?'<button type="button" data-selection-filter="private">Мастера · '+privateCount+'</button>':'')+'<button type="button" data-selection-filter="contact">С email · '+contactCount+'</button></div><span id="selectionVisibleCount">Показано '+candidates.length+'</span></div><div class="account-candidate-list decision-list">'+(cards||'<div class="account-mini-card"><p>Подбор формируется.</p></div>')+'</div><div class="decision-selection-bar" id="decisionSelectionBar" hidden><div><b><span id="decisionSelectedCount">0</span> выбрано</b><span>Проверим получателей и одинаковый запрос перед отправкой.</span></div><button class="account-primary" type="button" data-review-selected>Продолжить с выбранными →</button></div></section>';
  }
  function responsesSection(t){
-  var replies=(t.replies||[]).map(function(r){var d=t.dialogues&&t.dialogues[r.request_id],state=d&&d.current_state,pending=state&&state.pending_clarifications||[];return '<div class="account-mini-card"><b>Ответ исполнителя</b><p>'+esc(r.raw_text||'Получен ответ')+'</p><p>'+esc(sdAccount.fmtDate(r.received_at))+'</p>'+(state?'<p><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+(pending.length?'<p><b>Нужно уточнить:</b> '+esc((pending[0].items||[]).join('; '))+'</p>':'')+'</div>'}).join('');
+  var seenReplyRequests=new Set();
+  var replies=(t.replies||[]).map(function(r){
+   var requestId=String(r.request_id||''),d=t.dialogues&&t.dialogues[requestId],state=d&&d.current_state,showDialogue=!seenReplyRequests.has(requestId);seenReplyRequests.add(requestId);
+   var pending=showDialogue&&state&&Array.isArray(state.pending_clarifications)?state.pending_clarifications:[],approvals=showDialogue&&state&&Array.isArray(state.approval_required_clarifications)?state.approval_required_clarifications:[];
+   var autoSent=pending.find(function(x){return x.decisionMode==='auto_send'&&x.status==='sent'});
+   var approval=approvals[0]||null;
+   var extra='';
+   if(autoSent){
+    extra+='<div class="previsit-clarification-card auto"><div><span>Уточнение отправлено автоматически</span><b>Попросили предварительную стоимость до выезда</b><p>'+esc(autoSent.question||'')+'</p></div><i>Ждём ответ</i></div>';
+   }else if(approval){
+    var retry=approval.status==='send_failed';
+    extra+='<div class="previsit-clarification-card approval"><div><span>'+(retry?'Не удалось отправить уточнение':'Нужно ваше решение')+'</span><b>Исполнитель дал полезный ответ, но точную стоимость оставил до выезда</b><p>'+esc(approval.question||'')+'</p>'+(approval.sendError?'<small>Ошибка: '+esc(approval.sendError)+'</small>':'')+'</div><button class="account-primary" type="button" data-send-clarification="'+esc(approval.clarification_id)+'">'+(retry?'Повторить отправку':'Отправить уточнение')+'</button></div>';
+   }else if(pending.length){
+    extra+='<div class="previsit-clarification-card pending"><div><span>Нужно уточнение</span><b>'+esc((pending[0].items||[]).join('; ')||'Не хватает данных для сравнения')+'</b></div></div>';
+   }
+   return '<div class="account-mini-card response-reply-card"><div class="response-reply-head"><b>Ответ исполнителя</b><span>'+esc(sdAccount.fmtDate(r.received_at))+'</span></div><p class="response-raw-text">'+esc(r.raw_text||'Получен ответ')+'</p>'+(state?'<p class="response-state"><b>Состояние:</b> '+esc(state.comparable?'готово к сравнению':state.blocking_reason||state.status)+'</p>':'')+extra+'</div>';
+  }).join('');
   var attempts=(t.outreach||[]).map(function(a){var st=String(a.status||''),label=st==='replied'?'Ответ получен':st==='delivered'?'Доставлено — ждём ответ':st==='sent'?'Отправлено — ждём ответ':st==='failed'?'Не отправлено':sdJourney.outreachLabel(st);return '<div class="account-mini-card outreach-attempt-card" data-outreach-status="'+esc(st)+'"><div class="outreach-attempt-head"><b>'+esc(a.candidateName||'Исполнитель')+'</b><span>'+esc(label)+'</span></div>'+(a.recipient?'<p>'+esc(a.recipient)+'</p>':'')+(a.sentAt?'<p>Отправлено '+esc(sdAccount.fmtDate(a.sentAt))+'</p>':'')+(a.lastError?'<p class="response-error">Ошибка: '+esc(a.lastError)+'</p>':'')+'</div>'}).join('');
   return '<details class="account-section account-section-fold account-section-responses" id="responses" open><summary><span><b>Обращения и ответы</b><small>Отправлено '+Number(t.counts&&t.counts.outreach||0)+' · ответов '+Number(t.counts&&t.counts.replies||0)+'</small></span><span class="fold-action">Показать</span></summary><div class="section-body"><div class="account-response-list">'+attempts+replies+'</div></div></details>';
  }
@@ -321,8 +337,25 @@ document.addEventListener('DOMContentLoaded',async function(){
   var review=root.querySelector('[data-review-selected]');if(review)review.onclick=function(){openSelectionReview(t)};
   updateSelectionBar();
  }
+ function bindClarificationActions(t){
+  root.querySelectorAll('[data-send-clarification]').forEach(function(button){
+   button.onclick=async function(){
+    var clarificationId=button.dataset.sendClarification;if(!clarificationId)return;
+    var original=button.textContent;button.disabled=true;button.textContent='Отправляем…';
+    try{
+     await sdAccount.api('/v1/account/tasks/'+encodeURIComponent(t.taskId)+'/clarifications/'+encodeURIComponent(clarificationId)+'/send',{method:'POST',body:JSON.stringify({explicitConfirm:true})});
+     sdAccount.track('contractor_clarification_sent',{task_id:t.taskId,clarification_id:clarificationId,reason:'previsit_price'});
+     if(workspaceController)await workspaceController.refresh();
+    }catch(e){
+     button.disabled=false;button.textContent=original;
+     alert('Не удалось отправить уточнение: '+(e.message||'ошибка'));
+    }
+   };
+  });
+ }
  function bindActions(t){
   workspaceController=sdJourney.mountWorkspace(root,t,render);
+  bindClarificationActions(t);
   if(t.payment&&t.payment.status==='paid')bindSelectionActions(t);
  }
 });
