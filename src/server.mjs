@@ -2,11 +2,12 @@ import http from 'node:http';
 import {
   processContractorReply,
   listTaskOffers,
-  getOfferDialogueHistory
+  getOfferDialogueHistory,
+  markClarificationDelivery
 } from './offer-pipeline.mjs';
 import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
-import { handleOutreach } from './outreach.mjs';
+import { handleOutreach, sendServiceClarificationEmail } from './outreach.mjs';
 import { compareNormalizedOffers } from './offer-comparison-engine.mjs';
 import { crawlCompanySite } from './site-crawler.mjs';
 import { createCustomerAuth } from './customer-auth.mjs';
@@ -124,7 +125,57 @@ const customerAccount = createCustomerAccount({
   db,
   customerAuth,
   sendJson,
-  authorizeOutreach: body => authorizeOutreach(body)
+  authorizeOutreach: body => authorizeOutreach(body),
+  sendClarification: async ({ taskId, clarificationId }) => {
+    const row = db.prepare(`
+      SELECT c.*, a.task_id AS outreach_task_id, a.channel AS outreach_channel
+      FROM contractor_clarifications c
+      INNER JOIN outreach_attempts a ON a.request_id = c.request_id
+      WHERE c.clarification_id = ?
+      LIMIT 1
+    `).get(String(clarificationId || ''));
+    if (!row || String(row.task_id || '') !== String(taskId || '') || String(row.outreach_task_id || '') !== String(taskId || '')) {
+      const error = new Error('CLARIFICATION_NOT_FOUND');
+      error.status = 404;
+      throw error;
+    }
+    if (!['approval_required','send_failed'].includes(String(row.status || ''))) {
+      const error = new Error('CLARIFICATION_NOT_SENDABLE');
+      error.status = 409;
+      throw error;
+    }
+    if (String(row.outreach_channel || '') !== 'email') {
+      const error = new Error('CLARIFICATION_EMAIL_REQUIRED');
+      error.status = 400;
+      throw error;
+    }
+    try {
+      const sent = await sendServiceClarificationEmail({
+        requestId: row.request_id,
+        clarificationId: row.clarification_id,
+        message: row.question_text
+      });
+      markClarificationDelivery(db, row.clarification_id, {
+        status: 'sent',
+        sentAt: sent.sentAt,
+        messageId: sent.messageId,
+        error: null
+      });
+      return {
+        clarificationId: row.clarification_id,
+        requestId: row.request_id,
+        status: 'sent',
+        sentAt: sent.sentAt,
+        messageId: sent.messageId
+      };
+    } catch (error) {
+      markClarificationDelivery(db, row.clarification_id, {
+        status: 'send_failed',
+        error: String(error?.message || error)
+      });
+      throw error;
+    }
+  }
 });
 
 function text(v) {
@@ -13825,6 +13876,44 @@ const server = http.createServer(async (req, res) => {
                 body.metadata || {}
             }
           );
+
+        if (
+          result?.clarification?.decisionMode === 'auto_send' &&
+          String(body.channel || '') === 'email'
+        ) {
+          try {
+            const sent = await sendServiceClarificationEmail({
+              requestId,
+              clarificationId: result.clarification.clarification_id,
+              message: result.clarification.question
+            });
+            markClarificationDelivery(
+              db,
+              result.clarification.clarification_id,
+              {
+                status: 'sent',
+                sentAt: sent.sentAt,
+                messageId: sent.messageId,
+                error: null
+              }
+            );
+            result.clarification.status = 'sent';
+            result.clarification.sentAt = sent.sentAt;
+            result.clarification.messageId = sent.messageId;
+          } catch (clarificationError) {
+            markClarificationDelivery(
+              db,
+              result.clarification.clarification_id,
+              {
+                status: 'send_failed',
+                error: String(clarificationError?.message || clarificationError)
+              }
+            );
+            result.clarification.status = 'send_failed';
+            result.clarification.sendError =
+              String(clarificationError?.message || clarificationError);
+          }
+        }
 
         return sendJson(
           res,

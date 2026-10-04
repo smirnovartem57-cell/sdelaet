@@ -44,6 +44,7 @@ const commands = [
   ['task workspace v2', ['tests/task-workspace-v2-regression.mjs']],
   ['task workspace visual polish', ['tests/task-workspace-visual-polish-regression.mjs']],
   ['task anchor offsets', ['tests/task-anchor-offsets-regression.mjs']],
+  ['previsit price clarification', ['tests/previsit-price-clarification-regression.mjs']],
   ['previsit estimate request', ['tests/previsit-estimate-request-regression.mjs']],
   ['task anchor offsets', ['tests/task-anchor-offsets-regression.mjs']],
   ['syntax: live search', ['--check', 'assets/live-search.js']],

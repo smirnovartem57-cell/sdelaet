@@ -25,7 +25,7 @@ function safeGeo(v,regionFallback=''){
 }
 function body(req,max=524288){return new Promise((ok,fail)=>{let n=0,a=[];req.on('data',c=>{n+=c.length;if(n>max){fail(Object.assign(new Error('PAYLOAD_TOO_LARGE'),{status:413}));req.destroy();return}a.push(c)});req.on('end',()=>{try{ok(JSON.parse(Buffer.concat(a).toString('utf8')||'{}'))}catch{fail(Object.assign(new Error('BAD_JSON'),{status:400}))}});req.on('error',fail)})}
 
-export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreach=null,paymentStoreFile=process.env.PAYMENT_STORE_FILE||'/var/lib/sdelaet-payments/orders.json',paymentApiUrl='http://127.0.0.1:8790'}){
+export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreach=null,sendClarification=null,paymentStoreFile=process.env.PAYMENT_STORE_FILE||'/var/lib/sdelaet-payments/orders.json',paymentApiUrl='http://127.0.0.1:8790'}){
  db.exec(
   'CREATE TABLE IF NOT EXISTS customer_task_owners(task_id TEXT PRIMARY KEY,email TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);'+
   'CREATE INDEX IF NOT EXISTS idx_customer_task_owners_email ON customer_task_owners(email,updated_at);'+
@@ -222,6 +222,16 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
    const cid=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/client-id$/);if(req.method==='POST'&&cid){const b=await body(req);reply(res,200,{ok:true,...bindClientId(email,decodeURIComponent(cid[1]),b.ym_client_id)},origin);return true}
    const oa=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/outreach-authorize$/);
    if(req.method==='POST'&&oa){const taskId=decodeURIComponent(oa[1]);owner(email,taskId);if(typeof authorizeOutreach!=='function'){const e=new Error('OUTREACH_AUTHORIZATION_UNAVAILABLE');e.status=503;throw e}const b=await body(req);const message=text(b.message),candidateIds=[...new Set((Array.isArray(b.candidateIds)?b.candidateIds:[b.candidateId||b.candidate_id]).map(text).filter(Boolean))];if(!message||!candidateIds.length||b.explicitConfirm!==true){const e=new Error('OUTREACH_CONFIRMATION_REQUIRED');e.status=400;throw e}const ps=taskPayments(email,taskId),paid=ps.find(x=>x.status==='paid');if(!paid){const e=new Error('PAID_ENTITLEMENT_REQUIRED');e.status=403;throw e}const result=await authorizeOutreach({taskId,orderId:paid.id,idempotencyKey:text(b.idempotencyKey||b.idempotency_key)||('account:'+taskId+':'+candidateIds.slice().sort().join(',')+':'+Date.now()),candidateIds,message,explicitConfirm:true});reply(res,200,{ok:true,authorized:true,...result},origin);return true}
+   const clarificationSend=u.pathname.match(/^\/v1\/account\/tasks\/([^/]+)\/clarifications\/([^/]+)\/send$/);
+   if(req.method==='POST'&&clarificationSend){
+    const taskId=decodeURIComponent(clarificationSend[1]),clarificationId=decodeURIComponent(clarificationSend[2]);
+    owner(email,taskId);
+    if(typeof sendClarification!=='function'){const e=new Error('CLARIFICATION_SEND_UNAVAILABLE');e.status=503;throw e}
+    const b=await body(req);
+    if(b.explicitConfirm!==true){const e=new Error('CLARIFICATION_CONFIRMATION_REQUIRED');e.status=400;throw e}
+    const result=await sendClarification({taskId,clarificationId,email});
+    reply(res,200,{ok:true,...result},origin);return true
+   }
    reply(res,404,{ok:false,error:'ACCOUNT_ROUTE_NOT_FOUND'},origin);return true
   }catch(e){reply(res,e?.status||500,{ok:false,error:e?.message||'ACCOUNT_FAILED'},origin);return true}
  }
