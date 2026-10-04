@@ -379,7 +379,7 @@ function parseRequestSections(value) {
     .map(item => item.trim());
 
   const taskIndex = rows.indexOf('Задача:');
-  const answerIndex = rows.indexOf('В ответе укажите:');
+  const answerIndex = rows.findIndex(item => /^В (?:первом ответе, до выезда, )?укажите:$/i.test(item));
 
   const title =
     rows.find((item, index) =>
@@ -504,7 +504,7 @@ function buildEmailHtml(
           '<div style="margin-top:6px;font:700 25px/1.25 Arial,sans-serif;color:#1d2740">' +
             escapeEmailHtml(parsed.title) +
           '</div>' +
-          '<div style="margin-top:15px;font:14px/1.6 Arial,sans-serif;color:#536079">Добрый день. Ниже — структурированная информация по задаче. Просьба дать расчёт по указанному объёму.</div>' +
+          '<div style="margin-top:15px;font:14px/1.6 Arial,sans-serif;color:#536079">Добрый день. Ниже — структурированная информация по задаче. Нужен предварительный расчёт до выезда: точная сумма, если её можно определить дистанционно, либо диапазон / типовой ориентир с пояснением, от чего зависит итоговая цена.</div>' +
           taskBlock +
           answerBlock +
           noteBlock +
