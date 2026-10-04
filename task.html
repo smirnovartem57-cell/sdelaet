@@ -144,15 +144,21 @@ document.addEventListener('DOMContentLoaded',async function(){
  function pricingBlock(t){
   return sdResearchPricing.renderAccount({count:t.research&&t.research.candidateCount,pricing:t.pricing||{}});
  }
+ function normalizePrevisitFields(value){
+  var out=(Array.isArray(value)?value:[]).map(function(v){var x=String(v||'').trim();if(/^Итоговая стоимость$/i.test(x))return'предварительную стоимость до выезда — точную сумму, если возможно, иначе диапазон от–до';if(/^Стоимость работ$/i.test(x))return'предварительную стоимость работ до выезда — сумму или диапазон';if(/^Стоимость устранения$/i.test(x))return'предварительную стоимость устранения по описанию / фото — ориентир или диапазон';if(/^Замер$/i.test(x))return'нужен ли выезд / замер для окончательной сметы и сколько он стоит';return x}).filter(Boolean);
+  if(!out.some(function(v){return/предварительн.{0,20}стоим|диапазон от.?до/i.test(v)}))out.unshift('предварительную оценку стоимости до выезда по описанию и фото; если точную цену назвать нельзя — диапазон или типовой ориентир');
+  if(!out.some(function(v){return/измен.{0,20}цен|повли.{0,20}цен|после осмотр|после замер/i.test(v)}))out.push('что может изменить цену после осмотра / замера');
+  return out;
+ }
  function buildOutreachMessage(t,c){
-  var j=t.taskJson||{},fields=list(j.requestFields),lines=['Добрый день!','',String(t.title||j.category||'Задача'),'','Задача:','— '+String(t.description||j.description||j.scope||'Нужен расчёт по задаче')];
+  var j=t.taskJson||{},fields=normalizePrevisitFields(list(j.requestFields)),lines=['Добрый день!','',String(t.title||j.category||'Задача'),'','Нужен предварительный расчёт до выезда по описанию и приложенным фото. На этом этапе выезд мастера не требуется.','Если точную стоимость без осмотра назвать нельзя — укажите, пожалуйста, диапазон или типовой ориентир и от чего будет зависеть уточнение цены.','','Задача:','— '+String(t.description||j.description||j.scope||'Нужен расчёт по задаче')];
   if(t.region)lines.push('— Регион: '+t.region);
   if(j.goal)lines.push('— Желаемый результат: '+j.goal);
   if(j.timing)lines.push('— Сроки: '+j.timing);
   if(j.wallSize)lines.push('— Размеры: '+j.wallSize);
-  lines.push('','В ответе укажите:');
-  (fields.length?fields:['итоговую стоимость','что входит в работы и материалы','возможные доплаты','срок выполнения','гарантию']).forEach(function(x){lines.push('— '+x)});
-  lines.push('','Ответьте, пожалуйста, обычным ответом на это письмо — сервис «Сделает» добавит предложение в сравнение.');
+  lines.push('','В первом ответе, до выезда, укажите:');
+  (fields.length?fields:normalizePrevisitFields(['Итоговая стоимость','что входит в работы и материалы','возможные доплаты','срок выполнения','гарантию'])).forEach(function(x){lines.push('— '+x)});
+  lines.push('','После этого, если для окончательной сметы нужен осмотр или замер, мы согласуем его отдельно.','Ответьте, пожалуйста, обычным ответом на это письмо — сервис «Сделает» добавит предложение в сравнение.');
   return lines.join('\n');
  }
  function candidateTypeLabel(c){return c.type==='private'?'Частный мастер':c.type==='unverified'?'Тип не подтверждён':'Компания'}
