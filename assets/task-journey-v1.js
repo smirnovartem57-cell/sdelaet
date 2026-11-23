@@ -11,12 +11,14 @@ function esc(s){return win.sdResearchPricing.escapeHtml(s);}
 function readStorage(store,key){try{return JSON.parse(store.getItem(key)||'null');}catch{return null;}}
 function writeStorage(store,key,value){try{store.setItem(key,JSON.stringify(value));}catch{}}
 function track(name,p){if(adapters.track)adapters.track(name,p);else if(win.sdTrack)win.sdTrack(name,p||{});}
-function request(path,options){
- if(adapters.request)return adapters.request(path,options||{});
+function request(path,options,deadline){
+ if(adapters.request)return adapters.request(path,options||{},deadline);
  return (async function(){var options2=Object.assign({credentials:'include',headers:{'content-type':'application/json'}},options||{});
- var isRead=!options2.method||options2.method==='GET',controller=new AbortController(),timer=win.setTimeout(()=>controller.abort(),isRead?15000:60000);
+ var isRead=!options2.method||options2.method==='GET',timeout=isRead?15000:60000;
+ if(deadline!==undefined){timeout=Math.min(timeout,deadline-Date.now());if(timeout<=0)throw new Error('RESEARCH_TIMEOUT');}
+ var controller=new AbortController(),timer=win.setTimeout(()=>controller.abort(),timeout);
  if(controller)options2.signal=controller.signal;
- try{var r=await win.fetch(path.startsWith('/api/payments/')?path:API+path,options2);var d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false){var e=new Error(d.error||d.message||'REQUEST_FAILED');e.status=r.status;throw e;}return d;}
+ try{var r=await win.fetch(path.startsWith('/api/payments/')?path:API+path,options2);var d=await r.json().catch(e=>{if(deadline!==undefined&&r.ok&&controller.signal.aborted)throw e;return {};});if(!r.ok||d.ok===false){var e=new Error(d.error||d.message||'REQUEST_FAILED');e.status=r.status;throw e;}return d;}
  finally{if(timer)win.clearTimeout(timer);}})();
 }
 function post(path,body){return request(path,{method:'POST',body:JSON.stringify(body)});}
@@ -161,10 +163,22 @@ function initResearch(task,options){
  var box=stateBox('journeyResearch',btn.closest('.actions')||btn),latestResearch=null,surface=btn.closest('.page>section.card')||win.document.getElementById('demoDraft');
  async function saved(){try{var d=await post('/v1/shortlists/prepared',{task_id:task.id||''});return d.prepared&&Number(d.count)>0?d:null;}catch{return null;}}
  async function waitForResearch(){
-  var started=Date.now(),lastStatus='';
-  while(Date.now()-started<240000){
-   await new Promise(function(resolve){win.setTimeout(resolve,2500)});
-   var st=await request('/v1/candidates/search-status?taskId='+encodeURIComponent(task.id||''));
+  var deadline=Date.now()+240000,lastStatus='',readFailures=0;
+  while(Date.now()<deadline){
+   await new Promise(function(resolve){win.setTimeout(resolve,Math.min(2500,deadline-Date.now()))});
+   if(Date.now()>=deadline)break;
+   var st;
+   try{
+    st=await request('/v1/candidates/search-status?taskId='+encodeURIComponent(task.id||''),undefined,deadline);
+   }catch(e){
+    if(Date.now()>=deadline)break;
+    var retryable=e.name==='AbortError'||e.name==='TypeError'||(e.status>=500&&e.status<600);
+    if(!retryable||readFailures>=2)throw e;
+    readFailures++;
+    continue;
+   }
+   if(Date.now()>=deadline)break;
+   readFailures=0;
    lastStatus=st.status||'';
    if(st.status==='completed')return st;
    if(st.status==='failed')throw new Error(st.error||'SEARCH_FAILED');
