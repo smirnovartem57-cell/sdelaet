@@ -11,4 +11,3 @@ Disallow: /candidates.html
 Clean-param: region&login&return
 
 Sitemap: https://onsdelaet.ru/sitemap.xml
-Sitemap: https://onsdelaet.ru/sitemap-regions.xml

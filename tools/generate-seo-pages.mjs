@@ -65,10 +65,10 @@ const regionalUrls=[...regionalXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)
 const expectedRegional=manifest.categories.length*29;
 if(regionalUrls.length!==expectedRegional||new Set(regionalUrls).size!==expectedRegional)throw new Error('SEO_REGIONAL_SITEMAP_SHAPE_INVALID');
 const baseUrls=[baseUrl+'/',baseUrl+'/uslugi/',...manifest.categories.map((item)=>baseUrl+'/uslugi/'+item.categoryId+'/')];
-const urls=[...baseUrls,...regionalUrls];
-if(urls.length!==2132||new Set(urls).size!==2132)throw new Error('SEO_MAIN_SITEMAP_SHAPE_INVALID');
+const urls=baseUrls;
+if(urls.length!==73||new Set(urls).size!==73)throw new Error('SEO_MAIN_SITEMAP_SHAPE_INVALID');
 const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+urls.map((url)=>`  <url><loc>${url}</loc><lastmod>${lastmod}</lastmod></url>`).join('\n')+'\n</urlset>\n';
 fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
-const robots=`User-agent: *\nAllow: /\nDisallow: /my-tasks.html\nDisallow: /task.html\nDisallow: /profile.html\nDisallow: /create-task.html\nDisallow: /task-tz.html\nDisallow: /candidates.html\n\n# UX-параметры не создают отдельные поисковые страницы\nClean-param: region&login&return\n\nSitemap: ${baseUrl}/sitemap.xml\nSitemap: ${baseUrl}/sitemap-regions.xml\n`;
+const robots=`User-agent: *\nAllow: /\nDisallow: /my-tasks.html\nDisallow: /task.html\nDisallow: /profile.html\nDisallow: /create-task.html\nDisallow: /task-tz.html\nDisallow: /candidates.html\n\n# UX-параметры не создают отдельные поисковые страницы\nClean-param: region&login&return\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
 fs.writeFileSync(path.join(root,'robots.txt'),robots);
 console.log(`SEO pages generated: ${categories.length} categories + index; BALCONY_INSULATION reserved for parallel work.`);
