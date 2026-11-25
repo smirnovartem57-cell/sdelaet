@@ -405,5 +405,8 @@ for (const [city, inflected, otherCity] of [
   },city,'сантехнические работы','any','plumbing-works').qualification.geography.status;
   assert.equal(qualification(`Не работаем в ${inflected}`),'other_locality',city);
   assert.equal(qualification(`Не работаем в ${otherCity}`),'exact',city);
+  assert.equal(qualification(`Работаем в ${inflected} и не работаем в ${otherCity}`),'exact',city);
+  assert.equal(qualification(`Не работаем в ${otherCity} а работаем в ${inflected}`),'exact',city);
+  assert.equal(qualification(`Не работаем в ${otherCity} и ${inflected}`),'other_locality',city);
 }
 console.log('Search Quality v1 regression: PASS');

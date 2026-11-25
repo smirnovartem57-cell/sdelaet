@@ -693,7 +693,7 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
   ] : [];
   const clauses = value => text(value)
     .replace(/,\s*(не\s+[а-яё]+)\s*(?=[.!?;]|$)/giu, ' $1')
-    .split(/[,.!?;]+/u);
+    .split(/[,.!?;]+|\s+(?:и|а|но)\s+(?=(?:не\s+)?(?:работа[а-яё]*|выезжа[а-яё]*|обслужива[а-яё]*|выполня[а-яё]*|оказыва[а-яё]*|дела[а-яё]*|бер[а-яё]*ся|занима[а-яё]*ся)(?!\p{L}))/iu);
   const serviceRefusal = /(?:^|\s)не\s+(?:выполня[а-яё]*|оказыва[а-яё]*|дела[а-яё]*|бер[а-яё]*ся|занима[а-яё]*ся)(?!\p{L})/iu;
   const positiveService = value => clauses(value).some(clause => pattern.test(clause) && !serviceRefusal.test(clause));
   const refusedService = value => clauses(value).some(clause => pattern.test(clause) && serviceRefusal.test(clause));
