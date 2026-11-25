@@ -755,7 +755,11 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
     /географ|выезд|работа(?:ем|ет)|обслужива/iu.test(clause) && !localityRefusal.test(clause)));
   const geographySource = areaExact ? profileSource : localClaim ? publicSource :
     sources.find(source => source.id === exactFact?.sourceId);
-  const regionalClaim = publicSource && /(?:работаем|выезжаем|обслуживаем).{0,55}московск[а-яё]* област/iu.test(text(candidate.description));
+  const regionClaimPattern = /(?:работаем|выезжаем|обслуживаем).{0,55}московск[а-яё]* област/iu;
+  const descriptionClauses = publicSource ? clauses(candidate.description) : [];
+  const regionalClaim = descriptionClauses.some(clause => regionClaimPattern.test(clause) && !localityRefusal.test(clause));
+  const noRegionalCoverage = place === 'мытищи' && !geographySource &&
+    descriptionClauses.some(clause => regionClaimPattern.test(clause) && localityRefusal.test(clause));
   const regionalProfile = areas.includes('московская область');
   const regional = ['москва', 'мытищи'].includes(place) && (regionalClaim || regionalProfile);
   const neighbors = {
@@ -766,10 +770,11 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
     !(place === 'мытищи' && /(?:^|\s)мытищах(?!\p{L})/iu.test(exclusiveArea)) &&
     !(place === 'москва' && /(?:^|\s)москве(?!\p{L})/iu.test(exclusiveArea)) &&
     !(place === 'мытищи' && /московск[а-яё]*\s+област/iu.test(exclusiveArea));
-  const geography = deniedSource || excludedByCoverage ? 'other_locality' : geographySource ? 'exact' : regional ? 'region' :
+  const geography = deniedSource || excludedByCoverage || noRegionalCoverage ? 'other_locality' :
+    geographySource ? 'exact' : regional ? 'region' :
     areas.some(area => neighbors.includes(area)) ? 'neighbor' : areas.length ? 'other_locality' : 'unknown';
 
-  const coverageSource = deniedSource || (excludedByCoverage ? publicSource : geographySource ||
+  const coverageSource = deniedSource || (excludedByCoverage || noRegionalCoverage ? publicSource : geographySource ||
     (regional ? (regionalProfile ? profileSource : publicSource) : areas.length ? profileSource : null));
   return {
     service: {status: refusedServiceSource ? 'excluded' : serviceSourceId ? 'confirmed' : 'unknown',

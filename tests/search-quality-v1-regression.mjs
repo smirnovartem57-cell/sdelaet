@@ -432,4 +432,10 @@ const regionalWebsite = evidenceContext.rankCandidate({
 },'Мытищи','сантехнические работы','any','plumbing-works');
 assert.equal(regionalWebsite.qualification.geography.status,'region');
 assert.equal(regionalWebsite.qualification.geography.sourceId,'site');
+const regionalRefusal = description => evidenceContext.rankCandidate({
+  ...mixedSourceCompany,description
+},'Мытищи','сантехнические работы','any','plumbing-works').qualification.geography;
+assert.equal(regionalRefusal('Не работаем по Московской области').status,'other_locality');
+assert.equal(regionalRefusal('Не работаем по Московской области, но работаем в Мытищах').status,'exact');
+assert.equal(regionalRefusal('Работаем по Московской области').status,'region');
 console.log('Search Quality v1 regression: PASS');
