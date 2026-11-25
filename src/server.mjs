@@ -721,23 +721,30 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
     (place === 'мытищи' && /(?:^|\s)мытищах(?!\p{L})/iu.test(value)) ||
     (place === 'москва' && /(?:^|\s)москве(?!\p{L})/iu.test(value));
   const localityRefusal = /(?:^|\s)не\s+(?:выезжа[а-яё]*|работа[а-яё]*|обслужива[а-яё]*)(?!\p{L})/iu;
-  const placeWords = place.split(' ');
-  const lastPlaceWord = placeWords.pop();
-  const placePrefix = placeWords.length ? placeWords.join(' ') + ' ' : '';
-  const cityEnding = /[аяьиыео]$/u.exec(lastPlaceWord)?.[0] || '';
-  const inflections = {
+  const placeWords = place.split(' ').filter(Boolean);
+  const nounEndings = {
     а: ['е', 'у', 'ы', 'и', 'ой'], я: ['е', 'ю', 'и', 'ей'], ь: ['и'],
     и: ['ах', 'ях', 'ам', 'ям'], ы: ['ах', 'ях', 'ам', 'ям'],
     о: ['е', 'а', 'у', 'ом'], е: ['е', 'я', 'ю', 'ем']
   };
-  const cityStem = cityEnding ? lastPlaceWord.slice(0, -1) : lastPlaceWord;
-  const deniedPlaceForms = /^[а-я]{3,}$/u.test(cityStem)
-    ? (inflections[cityEnding] || ['е', 'а', 'у', 'ом']).map(ending => placePrefix + cityStem + ending)
-    : [];
+  const adjectiveEndings = {
+    ый: ['ом', 'ого', 'ому', 'ым'], ой: ['ом', 'ого', 'ому', 'ым'],
+    ий: ['ем', 'его', 'ему', 'им', 'ом', 'ого', 'ому'],
+    ая: ['ой', 'ую'], яя: ['ей', 'юю'], ое: ['ом', 'ого', 'ому'],
+    ее: ['ем', 'его', 'ему'], ые: ['ых', 'ым'], ие: ['их', 'им']
+  };
+  const deniedPlaceForms = placeWords.map((word, index) => {
+    const adjective = index < placeWords.length - 1 && Object.hasOwn(adjectiveEndings, word.slice(-2));
+    const ending = adjective ? word.slice(-2) : /[аяьиыео]$/u.exec(word)?.[0] || '';
+    const stem = ending ? word.slice(0, -ending.length) : word;
+    const endings = adjective ? adjectiveEndings[ending] : nounEndings[ending] || ['е', 'а', 'у', 'ом'];
+    return new Set([word, ...(/^[а-я]{3,}$/u.test(stem) ? endings.map(suffix => stem + suffix) : [])]);
+  });
   const deniedTarget = value => clauses(value).some(clause => {
     if (!localityRefusal.test(clause)) return false;
-    const normalized = ` ${normalizePlace(clause)} `;
-    return mentionsTarget(clause) || deniedPlaceForms.some(form => normalized.includes(` ${form} `));
+    const words = normalizePlace(clause).split(' ');
+    return mentionsTarget(clause) || deniedPlaceForms.length > 0 &&
+      words.some((_, offset) => deniedPlaceForms.every((forms, index) => forms.has(words[offset + index])));
   });
   const deniedSource = publicSignals.some(deniedTarget) ? publicSource : profileSignals.some(deniedTarget) ? profileSource :
     sources.find(source => source.id === facts.find(fact => deniedTarget(fact.label))?.sourceId);
