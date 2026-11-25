@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 const ui=readFileSync(new URL('../assets/prod-ui.js',import.meta.url),'utf8');
 const analytics=readFileSync(new URL('../assets/analytics.js',import.meta.url),'utf8');
 const account=readFileSync(new URL('../src/customer-account.mjs',import.meta.url),'utf8');
-const payment=readFileSync(new URL('../payment-api/server.mjs',import.meta.url),'utf8');
+const payment=readFileSync(new URL('../payment-api/lifecycle.mjs',import.meta.url),'utf8');
 const success=readFileSync(new URL('../payment-success.html',import.meta.url),'utf8');
 const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
 const taskTz=readFileSync(new URL('../task-tz.html',import.meta.url),'utf8');
@@ -40,7 +40,7 @@ assert.match(server,/customerAccount\.captureAttribution/);
 assert.match(account,/attribution:attr\|\|null/);
 
 assert.match(payment,/paymentSuccessEvent/);
-assert.match(payment,/confirmedBy:'tochka_webhook'/);
+assert.match(payment,/confirmedBy:'tochka_verified'/);
 assert.match(payment,/\/v1\/internal\/payment-confirmed/);
 assert.match(success,/sdJourney\.initPaymentReturn\(\)/);
 assert.match(taskJourney,/var paid=d\.order\|\|\{\}/);
