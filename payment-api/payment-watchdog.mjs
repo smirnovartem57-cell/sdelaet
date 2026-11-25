@@ -119,7 +119,7 @@ async function reconcileOrders(){
   const orders=await listOrders();
   const refundDueBefore=Date.now()-refundCheckIntervalMs;
   const refundChecks=new Set(orders
-    .filter(order=>order.status==='paid'&&order.operationId&&!isTestOrder(order)&&
+    .filter(order=>order.status==='paid'&&order.operationId&&!isTestOrder(order)&&!needsLifecycleDelivery(order)&&
       (state.orders[order.id]?.lastRefundCheckAt||0)<=refundDueBefore)
     .sort((a,b)=>(state.orders[a.id]?.lastRefundAttemptAt||0)-(state.orders[b.id]?.lastRefundAttemptAt||0))
     .slice(0,refundCheckBatchSize).map(order=>order.id));

@@ -286,6 +286,11 @@ try{
   assert.equal((await webhook(racingFact)).status,503);
   assert.equal((await getOrder(racingOrder.orderId)).lifecyclePending,true);
   denyProjection=false;
+  bankStatusFailures.add(racingFact.operationId);
+  await runWatchdog();
+  assert.equal(projections.get('racer'),1);
+  assert.equal((await getOrder(racingOrder.orderId)).lifecyclePending,false);
+  bankStatusFailures.delete(racingFact.operationId);
   await Promise.all([webhook(racingFact),status(racingOrder.orderId),runWatchdog()]);
   assert.equal(projections.get('racer'),1);
   assert.equal((await getOrder(racingOrder.orderId)).lifecyclePending,false);
