@@ -390,4 +390,17 @@ const negativeClaims = contextFor(source, async () => xml([
 const negativeResult=await negativeClaims.performSearch(filterBody);
 assert.deepEqual(Array.from(negativeResult.candidates,candidate=>candidate.sources[0].url),
   ['https://limited-positive.example.test/']);
+for (const [city, inflected, otherCity] of [
+  ['Казань','Казани','Твери'],
+  ['Самара','Самаре','Сызрани'],
+  ['Новосибирск','Новосибирске','Искитиме'],
+  ['Санкт-Петербург','Санкт-Петербурге','Гатчине']
+]) {
+  const qualification = description => evidenceContext.rankCandidate({
+    type:'company',name:`Сантехнические работы, ${city}`,description,
+    sources:[{id:'site',kind:'web_search',url:'https://example.test'}]
+  },city,'сантехнические работы','any','plumbing-works').qualification.geography.status;
+  assert.equal(qualification(`Не работаем в ${inflected}`),'other_locality',city);
+  assert.equal(qualification(`Не работаем в ${otherCity}`),'exact',city);
+}
 console.log('Search Quality v1 regression: PASS');
