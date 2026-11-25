@@ -6756,34 +6756,18 @@ function searchOrderEntitlement({
     throw error;
   }
 
-  const order =
-    db.prepare(`
-      SELECT
-        order_id,
-        task_id,
-        client_id_crm,
-        tariff_id,
-        tariff_name,
-        amount,
-        currency,
-        status
-      FROM orders
-      WHERE order_id = ?
-      LIMIT 1
-    `).get(
-      normalizedOrderId
-    );
+  const payment=customerAccount.paymentOrder(normalizedOrderId);
+  const order=payment?{
+    order_id:payment.id,task_id:payment.taskId,tariff_id:basePaymentPlanId(payment.plan),
+    amount:payment.amount,currency:'RUB',status:payment.status
+  }:db.prepare(`
+    SELECT order_id,task_id,client_id_crm,tariff_id,tariff_name,amount,currency,status
+    FROM orders WHERE order_id=? LIMIT 1
+  `).get(normalizedOrderId);
 
-  if (!order) {
-    const error =
-      new Error(
-        'ORDER_NOT_FOUND'
-      );
-
-    error.status =
-      403;
-
-    throw error;
+  if(!order)throw Object.assign(new Error('ORDER_NOT_FOUND'),{status:403});
+  if(order.status!=='paid'||!text(taskId)||!text(order.task_id)){
+    throw Object.assign(new Error('PAID_ENTITLEMENT_REQUIRED'),{status:403});
   }
 
   if (
@@ -13301,7 +13285,13 @@ const server = http.createServer(async (req, res) => {
   if(req.method==='POST'&&req.url==='/v1/internal/payment-confirmed'){
     const remote=String(req.socket?.remoteAddress||'');
     if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(remote))return sendJson(res,403,{ok:false,error:'LOCAL_ONLY'},origin);
-    try{const body=await readBody(req);const taskId=text(body.taskId||body.task_id);if(!taskId)return sendJson(res,400,{ok:false,error:'TASK_ID_REQUIRED'},origin);const crm=customerAccount.recordPaymentLifecycle(taskId,{paymentId:text(body.paymentId||body.payment_id),status:text(body.status||'paid'),tariff:text(body.tariff),amount:Number(body.amount||0),paidAmount:Number(body.paidAmount||body.paid_amount||0),paidAt:text(body.paidAt||body.paid_at)||null});return sendJson(res,200,{ok:true,crm},origin)}catch(error){return sendJson(res,500,{ok:false,error:error?.message||'PAYMENT_CRM_UPDATE_FAILED'},origin)}
+    try{
+      const body=await readBody(req),taskId=text(body.taskId||body.task_id),paymentId=text(body.paymentId||body.payment_id);
+      if(!taskId||!paymentId)return sendJson(res,400,{ok:false,error:'TASK_AND_PAYMENT_REQUIRED'},origin);
+      const crm=customerAccount.confirmPayment(taskId,paymentId);
+      if(!crm||crm.payment_id!==paymentId)return sendJson(res,409,{ok:false,error:'PAYMENT_CONFIRMATION_NOT_BOUND'},origin);
+      return sendJson(res,200,{ok:true},origin);
+    }catch(error){return sendJson(res,500,{ok:false,error:error?.message||'PAYMENT_CRM_UPDATE_FAILED'},origin)}
   }
 
   if (await customerAuth.handle(req, res, origin)) {
