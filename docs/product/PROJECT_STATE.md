@@ -1,6 +1,6 @@
 # PROJECT_STATE
 
-Updated: 2026-09-28
+Updated: 2026-11-26
 
 ## Product
 «Сделает» turns a plain-language household repair task into a short technically sufficient Contractor Brief, finds/qualifies contractors, normalizes offers and explains which option is actually comparable and preferable.
@@ -19,7 +19,13 @@ Application tree: `/opt/sdelaet/current`.
 Data/runtime state: `/var/lib/sdelaet`.
 Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.timer`.
 
-### Operational snapshot — 2026-09-28
+### Latest accepted production releases
+
+- #15 payment recovery, deploy `2a89d6d47deeece659fb27ac06eb104a11c1e368`, Node.js 24.20.0 for Payment API and watchdog.
+- #160 search quality, deploy `2ceb59f418e7736d094c737cd77de1d038a2e836`, parity and public health PASS, payment runtime and data preserved. See the [release receipts](DEPLOYMENT.md).
+- Live search coverage, current contact reachability and the first paid customer task remain separate acceptance items.
+
+### Historical operational snapshot — 2026-09-28
 - GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; this is an audit snapshot only. Deploy must always re-read the current exact SHA immediately before release.
 - Recorded production baseline: `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33`.
 - Server deploy checkout is currently on `local-v20-ui`, not `main`, but that ref points to the same commit as the recorded production baseline (`f542e1c0f810377ed751eeefc2263de9db9ab55e`). No newer local commit was observed on that branch.
@@ -105,7 +111,7 @@ Canonical publication: `sdelaet-main-deploy.service` with `sdelaet-main-deploy.t
 ## Current focus
 Global SEO catalogue is generated from the category manifest for all 71 service categories at `/uslugi/<category-id>/`, including `BALCONY_INSULATION`, with unique metadata, canonical URLs, Service/Breadcrumb/FAQ structured data, related services, `sitemap.xml` and `robots.txt`. Expansion waves 1–4 added high-demand task-specific categories in honest `RESEARCH` state across private-house, site, flooring, plumbing, heating, climate, window, door and finishing work.
 
-Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING`, `INTERIOR_DOORS`, `MINOR_APARTMENT_REPAIR`, `WALL_FINISHING`, `WALL_PLASTERING`, `FLOOR_SCREED`, `DRYWALL_PARTITIONS`, `SOUNDPROOFING` and `BATHROOM_WATERPROOFING`; these categories remain `TESTING` because canonical `productionDeploy = PASS` is unavailable while production is locked. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
+Category factory automation is active. `config/service-categories.json` is the category registry; generated runtime/search registries, taxonomy, lifecycle tests and category QA/E2E runner are derived from it. `tools/platform-readiness.mjs` is the canonical automated launch gate and runs independently in CI. All automated product gates pass. Manual user-facing review has already passed for `BALCONY_GLAZING`, `WINDOW_REPLACEMENT`, `WINDOW_REPAIR`, `BALCONY_FINISHING`, `BALCONY_LEAK_REPAIR`, `ELECTRICAL_INSTALLATION`, `PLUMBING_WORKS`, `RADIATOR_HEATING`, `INTERIOR_DOORS`, `MINOR_APARTMENT_REPAIR`, `WALL_FINISHING`, `WALL_PLASTERING`, `FLOOR_SCREED`, `DRYWALL_PARTITIONS`, `SOUNDPROOFING` and `BATHROOM_WATERPROOFING`; these categories remain `TESTING` until their category-specific publication evidence and explicit promotion are recorded. Pilot evidence is tracked separately in `config/pilot-verification.json`; synthetic E2E never counts as real-task verification. Production deployment is server-side on FirstVDS and no longer depends on GitHub SSH secrets. The canonical deploy is fail-closed on production parity, baseline SHA, `PUBLISH_LOCK`, readiness, health and post-deploy parity.
 
 ## Current public/product flow
 - Canonical service registry: 71 categories.
@@ -126,15 +132,7 @@ Dev-time pipeline uses 9 independent roles: research, domain expert, intake, con
 
 ## Current operational priority
 
-P0 is production reconciliation, not category promotion:
-
-1. compare the running application/public webroot against recorded baseline `f542e1c0f810377ed751eeefc2263de9db9ab55e`;
-2. identify server-only or newer production changes and preserve them in Git instead of overwriting them;
-3. reconcile the canonical GitHub `main` with the production-owned delta and all current parallel PRs;
-4. run Platform Readiness, Metrika regression and relevant product/category tests on the reconciled exact SHA;
-5. remove the production lock only as an explicit release step after parity is proven;
-6. publish through the canonical server-side deploy and verify post-deploy parity/exact SHA;
-7. only then use `productionDeploy = PASS` as evidence for further `TESTING → READY` promotions.
+Keep the mandatory exact-SHA deploy and parity checks in [PUBLISH_POLICY](PUBLISH_POLICY.md). The #15 and #160 receipts apply to the released payment and search scope. Category promotion requires its own explicit lifecycle evidence and pilot acceptance.
 
 ## Current next work
 - Priority category lifecycle work is now `TESTING → READY`, not repeated research.
