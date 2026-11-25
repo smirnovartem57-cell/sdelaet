@@ -5,7 +5,7 @@ const now=()=>new Date().toISOString();
 const conflict=code=>Object.assign(new Error(code),{status:409});
 
 export function needsLifecycleDelivery(order){
-  return Boolean(order?.status==='paid'&&order.taskId&&(order.operationId||order.id)&&order.lifecyclePending!==false);
+  return Boolean(['paid','refunded'].includes(order?.status)&&order.taskId&&(order.operationId||order.id)&&order.lifecyclePending!==false);
 }
 
 async function deliver(id,env){
@@ -15,7 +15,7 @@ async function deliver(id,env){
     const accountApi=String(env.ACCOUNT_API_URL||'http://127.0.0.1:3210').replace(/\/$/,'');
     const response=await fetch(accountApi+'/v1/internal/payment-confirmed',{
       method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({taskId:order.taskId,paymentId:order.operationId||order.id,status:'paid',
+      body:JSON.stringify({taskId:order.taskId,paymentId:order.operationId||order.id,status:order.status,
         tariff:order.plan,amount:order.amount,paidAmount:order.paidAmount??order.amount,paidAt:order.paidAt}),
       signal:AbortSignal.timeout(3500)
     });
@@ -54,7 +54,10 @@ export async function applyProviderStatus(id,fact,env){
         intent_cluster:current.attribution?.intent_cluster||'',confirmedBy:'tochka_verified'};
     }else if(status==='EXPIRED'||status==='REFUNDED'){
       current.status=status.toLowerCase();
-      if(status==='REFUNDED')current.lifecyclePending=false;
+      if(status==='REFUNDED'){
+        current.refundedAt=now();
+        current.lifecyclePending=true;
+      }
     }
     await save();
     return current;

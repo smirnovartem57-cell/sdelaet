@@ -13288,7 +13288,7 @@ const server = http.createServer(async (req, res) => {
     try{
       const body=await readBody(req),taskId=text(body.taskId||body.task_id),paymentId=text(body.paymentId||body.payment_id);
       if(!taskId||!paymentId)return sendJson(res,400,{ok:false,error:'TASK_AND_PAYMENT_REQUIRED'},origin);
-      const crm=customerAccount.confirmPayment(taskId,paymentId);
+      const crm=customerAccount.confirmPayment(taskId,paymentId,text(body.status)||'paid');
       if(!crm||crm.payment_id!==paymentId)return sendJson(res,409,{ok:false,error:'PAYMENT_CONFIRMATION_NOT_BOUND'},origin);
       return sendJson(res,200,{ok:true},origin);
     }catch(error){return sendJson(res,500,{ok:false,error:error?.message||'PAYMENT_CRM_UPDATE_FAILED'},origin)}

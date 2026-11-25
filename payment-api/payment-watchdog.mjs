@@ -8,6 +8,8 @@ import {needsLifecycleDelivery,refreshOrder} from './lifecycle.mjs';
 const env=process.env;
 const alertAfterMs=Math.max(1,Number(env.PAYMENT_PENDING_ALERT_MINUTES||10))*60_000;
 const notificationTimeoutMs=5000;
+const refundCheckIntervalMs=60*60*1000;
+const refundCheckBatchSize=10;
 const alertEmail=String(env.PAYMENT_ALERT_EMAIL||'bill@onsdelaet.ru').trim();
 const alertFrom=String(env.PAYMENT_ALERT_FROM||'bill@onsdelaet.ru').trim();
 const emailEnabled=String(env.PAYMENT_ALERT_EMAIL_ENABLED||'0')==='1';
@@ -24,7 +26,7 @@ export function shouldAlertPending(order,ts=Date.now()){
   if(!order||isTestOrder(order))return false;
   const lifecycle=needsLifecycleDelivery(order);
   if(order.status!=='pending'&&!lifecycle)return false;
-  const since=Date.parse((lifecycle?order.paidAt:null)||order.createdAt||'');
+  const since=Date.parse((lifecycle?(order.refundedAt||order.paidAt):null)||order.createdAt||'');
   return Number.isFinite(since)&&(ts-since)>=alertAfterMs;
 }
 function safe(v){return String(v==null?'—':v)}
@@ -68,7 +70,7 @@ async function sendMail(subject,body){
 }
 
 function stuckBody(order,providerStatus,extra=''){return [
-  needsLifecycleDelivery(order)?'Банк подтвердил платёж, приложение ещё не получило подтверждение.':
+  needsLifecycleDelivery(order)?'Банк подтвердил статус операции, приложение ещё не получило обновление.':
     'Платёж остаётся в pending дольше допустимого времени.',
   '',
   `Заказ: ${safe(order.id)}`,
@@ -114,15 +116,25 @@ async function tryAlert(record,marker,subject,body){
 
 async function reconcileOrders(){
   const state=await loadState();state.orders=state.orders||{};
-  const orders=await listOrders();let checked=0,healed=0,alerts=0,skipped=0;
+  const orders=await listOrders();
+  const refundDueBefore=Date.now()-refundCheckIntervalMs;
+  const refundChecks=new Set(orders
+    .filter(order=>order.status==='paid'&&order.operationId&&!isTestOrder(order)&&
+      (state.orders[order.id]?.lastRefundCheckAt||0)<=refundDueBefore)
+    .sort((a,b)=>(state.orders[a.id]?.lastRefundAttemptAt||0)-(state.orders[b.id]?.lastRefundAttemptAt||0))
+    .slice(0,refundCheckBatchSize).map(order=>order.id));
+  let checked=0,healed=0,alerts=0,skipped=0;
   for(const order of orders){
     const prior=state.orders[order.id];
     const needsRecoveryAlert=order.status==='paid'&&prior?.stuckNotifiedAt&&!prior.recoveredNotifiedAt;
-    if(order.status!=='pending'&&!needsLifecycleDelivery(order)&&!needsRecoveryAlert)continue;
+    const checkRefund=refundChecks.has(order.id);
+    if(order.status!=='pending'&&!needsLifecycleDelivery(order)&&!needsRecoveryAlert&&!checkRefund)continue;
     if(isTestOrder(order)){skipped++;continue}
     checked++;const rec=state.orders[order.id]||{};let current=order,providerStatus='UNKNOWN';
     try{
-      current=await refreshOrder(order.id,env,{reconcile:shouldAlertPending(order)});
+      if(checkRefund)rec.lastRefundAttemptAt=Date.now();
+      current=await refreshOrder(order.id,env,{reconcile:shouldAlertPending(order),checkPaid:checkRefund});
+      if(checkRefund)rec.lastRefundCheckAt=Date.now();
       providerStatus=current?.providerStatus||(order.operationId?'UNKNOWN':'NO_OPERATION_ID');
     }catch(error){
       providerStatus='CHECK_ERROR';rec.lastError=String(error?.message||error);rec.lastErrorAt=now();
@@ -135,13 +147,13 @@ async function reconcileOrders(){
       state.orders[order.id]=rec;
       if(shouldAlertPending(current)){
         alerts+=await tryAlert(rec,'stuckNotifiedAt',
-          `[Сделает] Оплата подтверждена, доставка в задачу задерживается — ${current.id}`,
+          `[Сделает] Статус платежа не доставлен в задачу — ${current.id}`,
           stuckBody(current,providerStatus,rec.lastError||'PAYMENT_LIFECYCLE_SYNC_FAILED'));
       }
       continue;
     }
     if(current?.status==='paid'){
-      healed++;
+      if(order.status!=='paid'||needsLifecycleDelivery(order))healed++;
       if(rec.stuckNotifiedAt){
         alerts+=await tryAlert(rec,'recoveredNotifiedAt',
           `[Сделает] Оплата восстановлена — ${current.id}`,recoveredBody(current,providerStatus));

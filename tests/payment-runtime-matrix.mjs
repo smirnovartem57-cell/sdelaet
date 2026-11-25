@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {generateKeyPairSync,randomUUID,sign} from 'node:crypto';
 import {once} from 'node:events';
-import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,rm,writeFile} from 'node:fs/promises';
 import http from 'node:http';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
@@ -36,6 +36,7 @@ db.prepare('INSERT INTO clients VALUES (?,?,?,?)').run('fixture',email,email,tim
 function task(id){db.prepare("INSERT INTO tasks VALUES (?,?,?,?,?,?,NULL,'draft')").run(id,'fixture','window','Windows','Moscow',timestamp)}
 const account=createCustomerAccount({db,customerAuth:{getSession:()=>({email})}});
 const operations=new Map(),bankCreates=new Map(),projections=new Map();
+const bankStatusFailures=new Set(),refundProjections=new Map();
 let bankMode='normal',lostId,denyProjection=false,denyAlert=false,stallAlert=false,onAlertStall;
 const servers=[];
 function send(res,status,value){res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(value))}
@@ -71,7 +72,9 @@ const fakeBank=await listen(async(req,res)=>{
     assert.match(url.searchParams.get('fromDate'),/^\d{4}-\d{2}-\d{2}$/);
     return send(res,200,{Data:{Operation:[...operations.values()]}});
   }
-  return send(res,200,{Data:{Operation:[operations.get(url.pathname.split('/').at(-1))]}});
+  const operationId=url.pathname.split('/').at(-1);
+  if(bankStatusFailures.has(operationId))return send(res,503,{error:'FIXTURE_BANK_OFFLINE'});
+  return send(res,200,{Data:{Operation:[operations.get(operationId)]}});
 });
 process.env.TOCHKA_BASE_URL=fakeBank;
 process.env.ACCOUNT_API_URL=await listen(async(req,res)=>{
@@ -87,9 +90,12 @@ process.env.ACCOUNT_API_URL=await listen(async(req,res)=>{
   assert.equal(req.url,'/v1/internal/payment-confirmed');
   if(denyProjection)return send(res,503,{ok:false});
   const previous=db.prepare('SELECT payment_status FROM crm_task_state WHERE task_id=?').get(value.taskId);
-  const row=account.confirmPayment(value.taskId,value.paymentId);
+  const row=account.confirmPayment(value.taskId,value.paymentId,value.status);
   if(row?.payment_id!==value.paymentId)return send(res,409,{ok:false});
-  if(previous?.payment_status!=='paid')projections.set(value.taskId,(projections.get(value.taskId)||0)+1);
+  if(value.status==='paid'&&previous?.payment_status!=='paid')projections.set(value.taskId,(projections.get(value.taskId)||0)+1);
+  if(value.status==='refunded'&&row.payment_status==='refunded'&&previous?.payment_status!=='refunded'){
+    refundProjections.set(value.taskId,(refundProjections.get(value.taskId)||0)+1);
+  }
   return send(res,200,{ok:true});
 });
 
@@ -457,12 +463,42 @@ try{
   assert.equal(alertState.orders[alertOrder].lastAlertError,undefined);
 
   task('refunded');
+  db.prepare('INSERT INTO search_runs VALUES (?,?,?,?,?,NULL)').run('refund-search','refunded',timestamp,1,'ok');
+  db.prepare("INSERT INTO candidates VALUES ('refund-search','candidate','company','Fixture','strong',NULL,NULL,NULL,'{}')").run();
   const refundable=await create('refunded','find');
   const refundFact=approve(refundable.orderId);
   await webhook(refundFact);
   assert.equal((await status(refundable.orderId)).order.status,'paid');
+  assert.equal(account._test.detail(email,'refunded').candidates.length,1);
+  const creditsBeforeRefund=account._test.pricing(email).repeatDiscount.paidTaskCount;
   refundFact.status='REFUNDED';
-  assert.equal((await status(refundable.orderId)).order.status,'refunded');
+  bankStatusFailures.add(refundFact.operationId);
+  const watchdogFile=process.env.PAYMENT_WATCHDOG_STATE_FILE;
+  const refundState=JSON.parse(await readFile(watchdogFile,'utf8'));
+  for(const order of await listOrders()){
+    if(order.id!==refundable.orderId&&order.status==='paid'){
+      refundState.orders[order.id]={...refundState.orders[order.id],lastRefundCheckAt:Date.now()};
+    }
+  }
+  await writeFile(watchdogFile,JSON.stringify(refundState));
+  await runWatchdog();
+  assert.equal((await getOrder(refundable.orderId)).status,'paid');
+  bankStatusFailures.delete(refundFact.operationId);
+  denyProjection=true;
+  await runWatchdog(); // No webhook or customer status request.
+  assert.equal((await getOrder(refundable.orderId)).status,'refunded');
+  assert.equal((await getOrder(refundable.orderId)).lifecyclePending,true);
+  assert.equal(account._test.detail(email,'refunded').candidates.length,0);
+  assert.equal(account._test.pricing(email).repeatDiscount.paidTaskCount,creditsBeforeRefund-1);
+  denyProjection=false;
+  await Promise.all([webhook(refundFact),runWatchdog(),webhook({...refundFact,status:'APPROVED'})]);
+  assert.equal((await getOrder(refundable.orderId)).lifecyclePending,false);
+  assert.equal(refundProjections.get('refunded'),1);
+  const readCrm=()=>db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get('refunded');
+  assert.equal(readCrm().payment_status,'refunded');
+  const refundStamp=readCrm().updated_at;
+  assert.equal(account.confirmPayment('refunded',refundFact.operationId,'refunded').updated_at,refundStamp);
+  assert.equal(account.confirmPayment('refunded',refundFact.operationId,'paid'),null);
   assert.throws(()=>refine('refunded',refundable.orderId),{message:'PAID_ENTITLEMENT_REQUIRED'});
   assert.equal((await webhook({...refundFact,status:'APPROVED'})).status,200);
   assert.equal((await getOrder(refundable.orderId)).status,'refunded');
@@ -474,6 +510,8 @@ try{
   assert.equal((await getOrder(replacement.orderId)).lifecyclePending,false);
   const replaced=db.prepare('SELECT payment_id FROM crm_task_state WHERE task_id=?').get('refunded');
   assert.equal(replaced.payment_id,replacementFact.operationId);
+  account.confirmPayment('refunded',refundFact.operationId,'refunded');
+  assert.equal(readCrm().payment_status,'paid');
   assert.equal((await webhook({...refundFact,status:'APPROVED'})).status,200);
   assert.equal(db.prepare('SELECT payment_id FROM crm_task_state WHERE task_id=?').get('refunded').payment_id,replacementFact.operationId);
 

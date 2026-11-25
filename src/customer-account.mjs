@@ -155,6 +155,7 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
  }
  function recordPaymentLifecycle(taskId,{paymentId='',status='',tariff='',amount=0,paidAmount=0,paidAt=null}={}){
   const previous=db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get(taskId);
+  if(previous?.payment_status==='refunded'&&previous.payment_id===paymentId)return previous;
   if(previous?.payment_status==='paid'){
    const replacing=status==='paid'&&paymentId&&paymentId!==previous.payment_id&&
      payStore().some(order=>order.taskId===taskId&&(order.operationId||order.id)===previous.payment_id&&order.status==='refunded');
@@ -163,9 +164,20 @@ export function createCustomerAccount({db,customerAuth,sendJson,authorizeOutreac
   syncCrmTask(taskId);const ts=now();db.prepare('UPDATE crm_task_state SET selected_tariff=COALESCE(NULLIF(?,\'\'),selected_tariff),tariff_price=CASE WHEN ?>0 THEN ? ELSE tariff_price END,payment_id=COALESCE(NULLIF(?,\'\'),payment_id),payment_status=COALESCE(NULLIF(?,\'\'),payment_status),paid_amount=CASE WHEN ?>0 THEN ? ELSE paid_amount END,paid_at=COALESCE(?,paid_at),updated_at=? WHERE task_id=?').run(tariff,Number(amount),Number(amount),paymentId,status,Number(paidAmount),Number(paidAmount),paidAt,ts,taskId);return db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get(taskId)
  }
  function paymentOrder(id){return payStore().find(row=>row.id===id)||null}
- function confirmPayment(taskId,paymentId){
-  const order=payStore().find(row=>row.taskId===taskId&&(row.operationId||row.id)===paymentId&&row.status==='paid');
-  if(!order||!paymentId)return null;
+ function confirmPayment(taskId,paymentId,status='paid'){
+  if(!paymentId||!['paid','refunded'].includes(status))return null;
+  const order=payStore().find(row=>row.taskId===taskId&&(row.operationId||row.id)===paymentId&&row.status===status);
+  if(!order)return null;
+  if(status==='refunded'){
+   const prior=db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get(taskId)||syncCrmTask(taskId);
+   if(!prior)return null;
+   // A late refund for an older payment cannot overwrite the current payment.
+   if(prior.payment_id&&prior.payment_id!==paymentId)return {payment_id:paymentId};
+   if(prior.payment_status==='refunded')return prior;
+   db.prepare("UPDATE crm_task_state SET payment_id=?,payment_status='refunded',updated_at=? WHERE task_id=?")
+     .run(paymentId,now(),taskId);
+   return db.prepare('SELECT * FROM crm_task_state WHERE task_id=?').get(taskId);
+  }
   return recordPaymentLifecycle(taskId,{paymentId,status:'paid',tariff:order.plan,
     amount:order.amount,paidAmount:order.paidAmount??order.amount,paidAt:order.paidAt});
  }
