@@ -4,8 +4,8 @@ import {readFileSync} from 'node:fs';
 const server=readFileSync(new URL('../src/server.mjs',import.meta.url),'utf8');
 const journey=readFileSync(new URL('../assets/task-journey-v1.js',import.meta.url),'utf8');
 
-assert.match(server,/site:uslugi\.yandex\.ru\/profile \$\{query\} \$\{city\}[\s\S]{0,100}\.catch\(\(\) => \[\]\)/);
-assert.match(server,/site:avito\.ru \$\{query\} \$\{city\}[\s\S]{0,100}\.catch\(\(\) => \[\]\)/);
+// Source-isolation and diagnostic states are exercised against performSearch in
+// search-quality-v1-regression.mjs. Keep the lifecycle checks here.
 assert.match(server,/const runId = saveSearchRun\(result, body\);[\s\S]{0,1200}customerAccount\.captureAttribution/);
 assert.match(server,/try \{[\s\S]{0,300}customerAccount\.captureAttribution/);
 assert.match(server,/try \{[\s\S]{0,300}updateTaskLifecycle/);
