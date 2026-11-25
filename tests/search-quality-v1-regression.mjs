@@ -420,6 +420,12 @@ const mixedSourceCompany = {
 const companyWithUnreadableProfile=evidenceContext.classifySearchExecutor(mixedSourceCompany);
 assert.equal(companyWithUnreadableProfile.type,'company');
 assert.equal(companyWithUnreadableProfile.executorTypeEvidence.sourceId,'site');
+const companyWithReadableProfile=evidenceContext.classifySearchExecutor({
+  ...mixedSourceCompany,
+  yandexServicesProfile:{profileUrl:profileUrl('unrelated-location'),description:'Мастерская ремонта'}
+});
+assert.equal(companyWithReadableProfile.type,'company');
+assert.equal(companyWithReadableProfile.executorTypeEvidence.sourceId,'site');
 const regionalWebsite = evidenceContext.rankCandidate({
   ...mixedSourceCompany,
   yandexServicesProfile:{profileUrl:profileUrl('unrelated-location'),areaServed:['Казань']}

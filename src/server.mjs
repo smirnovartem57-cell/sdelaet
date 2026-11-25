@@ -781,17 +781,14 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
 function classifySearchExecutor(candidate) {
   const profile = candidate.yandexServicesProfile;
   const sources = candidate.sources || [];
-  const profileSource = sources.find(source => source.kind === 'yandex_services' && source.url === profile?.profileUrl) ||
-    sources.find(source => source.kind === 'yandex_services');
-  const matchedProfile = Boolean(profile?.profileUrl && profile.profileUrl === profileSource?.url);
-  if (!matchedProfile) {
-    const officialSite = sources.find(source => source.kind === 'official_site');
-    const company = candidate.type === 'company' && candidate.legalIdentity && officialSite;
-    return {
-      ...candidate,
-      type: company ? 'company' : 'unverified',
-      executorTypeEvidence: {status: company ? 'confirmed' : 'unknown', sourceId: company ? officialSite.id : null}
-    };
+  const officialSite = sources.find(source => source.kind === 'official_site');
+  if (candidate.type === 'company' && candidate.legalIdentity && officialSite) {
+    return {...candidate, executorTypeEvidence: {status:'confirmed', sourceId:officialSite.id}};
+  }
+  const profileSource = profile?.profileUrl && sources.find(source =>
+    source.kind === 'yandex_services' && source.url === profile.profileUrl);
+  if (!profileSource) {
+    return {...candidate, type:'unverified', executorTypeEvidence: {status:'unknown', sourceId:null}};
   }
 
   const company = (
