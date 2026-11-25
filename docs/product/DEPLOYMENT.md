@@ -22,7 +22,7 @@
 
 ### Search release rollback
 
-Hold the canonical publish lock and stop its timer before restoring code. Restore the verified application and public webroot snapshots and the exact base marker only after base parity passes. Leave current orders, CRM and task data in place, including any events created during the window. Keep deployment gated if restored parity or health fails.
+Hold the canonical publish lock and stop its timer before restoring code. Restore the verified application and public webroot snapshots first. Verify base parity and application health, then record the restored exact base marker. Leave current orders, CRM and task data in place, including any events created during the window. Keep deployment gated if restored parity or health fails.
 
 ## Canonical deployment path
 

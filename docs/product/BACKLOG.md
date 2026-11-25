@@ -3,7 +3,7 @@
 ## Closed P0 — Payment recovery, PR #15
 
 - Accepted in production on 2026-11-25. [PR #15](https://github.com/smirnovartem57-cell/sdelaet/pull/15) deployed as `2a89d6d47deeece659fb27ac06eb104a11c1e368`. See the [release receipt](DEPLOYMENT.md#p0-payment-release-receipt--2026-11-25).
-- The first real paid customer task remains a separate production acceptance item and requires the owner's authorization for a real bank operation.
+
 
 ## Closed P0 — Contractor search quality, PR #160
 
