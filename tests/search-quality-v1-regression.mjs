@@ -409,4 +409,21 @@ for (const [city, inflected, otherCity] of [
   assert.equal(qualification(`Не работаем в ${otherCity} а работаем в ${inflected}`),'exact',city);
   assert.equal(qualification(`Не работаем в ${otherCity} и ${inflected}`),'other_locality',city);
 }
+const mixedSourceCompany = {
+  type:'company',name:'Сантехнические работы',
+  description:'Работаем по Московской области',legalIdentity:{name:'Учебная организация'},
+  sources:[
+    {id:'profile',kind:'yandex_services',url:profileUrl('unrelated-location')},
+    {id:'site',kind:'official_site',url:'https://coverage.example.test'}
+  ]
+};
+const companyWithUnreadableProfile=evidenceContext.classifySearchExecutor(mixedSourceCompany);
+assert.equal(companyWithUnreadableProfile.type,'company');
+assert.equal(companyWithUnreadableProfile.executorTypeEvidence.sourceId,'site');
+const regionalWebsite = evidenceContext.rankCandidate({
+  ...mixedSourceCompany,
+  yandexServicesProfile:{profileUrl:profileUrl('unrelated-location'),areaServed:['Казань']}
+},'Мытищи','сантехнические работы','any','plumbing-works');
+assert.equal(regionalWebsite.qualification.geography.status,'region');
+assert.equal(regionalWebsite.qualification.geography.sourceId,'site');
 console.log('Search Quality v1 regression: PASS');

@@ -756,7 +756,8 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
   const geographySource = areaExact ? profileSource : localClaim ? publicSource :
     sources.find(source => source.id === exactFact?.sourceId);
   const regionalClaim = publicSource && /(?:работаем|выезжаем|обслуживаем).{0,55}московск[а-яё]* област/iu.test(text(candidate.description));
-  const regional = ['москва', 'мытищи'].includes(place) && (regionalClaim || areas.includes('московская область'));
+  const regionalProfile = areas.includes('московская область');
+  const regional = ['москва', 'мытищи'].includes(place) && (regionalClaim || regionalProfile);
   const neighbors = {
     мытищи: ['москва', 'королев', 'пушкино', 'долгопрудный'],
     москва: ['мытищи', 'химки', 'долгопрудный', 'реутов', 'котельники']
@@ -768,11 +769,12 @@ function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
   const geography = deniedSource || excludedByCoverage ? 'other_locality' : geographySource ? 'exact' : regional ? 'region' :
     areas.some(area => neighbors.includes(area)) ? 'neighbor' : areas.length ? 'other_locality' : 'unknown';
 
+  const coverageSource = deniedSource || (excludedByCoverage ? publicSource : geographySource ||
+    (regional ? (regionalProfile ? profileSource : publicSource) : areas.length ? profileSource : null));
   return {
     service: {status: refusedServiceSource ? 'excluded' : serviceSourceId ? 'confirmed' : 'unknown',
       sourceId: refusedServiceSource?.id || serviceSourceId},
-    geography: {status: geography, sourceId: deniedSource?.id || (excludedByCoverage ? publicSource.id :
-      geographySource?.id || (areas.length ? profileSource.id : regionalClaim ? publicSource.id : null))}
+    geography: {status: geography, sourceId: coverageSource?.id || null}
   };
 }
 
@@ -781,7 +783,8 @@ function classifySearchExecutor(candidate) {
   const sources = candidate.sources || [];
   const profileSource = sources.find(source => source.kind === 'yandex_services' && source.url === profile?.profileUrl) ||
     sources.find(source => source.kind === 'yandex_services');
-  if (!profileSource) {
+  const matchedProfile = Boolean(profile?.profileUrl && profile.profileUrl === profileSource?.url);
+  if (!matchedProfile) {
     const officialSite = sources.find(source => source.kind === 'official_site');
     const company = candidate.type === 'company' && candidate.legalIdentity && officialSite;
     return {
@@ -791,12 +794,11 @@ function classifySearchExecutor(candidate) {
     };
   }
 
-  const matchedProfile = Boolean(profile?.profileUrl && profile.profileUrl === profileSource.url);
-  const company = matchedProfile && (
+  const company = (
     /^(?:ооо|ип|ао|компания|организация)(?:[^а-яё]|$)/iu.test(text(candidate.name)) ||
     /^(?:мы\s*[-—–]?\s*(?:компания|организация)|(?:наша компания|работаем как (?:ооо|ип|ао)))(?:[^а-яё]|$)/iu.test(text(profile.description))
   );
-  const privateExecutor = matchedProfile && profile.passportVerified && candidate.type === 'private';
+  const privateExecutor = profile.passportVerified && candidate.type === 'private';
   const type = company ? 'company' : privateExecutor ? 'private' : 'unverified';
   return {
     ...candidate,
