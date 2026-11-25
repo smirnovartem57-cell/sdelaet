@@ -324,6 +324,10 @@ function serviceMatchLevel(
     return 'Не соответствует';
   }
 
+  if (categoryRelevance?.categoryId === 'balcony-insulation' && categoryRelevance.level === 'weak') {
+    return 'Требует проверки';
+  }
+
   const relevanceScore =
     Number(
       categoryRelevance?.score || 0
@@ -393,8 +397,18 @@ function evaluateCategoryRelevance(
     };
   }
 
-  const facts =
-    c.facts || [];
+  const facts = (c.facts || []).filter(
+    fact => fact.status === 'confirmed' || fact.status === 'claimed'
+  );
+  const profile = c.yandexServicesProfile;
+  const profileSource = profile?.profileUrl && (c.sources || []).find(
+    source => source.kind === 'yandex_services' && source.url === profile.profileUrl
+  );
+  const profileServiceEvidence = profileSource ? [
+    profile.description,
+    ...(profile.services || []).flatMap(service => [service.name, service.description]),
+    ...(profile.specializations || []).map(specialization => specialization.name)
+  ].map(lower).filter(Boolean) : [];
 
   const hay = lower([
     c.name,
@@ -511,7 +525,10 @@ function evaluateCategoryRelevance(
         pattern => pattern.test(hay)
       );
 
-    if (!matched) continue;
+    const profileMatch = profileServiceEvidence.some(value =>
+      definition.patterns.some(pattern => pattern.test(value))
+    );
+    if (!matched && !profileMatch) continue;
 
     const sourceFact =
       facts.find(fact => {
@@ -529,8 +546,10 @@ function evaluateCategoryRelevance(
       strength: definition.strength,
       sourceId:
         sourceFact?.sourceId ||
+        (profileMatch ? profileSource.id : '') ||
         c.sources?.[0]?.id ||
-        ''
+        '',
+      ...(profileMatch && !sourceFact?.sourceId ? {evidenceStatus: 'claimed'} : {})
     });
   }
 
@@ -642,6 +661,169 @@ function evaluateCategoryRelevance(
 }
 
 
+function searchQualityPattern(categoryId, query) {
+  if (categoryId === 'balcony-insulation') return /утепл[а-яё]*.{0,35}(?:балкон|лоджи)|(?:балкон|лоджи).{0,35}утепл/iu;
+  if (categoryId === 'plumbing-works') return /сантех|монтаж.{0,20}(?:унитаз|смесител|водопровод)/iu;
+  if (categoryId !== 'universal-home-repair') return null;
+
+  return [
+    /ремонт[а-яё]*\s+(?:квартир|в новостройк)/iu,
+    /(?:установ|монтаж)[а-яё]*.{0,25}(?:кондиционер|сплит)/iu,
+    /сбор[кщ][а-яё]*.{0,20}(?:мебел|шкаф|кух)/iu
+  ].find(pattern => pattern.test(query));
+}
+
+function evaluateSearchQuality(candidate, city, pattern, categoryRelevance) {
+  const sources = candidate.sources || [];
+  const profile = candidate.yandexServicesProfile;
+  const profileSource = profile && sources.find(source =>
+    source.kind === 'yandex_services' && source.url === profile.profileUrl
+  );
+  const publicSource = sources.find(source =>
+    ['official_site', 'web_search', 'avito'].includes(source.kind)
+  );
+  const facts = (candidate.facts || []).filter(fact =>
+    ['confirmed', 'claimed'].includes(fact.status) && sources.some(source => source.id === fact.sourceId)
+  );
+  const profileSignals = profileSource ? [
+    profile.description,
+    ...(profile.services || []).flatMap(service => [service.name, service.description]),
+    ...(profile.portfolio || []).map(item => item.title),
+    ...(profile.specializations || []).map(item => item.name)
+  ] : [];
+  const clauses = value => text(value)
+    .replace(/,\s*(не\s+[а-яё]+)\s*(?=[.!?;]|$)/giu, ' $1')
+    .split(/[,.!?;]+|\s+(?:и|а|но)\s+(?=(?:не\s+)?(?:работа[а-яё]*|выезжа[а-яё]*|обслужива[а-яё]*|выполня[а-яё]*|оказыва[а-яё]*|дела[а-яё]*|бер[а-яё]*ся|занима[а-яё]*ся)(?!\p{L}))/iu);
+  const serviceRefusal = /(?:^|\s)не\s+(?:выполня[а-яё]*|оказыва[а-яё]*|дела[а-яё]*|бер[а-яё]*ся|занима[а-яё]*ся)(?!\p{L})/iu;
+  const positiveService = value => clauses(value).some(clause => pattern.test(clause) && !serviceRefusal.test(clause));
+  const refusedService = value => clauses(value).some(clause => pattern.test(clause) && serviceRefusal.test(clause));
+  const publicSignals = publicSource ? [candidate.name, candidate.description] : [];
+  const refusedServiceSource = profileSignals.some(refusedService) ? profileSource :
+    publicSignals.some(refusedService) ? publicSource :
+    sources.find(source => source.id === facts.find(fact => refusedService(fact.label))?.sourceId);
+  const serviceSource = profileSignals.some(positiveService) ? profileSource :
+    publicSignals.some(positiveService) ? publicSource :
+    sources.find(source => source.id === facts.find(fact => positiveService(fact.label))?.sourceId);
+  const balconySignal = categoryRelevance.matchedSignals?.find(signal =>
+    signal.key === 'balcony_insulation' && sources.some(source => source.id === signal.sourceId)
+  );
+  const serviceSourceId = serviceSource?.id || balconySignal?.sourceId || null;
+
+  const normalizePlace = value => lower(value).replace(/ё/g, 'е').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const place = normalizePlace(city);
+  const areas = profileSource ? (profile.areaServed || []).map(normalizePlace).filter(Boolean) : [];
+  const includesPlace = value => place && (` ${normalizePlace(value)} `).includes(` ${place} `);
+  const isMoscowDistrict = value => /^(?:центральный|северный|северо восточный|восточный|юго восточный|южный|юго западный|западный|северо западный|зеленоградский|троицкий|новомосковский) административный округ$/u.test(value);
+  const areaExact = areas.some(area => includesPlace(area) || (place === 'москва' && isMoscowDistrict(area)));
+  const exclusiveArea = publicSource && text(candidate.description)
+    .match(/(?:работаем|выезжаем|обслуживаем)\s+только\s+(?:в|по)\s+(?:городе?|городу)\s+([^.!?;]{1,90})/iu)?.[1];
+  const mentionsTarget = value => includesPlace(value) ||
+    (place === 'мытищи' && /(?:^|\s)мытищах(?!\p{L})/iu.test(value)) ||
+    (place === 'москва' && /(?:^|\s)москве(?!\p{L})/iu.test(value));
+  const localityRefusal = /(?:^|\s)не\s+(?:выезжа[а-яё]*|работа[а-яё]*|обслужива[а-яё]*)(?!\p{L})/iu;
+  const placeWords = place.split(' ').filter(Boolean);
+  const nounEndings = {
+    а: ['е', 'у', 'ы', 'и', 'ой'], я: ['е', 'ю', 'и', 'ей'], ь: ['и'],
+    и: ['ах', 'ях', 'ам', 'ям'], ы: ['ах', 'ях', 'ам', 'ям'],
+    о: ['е', 'а', 'у', 'ом'], е: ['е', 'я', 'ю', 'ем']
+  };
+  const adjectiveEndings = {
+    ый: ['ом', 'ого', 'ому', 'ым'], ой: ['ом', 'ого', 'ому', 'ым'],
+    ий: ['ем', 'его', 'ему', 'им', 'ом', 'ого', 'ому'],
+    ая: ['ой', 'ую'], яя: ['ей', 'юю'], ое: ['ом', 'ого', 'ому'],
+    ее: ['ем', 'его', 'ему'], ые: ['ых', 'ым'], ие: ['их', 'им']
+  };
+  const deniedPlaceForms = placeWords.map((word, index) => {
+    const adjective = index < placeWords.length - 1 && Object.hasOwn(adjectiveEndings, word.slice(-2));
+    const ending = adjective ? word.slice(-2) : /[аяьиыео]$/u.exec(word)?.[0] || '';
+    const stem = ending ? word.slice(0, -ending.length) : word;
+    const endings = adjective ? adjectiveEndings[ending] : nounEndings[ending] || ['е', 'а', 'у', 'ом'];
+    return new Set([word, ...(/^[а-я]{3,}$/u.test(stem) ? endings.map(suffix => stem + suffix) : [])]);
+  });
+  const deniedTarget = value => clauses(value).some(clause => {
+    if (!localityRefusal.test(clause)) return false;
+    const words = normalizePlace(clause).split(' ');
+    return mentionsTarget(clause) || deniedPlaceForms.length > 0 &&
+      words.some((_, offset) => deniedPlaceForms.every((forms, index) => forms.has(words[offset + index])));
+  });
+  const deniedSource = publicSignals.some(deniedTarget) ? publicSource : profileSignals.some(deniedTarget) ? profileSource :
+    sources.find(source => source.id === facts.find(fact => deniedTarget(fact.label))?.sourceId);
+  const localClaim = publicSignals.some(value =>
+    clauses(value).some(clause => mentionsTarget(clause) && !localityRefusal.test(clause))
+  );
+  const exactFact = facts.find(fact => clauses(fact.label).some(clause => mentionsTarget(clause) &&
+    /географ|выезд|работа(?:ем|ет)|обслужива/iu.test(clause) && !localityRefusal.test(clause)));
+  const geographySource = areaExact ? profileSource : localClaim ? publicSource :
+    sources.find(source => source.id === exactFact?.sourceId);
+  const regionClaimPattern = /(?:работаем|выезжаем|обслуживаем).{0,55}московск[а-яё]* област/iu;
+  const descriptionClauses = publicSource ? clauses(candidate.description) : [];
+  const regionalClaim = descriptionClauses.some(clause => regionClaimPattern.test(clause) && !localityRefusal.test(clause));
+  const noRegionalCoverage = place === 'мытищи' && !geographySource &&
+    descriptionClauses.some(clause => regionClaimPattern.test(clause) && localityRefusal.test(clause));
+  const regionalProfile = areas.includes('московская область');
+  const regional = ['москва', 'мытищи'].includes(place) && (regionalClaim || regionalProfile);
+  const neighbors = {
+    мытищи: ['москва', 'королев', 'пушкино', 'долгопрудный'],
+    москва: ['мытищи', 'химки', 'долгопрудный', 'реутов', 'котельники']
+  }[place] || [];
+  const excludedByCoverage = exclusiveArea && !includesPlace(exclusiveArea) &&
+    !(place === 'мытищи' && /(?:^|\s)мытищах(?!\p{L})/iu.test(exclusiveArea)) &&
+    !(place === 'москва' && /(?:^|\s)москве(?!\p{L})/iu.test(exclusiveArea)) &&
+    !(place === 'мытищи' && /московск[а-яё]*\s+област/iu.test(exclusiveArea));
+  const geography = deniedSource || excludedByCoverage || noRegionalCoverage ? 'other_locality' :
+    geographySource ? 'exact' : regional ? 'region' :
+    areas.some(area => neighbors.includes(area)) ? 'neighbor' : areas.length ? 'other_locality' : 'unknown';
+
+  const coverageSource = deniedSource || (excludedByCoverage || noRegionalCoverage ? publicSource : geographySource ||
+    (regional ? (regionalProfile ? profileSource : publicSource) : areas.length ? profileSource : null));
+  return {
+    service: {status: refusedServiceSource ? 'excluded' : serviceSourceId ? 'confirmed' : 'unknown',
+      sourceId: refusedServiceSource?.id || serviceSourceId},
+    geography: {status: geography, sourceId: coverageSource?.id || null}
+  };
+}
+
+function classifySearchExecutor(candidate) {
+  const profile = candidate.yandexServicesProfile;
+  const sources = candidate.sources || [];
+  const officialSite = sources.find(source => source.kind === 'official_site');
+  if (candidate.type === 'company' && candidate.legalIdentity && officialSite) {
+    return {...candidate, executorTypeEvidence: {status:'confirmed', sourceId:officialSite.id}};
+  }
+  const profileSource = profile?.profileUrl && sources.find(source =>
+    source.kind === 'yandex_services' && source.url === profile.profileUrl);
+  if (!profileSource) {
+    return {...candidate, type:'unverified', executorTypeEvidence: {status:'unknown', sourceId:null}};
+  }
+
+  const company = (
+    /^(?:ооо|ип|ао|компания|организация)(?:[^а-яё]|$)/iu.test(text(candidate.name)) ||
+    /^(?:мы\s*[-—–]?\s*(?:компания|организация)|(?:наша компания|работаем как (?:ооо|ип|ао)))(?:[^а-яё]|$)/iu.test(text(profile.description))
+  );
+  const privateExecutor = profile.passportVerified && candidate.type === 'private';
+  const type = company ? 'company' : privateExecutor ? 'private' : 'unverified';
+  return {
+    ...candidate,
+    type,
+    executorTypeEvidence: {status: type === 'unverified' ? 'unknown' : 'confirmed', sourceId: profileSource.id}
+  };
+}
+
+function searchQualityPriority(candidate) {
+  const quality = candidate.qualification;
+  if (!quality) return 0;
+  return (quality.service.status === 'confirmed' ? 6 : 0) +
+    candidate.selectionBreakdown.region;
+}
+
+function searchAccessOutcome(status, body) {
+  if (/<title[^>]*>[^<]*(?:captcha|вы не робот|подтвердите, что вы человек)|<form[^>]*action=["'][^"']*showcaptcha/i.test(body)) return 'captcha';
+  if (status === 429) return 'rate_limit';
+  if (status === 401 || status === 403) return 'access_restricted';
+  if (status >= 400) return 'provider_error';
+  return null;
+}
+
 function rankCandidate(c, city, query, preference, categoryId = '') {
   const reasons = [];
 
@@ -675,6 +857,10 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
       c,
       categoryId
     );
+  const qualityPattern = searchQualityPattern(categoryId, query);
+  const qualification = qualityPattern ? evaluateSearchQuality(c, city, qualityPattern, categoryRelevance) : null;
+  const serviceUnknown = qualification?.service.status === 'unknown';
+  const geographyUnknown = qualification && qualification.geography.status !== 'exact';
 
   if (categoryRelevance.reject) {
     return {
@@ -725,7 +911,7 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
       );
 
     if (
-      categoryRelevance.primaryReason
+      categoryRelevance.primaryReason && !serviceUnknown
     ) {
       reasons.push(
         categoryRelevance.primaryReason
@@ -747,7 +933,7 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
         hay.includes(word)
     );
 
-  if (queryMatch) {
+  if (categoryId !== 'balcony-insulation' && (qualification ? qualification.service.status === 'confirmed' : queryMatch)) {
     taskScore += 5;
 
     reasons.push(
@@ -1176,7 +1362,11 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
   let regionStatus =
     'unknown';
 
-  if (
+  if (qualification) {
+    regionStatus = qualification.geography.status;
+    regionScore = {exact: 5, region: 3, neighbor: 2, other_locality: 0, unknown: 1}[regionStatus];
+    if (regionStatus === 'exact') reasons.push(`Указана работа в городе ${city}.`);
+  } else if (
     city &&
     hay.includes(
       lower(city)
@@ -1202,6 +1392,8 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
         c.address,
         ...(c.rubrics || []),
         ...(c.facts || [])
+          .filter(fact => categoryId !== 'balcony-insulation' ||
+            fact.status === 'confirmed' || fact.status === 'claimed')
           .map(
             fact =>
               fact.label || ''
@@ -1270,9 +1462,10 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
     ...c,
 
     categoryRelevance,
+    ...(qualification ? {qualification} : {}),
 
     matchLevel:
-      serviceMatchLevel(
+      serviceUnknown || geographyUnknown ? 'Требует проверки' : serviceMatchLevel(
         categoryRelevance,
         taskScore
       ),
@@ -1285,10 +1478,12 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
 
     serviceMatch: {
       status:
-        'matched',
+        (categoryId === 'balcony-insulation' && categoryRelevance.level === 'weak') || serviceUnknown
+          ? 'needs_verification'
+          : 'matched',
 
       level:
-        serviceMatchLevel(
+        serviceUnknown ? 'Требует проверки' : serviceMatchLevel(
           categoryRelevance,
           taskScore
         ),
@@ -1297,7 +1492,7 @@ function rankCandidate(c, city, query, preference, categoryId = '') {
         taskScore,
 
       reason:
-        categoryRelevance
+        serviceUnknown ? 'Соответствие услуги требует проверки.' : categoryRelevance
           ?.primaryReason ||
         'Услуга соответствует задаче.'
     },
@@ -1581,7 +1776,7 @@ async function yandexSearchDocuments(
 }
 
 
-async function yandexSearch(queryText, type, page = 0) {
+async function yandexSearch(queryText, type, page = 0, diagnostic = {}, expandProfileTypes = false) {
   const apiKey = process.env.YANDEX_SEARCH_API_KEY;
   const folderId = process.env.YANDEX_FOLDER_ID;
 
@@ -1618,18 +1813,31 @@ async function yandexSearch(queryText, type, page = 0) {
     }
   );
 
-  if (!response.ok) {
-    throw new Error(`YANDEX_HTTP_${response.status}`);
+  diagnostic.httpStatus = response.status;
+  const body = await response.text();
+  const accessOutcome = searchAccessOutcome(response.status, body);
+  if (accessOutcome || !response.ok) {
+    diagnostic.outcome = accessOutcome || 'provider_error';
+    return [];
   }
 
-  const payload = await response.json();
+  const payload = JSON.parse(body);
+  if (typeof payload.rawData !== 'string') throw new Error('YANDEX_INVALID_RESPONSE');
   const xml = Buffer
     .from(payload.rawData || '', 'base64')
     .toString('utf8');
+  if (!/<(?:yandexsearch|response)\b/i.test(xml)) throw new Error('YANDEX_INVALID_XML');
 
   const blocks = [
     ...xml.matchAll(/<doc\b[^>]*>([\s\S]*?)<\/doc>/gi)
   ].map(m => m[1]);
+  const errorCode = xml.match(/<error\b[^>]*\bcode=["'](\d+)/i)?.[1];
+  if (errorCode && errorCode !== '15') {
+    diagnostic.outcome = 'provider_error';
+    diagnostic.providerCode = errorCode;
+    return [];
+  }
+  diagnostic.documents = blocks.length;
 
   const result = [];
 
@@ -1740,9 +1948,7 @@ async function yandexSearch(queryText, type, page = 0) {
       }
     }
 
-    if (type === 'private' && profileType !== 'private') {
-      continue;
-    }
+    if (type === 'private' && profileType !== 'private' && !expandProfileTypes) continue;
 
     const avitoPriceMatch =
       type === 'avito'
@@ -1829,6 +2035,7 @@ async function yandexSearch(queryText, type, page = 0) {
     }
   }
 
+  diagnostic.outcome = result.length ? 'candidates' : blocks.length ? 'no_eligible_links' : 'empty';
   return result;
 }
 
@@ -4291,13 +4498,15 @@ function extractYandexServicesReputation(
 
 async function enrichCandidatesWithYandexServicesReputation(
   candidates,
-  maxProfiles = 5
+  maxProfiles = 5,
+  diagnostics = [],
+  includeNonPrivate = false
 ) {
   const targets =
     candidates
       .filter(
         candidate =>
-          candidate.type === 'private' &&
+          (includeNonPrivate || candidate.type === 'private') &&
           (candidate.sources || [])
             .some(
               source =>
@@ -4327,6 +4536,8 @@ async function enrichCandidatesWithYandexServicesReputation(
           return;
         }
 
+        const diagnostic = {source: 'yandex_services', stage: 'enrichment', sourceId: source.id};
+        diagnostics.push(diagnostic);
         try {
           const response =
             await fetch(
@@ -4350,12 +4561,14 @@ async function enrichCandidatesWithYandexServicesReputation(
               }
             );
 
-          if (!response.ok) {
-            return;
-          }
-
+          diagnostic.httpStatus = response.status;
           const html =
             await response.text();
+          const accessOutcome = searchAccessOutcome(response.status, html);
+          if (accessOutcome || !response.ok) {
+            diagnostic.outcome = accessOutcome || 'provider_error';
+            return;
+          }
 
           const enrichment =
             extractYandexServicesProfile(
@@ -4363,10 +4576,10 @@ async function enrichCandidatesWithYandexServicesReputation(
               source.url
             );
 
-          if (
-            !enrichment?.reputation &&
-            !enrichment?.profile
-          ) {
+          const profile = enrichment?.profile;
+          if (!enrichment?.reputation && !profile?.description && !profile?.areaServed?.length &&
+              !profile?.services?.length && !profile?.portfolio?.length && !profile?.specializations?.length) {
+            diagnostic.outcome = 'empty';
             return;
           }
 
@@ -4379,7 +4592,10 @@ async function enrichCandidatesWithYandexServicesReputation(
             candidate.yandexServicesProfile =
               enrichment.profile;
           }
-        } catch {}
+          diagnostic.outcome = 'profile_read';
+        } catch {
+          diagnostic.outcome = diagnostic.httpStatus ? 'provider_error' : 'transport_error';
+        }
       }
     )
   );
@@ -5588,7 +5804,8 @@ function saveSearchRun(result, body = {}) {
     previousRunId || null,
     JSON.stringify({
       ...refinement,
-      requestMeta
+      requestMeta,
+      sourceDiagnostics: result.searchMeta?.sourceDiagnostics || []
     })
   );
 
@@ -5802,6 +6019,9 @@ async function performSearch(body) {
   }
 
   const jobs = [];
+  const sourceDiagnostics = [];
+  const discoveredByRequest = new Map();
+  const qualityActive = Boolean(searchQualityPattern(categoryId, query));
 
   const expandedRegions =
     expandRegion
@@ -5816,86 +6036,27 @@ async function performSearch(body) {
       : [];
 
 
-  if (
-    allowCompany &&
-    useWeb &&
-    providers.yandexSearch
-  ) {
-    jobs.push(
-      yandexSearch(`${query} ${city}`, 'company')
-        .catch(() => [])
-    );
-  }
-
-  if (
-    allowPrivate &&
-    useYandexServices &&
-    providers.yandexSearch
-  ) {
-    jobs.push(
-      yandexSearch(
-        `site:uslugi.yandex.ru/profile ${query} ${city}`,
-        'private'
-      ).catch(() => [])
-    );
-  }
-
-  if (
-    allowCompany &&
-    allowPrivate &&
-    useAvito &&
-    providers.yandexSearch
-  ) {
-    jobs.push(
-      yandexSearch(
-        `site:avito.ru ${query} ${city}`,
-        'avito'
-      ).catch(() => [])
-    );
-  }
-
-  for (
-    const expandedRegion of
-    expandedRegions
-  ) {
-    if (
-      allowCompany &&
-      useWeb &&
-      providers.yandexSearch
-    ) {
-      jobs.push(
-        yandexSearch(
-          `${query} ${expandedRegion}`,
-          'company'
-        ).catch(() => [])
-      );
-    }
-
-    if (
-      allowPrivate &&
-      useYandexServices &&
-      providers.yandexSearch
-    ) {
-      jobs.push(
-        yandexSearch(
-          `site:uslugi.yandex.ru/profile ${query} ${expandedRegion}`,
-          'private'
-        ).catch(() => [])
-      );
-    }
-
-    if (
-      allowCompany &&
-      allowPrivate &&
-      useAvito &&
-      providers.yandexSearch
-    ) {
-      jobs.push(
-        yandexSearch(
-          `site:avito.ru ${query} ${expandedRegion}`,
-          'avito'
-        ).catch(() => [])
-      );
+  const channels = [
+    {enabled: allowCompany && useWeb, kind: 'web_search', type: 'company', prefix: ''},
+    {enabled: useYandexServices && (allowPrivate || qualityActive), kind: 'yandex_services', type: 'private', prefix: 'site:uslugi.yandex.ru/profile '},
+    {enabled: allowCompany && allowPrivate && useAvito, kind: 'avito', type: 'avito', prefix: 'site:avito.ru '}
+  ];
+  for (const locality of [city, ...expandedRegions]) {
+    for (const channel of channels.filter(item => item.enabled && providers.yandexSearch)) {
+      const diagnostic = {source: channel.kind, stage: 'discovery', locality};
+      sourceDiagnostics.push(diagnostic);
+      jobs.push(yandexSearch(`${channel.prefix}${query} ${locality}`, channel.type, 0, diagnostic, qualityActive)
+        .then(items => {
+          diagnostic.outcome ||= items.length ? 'candidates' : 'empty';
+          diagnostic.discovered = items.length;
+          discoveredByRequest.set(diagnostic, new Set(items.flatMap(item => item.sources?.map(source => source.id) || [])));
+          return items;
+        })
+        .catch(() => {
+          diagnostic.outcome = diagnostic.httpStatus ? 'provider_error' : 'transport_error';
+          diagnostic.discovered = 0;
+          return [];
+        }));
     }
   }
 
@@ -5909,6 +6070,8 @@ async function performSearch(body) {
     const kinds = new Set(
       (c.sources || []).map(x => x.kind)
     );
+
+    if (qualityActive && kinds.has('yandex_services')) return useYandexServices;
 
     if (c.type === 'company') {
       if (!allowCompany) return false;
@@ -6010,14 +6173,14 @@ async function performSearch(body) {
   const discoveredCount =
     candidates.length;
 
-  const qualificationPool =
-    candidates.slice(
-      0,
-      searchPlan.qualificationLimit
-    );
-
-  const qualifiedCount =
-    qualificationPool.length;
+  // Use the bounded enrichment budget so later profiles can still qualify.
+  // Early website evidence otherwise fills the pool before profiles can be checked.
+  const profileEnrichmentLimit = qualityActive ? searchPlan.enrichmentLimit : 5;
+  const isProfileCandidate = candidate => candidate.sources.some(source => source.kind === 'yandex_services');
+  const profileTargets = qualityActive ? candidates.filter(isProfileCandidate).slice(0, profileEnrichmentLimit) : [];
+  const publicTargets = qualityActive ? candidates.filter(candidate => !isProfileCandidate(candidate)) : [];
+  const qualificationPool = [...new Set([...profileTargets, ...publicTargets, ...candidates])]
+    .slice(0, searchPlan.qualificationLimit);
 
   const enrichmentTargets =
     qualificationPool
@@ -6060,7 +6223,9 @@ async function performSearch(body) {
   candidates =
     await enrichCandidatesWithYandexServicesReputation(
       candidates,
-      5
+      profileEnrichmentLimit,
+      sourceDiagnostics,
+      qualityActive
     );
 
   candidates =
@@ -6118,12 +6283,10 @@ async function performSearch(body) {
         )
     ).length;
 
-  candidates =
-    candidates.map(candidate => ({
-      ...candidate,
-      trustProfile:
-        buildTrustProfile(candidate)
-    }));
+  candidates = candidates.map(candidate => {
+    const classified = qualityActive ? classifySearchExecutor(candidate) : candidate;
+    return {...classified, trustProfile: buildTrustProfile(classified)};
+  });
 
   /*
    * Re-rank AFTER enrichment.
@@ -6145,11 +6308,30 @@ async function performSearch(body) {
         categoryId
       )
     )
+    .filter(c => categoryId !== 'balcony-insulation' || c.categoryRelevance?.level !== 'weak')
+    .filter(c => c.qualification?.geography.status !== 'other_locality' && c.qualification?.service.status !== 'excluded')
+    .filter(c => !c.executorTypeEvidence || c.type === 'private' && allowPrivate ||
+      c.type === 'company' && allowCompany || c.type === 'unverified' && allowCompany && allowPrivate)
     .sort(
       (a, b) =>
+        searchQualityPriority(b) - searchQualityPriority(a) ||
         b._score - a._score ||
         b.sources.length - a.sources.length
     );
+
+  if (candidates.some(candidate => searchQualityPriority(candidate) === 11)) {
+    candidates = candidates.filter(candidate => candidate.qualification.service.status === 'confirmed' &&
+      ['exact', 'region', 'neighbor'].includes(candidate.qualification.geography.status));
+  }
+  const qualifiedCount = candidates.length;
+  for (const diagnostic of sourceDiagnostics) {
+    if (diagnostic.outcome !== 'candidates') continue;
+    const retained = candidates.filter(candidate => candidate.sources.some(source => discoveredByRequest.get(diagnostic).has(source.id)));
+    diagnostic.qualified = retained.filter(candidate =>
+      (!candidate.qualification || searchQualityPriority(candidate) === 11)
+    ).length;
+    diagnostic.qualification = diagnostic.qualified ? 'qualified' : retained.length ? 'needs_verification' : 'rejected_after_qualification';
+  }
 
   let reputationStrictApplied =
     false;
@@ -6224,6 +6406,7 @@ async function performSearch(body) {
     candidates.length;
 
   const searchMeta = {
+    sourceDiagnostics,
     refinement: {
       active:
         Boolean(
@@ -13770,6 +13953,11 @@ const server = http.createServer(async (req, res) => {
     if (!taskId) return sendJson(res,400,{ok:false,error:'TASK_ID_REQUIRED'},origin);
     const job = researchJob(taskId);
     if (!job) return sendJson(res,404,{ok:false,error:'RESEARCH_JOB_NOT_FOUND'},origin);
+    let sourceDiagnostics;
+    if (job.status === 'completed' && job.run_id) {
+      const run = db.prepare('SELECT refinement_json FROM search_runs WHERE id = ?').get(job.run_id);
+      try { sourceDiagnostics = JSON.parse(run?.refinement_json || '{}').sourceDiagnostics; } catch {}
+    }
     return sendJson(res,200,{
       ok:true,
       jobId:job.job_id,
@@ -13778,6 +13966,7 @@ const server = http.createServer(async (req, res) => {
       error:job.error||'',
       runId:job.run_id||'',
       count:Number(job.candidate_count||0),
+      ...(Array.isArray(sourceDiagnostics) ? {sourceDiagnostics} : {}),
       updatedAt:job.updated_at
     },origin);
   }
