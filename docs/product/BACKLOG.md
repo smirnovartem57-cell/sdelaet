@@ -1,8 +1,22 @@
 # BACKLOG
 
-## P0 — reconcile production before any publication
+## Closed P0 — Payment recovery, PR #15
 
-Current operational state on 2026-09-28 is intentionally fail-closed:
+- Accepted in production on 2026-11-25. [PR #15](https://github.com/smirnovartem57-cell/sdelaet/pull/15) deployed as `2a89d6d47deeece659fb27ac06eb104a11c1e368`. See the [release receipt](DEPLOYMENT.md#p0-payment-release-receipt--2026-11-25).
+- The first real paid customer task remains a separate production acceptance item and requires the owner's authorization for a real bank operation.
+
+## Closed P0 — Contractor search quality, PR #160
+
+- Accepted in production on 2026-11-26. [PR #160](https://github.com/smirnovartem57-cell/sdelaet/pull/160) deployed as `2ceb59f418e7736d094c737cd77de1d038a2e836`. See the [release receipt](DEPLOYMENT.md#search-quality-release-receipt--2026-11-26).
+
+## Open commercial acceptance
+
+- Verify live shortlist coverage and current contact reachability on an approved representative sample. Exact-head fixture outcomes establish qualification and release behavior.
+- Complete the first real paid customer task only after separate bank-operation authorization. Preserve the existing SEO route for #80.
+
+## Historical P0 — production reconciliation and mandatory release checks
+
+Historical snapshot on 2026-09-28. Use the latest deployment receipt and exact live checks for current state:
 
 - GitHub `main` after source-of-truth sync and BATHROOM_WATERPROOFING control-test fix: `3354b6155231f9ce2679d7c58422a41d063e4944`; current exact `main` must still be re-read immediately before release;
 - recorded production baseline: `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33`;
@@ -21,7 +35,7 @@ Required sequence:
 8. verify exact production SHA, site/API health and post-deploy parity;
 9. restore/confirm timer state.
 
-Until this P0 is complete, `productionDeploy = PASS` is unavailable and categories that require it must remain below READY.
+Category promotion requires production deployment evidence for the release that contains its changes.
 
 ## P1 — finish TESTING → READY for priority categories
 

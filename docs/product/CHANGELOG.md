@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-26 — Search Quality P0
+- [PR #160](https://github.com/smirnovartem57-cell/sdelaet/pull/160) improved sourced service, geography and provider-type qualification, labeled shortlist fallback and empty-result diagnostics.
+- Production parity and application health passed. Payment runtime hashes and records were preserved. [Release receipt](DEPLOYMENT.md#search-quality-release-receipt--2026-11-26).
+
+## 2026-11-25 — Payment recovery P0
+- [PR #15](https://github.com/smirnovartem57-cell/sdelaet/pull/15) delivered idempotent payment and refund recovery, crash-safe payment locking, and coordinated Node.js 24.20.0 for both payment units. [Release receipt](DEPLOYMENT.md#p0-payment-release-receipt--2026-11-25).
+
 ## 2026-09-28 — Canonical production reconciliation and universal-flow recovery
 - Reconciled recorded production `f542e1c0...` against current main with no tracked deletions, no `src/*` runtime delta and no `ops/*` deploy delta before publication.
 - Canonical FirstVDS deploy completed at exact SHA `0aa85763fcc894ed2a5a595c4e9c0d331dbc0a33` with pre/post parity PASS and backup evidence.
